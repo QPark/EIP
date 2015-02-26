@@ -19,5 +19,7 @@
 		<module>qp-enterprise-integration-platform-sample/sample</module>
 		<module>qp-enterprise-integration-platform-sample/sample-templates</module>
 	</modules>
-
+	<!--
+MAVEN_OPTS=-Xmx512m -Xms512m -XX:PermSize=1024M -XX:MaxPermSize=1024M 
+	-->
 </project>
