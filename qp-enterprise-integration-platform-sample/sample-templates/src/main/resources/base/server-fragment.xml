@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Server>
+	<Listener className="com.springsource.tcserver.serviceability.rmi.JmxSocketListener" 
+		update:bind="0.0.0.0"
+	/>
+	<GlobalNamingResources>
+			<add:Resource name="jdbc/PlatformDB" auth="Container" 
+				username="mpp" password="mpp" url="jdbc:postgresql://localhost:5432" 
+				driverClassName="org.postgresql.Driver" 
+				factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" 
+				testWhileIdle="true" testOnBorrow="false" testOnReturn="false" 
+				validationQuery="SELECT 1 FROM DUAL" validationInterval="30000"
+				timeBetweenEvictionRunsMillis="5000" maxWait="10000" 
+				defaultTransactionIsolation="READ_COMMITTED" 
+				maxActive="20" maxIdle="20" minIdle="3" initialSize="2"
+				minEvictableIdleTimeMillis="30000" jmxEnabled="true"
+				jdbcInterceptors="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReportJmx(threshold=10000)" 
+			/>
+			<!-- add others here -->
+	</GlobalNamingResources>
+	<Service name="Catalina">
+		<Engine name="Catalina">
+			<Host name="localhost"
+			>
+				<remove:Valve className="org.apache.catalina.valves.AccessLogValve" />
+			</Host>
+		</Engine>
+		<Connector protocol="org.apache.coyote.http11.Http11Protocol"
+			add:URIEncoding="UTF-8"
+		/>
+		<Connector protocol="org.apache.coyote.ajp.AjpProtocol"
+			add:URIEncoding="UTF-8"
+		/>
+	</Service>
+</Server>

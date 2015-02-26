@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<tomcat-users>
+	<role rolename="manager-gui" />
+	<role rolename="manager-script" />
+	<user username="iss" password="iss" roles="manager-gui, manager-script" />
+	<role rolename="admin" />
+</tomcat-users>
+

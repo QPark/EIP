@@ -1,0 +1,130 @@
+<com:FailureMessageListType xmlns:com="http://www.ses.com/FailureTypes-1.0">
+	<messagePhrase>
+		<key>noRetry</key>
+		<phrase>Do not retry the action that caused the problem until the problem has been resolved.</phrase>
+	</messagePhrase>
+	<messagePhrase>
+		<key>persist</key>
+		<phrase>If the problem persists, inform your system administrator</phrase>
+	</messagePhrase>
+	<messagePhrase>
+		<key>informAdm</key>
+		<phrase>Inform your system administrator of the error.</phrase>
+	</messagePhrase>
+	<messagePhrase>
+		<key>noAction</key>
+		<phrase>The requested action was not performed.</phrase>
+	</messagePhrase>
+	<messagePhrase>
+		<key>firstUsed</key>
+		<phrase>The first item supplied has been used.</phrase>
+	</messagePhrase>
+	<message>
+		<code>E_ALL_NOT_KNOWN_ERROR</code>
+		<whatHappened><text>An unidentified error has occurred.</text></whatHappened>
+		<whyHappened><text>An unexpected combination of events or data has occurred. The application has no rules about what to do in these circumstances.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<supportInformation><text>{0}\n{1}\n{2}\n{3}\n{4}\n{5}</text></supportInformation>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>AUTHENTICATION_USERNAME_PASSWORD_TOKEN_FAILED</code>
+		<whatHappened><text>Authentication failed: The user name and/or password you entered was not correct or is not known to the system.</text></whatHappened>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>AUTHORISATION_ACCESS_DENIED</code>
+		<whatHappened><text>Access denied: The user is not authorized to call this operation.</text></whatHappened>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>AUT_INVALID_CREDENTIALS</code>
+		<whatHappened><text>User "{0}" could not be authenticated.</text></whatHappened>
+		<whyHappened><text>The user name and/or password you entered was not correct or is not known to the system.</text></whyHappened>
+		<whatToDo><phraseKey>persist</phraseKey><text>Enter the user name and password again and retry the login. 
+If you are a new user, check with your administrator that the user name and password have already been entered into the system, and ensure that the details you have been given match those entered into the application.
+If you are a regular user of the system check with your administrator that your password has not expired or your user access has been changed.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_MESSAGE_VALIDATION_ERROR</code>
+		<whatHappened><phraseKey>noAction</phraseKey></whatHappened>
+		<whyHappened><text>The bus has tried to validate a SOAP Message, but it detects an error indicating that the format of the SEND is not valid. This is probably caused by an unexpected combination of input data values.</text></whyHappened>
+		<whatToDo><phraseKey>informAdm</phraseKey></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_NOT_IMPLEMENTED_SERVICE</code>
+		<whatHappened><text>The service {0} is not implement!</text></whatHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_NOT_IMPLEMENTED_OPERATION</code>
+		<whatHappened><text>The operation {0} of service {1} is not implement!</text></whatHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+
+	<message>
+		<code>E_WEBSERVICE_ERROR</code>
+		<whatHappened><text>An unidentified error has occurred at the called server: {0}</text></whatHappened>
+		<whyHappened><text>An unexpected combination of events or data has occurred. The application has no rules about what to do in these circumstances.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_FAULT_CLIENT_ERROR</code>
+		<whatHappened><text>An unidentified error has occurred at the called server: {0}</text></whatHappened>
+		<whyHappened><text>An unexpected combination of events or data has occurred. The application has no rules about what to do in these circumstances.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_FAULT_SERVICE_NOT_AVAILABLE</code>
+		<whatHappened><text>Could not call the function needed.</text></whatHappened>
+		<whyHappened><text>The service is not available.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_FAULT_HTTPS_CERTIFICATE_ERROR</code>
+		<whatHappened><text>Could not call the function needed.</text></whatHappened>
+		<whyHappened><text>No valid certificate found in the keystore of the service bus.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_FAULT_CREDENTIAL_ERROR</code>
+		<whatHappened><text>Could not call the function needed: {0}</text></whatHappened>
+		<whyHappened><text>No valid credentials available.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_FAULT_MARSHALLING_ERROR</code>
+		<whatHappened><text>Could not call the function needed.</text></whatHappened>
+		<whyHappened><text>The message send or received was not valid.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+	<message>
+		<code>E_SOAP_FAULT_NETWORK_ERROR</code>
+		<whatHappened><text>Could not call the function needed.</text></whatHappened>
+		<whyHappened><text>The network connection to the service is not available.</text></whyHappened>
+		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>
+		<severity>ERROR</severity>
+	</message>
+
+
+
+	<message>
+		<code>E_DATABASE_ERROR</code>
+		<whatHappened><phraseKey>noAction</phraseKey></whatHappened>
+		<whyHappened><text>You requested an action that required the Service Bus to communicate with a database sub-system, which has given an unexpected error.</text></whyHappened>
+		<whatToDo><phraseKey>informAdm</phraseKey></whatToDo>
+		<supportInformation><text>System Administrator: Inform the Administrator of the database sub-system. When the problem has been fixed in migration database, ask the user to repeat the action which caused the error.</text></supportInformation>
+		<severity>ERROR</severity>
+	</message>
+	
+</com:FailureMessageListType>

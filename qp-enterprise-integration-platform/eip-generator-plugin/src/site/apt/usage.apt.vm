@@ -1,0 +1,81 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Usage
+  ------
+  Bernhard Hausen
+  ------
+  2013-04-24
+  ------
+
+Usage
+ 
+  Brief examples on how to use the generator-plugin goals.
+
+  Configure the plugin something like this if you intend to bind it to execute along with your build:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.qpark.maven.eip</groupId>
+        <artifactId>generator-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>generate schema file list and catalog to prepare xjc</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>generate-xjc-preparations</goal>
+            </goals>
+            <configuration>
+              <baseDirectory>[ base directory ]</baseDirectory>
+              <outputDirectory>[ output directory ]</outputDirectory>
+              <schemalocationPrefix>[ prefix ]</schemalocationPrefix>
+            </configuration>
+          </execution>
+          <!-- other executions here ... -->
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+  
+
+  <Notes:>
+  
+    * By default, artifacts are copied into <outputDirectory> using 
+      Maven artifact file name convention ( ie <artifactId-version-classifier.type> ).
+      Use the following rules to override the default convention:
+      
+      * Use <artifactItem.destFileName> to override the default file name.  
+        
+      * Use <stripVersion> to remove <version> from default file name.
+        This field is ignored when <artifactId.destFileName> is set.
+      
+      * Use <artifactItem.outputDirectory> to override the plugin's <outputDirectory> configuration 
+        per <artifactItem>.
+        
+      []
+      
+    []
+

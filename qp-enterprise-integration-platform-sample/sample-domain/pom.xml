@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+
+	<groupId>com.samples.domain.service</groupId>
+	<artifactId>domain-base</artifactId>
+	<version>1.0.1</version>
+	<packaging>pom</packaging>
+	<name>domain-base</name>
+
+	<description>Example model and service definition example.</description>
+
+	<modules>
+		<module>model</module>
+		<module>service</module>
+		<module>impl</module>
+	</modules>
+
+	<properties>
+		<maven.test.skip.exec>true</maven.test.skip.exec>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+	</properties>
+	<organization>
+		<name>QPark Consulting s.a r.l</name>
+		<url>http://www.qpark-consulting.com</url>
+	</organization>
+
+	<distributionManagement>
+		<repository>
+			<id>${repository.id}</id>
+			<url>${repository.url}</url>
+		</repository>
+		<site>
+			<id>site-server</id>
+			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
+		</site>
+	</distributionManagement>
+</project>

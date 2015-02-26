@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Server>
+	<GlobalNamingResources>
+			<Resource name="jdbc/PlatformDB" 
+				update:username="mpp" 
+				update:password="mpp" 
+				update:url="jdbc:postgresql://localhost:5432" 
+			/>
+	</GlobalNamingResources>
+</Server>

@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.qpark.eip</groupId>
+	<artifactId>eip-base</artifactId>
+	<version>1.0.1</version>
+	<packaging>pom</packaging>
+	<description>
+		<![CDATA[pom to build eip.]]>
+	</description>
+	
+	<modules>
+		<module>qp-enterprise-integration-platform/eip-generator-plugin</module>
+		<module>qp-enterprise-integration-platform/eip-plugin-xml</module>
+		<module>qp-enterprise-integration-platform-impl</module>
+		<module>qp-enterprise-integration-platform-sample/sample-domain</module>
+		<module>qp-enterprise-integration-platform-sample/sample</module>
+		<module>qp-enterprise-integration-platform-sample/sample-templates</module>
+	</modules>
+
+</project>

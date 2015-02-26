@@ -1,0 +1,242 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+
+	<groupId>com.samples.platform.templates</groupId>
+	<artifactId>sample-templates</artifactId>
+	<version>1.0.1</version>
+	<packaging>jar</packaging>
+	<description>
+		<![CDATA[Templates of the platform.]]>
+	</description>
+
+	<properties>
+		<maven.test.skip.exec>true</maven.test.skip.exec>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+
+		<application.name>platform</application.name>
+		<application.groupId>com.samples.platform</application.groupId>
+		<application.version>1.0.1</application.version>
+		<application.base.package.name>com.samples.platform</application.base.package.name>
+		<domain.version>1.0.1</domain.version>
+		<slf4j.version>1.7.5</slf4j.version>
+		<logback.version>1.0.13</logback.version>
+	</properties>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.9</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>make-templates</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
+									<property name="environment.name">base</property>
+									<target name="base-config" />
+									<target name="base-additional-libs" />
+									<target name="base-webapps-applications" />
+									<target name="handle-readme"/>
+								</ant>
+								<ant antfile="${basedir}/build-rename-wars.xml" inheritRefs="true">
+									<property name="environment.name">base</property>
+									<target name="rename-wars" />
+								</ant>
+								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
+									<property name="environment.name">local</property>
+									<target name="user-config" />
+									<target name="handle-readme"/>
+								</ant>
+								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
+									<property name="environment.name">integration</property>
+									<target name="user-config" />
+									<target name="handle-readme"/>
+								</ant>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>zip-or-copy-templates</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
+									<target name="templates-zip" />
+									<!--
+									<target name="templates-copy-local" />
+									-->
+								</ant>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>copy-platform</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${application.groupId}</groupId>
+									<artifactId>platform-webapp-library</artifactId>
+									<version>${application.version}</version>
+									<type>war</type>
+								</artifactItem>
+								<!-- add aditional services here -->
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-libs</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+							<artifactItems>
+								<dependency>
+									<groupId>postgresql</groupId>
+									<artifactId>postgresql</artifactId>
+									<version>9.0-801.jdbc4</version>
+								</dependency>
+								<artifactItem>
+									<groupId>ch.qos.logback</groupId>
+									<artifactId>logback-core</artifactId>
+									<version>${logback.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>ch.qos.logback</groupId>
+									<artifactId>logback-access</artifactId>
+									<version>${logback.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>ch.qos.logback</groupId>
+									<artifactId>logback-access</artifactId>
+									<version>${logback.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>slf4j-api</artifactId>
+									<version>${slf4j.version}</version>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly-sources.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>assembly-0</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<createChecksum>true</createChecksum>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.2</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>${repository.id}</id>
+			<url>${repository.url}</url>
+		</repository>
+		<site>
+			<id>site-server</id>
+			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
+		</site>
+	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>repository.apache.org</id>
+			<url>https://repository.apache.org/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>maven.springframework.org</id>
+			<url>http://maven.springframework.org/release/</url>
+		</repository>
+		<repository>
+			<id>maven.java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>repository.jboss.org.thirdparty</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+		</repository>
+	</repositories>
+</project>

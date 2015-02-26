@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:failure="http://www.ses.com/FailureTypes-1.0"
+	jaxb:version="2.0"
+	targetNamespace="http://www.ses.com/FailureTypes-1.0"
+	elementFormDefault="unqualified" >
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.core.failure.domain" />
+			</jaxb:schemaBindings>
+		</appinfo>
+	</annotation>
+
+	<complexType name="FailureMessageListType">
+		<sequence>
+			<element name="messagePhrase" type="failure:FailureMessagePhraseType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="message" type="failure:FailureMessageType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="FailureMessagePhraseType">
+		<annotation><documentation>A common used phrase in the messages like "Inform your system administrator of the error."</documentation></annotation>
+		<sequence>
+			<element name="key" type="string"/>
+			<element name="phrase" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="FailureMessagePhraseableType">
+		<sequence>
+			<element name="phraseKey" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="text" type="string" minOccurs="0" maxOccurs="1"/>
+		</sequence>
+	</complexType>
+	<complexType name="FailureMessageType">
+		<annotation>
+			<documentation>A failure message in the system.</documentation>
+		</annotation>
+		<sequence>
+			<element name="code" type="string">
+				<annotation>
+					<documentation>The name of the error code</documentation>
+				</annotation>
+			</element>
+			<element name="whatHappened" type="failure:FailureMessagePhraseableType">
+				<annotation>
+					<documentation>What happened?</documentation>
+				</annotation>
+			</element>
+			<element name="whyHappened" type="failure:FailureMessagePhraseableType" minOccurs="0">
+				<annotation>
+					<documentation>Why has this failure happened?</documentation>
+				</annotation>
+			</element>
+			<element name="whatToDo" type="failure:FailureMessagePhraseableType" minOccurs="0">
+				<annotation>
+					<documentation>What to do now?</documentation>
+				</annotation>
+			</element>
+			<element name="supportInformation" type="failure:FailureMessagePhraseableType" minOccurs="0">
+				<annotation>
+					<documentation>The advanced support information.</documentation>
+				</annotation>
+			</element>
+			<element name="severity" type="failure:FailureMessageSeverity"/>
+		</sequence>
+	</complexType>
+	<simpleType name="FailureMessageSeverity">
+		<restriction base="string">
+			<enumeration value="INFORMATION" />
+			<enumeration value="WARNING" />
+			<enumeration value="ERROR" />
+		</restriction>
+	</simpleType>
+</schema>
