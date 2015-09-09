@@ -1,0 +1,270 @@
+package com.qpark.maven.xmlbeans;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import com.qpark.maven.Util;
+
+/**
+ * @author bhausen
+ */
+public class ServiceIdRegistry {
+
+	private static final String SERVICE_DEFINITION = ".service.";
+
+	private static final Map<String, ServiceIdEntry> serviceIdMap = new TreeMap<String, ServiceIdEntry>();
+	private static final Map<String, ServiceIdEntry> serviceIdPackageNameMap = new TreeMap<String, ServiceIdEntry>();
+	private static final Set<String> serviceIds = new TreeSet<String>();
+	private static final Map<String, ServiceIdEntry> serviceIdTargetNamespaceMap = new TreeMap<String, ServiceIdEntry>();
+
+	/**
+	 * @return
+	 */
+	public static Collection<String> getAllServiceIds() {
+		return serviceIds;
+	}
+
+	private static int getIndexDeltaSuffix(final String packageName,
+			final String deltaPackageNameSuffix) {
+		int index = -1;
+		if (deltaPackageNameSuffix != null) {
+			List<String> deltaSuffixes = splitByCommaAndSpace(deltaPackageNameSuffix);
+			StringBuffer sb = new StringBuffer(16);
+			for (String deltaSuffix : deltaSuffixes) {
+				if (deltaSuffix.charAt(0) != '.') {
+					sb.setLength(0);
+					deltaSuffix = sb.append(".").append(deltaSuffix).toString();
+				}
+				if (deltaSuffix.charAt(deltaSuffix.length() - 1) != '.') {
+					sb.setLength(0);
+					deltaSuffix = sb.append(deltaSuffix).append(".").toString();
+				}
+				index = packageName.lastIndexOf(deltaSuffix);
+				if (index > -1) {
+					break;
+				}
+			}
+		}
+		return index;
+	}
+
+	private static int getIndexMessageSuffix(final String packageName,
+			final String messageSuffix) {
+		int index = -1;
+		if (messageSuffix != null) {
+			List<String> msgSuffixes = splitByCommaAndSpace(messageSuffix);
+			StringBuffer sb = new StringBuffer(16);
+			for (String msgSuffix : msgSuffixes) {
+				if (msgSuffix.charAt(0) != '.') {
+					sb.setLength(0);
+					msgSuffix = sb.append(".").append(msgSuffix).toString();
+				}
+				index = packageName.lastIndexOf(msgSuffix);
+				if (index > -1) {
+					break;
+				}
+			}
+		}
+		return index;
+	}
+
+	public static String capitalize(final String serviceId) {
+		String s = Util.capitalizePackageName(serviceId);
+		return s;
+	}
+
+	/**
+	 * Get the service id out of the package name.
+	 * @param packageName
+	 * @param targetNamespace
+	 * @param messageSuffix
+	 * @param deltaPackageNameSuffix
+	 * @return the service id.
+	 */
+	static String getServiceId(final String packageName,
+			final String targetNamespace, final String messageSuffix,
+			final String deltaPackageNameSuffix) {
+		String serviceId = "";
+		ServiceIdEntry entry = serviceIdPackageNameMap.get(packageName);
+		if (entry != null) {
+			serviceId = entry.getServiceId();
+		} else {
+			/* Service id definition. */
+			String delta = deltaPackageNameSuffix;
+			if (delta != null && delta.trim().length() > 0) {
+				if (delta.charAt(0) != '.') {
+					delta = new StringBuffer(delta.length() + 1).append(".")
+							.append(delta).toString();
+				}
+				if (delta.charAt(delta.length() - 1) != '.') {
+					delta = new StringBuffer(delta.length() + 1).append(delta)
+							.append(".").toString();
+				}
+			}
+			if (delta != null && delta.trim().length() == 0) {
+				delta = null;
+			}
+			int indexMsg = getIndexMessageSuffix(packageName, messageSuffix);
+			int indexService = packageName.indexOf(SERVICE_DEFINITION);
+			if (indexService > 0 && indexMsg > 0 && indexService < indexMsg) {
+				int indexDelta = getIndexDeltaSuffix(packageName,
+						deltaPackageNameSuffix);
+				if (indexDelta > 0 && indexService < indexDelta) {
+					serviceId = packageName.substring(indexService
+							+ SERVICE_DEFINITION.length(), indexDelta);
+				} else {
+					serviceId = packageName.substring(indexService
+							+ SERVICE_DEFINITION.length(), indexMsg);
+				}
+				entry = new ServiceIdEntry(serviceId, packageName,
+						targetNamespace);
+				serviceIdPackageNameMap.put(packageName, entry);
+				serviceIdTargetNamespaceMap.put(targetNamespace, entry);
+				serviceIdMap.put(serviceId, entry);
+				serviceIds.add(serviceId);
+			}
+		}
+		return serviceId;
+	}
+
+	public static String getServiceIdBasename(final String serviceId) {
+		StringBuffer sb = new StringBuffer();
+		List<String> list = getServiceIds(serviceId);
+		if (list.size() > 0) {
+			for (String string : list) {
+				sb.append(string);
+			}
+		}
+		return sb.toString();
+	}
+
+	public static ServiceIdEntry getServiceIdEntry(final String serviceId) {
+		return serviceIdMap.get(serviceId);
+	}
+
+	public static List<String> getServiceIds(final String serviceId) {
+		List<String> list = splitByCommaAndSpace(serviceId);
+		return list;
+	}
+
+	public static String getMarshallerContextPath(final String serviceId) {
+		StringBuffer sb = new StringBuffer(128);
+		Set<String> serviceIds = new TreeSet<String>();
+		List<String> list = splitByCommaAndSpace(serviceId);
+		if (list.isEmpty()) {
+			serviceIds.addAll(getAllServiceIds());
+		} else {
+			serviceIds.addAll(list);
+			for (String sid : list) {
+				try {
+					serviceIds.addAll(getServiceIdEntry(sid)
+							.getTotalServiceIdImports());
+				} catch (RuntimeException e) {
+					throw new RuntimeException(new StringBuffer(64)
+							.append("Can not find the serviceId \"")
+							.append(sid).append("\" in the ServiceIdRegistry!")
+							.toString());
+				}
+			}
+		}
+		for (String sid : serviceIds) {
+			if (sb.length() > 0) {
+				sb.append(":");
+			}
+			sb.append(getServiceIdEntry(sid).getPackageName());
+		}
+		return sb.toString();
+	}
+
+	public static boolean isValidServiceId(final String elementServiceId,
+			final String serviceId) {
+		boolean valid = false;
+		Collection<String> serviceIds = getServiceIds(serviceId);
+		if (serviceIds.isEmpty()) {
+			valid = true;
+		} else {
+			ServiceIdEntry entry;
+			for (String sid : serviceIds) {
+				entry = getServiceIdEntry(sid);
+				if (entry != null) {
+					valid = entry.getServiceId().equals(elementServiceId)
+							|| entry.getTotalServiceIdImports().contains(
+									elementServiceId);
+					if (valid) {
+						break;
+					}
+				}
+			}
+		}
+		return valid;
+	}
+
+	public static void main(final String[] args) {
+		System.out
+				.println(splitByCommaAndSpace("appcontrolling, monitoring, busappmonics"));
+		System.out.println(getServiceId(
+				"com.ses.osp.bus.service.directory.v20.delta.msg", "httpx",
+				"msg", "delta"));
+		System.out.println(getServiceId(
+				"com.ses.osp.bus.service.directory.v20.msg", "httpx", "msg",
+				"delta"));
+		for (String s : getServiceIds("abc.cde")) {
+			System.out.println(s);
+		}
+		System.out.println("#########");
+		for (String s : getServiceIds("abc.cde, efg.hij")) {
+			System.out.println(s);
+		}
+		System.out.println("#########");
+		System.out.println(getServiceIdBasename("abc.cde"));
+		System.out.println("#########");
+		System.out.println(getServiceIdBasename("abc.cde, efg.hij"));
+
+		System.out.println(isValidServiceId("directory.v20", "directory.v20"));
+	}
+
+	private static void setServiceEntryImports(final ServiceIdEntry entry,
+			final Map<String, XsdContainer> map) {
+		XsdContainer container = map.get(entry.getTargetNamespace());
+		ServiceIdEntry child;
+		for (String importedTargetNamespace : container
+				.getImportedTargetNamespaces()) {
+			child = serviceIdTargetNamespaceMap.get(importedTargetNamespace);
+			if (child != null) {
+				entry.getImportedServiceEntries().add(child);
+				setServiceEntryImports(child, map);
+			}
+		}
+	}
+
+	static void setupServiceIdTree(final XsdsUtil xsds) {
+		ServiceIdEntry entry;
+		for (String serviceId : serviceIds) {
+			entry = serviceIdMap.get(serviceId);
+			setServiceEntryImports(entry, xsds.getXsdContainerMap());
+		}
+	}
+
+	private static List<String> splitByCommaAndSpace(final String s) {
+		List<String> list = new ArrayList<String>();
+		if (s != null && s.trim().length() > 0) {
+			for (String stringa : s.split(",")) {
+				if (stringa.trim().length() > 0) {
+					for (String stringb : stringa.split(" ")) {
+						if (stringb.trim().length() > 0
+								&& !list.contains(stringb.trim())) {
+							list.add(stringb.trim());
+						}
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+}
