@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -34,6 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.qpark.maven.Util;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 
 /**
  * Create the spring-integration xml files of the router. The base to create
@@ -319,8 +320,8 @@ public class RouterXmlMojo extends AbstractMojo {
 			final String channelIncoming, final Properties p) {
 		String transformerBeanName = new StringBuffer(64)
 				.append("routingTranformerOf")
-				.append(Util.capitalize(serviceId)).append(operationName)
-				.toString();
+				.append(ServiceIdRegistry.capitalize(serviceId))
+				.append(operationName).toString();
 
 		StringBuffer sb = new StringBuffer(1024);
 
@@ -440,7 +441,8 @@ public class RouterXmlMojo extends AbstractMojo {
 				.append("InputChannel").append(System.currentTimeMillis())
 				.toString();
 		String recipientListRouterChannelName = new StringBuffer(32)
-				.append("internal").append(Util.capitalize(serviceId))
+				.append("internal")
+				.append(ServiceIdRegistry.capitalize(serviceId))
 				.append(operationName).append("RouterChannel").toString();
 		channels.append("\t<int:publish-subscribe-channel id=\"");
 		channels.append(aggregatorInputChannelName);
@@ -476,7 +478,8 @@ public class RouterXmlMojo extends AbstractMojo {
 
 		for (String operationProviderBeanName : operationProviderBeanNames) {
 			String operationChannelName = new StringBuffer(64)
-					.append("internal").append(Util.capitalize(serviceId))
+					.append("internal")
+					.append(ServiceIdRegistry.capitalize(serviceId))
 					.append(operationName).append(System.currentTimeMillis())
 					.toString();
 			channels.append("\t<int:channel id=\"");

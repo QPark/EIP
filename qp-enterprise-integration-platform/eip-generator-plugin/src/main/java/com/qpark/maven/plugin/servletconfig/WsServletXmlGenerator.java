@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -17,6 +17,7 @@ import static com.qpark.maven.plugin.EipGeneratorDefaults.DEFAULT_SPRING_WS_XSD_
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -24,9 +25,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.plugin.GetServiceIds;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ElementType;
+import com.qpark.maven.xmlbeans.ServiceIdEntry;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -148,23 +150,6 @@ public class WsServletXmlGenerator {
 		this.log.debug("-generate");
 	}
 
-	private boolean isValidServiceId(final String elementServiceId) {
-		boolean valid = false;
-		List<String> serviceIds = GetServiceIds.getServiceIds(this.serviceId);
-		if (serviceIds.size() == 0) {
-			serviceIds = GetServiceIds.getAllServiceIds(this.config);
-		}
-		for (String sid : serviceIds) {
-			valid = Util.isValidServiceId(elementServiceId, sid,
-					this.serviceIdCommonServices,
-					this.serviceCreationWithCommon);
-			if (valid) {
-				break;
-			}
-		}
-		return valid;
-	}
-
 	private String getEndPointMappings() {
 		StringBuffer sb = new StringBuffer(1024);
 		if (this.additionalWebservicePayloadInterceptors != null
@@ -199,7 +184,8 @@ public class WsServletXmlGenerator {
 		String targetNamespace = null;
 		for (ElementType element : this.elementTypes) {
 			if (element.isRequest()
-					&& this.isValidServiceId(element.getServiceId())) {
+					&& ServiceIdRegistry.isValidServiceId(
+							element.getServiceId(), this.serviceId)) {
 				ElementType elementResponse = XsdsUtil.findResponse(element,
 						this.config.getElementTypes(), this.config);
 				if (elementResponse != null) {
@@ -236,6 +222,16 @@ public class WsServletXmlGenerator {
 
 	private String getPayloadLoggingInterceptor() {
 		StringBuffer sb = new StringBuffer(1024);
+
+		// TreeSet<String> packageNames = new TreeSet<String>();
+		// for (ElementType element : this.elementTypes) {
+		// if (element.isRequest()
+		// && ServiceIdRegistry.isValidServiceId(
+		// element.getServiceId(), this.serviceId)) {
+		// packageNames.add(element.getPackageName());
+		// }
+		// }
+
 		sb.append("\t<!-- Payload logging interceptor -->\n");
 		sb.append("\t<bean id=\"payloadLoggingInterceptor\" class=\"");
 		sb.append(this.webservicePayloadLoggerImplementation);
@@ -244,7 +240,8 @@ public class WsServletXmlGenerator {
 		sb.append(this.basePackageName);
 		sb.append(".messages.incoming\"/>\n");
 		sb.append("\t\t<property name=\"contextPath\" value=\"");
-		sb.append(Util.getContextPath(this.config.getPackageNames()));
+		// sb.append(Util.getContextPath(packageNames));
+		sb.append(ServiceIdRegistry.getMarshallerContextPath(this.serviceId));
 		sb.append("\"/>\n");
 		sb.append("\t</bean>\n");
 		return sb.toString();
@@ -257,30 +254,19 @@ public class WsServletXmlGenerator {
 		sb.append("\t\t<property name=\"schemas\">\n");
 		sb.append("\t\t\t<list>\n");
 		if (this.serviceId.length() > 0) {
-			List<String> serviceIds = GetServiceIds
+			Collection<String> serviceIds = ServiceIdRegistry
 					.getServiceIds(this.serviceId);
 			if (serviceIds.size() == 0) {
-				serviceIds = GetServiceIds.getAllServiceIds(this.config);
+				serviceIds = ServiceIdRegistry.getAllServiceIds();
 			}
 			for (String sid : serviceIds) {
-				String msg = new StringBuffer(32).append(".")
-						.append(this.config.getMessagePackageNameSuffix())
-						.toString();
-				String srv = new StringBuffer(32).append(".").append(sid)
-						.toString();
-				for (String targetNamespace : this.config.getXsdContainerMap()
-						.keySet()) {
-					XsdContainer xc = this.config.getXsdContainerMap().get(
-							targetNamespace);
-					if (xc.getPackageName().contains(msg)
-							&& xc.getPackageName().contains(srv)) {
-						System.out.println("added");
-						sb.append("\t\t\t\t<value>/WEB-INF/classes");
-						sb.append(Util.getRelativePathTranslated(
-								this.config.getBaseDirectory(), xc.getFile()));
-						sb.append("</value>\n");
-					}
-				}
+				ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
+				XsdContainer xc = this.config.getXsdContainerMap(entry
+						.getTargetNamespace());
+				sb.append("\t\t\t\t<value>/WEB-INF/classes");
+				sb.append(Util.getRelativePathTranslated(
+						this.config.getBaseDirectory(), xc.getFile()));
+				sb.append("</value>\n");
 			}
 		} else {
 			for (File f : this.config.getXsdFiles()) {

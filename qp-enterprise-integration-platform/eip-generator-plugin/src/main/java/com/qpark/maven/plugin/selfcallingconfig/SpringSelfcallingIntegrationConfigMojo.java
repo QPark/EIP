@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -33,6 +33,7 @@ import org.apache.maven.project.MavenProject;
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ElementType;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -143,8 +144,8 @@ public class SpringSelfcallingIntegrationConfigMojo extends AbstractMojo {
 							.getElement().getType(), config);
 					if (ctResponse != null && !ctResponse.isSimpleType()
 							&& !ctResponse.isPrimitiveType()) {
-						capitalizedServiceId = Util.capitalize(element
-								.getServiceId());
+						capitalizedServiceId = ServiceIdRegistry
+								.capitalize(element.getServiceId());
 						gateways.append("\t<int:gateway id=\"internalSelfCallingWs");
 						gateways.append(capitalizedServiceId);
 						gateways.append(element.getOperationName());
@@ -191,7 +192,7 @@ public class SpringSelfcallingIntegrationConfigMojo extends AbstractMojo {
 		}
 		sb.append(gateways);
 		for (String serviceId : routerMappings.keySet()) {
-			capitalizedServiceId = Util.capitalize(serviceId);
+			capitalizedServiceId = ServiceIdRegistry.capitalize(serviceId);
 			sb.append("\t<int:channel id=\"internalSelfCallingWs");
 			sb.append(capitalizedServiceId);
 			sb.append("WebServiceResponseChannel\" />\n");
@@ -258,7 +259,9 @@ public class SpringSelfcallingIntegrationConfigMojo extends AbstractMojo {
 		sb.append(SpringSelfcallingIntegrationConfigMojo.MARSHALLER_NAME);
 		sb.append("\" \n");
 		sb.append("\t\tcontextPath=\"");
-		sb.append(Util.getContextPath(config.getPackageNames()));
+		// sb.append(Util.getContextPath(config.getPackageNames()));
+		// sb.append(ServiceIdRegistry.getMarshallerContextPath(serviceId));//
+		// (config.getPackageNames()));
 		sb.append("\"\n\t/>\n");
 
 		for (String channel : channels) {

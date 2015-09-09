@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -31,8 +31,9 @@ import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
- * Make the schemalocation of the xsds relative in the local area. This is needed inside of the web
- * application so that the dynamic WSDL and the validation could be done.
+ * Make the schemalocation of the xsds relative in the local area. This is
+ * needed inside of the web application so that the dynamic WSDL and the
+ * validation could be done.
  * @author bhausen
  */
 @Mojo(name = "relative-schemalocation", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
@@ -51,7 +52,7 @@ public class ToRelativeSchemaLocationMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		this.getLog().debug("+execute");
-		TreeMap<String, XsdContainer> map = XsdsUtil
+		Map<String, XsdContainer> map = XsdsUtil
 				.getXsdContainers(this.baseDirectory);
 		HashMap<String, String> replacements = new HashMap<String, String>();
 		for (XsdContainer xc : map.values()) {

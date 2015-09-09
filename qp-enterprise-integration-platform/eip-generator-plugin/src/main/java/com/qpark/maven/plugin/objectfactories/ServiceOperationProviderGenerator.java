@@ -7,6 +7,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import com.qpark.maven.Util;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -42,7 +43,7 @@ public class ServiceOperationProviderGenerator {
 		this.log.debug("+generate");
 
 		String className = new StringBuffer("OperationProvider").append(
-				Util.capitalize(this.serviceId)).toString();
+				ServiceIdRegistry.capitalize(this.serviceId)).toString();
 		StringBuffer sb = new StringBuffer(1024);
 
 		StringBuffer imports = new StringBuffer(1024);
@@ -97,7 +98,7 @@ public class ServiceOperationProviderGenerator {
 			StringBuffer gatewayId = new StringBuffer(128);
 			gatewayId.append("eipCaller");
 			gatewayId.append(Util.capitalizePackageName(this.basePackageName));
-			gatewayId.append(Util.capitalize(this.serviceId));
+			gatewayId.append(ServiceIdRegistry.capitalize(this.serviceId));
 			gatewayId.append(ig.getClassName());
 			gatewayId.append("Gateway");
 

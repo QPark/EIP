@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
- * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven.plugin.securityconfig;
 
@@ -70,7 +65,6 @@ public class SecurityConfigMojo extends AbstractMojo {
 	/** A list of channel patterns that allow users to create. */
 	@Parameter(property = "channelPatternsCreate")
 	private String channelPatternsCreate;
-
 	/** A list of channel patterns that allow users to delete. */
 	@Parameter(property = "channelPatternsDelete")
 	private String channelPatternsDelete;
@@ -131,6 +125,19 @@ public class SecurityConfigMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "securityContextHolderStrategyName", defaultValue = "")
 	private String securityContextHolderStrategyName;
+	/**
+	 * An implementation of the
+	 * <code>com.qpark.eip.core.spring.security.EipLimitedAccessDataProvider</code>
+	 * .
+	 */
+	@Parameter(property = "limitedAccessDataProviderBeanName", defaultValue = "")
+	private String limitedAccessDataProviderBeanName;
+	/**
+	 * An implementation of the
+	 * <code>com.qpark.eip.core.spring.security.EipUserProvider</code> .
+	 */
+	@Parameter(property = "userProviderBeanName", defaultValue = "")
+	private String userProviderBeanName;
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -351,10 +358,23 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\n");
 		sb.append("\t<!-- Authorization -->\n");
 		sb.append("\t<!-- Role voter. -->\n");
+
+		sb.append("\t<bean id=\"eipRoleVoter\" class=\"com.qpark.eip.core.spring.security.EipRoleVoter\"");
+		if (this.limitedAccessDataProviderBeanName != null
+				&& this.limitedAccessDataProviderBeanName.trim().length() > 0) {
+			sb.append(">\n");
+			sb.append("\t\t<property name=\"eipLimitedAccessDataProvider\" ref=\"");
+			sb.append(this.limitedAccessDataProviderBeanName);
+			sb.append("\"/>\n");
+			sb.append("\t</bean>\n");
+		} else {
+			sb.append("/>\n");
+		}
+
 		sb.append("\t<bean id=\"eipAccessDecisionManager\" class=\"com.qpark.eip.core.spring.security.EipAffirmativeBased\">\n");
 		sb.append("\t\t<property name=\"decisionVoters\">\n");
 		sb.append("\t\t\t<list>\n");
-		sb.append("\t\t\t\t<ref bean=\"eipUserDetailsService\"/>\n");
+		sb.append("\t\t\t\t<ref bean=\"eipRoleVoter\"/>\n");
 		sb.append("\t\t\t</list>\n");
 		sb.append("\t\t</property>\n");
 		sb.append("\t</bean>\n");
@@ -519,16 +539,22 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\t<!-- This bean is used in the ws-servlet.xml wsSecurityInterceptor and in the authentication and authorization part. -->\n");
 		sb.append("\t<bean id=\"eipUserDetailsService\" class=\"com.qpark.eip.core.spring.security.EipUserDetailsService\" >\n");
 		sb.append("\t\t<property name=\"userProvider\" ref=\"");
-		sb.append(Util.capitalizePackageName(this.basePackageName));
-		sb.append("UserProvider\" />\n");
+		if (this.userProviderBeanName != null
+				&& this.userProviderBeanName.trim().length() > 0) {
+			sb.append(this.userProviderBeanName);
+		} else {
+			sb.append(Util.capitalizePackageName(this.basePackageName));
+			sb.append("UserProvider");
+		}
+		sb.append("\" />\n");
 		sb.append("\t</bean>\n");
 
 		sb.append("\n");
 		sb.append("\t<bean id=\"proxyBean\" class=\"com.qpark.eip.core.spring.security.proxy.ProxyBean\">\n");
-		sb.append("\t\t<property name=\"proxyHost\" value=\"${eip.proxy.host}\" />\n");
-		sb.append("\t\t<property name=\"proxyPort\" value=\"${eip.proxy.port}\" />\n");
-		sb.append("\t\t<property name=\"username\" value=\"${eip.proxy.username}\" />\n");
-		sb.append("\t\t<property name=\"password\" value=\"${eip.proxy.password}\" />\n");
+		sb.append("\t\t<property name=\"proxyHost\" value=\"${eip.proxy.host:localhost}\" />\n");
+		sb.append("\t\t<property name=\"proxyPort\" value=\"${eip.proxy.port:8080}\" />\n");
+		sb.append("\t\t<property name=\"username\" value=\"${eip.proxy.username:userName}\" />\n");
+		sb.append("\t\t<property name=\"password\" value=\"${eip.proxy.password:password}\" />\n");
 		sb.append("\t</bean>\n");
 		sb.append("\t<bean id=\"proxyHostConfiguration\" class=\"com.qpark.eip.core.spring.security.proxy.ProxyHostConfiguration\">\n");
 		sb.append("\t\t<property name=\"proxyBean\" ref=\"proxyBean\" />\n");
@@ -537,11 +563,18 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\t\t<property name=\"hostConfiguration\" ref=\"proxyHostConfiguration\" />\n");
 		sb.append("\t</bean>\n");
 		sb.append("\n");
+
 		sb.append("\t<!-- Key store handler -->\n");
 		sb.append("\t<bean id=\"eipX509TrustManager\" class=\"com.qpark.eip.core.spring.security.https.EipX509TrustManager\" init-method=\"init\">\n");
 		sb.append("\t\t<property name=\"keystore\" value=\"${eip.jks.keystore.url}\"/>\n");
 		sb.append("\t\t<property name=\"keystorePassword\" value=\"${eip.jks.keystore.password}\" />\n");
 		sb.append("\t</bean>\n");
+
+		sb.append("\t<!-- EipWsChannelInterceptor initialisation -->\n");
+		sb.append("\t<bean class=\"com.qpark.eip.core.spring.EipWsChannelInterceptorInitializer\" />\n");
+		sb.append("\t<!-- EipWsChannelInterceptors have to have a name! -->\n");
+		sb.append("\t<bean name=\"ComQparkEipCoreSpringRequestIdMessageHeaderEnhancer\" class=\"com.qpark.eip.core.spring.RequestIdMessageHeaderEnhancer\" />\n");
+
 		sb.append("\n");
 		sb.append("</beans>\n");
 		return sb.toString();

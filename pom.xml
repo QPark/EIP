@@ -15,11 +15,11 @@
 		<module>qp-enterprise-integration-platform/eip-generator-plugin</module>
 		<module>qp-enterprise-integration-platform/eip-plugin-xml</module>
 		<module>qp-enterprise-integration-platform-impl</module>
+		<!--
 		<module>qp-enterprise-integration-platform-sample/sample-domain</module>
 		<module>qp-enterprise-integration-platform-sample/sample</module>
 		<module>qp-enterprise-integration-platform-sample/sample-templates</module>
+		-->
 	</modules>
-	<!--
-MAVEN_OPTS=-Xmx512m -Xms512m -XX:PermSize=1024M -XX:MaxPermSize=1024M 
-	-->
+
 </project>

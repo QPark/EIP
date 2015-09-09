@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -97,9 +97,9 @@ public class OperationProviderMockGenerator {
 			sb.append("import ");
 			sb.append(this.failureHandlerClassName);
 			sb.append(";\n");
-			sb.append("import ");
-			sb.append(this.config.getBasePackageName());
-			sb.append(".ServiceObjectFactory;\n");
+			// sb.append("import ");
+			// sb.append(this.config.getBasePackageName());
+			// sb.append(".ServiceObjectFactory;\n");
 			sb.append("import ");
 			sb.append(this.config.getBasePackageName());
 			sb.append(".RequestProperties;\n");
@@ -251,7 +251,9 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\tString xml = this.getSampleXml();\n");
 			sb.append("\t\ttry {\n");
 			sb.append("\t\t\tJAXBContext jaxbContext = JAXBContext\n");
-			sb.append("\t\t\t\t\t.newInstance(ServiceObjectFactory.CONTEXT_PATH_DEFINITON);\n");
+			sb.append("\t\t\t\t\t.newInstance(\"");
+			sb.append(this.ctRequest.getPackageName());
+			sb.append("\");\n");
 			sb.append("\t\t\tUnmarshaller unmarshaller = jaxbContext.createUnmarshaller();\n");
 			sb.append("\t\t\tJAXBElement<");
 			sb.append(this.responseType);

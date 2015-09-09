@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -24,6 +24,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import com.qpark.maven.Util;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -53,6 +54,7 @@ public class ApplicationPropertiesConfigXmlGenerator {
 	private final Log log;
 	private final String revisionNumber;
 	private final MavenProject project;
+	private final String placeholderConfigurerImpl;
 
 	/**
 	 * @param config
@@ -61,14 +63,17 @@ public class ApplicationPropertiesConfigXmlGenerator {
 	public ApplicationPropertiesConfigXmlGenerator(final XsdsUtil config,
 			final String basePackageName, final String serviceId,
 			final String serviceVersion, final String revisionNumber,
-			final File outputDirectory, final MavenProject project,
-			final Log log) {
+			final String placeholderConfigurerImpl, final File outputDirectory,
+			final MavenProject project, final Log log) {
 		this.config = config;
 		this.basePackageName = basePackageName;
 		this.serviceId = serviceId == null ? "" : serviceId.replace(',', '-')
 				.replaceAll(" ", "");
 		this.serviceVersion = serviceVersion;
 		this.revisionNumber = revisionNumber == null ? "" : revisionNumber;
+		this.placeholderConfigurerImpl = placeholderConfigurerImpl == null
+				|| placeholderConfigurerImpl.trim().length() == 0 ? "com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer"
+				: placeholderConfigurerImpl;
 		this.outputDirectory = outputDirectory;
 		this.project = project;
 		this.log = log;
@@ -152,8 +157,10 @@ public class ApplicationPropertiesConfigXmlGenerator {
 				this.project.getArtifactId());
 		appl.setProperty("eip.application.maven.artifact.version",
 				this.project.getVersion());
+		// appl.setProperty("eip.application.jaxb.context.name",
+		// Util.getContextPath(this.config.getPackageNames()));
 		appl.setProperty("eip.application.jaxb.context.name",
-				Util.getContextPath(this.config.getPackageNames()));
+				ServiceIdRegistry.getMarshallerContextPath(this.serviceId));
 		appl.setProperty("eip.web.service.server", "http://localhost:8080/");
 
 		return appl;
@@ -176,7 +183,13 @@ public class ApplicationPropertiesConfigXmlGenerator {
 		sb.append("\t<bean id=\"");
 		sb.append(Util.capitalizePackageName(this.basePackageName));
 		sb.append("Properties\" ");
-		sb.append("class=\"com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer\">\n");
+		sb.append("class=\"");
+		if (this.placeholderConfigurerImpl == null) {
+			sb.append("com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer");
+		} else {
+			sb.append(this.placeholderConfigurerImpl);
+		}
+		sb.append("\">\n");
 		sb.append("\t\t<property name=\"ignoreResourceNotFound\" value=\"true\"/>\n");
 		sb.append("\t\t<property name=\"ignoreUnresolvablePlaceholders\" value=\"true\"/>\n");
 		sb.append("\t\t<property name=\"locations\">\n");

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -36,13 +36,13 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * spring-integration gateways for all operations available.
  * @author bhausen
  */
-@Mojo(name = "generate-objectfactories", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = "generate-integration-config", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GeneratorIntegrationConfigMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-resources")
 	protected File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -87,18 +87,6 @@ public class GeneratorIntegrationConfigMojo extends AbstractMojo {
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
-		ModelObjectFactoryGenerator mof = new ModelObjectFactoryGenerator(xsds,
-				this.outputDirectory, this.messagePackageNameSuffix,
-				this.getLog());
-		mof.generate();
-		ServiceObjectFactoryGenerator sof = new ServiceObjectFactoryGenerator(
-				xsds, this.outputDirectory, this.messagePackageNameSuffix,
-				this.getLog());
-		sof.generate();
-		RequestPropertiesGenerator rp = new RequestPropertiesGenerator(xsds,
-				this.outputDirectory, this.serviceIdCommonServices,
-				this.getLog());
-		rp.generate();
 		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<String, List<IntegrationGatewayGenerator>>();
 		List<IntegrationGatewayGenerator> igs;
 		IntegrationGatewayGenerator ig;
@@ -129,6 +117,7 @@ public class GeneratorIntegrationConfigMojo extends AbstractMojo {
 				xsds, this.basePackageName, this.outputDirectory,
 				this.getLog(), this.project);
 		tc.generate();
+
 		this.getLog().debug("-execute");
 	}
 }

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -227,6 +227,12 @@ public class WebXmlGenerator {
 		sb.append("\t<servlet>\n");
 		sb.append("\t\t<servlet-name>ws</servlet-name>\n");
 		sb.append("\t\t<servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>\n");
+
+		sb.append("\t\t\t<init-param>\n");
+		sb.append("\t\t\t<param-name>transformWsdlLocations</param-name>\n");
+		sb.append("\t\t\t<param-value>true</param-value>\n");
+		sb.append("\t\t\t</init-param>\n");
+
 		if (!this.enableHttpServlet) {
 			sb.append("\t\t<load-on-startup>1</load-on-startup>\n");
 		}

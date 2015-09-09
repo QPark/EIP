@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -17,16 +17,19 @@ import static com.qpark.maven.plugin.EipGeneratorDefaults.DEFAULT_SPRING_INTEGRA
 import static com.qpark.maven.plugin.EipGeneratorDefaults.DEFAULT_SPRING_WS_XSD_VERSION;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.plugin.GetServiceIds;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ElementType;
+import com.qpark.maven.xmlbeans.ServiceIdEntry;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -69,19 +72,31 @@ public class WebServiceDispatcherXmlGenerator {
 				.append("Marshaller").toString();
 	}
 
-	private void createWebServiceDynamicWsdlConfig(final String wsdlServiceId) {
-		File f = Util.getFile(
-				this.outputDirectory,
-				"dispatcher",
-				new StringBuffer(64)
-						.append(GetServiceIds
-								.getServiceIdBasename(wsdlServiceId))
-						.append("DynamicWsdlConfig.xml").toString());
+	private String getFileName(final String wsdlServiceId,
+			final String fileNamePart, final String extension) {
+		Collection<String> serviceIds = ServiceIdRegistry
+				.getServiceIds(wsdlServiceId);
+		if (serviceIds.size() == 0) {
+			serviceIds = ServiceIdRegistry.getAllServiceIds();
+		}
+		StringBuffer sb = new StringBuffer(128);
+		for (String serviceId : serviceIds) {
+			sb.append(serviceId).append(".");
+		}
+		sb.append(fileNamePart);
+		String fileName = new StringBuffer(128)
+				.append(Util.capitalizePackageName(sb.toString())).append(".")
+				.append(extension).toString();
+		return fileName;
+	}
+
+	private void createWebServiceDynamicWsdlConfig(final String sid) {
+		String fileName = this.getFileName(sid, "DynamicWsdlConfig", "xml");
+		File f = Util.getFile(this.outputDirectory, "dispatcher", fileName);
 		this.log.info(new StringBuffer().append("Write ").append(
 				f.getAbsolutePath()));
 		try {
-			Util.writeToFile(f,
-					this.getWebServiceDynamicWsdlConfig(wsdlServiceId));
+			Util.writeToFile(f, this.getWebServiceDynamicWsdlConfig(sid));
 		} catch (Exception e) {
 			this.log.error(e.getMessage());
 			e.printStackTrace();
@@ -101,14 +116,9 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append(this.getServiceDefinition());
 		sb.append("</beans>\n");
 
-		File f = Util.getFile(
-				this.outputDirectory,
-				"dispatcher",
-				new StringBuffer(64)
-						.append(GetServiceIds
-								.getServiceIdBasename(this.serviceId))
-						.append("SpringIntegrationDispatcherConfig.xml")
-						.toString());
+		String fileName = this.getFileName(this.serviceId,
+				"SpringIntegrationDispatcherConfig", "xml");
+		File f = Util.getFile(this.outputDirectory, "dispatcher", fileName);
 		this.log.info(new StringBuffer().append("Write ").append(
 				f.getAbsolutePath()));
 		try {
@@ -119,23 +129,19 @@ public class WebServiceDispatcherXmlGenerator {
 		}
 
 		if (this.serviceId.length() > 0) {
-			List<String> serviceIds = GetServiceIds
-					.getServiceIds(this.serviceId);
-			for (String sid : serviceIds) {
+			Set<String> totalServiceIds = new TreeSet<String>();
+			List<String> list = ServiceIdRegistry.getServiceIds(this.serviceId);
+			totalServiceIds.addAll(list);
+			for (String sid : list) {
+				totalServiceIds.addAll(ServiceIdRegistry.getServiceIdEntry(sid)
+						.getTotalServiceIdImports());
+			}
+			for (String sid : totalServiceIds) {
 				this.createWebServiceDynamicWsdlConfig(sid);
 			}
 		} else {
-			TreeSet<String> serviceIds = new TreeSet<String>();
-			for (ElementType elem : this.config.getElementTypes()) {
-				if (elem.getServiceId() != null
-						&& !elem.getServiceId().equals(
-								this.serviceIdCommonServices)
-						&& !elem.getServiceId().trim().isEmpty()) {
-					serviceIds.add(elem.getServiceId());
-				}
-			}
-			for (String wsdlServiceId : serviceIds) {
-				this.createWebServiceDynamicWsdlConfig(wsdlServiceId);
+			for (String sid : ServiceIdRegistry.getAllServiceIds()) {
+				this.createWebServiceDynamicWsdlConfig(sid);
 			}
 		}
 		this.log.debug("-generate");
@@ -143,12 +149,13 @@ public class WebServiceDispatcherXmlGenerator {
 
 	private String getApplicationMarshaller() {
 		StringBuffer sb = new StringBuffer(1024);
+
 		sb.append("\t<!-- Marshaller of the application -->\n");
 		sb.append("\t<oxm:jaxb2-marshaller id=\"");
 		sb.append(this.marshallerName);
 		sb.append("\" \n");
 		sb.append("\t\tcontextPath=\"");
-		sb.append(Util.getContextPath(this.config.getPackageNames()));
+		sb.append(ServiceIdRegistry.getMarshallerContextPath(this.serviceId));
 		sb.append("\"\n\t/>\n");
 		return sb.toString();
 	}
@@ -171,30 +178,14 @@ public class WebServiceDispatcherXmlGenerator {
 		return s.trim();
 	}
 
-	private boolean isValidServiceId(final String elementServiceId) {
-		boolean valid = false;
-		List<String> serviceIds = GetServiceIds.getServiceIds(this.serviceId);
-		if (serviceIds.size() == 0) {
-			serviceIds = GetServiceIds.getAllServiceIds(this.config);
-		}
-		for (String sid : serviceIds) {
-			valid = Util.isValidServiceId(elementServiceId, sid,
-					this.serviceIdCommonServices,
-					this.serviceCreationWithCommon);
-			if (valid) {
-				break;
-			}
-		}
-		return valid;
-	}
-
 	private String getServiceDefinition() {
 		StringBuffer sb = new StringBuffer(1024);
 		String operationNameElement;
 		String serviceIdElement;
 		for (ElementType element : this.elementTypes) {
 			if (element.isRequest()
-					&& this.isValidServiceId(element.getServiceId())) {
+					&& ServiceIdRegistry.isValidServiceId(
+							element.getServiceId(), this.serviceId)) {
 				ElementType elementResponse = XsdsUtil.findResponse(element,
 						this.config.getElementTypes(), this.config);
 				if (elementResponse != null) {
@@ -236,31 +227,11 @@ public class WebServiceDispatcherXmlGenerator {
 		return sb.toString();
 	}
 
-	private String getWebServiceDynamicWsdlConfig(final String wsdlServiceId) {
-		String tns = "";
-		String dynamicWsdlId = wsdlServiceId;
-		String msg = new StringBuffer(32).append(".")
-				.append(this.config.getMessagePackageNameSuffix()).toString();
-		String srv = new StringBuffer(32).append(".")
-				.append(this.serviceIdCommonServices).toString();
-		if (wsdlServiceId.length() > 0) {
-			srv = new StringBuffer(32).append(".").append(wsdlServiceId)
-					.toString();
-		} else {
-			dynamicWsdlId = this.serviceIdCommonServices;
-		}
+	private String getWebServiceDynamicWsdlConfig(final String sid) {
+		ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
+		XsdContainer xc = this.config.getXsdContainerMap(entry
+				.getTargetNamespace());
 
-		for (String targetNamespace : this.config.getXsdContainerMap().keySet()) {
-			XsdContainer xc = this.config.getXsdContainerMap().get(
-					targetNamespace);
-			if (xc.getPackageName().contains(msg)
-					&& xc.getPackageName().contains(srv)) {
-				if (!xc.getTargetNamespace().contains(
-						this.config.getDeltaPackageNameSuffix())) {
-					tns = xc.getTargetNamespace();
-				}
-			}
-		}
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append("<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
@@ -281,36 +252,28 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append(">\n");
 		sb.append("\t<sws:dynamic-wsdl \n");
 		sb.append("\t\tid=\"");
-		sb.append(dynamicWsdlId);
+		sb.append(sid);
 		sb.append("\" \n");
 		sb.append("\t\tportTypeName=\"");
-		sb.append(dynamicWsdlId);
+		sb.append(sid);
 		sb.append("\"\n");
-		sb.append("\t\tlocationUri=\"${eip.web.service.server}/");
-		sb.append(this.getApplicationName());
-		if (this.getApplicationVersion().length() > 0) {
-			sb.append("/").append(this.getApplicationVersion());
-		}
-		sb.append("/services/");
-		sb.append(dynamicWsdlId);
+		// sb.append("\t\tlocationUri=\"${eip.web.service.server}/");
+		// sb.append(this.getApplicationName());
+		// if (this.getApplicationVersion().length() > 0) {
+		// sb.append("/").append(this.getApplicationVersion());
+		// }
+		sb.append("\t\tlocationUri=\"/services/");
+		sb.append(sid);
 		sb.append("\"\n");
 		sb.append("\t\ttargetNamespace=\"");
-		sb.append(tns);
+		sb.append(entry.getTargetNamespace());
 		sb.append("\"\n");
 		sb.append("\t\tcreateSoap11Binding=\"false\"\n");
 		sb.append("\t\tcreateSoap12Binding=\"true\">\n");
-		for (String targetNamespace : this.config.getXsdContainerMap().keySet()) {
-			XsdContainer xc = this.config.getXsdContainerMap().get(
-					targetNamespace);
-			if (xc.getPackageName().contains(msg)
-					&& (wsdlServiceId.length() == 0 || xc.getPackageName()
-							.contains(srv))) {
-				sb.append("\t\t<sws:xsd location=\"/WEB-INF/classes");
-				sb.append(Util.getRelativePathTranslated(
-						this.config.getBaseDirectory(), xc.getFile()));
-				sb.append("\" />\n");
-			}
-		}
+		sb.append("\t\t<sws:xsd location=\"/WEB-INF/classes");
+		sb.append(Util.getRelativePathTranslated(
+				this.config.getBaseDirectory(), xc.getFile()));
+		sb.append("\" />\n");
 		sb.append("\t</sws:dynamic-wsdl>\n");
 		sb.append("</beans>\n");
 		return sb.toString();

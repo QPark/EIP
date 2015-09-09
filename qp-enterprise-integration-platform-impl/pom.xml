@@ -16,7 +16,7 @@
 
 	<groupId>com.qpark.eip.core</groupId>
 	<artifactId>eip-base</artifactId>
-	<version>1.0.11</version><!--qp-eip-impl-project-version-->
+	<version>1.0.12</version><!--qp-eip-impl-project-version-->
 	<packaging>pom</packaging>
 	<name>eip-base</name>
 

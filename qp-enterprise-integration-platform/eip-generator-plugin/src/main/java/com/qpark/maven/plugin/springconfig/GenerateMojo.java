@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -98,7 +98,12 @@ public class GenerateMojo extends AbstractMojo {
 	/** The name of the war file. */
 	@Parameter(property = "warName", defaultValue = "bus.war")
 	private String warName;
-
+	/**
+	 * The service response name need to end with this suffix (Default
+	 * <code>Response</code>).
+	 */
+	@Parameter(property = "placeholderConfigurerImpl", defaultValue = "com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer")
+	private String placeholderConfigurerImpl;
 	@Component
 	private MavenProject project;
 
@@ -120,7 +125,8 @@ public class GenerateMojo extends AbstractMojo {
 		wsdx.generate();
 		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(
 				xsds, this.basePackageName, this.serviceIdCommonServices,
-				this.serviceVersion, this.revisionNumber, this.outputDirectory,
+				this.serviceVersion, this.revisionNumber,
+				this.placeholderConfigurerImpl, this.outputDirectory,
 				this.project, this.getLog());
 		pcx.generate();
 		MainApplicationContextXmlGenerator macx = new MainApplicationContextXmlGenerator(

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -15,10 +15,13 @@ package com.qpark.maven;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -38,15 +41,47 @@ public class Util {
 		return s;
 	}
 
+	/**
+	 * @param millis the duration in milliseconds.
+	 * @return a string with the duration formatted with
+	 *         <code>HH:mm:ss.SSS</code>.
+	 */
+	public static String getDuration(final long millis) {
+		DecimalFormat df20 = new DecimalFormat("00");
+		DecimalFormat df30 = new DecimalFormat("000");
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c.setTimeInMillis(millis);
+		return new StringBuffer(12)
+				.append(df20.format(c.get(Calendar.HOUR_OF_DAY))).append(":")
+				.append(df20.format(c.get(Calendar.MINUTE))).append(":")
+				.append(df20.format(c.get(Calendar.SECOND))).append(".")
+				.append(df30.format(c.get(Calendar.MILLISECOND))).toString();
+	}
+
+	public static String lowerize(final String name) {
+		String s = name;
+		if (s != null && s.length() > 0) {
+			StringBuffer sb = new StringBuffer(s.length());
+			sb.append(s.substring(0, 1).toLowerCase());
+			if (s.length() > 1) {
+				sb.append(s.substring(1, s.length()));
+			}
+			s = sb.toString();
+		}
+		return s;
+	}
+
 	public static String capitalizePackageName(final String packageName) {
 		String s = packageName;
 		if (packageName != null) {
-			String[] ss = packageName.split("\\.");
+			String[] ss = packageName.replaceAll("-", ".").split("\\.");
 			StringBuffer sb = new StringBuffer(packageName.length());
 			for (String sx : ss) {
-				sb.append(sx.substring(0, 1).toUpperCase());
-				if (sx.length() > 1) {
-					sb.append(sx.substring(1, sx.length()));
+				if (sx.length() > 0) {
+					sb.append(sx.substring(0, 1).toUpperCase());
+					if (sx.length() > 1) {
+						sb.append(sx.substring(1, sx.length()));
+					}
 				}
 			}
 			s = sb.toString();
@@ -54,9 +89,85 @@ public class Util {
 		return s;
 	}
 
+	public static void main(final String[] args) {
+		System.out.println(capitalizePackageName("Alkj.llkj-ljaf2j34lkj"));
+		System.out.println(getXjcSetterName("v2kConstraintRow"));
+		System.out.println(getXjcSetterName("organi_s2a.tion"));
+		// @XmlElement(name = "organi_s2a.tion", required = true)
+		// protected String organiS2ATion;
+
+		System.out.println(getXjcCamelCase("Alkj.llkj-ljaf2j34lkj"));
+		System.out.println(getXjcCamelCase("v2kConstraintRow"));
+		System.out.println(getXjcCamelCase("Ab-Bc-cd_Ef_fg.Gh.hi2Ij3jk"));
+		System.out.println(getXjcCamelCase("v2kConstraintRow"));
+		System.out.println(getXjcCamelCase("organi_s2a.tion"));
+	}
+
+	public static String getXjcClassName(final String typeQNameLocalPart) {
+		String s = typeQNameLocalPart;
+		if (typeQNameLocalPart != null) {
+			s = getXjcCamelCase(typeQNameLocalPart).toString();
+		}
+		return s;
+	}
+
+	public static String getXjcGetterName(final String propertyName) {
+		String s = propertyName;
+		if (propertyName != null) {
+			StringBuffer sb = getXjcCamelCase(propertyName);
+			sb.insert(0, "get");
+			s = sb.toString();
+		}
+		return s;
+	}
+
+	public static String getXjcSetterName(final String propertyName) {
+		String s = propertyName;
+		if (propertyName != null) {
+			StringBuffer sb = getXjcCamelCase(propertyName);
+			sb.insert(0, "set");
+			s = sb.toString();
+		}
+		return s;
+	}
+
+	public static String getXjcPropertyName(final String propertyName) {
+		String s = propertyName;
+		if (propertyName != null) {
+			s = getXjcTranslated(propertyName, false).toString();
+		}
+		return s;
+	}
+
+	private static StringBuffer getXjcTranslated(final String name,
+			final boolean camelCase) {
+		char[] chars = name.toCharArray();
+		StringBuffer sb = new StringBuffer(chars.length);
+		for (int i = 0; i < chars.length; i++) {
+			char ch = chars[i];
+			if (camelCase && i == 0) {
+				ch = Character.toUpperCase(ch);
+			}
+			if ((ch == '.' || ch == '-' || ch == '_' || Character.isDigit(ch))
+					&& i < chars.length - 1) {
+				chars[i + 1] = Character.toUpperCase(chars[i + 1]);
+			}
+			if (ch != '.' && ch != '-' && ch != '_') {
+				sb.append(ch);
+			}
+		}
+		return sb;
+
+	}
+
+	private static StringBuffer getXjcCamelCase(final String name) {
+		return getXjcTranslated(name, true);
+	}
+
 	/**
-	 * Get a {@link UUID} name for the given {@link Class} and name. To get an {@link UUID} object
-	 * out of the returned string use {@link UUID#fromString(String)}.
+	 * Get a {@link UUID} name for the given {@link Class} and name. To get an
+	 * {@link UUID} object out of the returned string use
+	 * {@link UUID#fromString(String)}.
 	 * @param type the {@link Class} of the Object e.g.
 	 *            com.a.b.bus.domain.c.AbcType.
 	 * @param name The name of the object.
@@ -81,7 +192,7 @@ public class Util {
 		return s;
 	}
 
-	public static String getContextPath(final Collection<String> packageNames) {
+	private static String getContextPath(final Collection<String> packageNames) {
 		StringBuffer sb = new StringBuffer(128);
 		String[] array = packageNames.toArray(new String[packageNames.size()]);
 		for (int i = 0; i < array.length; i++) {
@@ -158,27 +269,6 @@ public class Util {
 			return sdf.format(d);
 		} else {
 			return sdf.format(new Date());
-		}
-	}
-
-	/**
-	 * @param elementServiceId
-	 * @param serviceId
-	 * @param serviceIdCommonServices
-	 * @param includeCommon
-	 * @return
-	 */
-	public static boolean isValidServiceId(final String elementServiceId,
-			final String serviceId, final String serviceIdCommonServices,
-			final boolean includeCommon) {
-		if (elementServiceId == null || elementServiceId.trim().length() == 0
-				|| serviceId == null || serviceId.trim().length() == 0) {
-			return true;
-		} else {
-			return serviceId.trim().equals(elementServiceId.trim())
-					|| includeCommon
-					&& elementServiceId.trim().equalsIgnoreCase(
-							serviceIdCommonServices);
 		}
 	}
 

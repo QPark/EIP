@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -13,7 +13,7 @@
 package com.qpark.maven.plugin.mockrestoperation;
 
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -24,9 +24,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.qpark.maven.Util;
-import com.qpark.maven.plugin.GetServiceIds;
 import com.qpark.maven.xmlbeans.ElementType;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -96,16 +95,16 @@ public class GeneratorMojo extends AbstractMojo {
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
 		RestOperationProviderMockGenerator mop;
 
-		List<String> serviceIds = GetServiceIds.getServiceIds(this.serviceId);
+		Collection<String> serviceIds = ServiceIdRegistry
+				.getServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
-			serviceIds = GetServiceIds.getAllServiceIds(xsds);
+			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
 				if (element.isRequest()
-						&& Util.isValidServiceId(element.getServiceId(), sid,
-								this.serviceIdCommonServices,
-								this.serviceCreationWithCommon)) {
+						&& ServiceIdRegistry.isValidServiceId(
+								element.getServiceId(), sid)) {
 					mop = new RestOperationProviderMockGenerator(xsds,
 							this.outputDirectory, element,
 							this.failureHandlerClassName, this.getLog());

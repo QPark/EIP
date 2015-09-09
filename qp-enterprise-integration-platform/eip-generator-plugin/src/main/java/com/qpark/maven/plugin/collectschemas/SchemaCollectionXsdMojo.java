@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -13,7 +13,7 @@
 package com.qpark.maven.plugin.collectschemas;
 
 import java.io.File;
-import java.util.TreeMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -68,7 +68,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		TreeMap<String, XsdContainer> xsdContainerMap = XsdsUtil
+		Map<String, XsdContainer> xsdContainerMap = XsdsUtil
 				.getXsdContainers(this.baseDirectory);
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(this.getXmlDefinition());
@@ -167,7 +167,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 	}
 
 	private String getSchemaImports(
-			final TreeMap<String, XsdContainer> xsdContainerMap) {
+			final Map<String, XsdContainer> xsdContainerMap) {
 		StringBuffer sb = new StringBuffer(1024);
 		for (XsdContainer xc : xsdContainerMap.values()) {
 			/* If NOT is message! */

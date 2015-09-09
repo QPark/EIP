@@ -146,14 +146,14 @@ public class IntegrationGatewayGenerator {
 	}
 
 	/**
-	 * @return the className
+	 * @return the implName
 	 */
 	public String getClassName() {
 		return this.className;
 	}
 
 	/**
-	 * @return the className
+	 * @return the implName
 	 */
 	public String getFqClassName() {
 		return new StringBuffer(128).append(this.packageName).append(".")

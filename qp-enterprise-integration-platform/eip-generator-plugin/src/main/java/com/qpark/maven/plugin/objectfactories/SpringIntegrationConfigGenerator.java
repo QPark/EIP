@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -24,6 +24,8 @@ import org.apache.maven.project.MavenProject;
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ElementType;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
+import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -83,11 +85,26 @@ public class SpringIntegrationConfigGenerator {
 		this.log.debug("+generateService");
 		String capitalizeName = new StringBuffer(
 				Util.capitalizePackageName(this.basePackageName)).append(
-				Util.capitalize(serviceId)).toString();
+				ServiceIdRegistry.capitalize(serviceId)).toString();
 		String servicePackageName = new StringBuffer(this.basePackageName)
 				.append(".").append(serviceId).toString();
 		String fileName = new StringBuffer(64).append(servicePackageName)
 				.append("-integration-spring-config.xml").toString();
+		XsdContainer messageDefinitionXsdContainer = null;
+
+		TreeSet<String> packageNames = new TreeSet<String>();
+		for (ElementType element : this.config.getElementTypes()) {
+			if (element.isRequest() && element.getServiceId().equals(serviceId)) {
+				packageNames.add(element.getPackageName());
+			}
+		}
+		for (ElementType element : this.config.getElementTypes()) {
+			if (element.getServiceId().equals(serviceId)) {
+				messageDefinitionXsdContainer = this.config
+						.getXsdContainerMap(element.getTargetNamespace());
+				break;
+			}
+		}
 
 		StringBuffer xml = new StringBuffer();
 		StringBuffer sb = new StringBuffer();
@@ -124,18 +141,51 @@ public class SpringIntegrationConfigGenerator {
 		properties.append(servicePackageName).append(".userName=XXXXXX\n");
 		properties.append(servicePackageName).append(".password=password\n");
 
+		if (messageDefinitionXsdContainer != null
+				&& messageDefinitionXsdContainer.getRelativeName() != null) {
+			sb.append("\n\t<!-- Payload validation interceptor -->\n");
+			sb.append("\t<bean id=\"eipCaller")
+					.append(capitalizeName)
+					.append("PayloadValidatingInterceptor\" class=\"org.springframework.ws.client.support.interceptor.PayloadValidatingInterceptor\">\n");
+			sb.append("\t\t<property name=\"schemas\">\n");
+			sb.append("\t\t\t<list>\n");
+			sb.append("\t\t\t\t<value>/WEB-INF/classes/");
+			sb.append(messageDefinitionXsdContainer.getRelativeName());
+			sb.append("</value>\n");
+			sb.append("\t\t\t</list>\n");
+			sb.append("\t\t</property>\n");
+			sb.append("\t\t<property name=\"validateRequest\" value=\"${");
+			sb.append(servicePackageName);
+			sb.append(".validate.request.message:false}\" />\n");
+			sb.append("\t\t<property name=\"validateResponse\" value=\"${");
+			sb.append(servicePackageName);
+			sb.append(".validate.response.message:false}\" />\n");
+			sb.append("\t</bean>\n");
+			properties.append(servicePackageName).append(
+					".validate.request.message=false\n");
+			properties.append(servicePackageName).append(
+					".validate.response.message=false\n");
+
+		}
+
 		sb.append("\t<!-- Interceptor list of services -->\n");
 		sb.append("\t<util:list id=\"eipCaller").append(capitalizeName)
 				.append("WsInterceptors\">\n");
 		sb.append("\t\t<ref bean=\"eipCaller").append(capitalizeName)
 				.append("Wss4jSecurityInterceptor\"/>\n");
+		if (messageDefinitionXsdContainer != null
+				&& messageDefinitionXsdContainer.getRelativeName() != null) {
+			sb.append("\t\t<ref bean=\"eipCaller").append(capitalizeName)
+					.append("PayloadValidatingInterceptor\"/>\n");
+		}
 		sb.append("\t</util:list>\n");
 
 		sb.append("\t<!-- Marshaller of services -->\n");
 		sb.append("\t<oxm:jaxb2-marshaller id=\"eipCaller")
 				.append(capitalizeName).append("Marshaller\" \n");
 		sb.append("\t\tcontextPath=\"");
-		sb.append(this.getMarshallerContextPath());
+		// sb.append(Util.getContextPath(packageNames));
+		sb.append(ServiceIdRegistry.getMarshallerContextPath(serviceId));
 		sb.append("\"\n\t/>\n");
 
 		sb.append("\n");
@@ -200,7 +250,7 @@ public class SpringIntegrationConfigGenerator {
 				.append(capitalizeName).append("WsOutgoingChannel\" />\n");
 		router.append("\t</int:router>\n");
 
-		sb.append("<!-- ").append(Util.capitalize(serviceId))
+		sb.append("<!-- ").append(ServiceIdRegistry.capitalize(serviceId))
 				.append(" definition start -->\n");
 		sb.append("\t<!-- Gateway of the service ").append(serviceId)
 				.append(" (to be used in your code) -->\n");
@@ -238,7 +288,7 @@ public class SpringIntegrationConfigGenerator {
 				.append("Marshaller\" unmarshaller=\"eipCaller")
 				.append(capitalizeName).append("Marshaller\"\n");
 		sb.append("\t/>\n");
-		sb.append("<!-- ").append(Util.capitalize(serviceId))
+		sb.append("<!-- ").append(ServiceIdRegistry.capitalize(serviceId))
 				.append(" definition end -->\n\n");
 
 		sb.append("\n</beans>\n");

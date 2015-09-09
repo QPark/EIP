@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -97,14 +97,14 @@ public class MainApplicationContextXmlGenerator {
 		sb.append(this.basePackageName);
 		sb.append(".properties-config.xml\" />\n");
 		if (this.applicationWithoutPersistenceConfig) {
-			sb.append("\t<!-- Object factories -->\n");
-			sb.append("\t<bean class=\"");
-			sb.append(this.basePackageName);
-			sb.append(".ModelObjectFactory\" />\n");
-			sb.append("\t<bean class=\"");
-			sb.append(this.basePackageName);
-			sb.append(".ServiceObjectFactory\" />\n");
-			sb.append("\n");
+			// sb.append("\t<!-- Object factories -->\n");
+			// sb.append("\t<bean class=\"");
+			// sb.append(this.basePackageName);
+			// sb.append(".ModelObjectFactory\" />\n");
+			// sb.append("\t<bean class=\"");
+			// sb.append(this.basePackageName);
+			// sb.append(".ServiceObjectFactory\" />\n");
+			// sb.append("\n");
 		} else {
 			sb.append("\t<import resource=\"classpath:/");
 			sb.append(this.basePackageName);

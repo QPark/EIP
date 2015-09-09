@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -13,8 +13,6 @@
 package com.qpark.maven.xmlbeans;
 
 import org.apache.xmlbeans.SchemaGlobalElement;
-
-import com.qpark.maven.Util;
 
 /**
  * @author bhausen
@@ -40,7 +38,7 @@ public class ElementType {
 	private final String packageName;
 	private final String packageNameGateway;
 	private final String packageNameMockOperationProvider;
-	private String serviceId;
+	private final String serviceId;
 
 	public ElementType(final SchemaGlobalElement elem, final XsdsUtil config) {
 		this.element = elem;
@@ -122,40 +120,14 @@ public class ElementType {
 				.append(this.getClassNameGateway()).toString();
 
 		/* Service id definition. */
-		index = this.packageName.indexOf(new StringBuffer(16).append(".")
-				.append(config.getMessagePackageNameSuffix()).toString());
-		if (index > 0) {
-			String sx = this.packageName.substring(0, index);
-			index = sx.lastIndexOf('.');
-			if (index > 0) {
-				this.serviceId = sx.substring(index + 1, sx.length());
-				if (this.serviceId.equals(config.getDeltaPackageNameSuffix())) {
-					index = this.packageName.indexOf(new StringBuffer(16)
-							.append(".")
-							.append(config.getDeltaPackageNameSuffix())
-							.toString());
-					if (index > 0) {
-						sx = this.packageName.substring(0, index);
-						index = sx.lastIndexOf('.');
-						if (index > 0) {
-							this.serviceId = sx.substring(index + 1,
-									sx.length());
-						} else {
-							this.serviceId = "";
-						}
-					} else {
-						this.serviceId = "";
-					}
-				}
-			} else {
-				this.serviceId = "";
-			}
-		} else {
-			this.serviceId = "";
-		}
+		this.serviceId = ServiceIdRegistry.getServiceId(this.packageName,
+				this.getTargetNamespace(),
+				config.getMessagePackageNameSuffix(),
+				config.getDeltaPackageNameSuffix());
+
 		this.beanIdOperationProvider = new StringBuffer(64)
 				.append("operationProvider")
-				.append(Util.capitalize(this.serviceId))
+				.append(ServiceIdRegistry.capitalize(this.serviceId))
 				.append(this.operationName).toString();
 		this.beanIdMockOperationProvider = new StringBuffer(
 				this.beanIdOperationProvider.length() + 4)
@@ -163,7 +135,8 @@ public class ElementType {
 
 		String serviceChannelNameStart = new StringBuffer(16)
 				.append(WEB_SERVICE_CHANNEL_NAME_PREFIX)
-				.append(Util.capitalize(this.serviceId)).toString();
+				.append(ServiceIdRegistry.capitalize(this.serviceId))
+				.toString();
 		String operationChannelNameStart = new StringBuffer(64)
 				.append(serviceChannelNameStart).append(this.operationName)
 				.append(WEB_SERVICE_CHANNEL_NAME_CONTENT).toString();
