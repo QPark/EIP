@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.xml.namespace.QName;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -16,8 +14,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.xmlbeans.SchemaProperty;
-import org.apache.xmlbeans.SchemaType;
 
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
@@ -77,6 +73,8 @@ public class GeneratorMapper extends AbstractMojo {
 				if (child.getComplexType().getType().getName().getLocalPart()
 						.equals("NoMappingType")) {
 					/* not to add. */
+				} else if (child.getChildName().equals("return")) {
+					/* not to add. */
 				} else if (child.getComplexType().getType().getName()
 						.getLocalPart().equals("anyType")) {
 					/* not to add. */
@@ -88,153 +86,14 @@ public class GeneratorMapper extends AbstractMojo {
 		return list;
 	}
 
-	public static boolean isDefaultMappingType(final SchemaType schemaType) {
-		boolean validType = false;
-		if (schemaType != null
-				&& schemaType.getName() != null
-				&& schemaType.getName().getLocalPart().toLowerCase()
-						.contains("default")
-				&& schemaType.getElementProperties() != null
-				&& schemaType.getElementProperties().length == 1) {
-			SchemaProperty defaultProperty = schemaType.getElementProperties()[0];
-			if (defaultProperty.getType().isSimpleType()
-					&& defaultProperty.getType().getEnumerationValues() != null
-					&& defaultProperty.getType().getEnumerationValues().length == 1) {
-				validType = true;
-			} else if (defaultProperty.getType().isSimpleType()
-					&& defaultProperty.getDefaultText() != null) {
-				validType = true;
-			}
-		}
-		return validType;
-	}
-
-	public static boolean isDirectMappingType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}DirectMappingType");
-	}
-
-	public static boolean isInterfaceType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}InterfaceType");
-	}
-
-	public static boolean isComplexMappingType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}ComplexMappingType");
-	}
-
-	public static boolean isMapRequestType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/Mapping}MappingInputType");
-	}
-
-	public static boolean isMapResponseType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/Mapping}MappingOutputType");
-	}
-
-	private static boolean isInstanceOf(final SchemaType schemaType,
-			final String qName) {
-		boolean validType = false;
-		if (schemaType != null && schemaType.getBaseType() != null) {
-			if (qName
-					.equals(String.valueOf(schemaType.getBaseType().getName()))) {
-				validType = true;
-			} else {
-				validType = isInstanceOf(schemaType.getBaseType(), qName);
-			}
-		}
-		return validType;
-
-	}
-
-	static class ComplexContent {
-		ComplexContent(final ComplexType ct, final boolean isDirect,
-				final boolean isComplex, final boolean isInterfaceType) {
-			this.ct = ct;
-			this.qName = ct.getType().getName();
-			this.isDirect = isDirect;
-			this.isComplex = isComplex;
-			this.isInterfaceType = isInterfaceType;
-		}
-
-		String getFQInterfaceName() {
-			return new StringBuffer(this.ct.getPackageName().length() + 1
-					+ this.interfaceName.length())
-					.append(this.ct.getPackageName()).append(".")
-					.append(this.interfaceName).toString();
-		}
-
-		ComplexType ct;
-		QName qName;
-		String packageName;
-		String interfaceName;
-		boolean isDirect;
-		boolean isComplex;
-		boolean isInterfaceType;
-	}
-
-	static class ComplexRequestResponse {
-		ComplexRequestResponse(final ComplexType request,
-				final ComplexType response) {
-			this.request = request;
-			this.requestQName = request.getType().getName();
-			this.response = response;
-			this.responseQName = response.getType().getName();
-		}
-
-		ComplexType request;
-		QName requestQName;
-		ComplexType response;
-		QName responseQName;
-		String packageName;
-		String interfaceName;
-	}
-
-	private final List<ComplexRequestResponse> requestResponses = new ArrayList<ComplexRequestResponse>();
-	private final List<ComplexContent> defaultMappings = new ArrayList<ComplexContent>();
-	private final List<ComplexContent> directMappings = new ArrayList<ComplexContent>();
-	private final List<ComplexContent> complexMappings = new ArrayList<ComplexContent>();
-	private final List<ComplexContent> interfaceTypes = new ArrayList<ComplexContent>();
-
 	private Collection<String> getInterfaceIds(final XsdsUtil config) {
 		Collection<String> interfaceIds = ServiceIdRegistry
 				.getServiceIds(this.interfaceId);
 		if (interfaceIds.size() == 0) {
-			interfaceIds = ServiceIdRegistry.getAllServiceIds();
+			interfaceIds.addAll(ServiceIdRegistry.getAllServiceIds());
 		}
 		interfaceIds.add("core");
 		return interfaceIds;
-	}
-
-	private void setupComplexContentLists(
-			final Collection<String> interfaceIds, final XsdsUtil config) {
-		// for (String sid : interfaceIds) {
-		ComplexType response;
-		for (ComplexType complexType : config.getComplexTypes()) {
-			response = XsdsUtil.findResponse(complexType,
-					config.getComplexTypes(), config);
-			if (complexType.isRequestType() && response != null
-					&& isMapRequestType(complexType.getType())
-					&& isMapResponseType(response.getType())) {
-				this.requestResponses.add(new ComplexRequestResponse(
-						complexType, response));
-			} else if (isDirectMappingType(complexType.getType())) {
-				this.directMappings.add(new ComplexContent(complexType, true,
-						false, false));
-			} else if (isComplexMappingType(complexType.getType())) {
-				this.complexMappings.add(new ComplexContent(complexType, false,
-						true, false));
-			} else if (isInterfaceType(complexType.getType())) {
-				this.interfaceTypes.add(new ComplexContent(complexType, false,
-						false, true));
-			} else if (isDefaultMappingType(complexType.getType())) {
-				this.defaultMappings.add(new ComplexContent(complexType, false,
-						false, true));
-			}
-		}
-		// }
 	}
 
 	private void generateBasicFlowInterface(final String basicPackageName) {
@@ -242,6 +101,8 @@ public class GeneratorMapper extends AbstractMojo {
 		sb.append("package ");
 		sb.append(basicPackageName);
 		sb.append(";\n");
+		sb.append("\n");
+		sb.append("import com.springsource.insight.annotation.InsightOperation;");
 		sb.append("\n");
 		sb.append("/**\n");
 		sb.append(" * Basic flow interface.\n");
@@ -253,6 +114,7 @@ public class GeneratorMapper extends AbstractMojo {
 		sb.append("\t * @param request the {@link Request}\n");
 		sb.append("\t * @return the {@link Response}\n");
 		sb.append("\t */\n");
+		sb.append("\t@InsightOperation\n");
 		sb.append("\tResponse invokeFlow(Request request);\n");
 		sb.append("}\n");
 		sb.append("\n");
@@ -370,9 +232,10 @@ public class GeneratorMapper extends AbstractMojo {
 		XsdsUtil config = new XsdsUtil(this.baseDirectory,
 				this.basePackageName, this.mappingPackageNameSuffixes, null,
 				this.mappingRequestSuffix, this.mappingResponseSuffix);
+		ComplexContentList complexContentList = new ComplexContentList();
+		complexContentList.setupComplexContentLists(config);
 
 		Collection<String> interfaceIds = this.getInterfaceIds(config);
-		this.setupComplexContentLists(interfaceIds, config);
 
 		String basicPackageName = null;
 		for (ComplexType ct : config.getComplexTypes()) {
@@ -395,10 +258,10 @@ public class GeneratorMapper extends AbstractMojo {
 			}
 			this.generateReferenceDataTypeProvider(config, basicPackageName);
 			Entry<String, String> entry;
-			for (ComplexContent cc : this.directMappings) {
+			for (ComplexContent cc : complexContentList.getDirectMappings()) {
 				try {
 					DirectMappingTypeGenerator mtg = new DirectMappingTypeGenerator(
-							config, cc.ct, this.getLog());
+							config, cc.ct, complexContentList, this.getLog());
 					entry = mtg
 							.generateInterface(this.outputInterfacesDirectory);
 					cc.packageName = entry.getKey();
@@ -410,10 +273,10 @@ public class GeneratorMapper extends AbstractMojo {
 					}
 				}
 			}
-			for (ComplexContent cc : this.defaultMappings) {
+			for (ComplexContent cc : complexContentList.getDefaultMappings()) {
 				try {
 					DefaultMappingTypeGenerator mtg = new DefaultMappingTypeGenerator(
-							config, cc.ct, this.getLog());
+							config, cc.ct, complexContentList, this.getLog());
 					entry = mtg
 							.generateInterface(this.outputInterfacesDirectory);
 					cc.packageName = entry.getKey();
@@ -425,27 +288,36 @@ public class GeneratorMapper extends AbstractMojo {
 					}
 				}
 			}
-			for (ComplexContent cc : this.complexMappings) {
+			for (ComplexContent cc : complexContentList
+					.getComplexUUIDMappings()) {
+				ComplexUUIDReferenceDataMappingTypeGenerator mtg = new ComplexUUIDReferenceDataMappingTypeGenerator(
+						config, cc.ct, complexContentList, this.getLog());
+				entry = mtg.generateInterface(this.outputInterfacesDirectory);
+				cc.packageName = entry.getKey();
+				cc.interfaceName = entry.getValue();
+				mtg.generateImpl(this.outputInterfacesDirectory);
+			}
+			for (ComplexContent cc : complexContentList.getComplexMappings()) {
 				ComplexMappingTypeGenerator mtg = new ComplexMappingTypeGenerator(
-						config, cc.ct, this.getLog());
+						config, cc.ct, complexContentList, this.getLog());
 				entry = mtg.generateInterface(this.outputInterfacesDirectory);
 				cc.packageName = entry.getKey();
 				cc.interfaceName = entry.getValue();
 				mtg.generateImpl(this.outputClassesDirectory);
 			}
-			for (ComplexContent cc : this.interfaceTypes) {
+			for (ComplexContent cc : complexContentList.getInterfaceTypes()) {
 				InterfaceMappingTypeGenerator mtg = new InterfaceMappingTypeGenerator(
-						config, cc.ct, this.getLog());
+						config, cc.ct, complexContentList, this.getLog());
 				entry = mtg.generateInterface(this.outputInterfacesDirectory);
 				cc.packageName = entry.getKey();
 				cc.interfaceName = entry.getValue();
 				mtg.generateImpl(this.outputClassesDirectory);
 			}
-			for (ComplexRequestResponse crr : this.requestResponses) {
+			for (ComplexRequestResponse crr : complexContentList
+					.getRequestResponses()) {
 				MappingOperationGenerator mog = new MappingOperationGenerator(
-						config, crr.request, crr.response, this.directMappings,
-						this.defaultMappings, this.complexMappings,
-						this.interfaceTypes, this.getLog());
+						config, crr.request, crr.response, complexContentList,
+						this.getLog());
 				entry = mog.generateInterface(this.outputInterfacesDirectory);
 				crr.packageName = entry.getKey();
 				crr.interfaceName = entry.getValue();

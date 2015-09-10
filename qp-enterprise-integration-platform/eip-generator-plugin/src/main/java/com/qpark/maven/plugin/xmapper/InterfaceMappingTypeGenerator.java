@@ -58,8 +58,9 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 	}
 
 	public InterfaceMappingTypeGenerator(final XsdsUtil config,
-			final ComplexType complexType, final Log log) {
-		super(config, complexType, log);
+			final ComplexType complexType,
+			final ComplexContentList complexContentList, final Log log) {
+		super(config, complexType, complexContentList, log);
 	}
 
 	public void generateImpl(final File outputDirectory) {
@@ -86,9 +87,8 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		sb.append("} implementation.\n");
 		if (this.complexType.getAnnotationDocumentation() != null) {
 			sb.append(" * <p/>\n");
-			sb.append(" * ");
-			sb.append(this.complexType.getAnnotationDocumentation());
-			sb.append(".\n");
+			sb.append(toJavadocHeader(this.complexType
+					.getAnnotationDocumentation()));
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");

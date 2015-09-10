@@ -23,7 +23,6 @@ import java.util.TreeSet;
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.plugin.xmapper.GeneratorMapper.ComplexContent;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
@@ -37,11 +36,9 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	protected final String implName;
 
 	public AbstractMappingTypeGenerator(final XsdsUtil config,
-			final ComplexType complexType, final Log log) {
-		super(config, new ArrayList<ComplexContent>(),
-				new ArrayList<ComplexContent>(),
-				new ArrayList<ComplexContent>(),
-				new ArrayList<ComplexContent>(), log);
+			final ComplexType complexType,
+			final ComplexContentList complexContentList, final Log log) {
+		super(config, complexContentList, log);
 		this.complexType = complexType;
 		this.packageName = this.getPackageNameInterface();
 		this.packageNameImpl = this.getPackageNameImpl();
@@ -52,6 +49,28 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	@Override
 	public String getInterfaceName() {
 		return this.interfaceName;
+	}
+
+	protected String getReturnValueClassName() {
+		String returnValueClassName = null;
+		for (ComplexTypeChild child : this.complexType.getChildren()) {
+			if (child.getChildName().equals("return")) {
+				returnValueClassName = child.getComplexType().getClassName();
+				break;
+			}
+		}
+		return returnValueClassName;
+	}
+
+	protected boolean isReturnValueList() {
+		boolean returnValueIsList = false;
+		for (ComplexTypeChild child : this.complexType.getChildren()) {
+			if (child.getChildName().equals("return")) {
+				returnValueIsList = child.isList();
+				break;
+			}
+		}
+		return returnValueIsList;
 	}
 
 	/**
@@ -254,6 +273,9 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append("\n");
 
 		Set<String> importedClasses = this.getInterfaceImports(children);
+		importedClasses
+				.add("com.springsource.insight.annotation.InsightOperation");
+
 		for (String importedClass : importedClasses) {
 			sb.append("import ").append(importedClass).append(";\n");
 		}
@@ -265,9 +287,9 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append(".\n");
 		if (this.complexType.getAnnotationDocumentation() != null) {
 			sb.append(" * <p/>\n");
-			sb.append(" * ");
-			sb.append(this.complexType.getAnnotationDocumentation());
-			sb.append(".\n");
+			sb.append(" * <p/>\n");
+			sb.append(toJavadocHeader(this.complexType
+					.getAnnotationDocumentation()));
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * The returned {@link ");
@@ -310,6 +332,8 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append(this.complexType.getClassName());
 		sb.append("}.\n");
 		sb.append("\t */\n");
+
+		sb.append("\t@InsightOperation\n");
 
 		sb.append("\t").append(this.complexType.getClassName());
 		sb.append(" ");

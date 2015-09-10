@@ -20,7 +20,6 @@ import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.plugin.xmapper.GeneratorMapper.ComplexContent;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
@@ -64,15 +63,28 @@ public class MappingOperationGenerator extends
 
 	public MappingOperationGenerator(final XsdsUtil config,
 			final ComplexType request, final ComplexType response,
-			final List<ComplexContent> directMappings,
-			final List<ComplexContent> defaultMappings,
-			final List<ComplexContent> complexMappings,
-			final List<ComplexContent> interfaceTypes, final Log log) {
-		super(config, request, response, directMappings, defaultMappings,
-				complexMappings, interfaceTypes, log);
+			final ComplexContentList complexContentList, final Log log) {
+		super(config, request, response, complexContentList, log);
 	}
 
 	public void generateImpl(final File outputDirectory) {
+		this.log.debug("+generateImpl");
+		String source = this.generateImpl();
+		File f = Util.getFile(outputDirectory, this.packageNameImpl,
+				new StringBuffer().append(this.implName).append(".java")
+						.toString());
+		this.log.info(new StringBuffer().append("Write Impl ").append(
+				f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, source);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+		this.log.debug("-generateImpl");
+	}
+
+	String generateImpl() {
 		this.log.debug("+generateImpl");
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
@@ -216,18 +228,8 @@ public class MappingOperationGenerator extends
 		// sb.append(this.getMapperDefinitionSetter(childrenTree,
 		// importedClasses));
 		sb.append("}\n");
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
-		this.log.info(new StringBuffer().append("Write Impl ").append(
-				f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, sb.toString());
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
 		this.log.debug("-generateImpl");
+		return sb.toString();
 	}
 
 	private String getMatchingRequestParameter(
@@ -347,19 +349,21 @@ public class MappingOperationGenerator extends
 			sb.insert(0, "\t\t// TODO Nothing found to be done here!\n");
 		}
 
-		sb.append("\t\t");
-		sb.append(parentName);
 		if (child.isList()) {
+			sb.append("\t\t// TODO Verify if the call of ");
+			sb.append(child.getGetterName());
+			sb.append("().addAll() need to be set at the end of the method.\n");
+			sb.append("\t\t// TODO The list is most probably filled later in this method!!!\n");
+			sb.append("\t\t");
+			sb.append(parentName);
 			sb.append(".");
 			sb.append(child.getGetterName());
-			if (child.isList()) {
-				sb.append("().addAll(");
-			} else {
-				sb.append("().add(");
-			}
+			sb.append("().addAll(");
 			sb.append(childName);
 			sb.append(")");
 		} else {
+			sb.append("\t\t");
+			sb.append(parentName);
 			sb.append(".");
 			sb.append(child.getSetterName());
 			sb.append("(");

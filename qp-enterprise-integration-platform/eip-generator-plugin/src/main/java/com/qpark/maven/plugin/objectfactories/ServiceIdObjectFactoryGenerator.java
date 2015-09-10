@@ -63,8 +63,8 @@ public class ServiceIdObjectFactoryGenerator {
 		ServiceIdEntry entry = ServiceIdRegistry
 				.getServiceIdEntry(this.serviceId);
 		if (entry != null) {
-			XsdContainer xc = this.xsds.getXsdContainerMap(entry
-					.getTargetNamespace());
+			XsdContainer xc = this.xsds
+					.getXsdContainerMap(entry.getTargetNamespace());
 			String className = new StringBuffer(32)
 					.append(ServiceIdRegistry.capitalize(this.serviceId))
 					.append("ObjectFactory").toString();
@@ -97,20 +97,20 @@ public class ServiceIdObjectFactoryGenerator {
 					eName = element.getClassNameObject();
 					this.log.debug("new ComplexType "
 							+ element.getElement().getType());
-					this.log.debug(" packagename "
-							+ this.xsds.getPackageName(element.getElement()
-									.getType().getName()));
+					this.log.debug(" packagename " + this.xsds.getPackageName(
+							element.getElement().getType().getName()));
 					ct = new ComplexType(element.getElement().getType(),
 							this.xsds);
 					if (ct.getPackageName().length() > 0) {
 						mName = new StringBuffer(6 + eName.length())
 								.append("create").append(eName).toString();
 						if (methodNames.contains(mName)) {
-							mName = new StringBuffer(6 + eName.length()
-									+ pOfName.length())
-									.append("create")
-									.append(Util.capitalizePackageName(pOfName))
-									.append(eName).toString();
+							mName = new StringBuffer(
+									6 + eName.length() + pOfName.length())
+											.append("create")
+											.append(Util.capitalizePackageName(
+													pOfName))
+											.append(eName).toString();
 						}
 
 						methodNames.add(mName);
@@ -119,7 +119,8 @@ public class ServiceIdObjectFactoryGenerator {
 						methods.append("\n\t * @param value a {@link ");
 						methods.append(ct.getClassNameFullQualified());
 						methods.append("}.");
-						methods.append("\n\t * @return a new {@link JAXBElement} containing a {@link ");
+						methods.append(
+								"\n\t * @return a new {@link JAXBElement} containing a {@link ");
 						methods.append(ct.getClassNameFullQualified());
 						methods.append("}.");
 
@@ -156,8 +157,8 @@ public class ServiceIdObjectFactoryGenerator {
 			for (ComplexType type : this.xsds.getComplexTypes()) {
 				targetNamespace = type.getTargetNamespace();
 				if (type.getPackageName().equals(entry.getPackageName())
-						|| xc.getImportedTargetNamespaces().contains(
-								targetNamespace)) {
+						|| xc.getImportedTargetNamespaces()
+								.contains(targetNamespace)) {
 					if (!type.isAbstractType() && !type.isEnumType()
 							&& !type.isSimpleType() && !type.isPrimitiveType()
 							&& !type.isInnerTypeDefinition()) {
@@ -180,18 +181,15 @@ public class ServiceIdObjectFactoryGenerator {
 								.append("create").append(cName).toString()
 								.replaceAll("\\.", "");
 						mOfName = mName;
+						cName = type.getClassNameFullQualified();
 						if (methodNames.contains(mName)) {
-							mName = new StringBuffer(6 + cName.length()
-									+ pOfName.length())
-									.append("create")
-									.append(Util.capitalizePackageName(pOfName))
-									.append(cName).toString()
-									.replaceAll("\\.", "");
-							cName = type.getClassNameFullQualified();
-						} else {
-							imports.append("\nimport ")
-									.append(type.getClassNameFullQualified())
-									.append(";");
+							mName = new StringBuffer(
+									6 + cName.length() + pOfName.length())
+											.append("create")
+											.append(Util.capitalizePackageName(
+													pOfName))
+											.append(cName).toString()
+											.replaceAll("\\.", "");
 						}
 
 						methodNames.add(mName);
@@ -225,8 +223,8 @@ public class ServiceIdObjectFactoryGenerator {
 			File f = Util.getFile(this.outputDirectory,
 					this.xsds.getBasePackageName(), new StringBuffer(64)
 							.append(className).append(".java").toString());
-			this.log.info(new StringBuffer().append("Write ").append(
-					f.getAbsolutePath()));
+			this.log.info(new StringBuffer().append("Write ")
+					.append(f.getAbsolutePath()));
 
 			try {
 
@@ -239,7 +237,8 @@ public class ServiceIdObjectFactoryGenerator {
 				sb.append("\n");
 				sb.append("\n/**\n * The {@link ");
 				sb.append(className);
-				sb.append("} contains the creation of the objects defined\n * in the target name space <i>");
+				sb.append(
+						"} contains the creation of the objects defined\n * in the target name space <i>");
 				sb.append(entry.getTargetNamespace());
 				sb.append("</i>\n * and imported xsds.\n");
 				sb.append(" * <pre>");

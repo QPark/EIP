@@ -66,15 +66,16 @@ public class ModelObjectFactoryGenerator {
 		StringBuffer methods = new StringBuffer();
 		StringBuffer objectFactories = new StringBuffer();
 
-		// imports.append("\nimport org.springframework.stereotype.Component;\n");
+		// imports.append("\nimport
+		// org.springframework.stereotype.Component;\n");
 		TreeMap<String, String> importedModels = new TreeMap<String, String>();
 		for (Entry<String, XsdContainer> xx : this.xsds.getXsdContainerMap()
 				.entrySet()) {
 			if (XsdsUtil.isMessagePackageName(xx.getValue().getPackageName(),
 					this.messagePackageNameSuffix)) {
 				for (String imp : xx.getValue().getImportedTargetNamespaces()) {
-					importedModels.put(imp, xx.getValue().getFile()
-							.getAbsolutePath());
+					importedModels.put(imp,
+							xx.getValue().getFile().getAbsolutePath());
 				}
 			}
 		}
@@ -89,12 +90,10 @@ public class ModelObjectFactoryGenerator {
 		String mOfName;
 		for (ComplexType type : this.complexTypes) {
 			tns = type.getType().getName();
-			if (!type.isAbstractType()
-					&& !type.isEnumType()
-					&& !type.isSimpleType()
-					&& !type.isPrimitiveType()
-					&& (tns == null || importedModels.containsKey(tns
-							.getNamespaceURI()))) {
+			if (!type.isAbstractType() && !type.isEnumType()
+					&& !type.isSimpleType() && !type.isPrimitiveType()
+					&& (tns == null || importedModels
+							.containsKey(tns.getNamespaceURI()))) {
 				pName = type.getPackageName();
 				ofName = ofMap.get(pName);
 				if (ofName == null) {
@@ -109,16 +108,14 @@ public class ModelObjectFactoryGenerator {
 				mName = new StringBuffer(6 + cName.length()).append("create")
 						.append(cName).toString().replaceAll("\\.", "");
 				mOfName = mName;
+				cName = type.getClassNameFullQualified();
 				if (methodNames.contains(mName)) {
-					mName = new StringBuffer(6 + cName.length()
-							+ pName.length()).append("create")
-							.append(Util.capitalizePackageName(pName))
-							.append(cName).toString().replaceAll("\\.", "");
-					cName = type.getClassNameFullQualified();
-				} else {
-					imports.append("\nimport ")
-							.append(type.getClassNameFullQualified())
-							.append(";");
+					mName = new StringBuffer(
+							6 + cName.length() + pName.length())
+									.append("create")
+									.append(Util.capitalizePackageName(pName))
+									.append(cName).toString()
+									.replaceAll("\\.", "");
 				}
 
 				methodNames.add(mName);
@@ -150,8 +147,8 @@ public class ModelObjectFactoryGenerator {
 
 		File f = Util.getFile(this.outputDirectory,
 				this.xsds.getBasePackageName(), "ModelObjectFactory.java");
-		this.log.info(new StringBuffer().append("Write ").append(
-				f.getAbsolutePath()));
+		this.log.info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			StringBuffer sb = new StringBuffer(1024);
 			sb.append("package ");
@@ -159,7 +156,8 @@ public class ModelObjectFactoryGenerator {
 			sb.append(";\n\n");
 			sb.append(imports.toString());
 			sb.append("\n");
-			sb.append("\n/**\n * The ModelObjectFactory contains the creation of all complex types defined in\n * the XSDs.\n");
+			sb.append(
+					"\n/**\n * The ModelObjectFactory contains the creation of all complex types defined in\n * the XSDs.\n");
 			sb.append(" * <pre>");
 			sb.append(Util.getGeneratedAt());
 			sb.append("</pre>\n");

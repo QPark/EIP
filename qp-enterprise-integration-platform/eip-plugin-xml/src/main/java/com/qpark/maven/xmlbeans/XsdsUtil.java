@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -266,26 +267,53 @@ public class XsdsUtil {
 				}
 			}
 		}
-		List<String> importedTargetNamespaces = new ArrayList<String>();
+		TreeMap<String, String> imports = new TreeMap<String, String>();
 		index0 = text.indexOf("<import");
+		String namespace = null;
+		String location = null;
+		int indexNamespace;
+		int indexLocation;
 		while (index0 > 0) {
 			int index1 = text.indexOf('>', index0);
 			if (index1 > 0) {
-				index0 = text.indexOf("namespace=\"", index0);
-				if (index0 > 0) {
-					index0 += "namespace=\"".length();
-					index1 = text.substring(index0).indexOf("\"");
-					importedTargetNamespaces.add(text.substring(index0, index0
-							+ index1));
+				namespace = null;
+				location = null;
+				indexNamespace = text.indexOf("namespace=\"", index0);
+				if (indexNamespace > 0) {
+					indexNamespace += "namespace=\"".length();
+					index1 = text.substring(indexNamespace).indexOf("\"");
+					namespace = text.substring(indexNamespace, indexNamespace
+							+ index1);
+				}
+				indexLocation = text.indexOf("schemaLocation=\"", index0);
+				if (indexLocation > 0) {
+					indexLocation += "schemaLocation=\"".length();
+					index1 = text.substring(indexLocation).indexOf("\"");
+					location = text.substring(indexLocation, indexLocation
+							+ index1);
+				}
+				if (namespace != null & location != null) {
+					if (imports.containsKey(namespace)) {
+						throw new RuntimeException(
+								"Double import of targetNamespace in "
+										+ f.getAbsolutePath() + ":" + namespace);
+					}
+					imports.put(namespace, location);
+				} else {
+					throw new RuntimeException(
+							"Not declared targetNamespace or location in "
+									+ f.getAbsolutePath() + ": "
+									+ targetNameSpace + " " + location);
 				}
 				index0 = text.indexOf("<import", index0 + 1);
 			} else {
 				index0 = 0;
 			}
 		}
+
 		if (targetNameSpace != null && packageName != null) {
 			xsdContainer = new XsdContainer(f, baseDirectory, packageName,
-					targetNameSpace, importedTargetNamespaces);
+					targetNameSpace, imports);
 		}
 		return xsdContainer;
 	}
@@ -304,8 +332,24 @@ public class XsdsUtil {
 				xsdContainer = getXsdContainer(f, baseDirectory);
 				if (xsdContainer != null
 						&& xsdContainer.getTargetNamespace() != null) {
-					xsdContainerMap.put(xsdContainer.getTargetNamespace(),
-							xsdContainer);
+					if (xsdContainerMap.containsKey(xsdContainer
+							.getTargetNamespace())) {
+						throw new RuntimeException(new StringBuffer(256)
+								.append("Target namespace \"")
+								.append(xsdContainer.getTargetNamespace())
+								.append("\" defined in file ")
+								.append(xsdContainerMap
+										.get(xsdContainer.getTargetNamespace())
+										.getFile().getAbsolutePath())
+								.append(" and ")
+								.append(xsdContainer.getFile()
+										.getAbsolutePath()).append("!")
+								.toString());
+					} else {
+						xsdContainerMap.put(xsdContainer.getTargetNamespace(),
+								xsdContainer);
+					}
+
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -371,8 +415,31 @@ public class XsdsUtil {
 		return isMessagePackageName;
 	}
 
-	private static Map<String, String> testGetNotImportedModels(
-			final XsdsUtil xsds, final String messagePackageNameSuffix) {
+	public static Map<String, String> getNotImportedModels(
+			final Map<String, XsdContainer> xsds,
+			final String messagePackageNameSuffix) {
+		TreeMap<String, String> notImportedModels = new TreeMap<String, String>();
+		for (Entry<String, XsdContainer> xx : xsds.entrySet()) {
+			if (!isMessagePackageName(xx.getValue().getPackageName(),
+					messagePackageNameSuffix)) {
+				notImportedModels.put(xx.getKey(), xx.getValue().getFile()
+						.getAbsolutePath());
+			}
+		}
+		for (Entry<String, XsdContainer> xx : xsds.entrySet()) {
+			for (String imp : xx.getValue().getImportedTargetNamespaces()) {
+				// System.out.println("Remove imported " + imp +
+				// ". Imported in "
+				// + xx.getKey());
+				notImportedModels.remove(imp);
+
+			}
+		}
+		return notImportedModels;
+	}
+
+	public static Map<String, String> getNotImportedModels(final XsdsUtil xsds,
+			final String messagePackageNameSuffix) {
 		TreeMap<String, String> notImportedModels = new TreeMap<String, String>();
 		for (Entry<String, XsdContainer> xx : xsds.getXsdContainerMap()
 				.entrySet()) {
@@ -656,6 +723,53 @@ public class XsdsUtil {
 		}
 	}
 
+	private static void testVerifyModel(final XsdsUtil xsds,
+			final Map<String, String> notImportedModels) {
+		StringBuffer sb = new StringBuffer();
+		for (Entry<String, String> model : notImportedModels.entrySet()) {
+			System.out.println("Model " + model.getKey()
+					+ " is not used (file: " + model.getValue() + ")");
+			sb.append("\t<import namespace=\"");
+			sb.append(model.getKey());
+			sb.append("\" schemaLocation=\"http://www.ses.com/model/");
+			sb.append(model
+					.getValue()
+					.substring(model.getValue().indexOf("\\model\\") + 7,
+							model.getValue().length()).replaceAll("\\\\", "/")
+					.replaceAll("//", "/"));
+			sb.append("\" />\n");
+		}
+		System.out.println(sb.toString());
+		for (XsdContainer xx : xsds.getXsdContainerMap().values()) {
+			for (String importedTargetNamespace : xx
+					.getImportedTargetNamespaces()) {
+				XsdContainer imported = xsds
+						.getXsdContainerMap(importedTargetNamespace);
+				if (imported == null) {
+					System.out.println("Target namespace "
+							+ importedTargetNamespace
+							+ " is not defined but imported by " + xx.getFile()
+							+ "!");
+				} else {
+					String fileName = xx
+							.getImportedSchemaLocation(importedTargetNamespace);
+					if (fileName.indexOf('/') > 0) {
+						fileName = fileName.substring(
+								fileName.lastIndexOf('/') + 1,
+								fileName.length());
+					}
+					if (!imported.getFile().getAbsolutePath()
+							.endsWith(fileName)) {
+						System.out.println("File "
+								+ xx.getFile().getAbsolutePath() + " uses "
+								+ fileName + " instead of "
+								+ imported.getFile().getAbsolutePath());
+					}
+				}
+			}
+		}
+	}
+
 	private static void testPrintNotUsedModels(final XsdsUtil xsds,
 			final Map<String, String> notImportedModels) {
 		for (Entry<String, String> model : notImportedModels.entrySet()) {
@@ -720,27 +834,29 @@ public class XsdsUtil {
 
 	public static void main(final String[] args) {
 		String xsdPath;
-		xsdPath = "C:\\xnb\\dev\\com.ses.domain-trx\\mapping\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\9.1\\bus.app.monics-2.0\\monics-webapp\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain\\mapping\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
+		// xsdPath =
+		// "C:\\xnb\\dev\\9.1\\bus.app.monics-2.0\\monics-webapp\\target\\model";
 		File dif = new File(xsdPath);
 		String messagePackageNameSuffix = "msg mapping flow";
 		long start = System.currentTimeMillis();
 		XsdsUtil xsds = new XsdsUtil(dif, "a.b.c.bus",
 				messagePackageNameSuffix, "delta");
-		System.out
-				.println(Util.getDuration(System.currentTimeMillis() - start));
+		System.out.println(Util.getDuration(System.currentTimeMillis() - start)
+				+ " needed for new XsdsUtil(...)");
 		XsdsUtil config = xsds;
-		Map<String, String> notImportedModels = testGetNotImportedModels(xsds,
+		Map<String, String> notImportedModels = getNotImportedModels(xsds,
 				messagePackageNameSuffix);
 		Map<String, String> importedModels = testGetImportedModels(xsds,
 				messagePackageNameSuffix);
+		testVerifyModel(xsds, notImportedModels);
 
 		// printCatalog(xsds, xsdPath);
-		testValidServiceId(xsds);
+		// testValidServiceId(xsds);
 		// testGetServiceIdTree(xsds);
 		// testFlowInputTypes(xsds);
 		// testXsdContainers(dif);
-		// testPrintNotUsedModels(xsds, notImportedModels);
 		// testPrintComplexTypeContent(xsds, notImportedModels, true);
 		// testPrintElementTypeRequestResponse(xsds, notImportedModels, true);
 		// testPrintComplexTypeRequestResponse(xsds, notImportedModels, true);
@@ -860,7 +976,7 @@ public class XsdsUtil {
 			} else if (schemaType.getName().getLocalPart().equals("float")) {
 				c = Float.class;
 			} else if (schemaType.getName().getLocalPart().equals("decimal")) {
-				c = Double.class;
+				c = BigDecimal.class;
 			} else if (schemaType.getName().getLocalPart().equals("long")) {
 				c = Long.class;
 			} else if (schemaType.getName().getLocalPart().equals("int")) {
@@ -892,15 +1008,15 @@ public class XsdsUtil {
 						&& !basex.getBaseType().equals(basex));
 			}
 			if (base.isBuiltinType()) {
-				SchemaType basex = base;
-				do {
-					base = basex;
-					basex = basex.getBaseType();
-					// System.out.println("---" + basex);
-				} while (basex != null
-						&& !basex.getName().getLocalPart()
-								.equals("anySimpleType")
-						&& !basex.getName().getLocalPart().equals("integer"));
+				// SchemaType basex = base;
+				// do {
+				// base = basex;
+				// basex = basex.getBaseType();
+				// // System.out.println("---" + basex);
+				// } while (basex != null
+				// && !basex.getName().getLocalPart()
+				// .equals("anySimpleType")
+				// && !basex.getName().getLocalPart().equals("integer"));
 			}
 		}
 		// System.out.println("--" + base);
@@ -1081,6 +1197,8 @@ public class XsdsUtil {
 		this.logger.debug("{} Got elements and complex type of {} files",
 				Util.getDuration(System.currentTimeMillis() - start), i);
 		ServiceIdRegistry.setupServiceIdTree(this);
+		this.logger.info("Setup serviceIds: {}",
+				ServiceIdRegistry.getAllServiceIds());
 		for (ComplexType ct : this.complexTypes) {
 			ct.initChildren(this);
 			if (ct.getType() != null) {

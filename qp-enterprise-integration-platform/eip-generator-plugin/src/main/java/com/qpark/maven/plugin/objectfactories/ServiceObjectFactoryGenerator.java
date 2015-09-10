@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -69,7 +69,8 @@ public class ServiceObjectFactoryGenerator {
 		StringBuffer objectFactories = new StringBuffer();
 
 		imports.append("\nimport javax.xml.bind.JAXBElement;\n");
-		// imports.append("\nimport org.springframework.stereotype.Component;\n");
+		// imports.append("\nimport
+		// org.springframework.stereotype.Component;\n");
 
 		TreeMap<String, String> importedModels = new TreeMap<String, String>();
 		for (Entry<String, XsdContainer> xx : this.xsds.getXsdContainerMap()
@@ -77,8 +78,8 @@ public class ServiceObjectFactoryGenerator {
 			if (XsdsUtil.isMessagePackageName(xx.getValue().getPackageName(),
 					this.messagePackageNameSuffix)) {
 				for (String imp : xx.getValue().getImportedTargetNamespaces()) {
-					importedModels.put(xx.getKey(), xx.getValue().getFile()
-							.getAbsolutePath());
+					importedModels.put(xx.getKey(),
+							xx.getValue().getFile().getAbsolutePath());
 				}
 			}
 		}
@@ -105,11 +106,10 @@ public class ServiceObjectFactoryGenerator {
 					ofMap.put(pOfName, ofName);
 				}
 				eName = element.getClassNameObject();
-				this.log.debug("new ComplexType "
-						+ element.getElement().getType());
-				this.log.debug(" packagename "
-						+ this.xsds.getPackageName(element.getElement()
-								.getType().getName()));
+				this.log.debug(
+						"new ComplexType " + element.getElement().getType());
+				this.log.debug(" packagename " + this.xsds.getPackageName(
+						element.getElement().getType().getName()));
 				ct = new ComplexType(element.getElement().getType(), this.xsds);
 				if (ct.getPackageName().length() > 0) {
 					// imports.append("\nimport ")
@@ -117,10 +117,12 @@ public class ServiceObjectFactoryGenerator {
 					mName = new StringBuffer(6 + eName.length())
 							.append("create").append(eName).toString();
 					if (methodNames.contains(mName)) {
-						mName = new StringBuffer(6 + eName.length()
-								+ pOfName.length()).append("create")
-								.append(Util.capitalizePackageName(pOfName))
-								.append(eName).toString();
+						mName = new StringBuffer(
+								6 + eName.length() + pOfName.length())
+										.append("create")
+										.append(Util
+												.capitalizePackageName(pOfName))
+										.append(eName).toString();
 					}
 
 					methodNames.add(mName);
@@ -129,7 +131,8 @@ public class ServiceObjectFactoryGenerator {
 					methods.append("\n\t * @param value a {@link ");
 					methods.append(ct.getClassNameFullQualified());
 					methods.append("}");
-					methods.append("\n\t * @return a new {@link JAXBElement} containing a {@link ");
+					methods.append(
+							"\n\t * @return a new {@link JAXBElement} containing a {@link ");
 					methods.append(ct.getClassNameFullQualified());
 					methods.append("}");
 
@@ -167,12 +170,10 @@ public class ServiceObjectFactoryGenerator {
 			if (XsdsUtil.isMessagePackageName(type.getPackageName(),
 					this.messagePackageNameSuffix)) {
 				tns = type.getType().getName();
-				if (!type.isAbstractType()
-						&& !type.isEnumType()
-						&& !type.isSimpleType()
-						&& !type.isPrimitiveType()
-						&& (tns == null || importedModels.containsKey(tns
-								.getNamespaceURI()))) {
+				if (!type.isAbstractType() && !type.isEnumType()
+						&& !type.isSimpleType() && !type.isPrimitiveType()
+						&& (tns == null || importedModels
+								.containsKey(tns.getNamespaceURI()))) {
 					pName = type.getPackageName();
 					ofName = ofMap.get(pName);
 					if (ofName == null) {
@@ -188,16 +189,15 @@ public class ServiceObjectFactoryGenerator {
 							.append("create").append(cName).toString()
 							.replaceAll("\\.", "");
 					mOfName = mName;
+					cName = type.getClassNameFullQualified();
 					if (methodNames.contains(mName)) {
-						mName = new StringBuffer(6 + cName.length()
-								+ pName.length()).append("create")
-								.append(Util.capitalizePackageName(pName))
-								.append(cName).toString().replaceAll("\\.", "");
-						cName = type.getClassNameFullQualified();
-					} else {
-						imports.append("\nimport ")
-								.append(type.getClassNameFullQualified())
-								.append(";");
+						mName = new StringBuffer(
+								6 + cName.length() + pName.length())
+										.append("create")
+										.append(Util
+												.capitalizePackageName(pName))
+										.append(cName).toString()
+										.replaceAll("\\.", "");
 					}
 
 					methodNames.add(mName);
@@ -230,8 +230,8 @@ public class ServiceObjectFactoryGenerator {
 
 		File f = Util.getFile(this.outputDirectory,
 				this.xsds.getBasePackageName(), "ServiceObjectFactory.java");
-		this.log.info(new StringBuffer().append("Write ").append(
-				f.getAbsolutePath()));
+		this.log.info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 
 		try {
 
@@ -242,16 +242,19 @@ public class ServiceObjectFactoryGenerator {
 			sb.append("\n");
 			sb.append(imports.toString());
 			sb.append("\n");
-			sb.append("\n/**\n * The ServiceObjectFactory contains the creation of all JAXBElement's defined\n * in the XSDs and extends the ModelObjectFactory.\n");
+			sb.append(
+					"\n/**\n * The ServiceObjectFactory contains the creation of all JAXBElement's defined\n * in the XSDs and extends the ModelObjectFactory.\n");
 			sb.append(" * <pre>");
 			sb.append(Util.getGeneratedAt());
 			sb.append("</pre>\n");
 			sb.append(" * @author bhausen\n");
 			sb.append(" */\n");
 			// sb.append("@Component\n");
-			sb.append("public class ServiceObjectFactory extends ModelObjectFactory {");
+			sb.append(
+					"public class ServiceObjectFactory extends ModelObjectFactory {");
 
-			sb.append("\n\tpublic static final String CONTEXT_PATH_DEFINITON =\"");
+			sb.append(
+					"\n\tpublic static final String CONTEXT_PATH_DEFINITON =\"");
 			for (int i = 0; i < contextPath.size(); i++) {
 				if (i > 0) {
 					sb.append(":");

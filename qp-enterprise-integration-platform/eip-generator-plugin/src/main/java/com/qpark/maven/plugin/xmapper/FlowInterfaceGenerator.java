@@ -172,6 +172,8 @@ public class FlowInterfaceGenerator {
 			}
 			sb.append("\t */\n");
 
+			sb.append("\t@InsightOperation\n");
+
 			sb.append("\t");
 			if (smd.getOut() != null) {
 				sb.append(smd.getOut().getClassName());
@@ -180,14 +182,16 @@ public class FlowInterfaceGenerator {
 			}
 			sb.append(" ");
 			sb.append(methodName);
-			if (!methodName.equals("invokeFlow")
-					&& !methodName.equals("subRequest")) {
-				if (smd.request) {
-					sb.append("Request");
-				} else {
-					sb.append("Response");
-				}
+			if (methodName.equals("invokeFlow")) {
+				/* Nothing to do. */
+			} else if (methodName.equals("subRequest")) {
 				sb.append(smd.suffix);
+			} else if (methodName.equals("filter")) {
+				sb.append(smd.suffix);
+			} else if (smd.isRequest() && !methodName.endsWith("Request")) {
+				sb.append("Request");
+			} else if (!smd.isRequest() && !methodName.endsWith("Response")) {
+				sb.append("Response");
 			}
 			sb.append("(");
 			if (smd.getInput().size() > 0) {
@@ -202,6 +206,37 @@ public class FlowInterfaceGenerator {
 				}
 			}
 			sb.append(");\n");
+		}
+		return sb.toString();
+	}
+
+	private static String getMethodLink(final SimpleMethodDefinition smd,
+			final String methodName) {
+		StringBuffer sb = new StringBuffer();
+
+		if (smd != null) {
+			sb.append("{@link #");
+			sb.append(methodName);
+			if (methodName.equals("invokeFlow")) {
+				/* Nothing to do. */
+			} else if (methodName.equals("subRequest")) {
+				sb.append(smd.suffix);
+			} else if (methodName.equals("filter")) {
+				sb.append(smd.suffix);
+			} else if (smd.isRequest() && !methodName.endsWith("Request")) {
+				sb.append("Request");
+			} else if (!smd.isRequest() && !methodName.endsWith("Response")) {
+				sb.append("Response");
+			}
+			sb.append("(");
+			for (int i = 0; i < smd.getInput().size(); i++) {
+				ComplexTypeChild ctc = smd.getInput().get(i);
+				if (i > 0) {
+					sb.append(", ");
+				}
+				sb.append(ctc.getComplexType().getClassName());
+			}
+			sb.append(")}");
 		}
 		return sb.toString();
 	}
@@ -270,6 +305,7 @@ public class FlowInterfaceGenerator {
 	private final SimpleMethodDefinition flow;
 	private final SimpleMethodDefinition request;
 	private final SimpleMethodDefinition response;
+	private final List<SimpleMethodDefinition> filters = new ArrayList<SimpleMethodDefinition>();
 	private final List<SimpleMethodDefinition> subRequests = new ArrayList<SimpleMethodDefinition>();
 	private final List<SimpleMethodDefinition> mappings = new ArrayList<SimpleMethodDefinition>();
 
@@ -301,6 +337,8 @@ public class FlowInterfaceGenerator {
 		}
 		this.subRequests.addAll(getSimpleMethodDefinition(flowInput,
 				"subRequest", "subResponse", true));
+		this.filters.addAll(getSimpleMethodDefinition(flowInput, "filterIn",
+				"filterOut", true));
 		this.mappings.addAll(getSimpleMethodDefinition(flowInput, "mapIn",
 				"mapOut", true));
 
@@ -314,6 +352,8 @@ public class FlowInterfaceGenerator {
 			}
 			this.subRequests.addAll(getSimpleMethodDefinition(this.flowOutput,
 					"subRequest", "subResponse", false));
+			this.filters.addAll(getSimpleMethodDefinition(this.flowOutput,
+					"filterIn", "filterOut", false));
 			this.mappings.addAll(getSimpleMethodDefinition(this.flowOutput,
 					"mapIn", "mapOut", false));
 		} else {
@@ -324,7 +364,24 @@ public class FlowInterfaceGenerator {
 
 	public void generateInterface(final File outputDirectory,
 			final String basicFlowPackageName) {
-		this.log.debug("+generateImpl");
+		String source = this.generateInterface(basicFlowPackageName);
+		this.log.debug("+generateInterface");
+		File f = Util.getFile(outputDirectory, this.packageName,
+				new StringBuffer().append(this.flowName).append(".java")
+						.toString());
+		this.log.info(new StringBuffer().append("Write Flow ").append(
+				f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, source);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+		this.log.debug("-generateInterface");
+	}
+
+	String generateInterface(final String basicFlowPackageName) {
+		this.log.debug("+generateInterface");
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
@@ -360,6 +417,7 @@ public class FlowInterfaceGenerator {
 			}
 
 		}
+		imports.add("com.springsource.insight.annotation.InsightOperation");
 		for (String importedClass : imports) {
 			sb.append("import ").append(importedClass).append(";\n");
 		}
@@ -371,36 +429,39 @@ public class FlowInterfaceGenerator {
 		sb.append("}.\n");
 		if (this.request != null || this.response != null) {
 			sb.append(" * <p/>\n");
-			sb.append(" * {@link #invokeFlow(");
-			if (this.flow.getInput().size() > 0) {
-				sb.append(this.flow.getInput().get(0).getComplexType()
-						.getClassName());
+			sb.append(" * ");
+			sb.append(getMethodLink(this.flow, "invokeFlow"));
+			if (this.request != null || this.response != null) {
+				sb.append(" calls ");
 			}
-			sb.append(")} calls\n");
 			if (this.request != null) {
-				sb.append("\n * {@link #executeRequest(");
-				for (int i = 0; i < this.request.getInput().size(); i++) {
-					if (i > 0) {
-						sb.append(", ");
-					}
-					sb.append(this.request.getInput().get(i).getComplexType()
-							.getClassName());
-				}
-				sb.append(")}");
+				sb.append("\n * ");
+				sb.append(getMethodLink(this.request, "executeRequest"));
 			}
 			if (this.request != null && this.response != null) {
 				sb.append(" and ");
 			}
 			if (this.response != null) {
-				sb.append("\n * {@link #processResponse(");
-				for (int i = 0; i < this.response.getInput().size(); i++) {
-					if (i > 0) {
-						sb.append(", ");
-					}
-					sb.append(this.response.getInput().get(i).getComplexType()
-							.getClassName());
+				sb.append("\n * ");
+				sb.append(getMethodLink(this.response, "processResponse"));
+			}
+			if (!this.subRequests.isEmpty()) {
+				sb.append(".\n * <p/>\n * Be sure to call:\n * <ul>\n");
+				for (SimpleMethodDefinition smd : this.subRequests) {
+					sb.append(" * </li>");
+					sb.append(getMethodLink(smd, "subRequest"));
+					sb.append("</li>\n");
 				}
-				sb.append(")}");
+				sb.append(" * </ul>");
+			}
+			if (!this.filters.isEmpty()) {
+				sb.append(".\n * <p/>\n * Apply the filters:\n * <ul>\n");
+				for (SimpleMethodDefinition smd : this.filters) {
+					sb.append(" * </li>");
+					sb.append(getMethodLink(smd, "filter"));
+					sb.append("</li>\n");
+				}
+				sb.append(" * </ul>");
 			}
 			sb.append(".\n");
 		}
@@ -429,41 +490,36 @@ public class FlowInterfaceGenerator {
 		sb.append(">");
 		sb.append(" {\n");
 
-		// /* invoke flow. */
-		// sb.append(getMethodDeclaration(this.flow, "invokeFlow",
-		// FlowInterfaceGenerator.getJavaDocCommentInvokeFlowMethod(
-		// this.flowName, this.flow, this.request, this.response)));
-
 		/* executeRequest. */
-		sb.append(getMethodDeclaration(this.request, "execute",
+		sb.append(getMethodDeclaration(this.request, "executeRequest",
 				getJavaDocCommentInvokeRequestResponseMethod(this.request)));
 
 		/* processResponse. */
-		sb.append(getMethodDeclaration(this.response, "process",
+		sb.append(getMethodDeclaration(this.response, "processResponse",
 				getJavaDocCommentInvokeRequestResponseMethod(this.response)));
 
 		for (SimpleMethodDefinition smd : this.subRequests) {
 			sb.append(getMethodDeclaration(smd, "subRequest",
 					getJavaDocCommentSubRequest(smd)));
 		}
+		for (SimpleMethodDefinition smd : this.filters) {
+			sb.append(getMethodDeclaration(smd, "filter",
+					getJavaDocCommentSubRequest(smd)));
+		}
+		Set<String> inOutMethods = new TreeSet<String>();
+		String link;
 		for (SimpleMethodDefinition smd : this.mappings) {
-			sb.append(getMethodDeclaration(smd, "mapInOut",
-					getJavaDocCommentMapMethod(smd)));
+			link = getMethodLink(smd, "mapInOut");
+			if (!inOutMethods.contains(link)) {
+				inOutMethods.add(link);
+				sb.append(getMethodDeclaration(smd, "mapInOut",
+						getJavaDocCommentMapMethod(smd)));
+			}
 		}
 
 		sb.append("}\n");
-		File f = Util.getFile(outputDirectory, this.packageName,
-				new StringBuffer().append(this.flowName).append(".java")
-						.toString());
-		this.log.info(new StringBuffer().append("Write Flow ").append(
-				f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, sb.toString());
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
-		this.log.debug("-generateImpl");
+		this.log.debug("-generateInterface");
+		return sb.toString();
 	}
 
 	private static String getJavaDocCommentInvokeRequestResponseMethod(
@@ -483,44 +539,6 @@ public class FlowInterfaceGenerator {
 			sb.append(Util.capitalize(b));
 			sb.append("</i> method(s).\n");
 		}
-		return sb.toString();
-	}
-
-	private static String getJavaDocCommentInvokeFlowMethod(
-			final String flowName, final SimpleMethodDefinition smd,
-			final SimpleMethodDefinition request,
-			final SimpleMethodDefinition response) {
-		StringBuffer sb = new StringBuffer(128);
-		sb.append("\t * The {@link ");
-		sb.append(flowName);
-		sb.append("}. The This calls");
-		if (request != null) {
-			sb.append("\n\t * {@link #executeRequest(");
-			for (int i = 0; i < request.getInput().size(); i++) {
-				if (i > 0) {
-					sb.append(", ");
-				}
-				sb.append(request.getInput().get(i).getComplexType()
-						.getClassName());
-			}
-			sb.append(")}");
-		}
-		if (request != null && response != null) {
-			sb.append(" and ");
-		}
-		if (response != null) {
-			sb.append("\n\t * {@link #processResponse(");
-			for (int i = 0; i < response.getInput().size(); i++) {
-				if (i > 0) {
-					sb.append(", ");
-				}
-				sb.append(response.getInput().get(i).getComplexType()
-						.getClassName());
-			}
-			sb.append(")}");
-		}
-		sb.append(".\n");
-
 		return sb.toString();
 	}
 }

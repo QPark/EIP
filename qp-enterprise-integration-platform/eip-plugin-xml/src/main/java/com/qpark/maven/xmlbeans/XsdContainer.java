@@ -15,7 +15,7 @@ package com.qpark.maven.xmlbeans;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class XsdContainer {
@@ -24,11 +24,16 @@ public class XsdContainer {
 	private final String targetNamespace;
 	private final String relativeName;
 
+	private final TreeMap<String, String> imports;
 	private final Collection<String> importedTargetNamespaces;
 	private final Collection<String> totalImportedTargetNamespaces = new TreeSet<String>();
 
 	public Collection<String> getImportedTargetNamespaces() {
 		return this.importedTargetNamespaces;
+	}
+
+	public String getImportedSchemaLocation(final String targetNamespace) {
+		return this.imports.get(targetNamespace);
 	}
 
 	public Collection<String> getTotalImportedTargetNamespaces() {
@@ -37,11 +42,11 @@ public class XsdContainer {
 
 	XsdContainer(final File f, final File baseDirectory,
 			final String packageName, final String targetNamespace,
-			final List<String> importedTargetNamespaces) {
+			final TreeMap<String, String> imports) {
 		this.file = f;
 		if (f != null) {
-			String s = f.getAbsolutePath().replace(
-					baseDirectory.getAbsolutePath(), "");
+			String s = f.getAbsolutePath()
+					.replace(baseDirectory.getAbsolutePath(), "");
 			if (s.length() > 0) {
 				s = s.substring(1, s.length());
 			}
@@ -51,10 +56,12 @@ public class XsdContainer {
 		}
 		this.packageName = packageName;
 		this.targetNamespace = targetNamespace;
-		if (importedTargetNamespaces == null) {
+		if (imports == null) {
+			this.imports = new TreeMap<String, String>();
 			this.importedTargetNamespaces = new ArrayList<String>();
 		} else {
-			this.importedTargetNamespaces = importedTargetNamespaces;
+			this.imports = imports;
+			this.importedTargetNamespaces = imports.keySet();
 			this.importedTargetNamespaces.remove(this.targetNamespace);
 		}
 	}

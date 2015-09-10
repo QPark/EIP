@@ -650,8 +650,11 @@ public class RouterXmlMojo extends AbstractMojo {
 			f = Util.getFile(new File(this.project.getBasedir(), "target"),
 					"applicationRouterConfig.xml");
 		} else {
-			f = Util.getFile(this.outputDirectory,
-					new StringBuffer(32).append(serviceId)
+			f = Util.getFile(
+					this.outputDirectory,
+					new StringBuffer(32)
+							.append(Util.lowerize(Util
+									.getXjcClassName(serviceId)))
 							.append(operationName).append("RouterConfig.xml")
 							.toString());
 		}

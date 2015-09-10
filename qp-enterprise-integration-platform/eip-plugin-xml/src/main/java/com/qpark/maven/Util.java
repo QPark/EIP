@@ -100,7 +100,7 @@ public class Util {
 		System.out.println(getXjcCamelCase("v2kConstraintRow"));
 		System.out.println(getXjcCamelCase("Ab-Bc-cd_Ef_fg.Gh.hi2Ij3jk"));
 		System.out.println(getXjcCamelCase("v2kConstraintRow"));
-		System.out.println(getXjcCamelCase("organi_s2a.tion"));
+		System.out.println(getXjcClassName("organi_s2a.tion"));
 	}
 
 	public static String getXjcClassName(final String typeQNameLocalPart) {
@@ -160,7 +160,7 @@ public class Util {
 
 	}
 
-	private static StringBuffer getXjcCamelCase(final String name) {
+	public static StringBuffer getXjcCamelCase(final String name) {
 		return getXjcTranslated(name, true);
 	}
 

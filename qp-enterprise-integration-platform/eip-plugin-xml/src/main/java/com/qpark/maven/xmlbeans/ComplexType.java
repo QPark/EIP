@@ -174,7 +174,7 @@ public class ComplexType {
 				}
 			}
 			if (sb.length() > 0) {
-				this.annotationDocumentation = sb.toString();
+				this.annotationDocumentation = sb.toString().trim();
 			} else {
 				this.annotationDocumentation = null;
 			}

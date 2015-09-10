@@ -23,7 +23,6 @@ import java.util.TreeSet;
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.plugin.xmapper.GeneratorMapper.ComplexContent;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
@@ -40,12 +39,8 @@ public abstract class AbstractMappingOperationGenerator extends
 
 	public AbstractMappingOperationGenerator(final XsdsUtil config,
 			final ComplexType request, final ComplexType response,
-			final List<ComplexContent> directMappings,
-			final List<ComplexContent> defaultMappings,
-			final List<ComplexContent> complexMappings,
-			final List<ComplexContent> interfaceTypes, final Log log) {
-		super(config, directMappings, defaultMappings, complexMappings,
-				interfaceTypes, log);
+			final ComplexContentList complexContentList, final Log log) {
+		super(config, complexContentList, log);
 		this.request = request;
 		this.response = response;
 		this.packageName = this.getPackageNameInterface();
@@ -216,6 +211,7 @@ public abstract class AbstractMappingOperationGenerator extends
 		sb.append("import ");
 		sb.append(this.response.getClassNameFullQualified());
 		sb.append(";\n");
+		sb.append("import com.springsource.insight.annotation.InsightOperation;");
 
 		sb.append("\n");
 		sb.append("/**\n");
@@ -264,6 +260,8 @@ public abstract class AbstractMappingOperationGenerator extends
 		sb.append(this.response.getClassName());
 		sb.append("}.\n");
 		sb.append("\t */\n");
+
+		sb.append("\t@InsightOperation\n");
 
 		sb.append("\t").append(this.response.getClassName());
 		sb.append(" ");

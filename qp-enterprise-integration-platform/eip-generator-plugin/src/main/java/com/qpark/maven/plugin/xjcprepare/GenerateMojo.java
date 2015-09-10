@@ -14,6 +14,7 @@ package com.qpark.maven.plugin.xjcprepare;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -43,6 +44,9 @@ public class GenerateMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
+	/** The base message target namespace to include for orphan models. */
+	@Parameter(property = "baseMessageTargetNamespace", defaultValue = "")
+	protected String baseMessageTargetNamespace = "http://www.ses.com/Common/BaseMessage-1.0";
 	/**
 	 * The package name of the messages should end with this. Default is
 	 * <code>msg</code>.
@@ -80,15 +84,36 @@ public class GenerateMojo extends AbstractMojo {
 		this.getLog().debug("get xsds");
 		Map<String, XsdContainer> xsdContainerMap = XsdsUtil
 				.getXsdContainers(this.baseDirectory);
-		StringBuffer schemaFileList = new StringBuffer(1024);
-		schemaFileList.append(this.getSchemaList(xsdContainerMap));
+		File f;
+		// String orphanNamespace = new StringBuffer(
+		// "http://www.qpark-consulting.com/").append(
+		// System.currentTimeMillis()).toString();
+		// String orphanModelImport = getOrphanModels(xsdContainerMap,
+		// this.messagePackageNameSuffixes,
+		// this.baseMessageTargetNamespace, orphanNamespace);
+		// f = Util.getFile(this.baseDirectory, "orphanModel.xsd");
+		// if (orphanModelImport.length() > 0) {
+		// this.getLog().info(
+		// new StringBuffer().append("Write ").append(
+		// f.getAbsolutePath()));
+		// try {
+		// Util.writeToFile(f, orphanModelImport);
+		// } catch (Exception e) {
+		// this.getLog().error(e.getMessage());
+		// e.printStackTrace();
+		// }
+		//
+		// xsdContainerMap = XsdsUtil.getXsdContainers(this.baseDirectory);
+		// }
 
-		File f = Util.getFile(this.outputDirectory, "schemaFileList.txt");
+		String schemaFileList = this.getSchemaList(xsdContainerMap);
+
+		f = Util.getFile(this.outputDirectory, "schemaFileList.txt");
 		this.getLog()
 				.info(new StringBuffer().append("Write ").append(
 						f.getAbsolutePath()));
 		try {
-			Util.writeToFile(f, schemaFileList.toString());
+			Util.writeToFile(f, schemaFileList);
 		} catch (Exception e) {
 			this.getLog().error(e.getMessage());
 			e.printStackTrace();
@@ -171,6 +196,60 @@ public class GenerateMojo extends AbstractMojo {
 		}
 	}
 
+	public static String getOrphanModels(final Map<String, XsdContainer> xsds,
+			final String messagePackageNameSuffix,
+			final String baseMessageTargetNamespace,
+			final String orphanNamespace) {
+		StringBuffer sb = new StringBuffer(1024);
+		XsdContainer baseMessageXsdContainer = xsds
+				.get(baseMessageTargetNamespace);
+
+		Map<String, String> notImported = XsdsUtil.getNotImportedModels(xsds,
+				messagePackageNameSuffix);
+		if (notImported.size() > 0) {
+
+			sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
+			sb.append("<schema xmlns=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" jaxb:version=\"2.0\" \n");
+			if (baseMessageXsdContainer != null) {
+				sb.append("\txmlns:baseMessageTargetNamespace=\"")
+						.append(baseMessageTargetNamespace).append("\"\n");
+			}
+			sb.append("\txmlns:jaxb=\"http://java.sun.com/xml/ns/jaxb\" \n");
+			sb.append("\ttargetNamespace=\"").append(orphanNamespace)
+					.append("\">\n");
+			sb.append("\n");
+			if (baseMessageXsdContainer != null) {
+				sb.append("\t<import namespace=\"")
+						.append(baseMessageTargetNamespace)
+						.append("\" schemaLocation=\"")
+						.append(baseMessageXsdContainer.getFile().toURI())
+						.append("\"/>\n");
+			}
+			XsdContainer xsdContainer;
+			for (Entry<String, String> notImp : notImported.entrySet()) {
+				xsdContainer = xsds.get(notImp.getKey());
+				if (xsdContainer != null) {
+					sb.append("\t<import namespace=\"").append(notImp.getKey())
+							.append("\" schemaLocation=\"")
+							.append(xsdContainer.getFile().toURI())
+							.append("\"/>\n");
+				}
+			}
+			sb.append("\n");
+			sb.append("\t<annotation>\n");
+			sb.append("\t\t<appinfo>\n");
+			sb.append("\t\t\t<jaxb:schemaBindings>\n");
+			sb.append("\t\t\t\t<jaxb:package name=\"\"/>\n");
+			sb.append("\t\t\t</jaxb:schemaBindings>\n");
+			sb.append("\t\t</appinfo>\n");
+			sb.append("\t</annotation>\n");
+			sb.append("</schema>\n");
+			sb.append("\n");
+		}
+
+		return sb.toString();
+	}
+
 	private String getSchemaList(final Map<String, XsdContainer> xsdContainerMap) {
 		StringBuffer sb = new StringBuffer(1024);
 		Set<String> imported = new TreeSet<String>();
@@ -200,23 +279,6 @@ public class GenerateMojo extends AbstractMojo {
 							this.baseDirectory, xc.getFile()).substring(1));
 				}
 			}
-			// TreeMap<String, File> files = new TreeMap<String, File>();
-			// for (XsdContainer xc : xsdContainerMap.values()) {
-			// files.put(xc.getTargetNamespace(), xc.getFile());
-			// }
-			// for (XsdContainer xc : xsdContainerMap.values()) {
-			// for (String importedNamespace : xc
-			// .getImportedTargetNamespaces()) {
-			// files.remove(importedNamespace);
-			// }
-			// }
-			// for (Entry<String, File> entry : files.entrySet()) {
-			// if (sb.length() > 0) {
-			// sb.append(",\n");
-			// }
-			// sb.append(Util.getRelativePathTranslated(this.baseDirectory,
-			// entry.getValue()).substring(1));
-			// }
 		}
 		return sb.toString();
 	}

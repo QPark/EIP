@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.plugin.xmapper.GeneratorMapper.ComplexContent;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
@@ -43,6 +42,45 @@ public abstract class AbstractGenerator {
 		return value;
 	}
 
+	public static String toJavadocHeader(final String documentation) {
+		int lenght = 77;
+		String s = documentation.replaceAll("\\t", " ").replaceAll("\\n", " ")
+				.replaceAll("( )+", " ");
+		StringBuffer sb = new StringBuffer();
+		while (s.length() > 0) {
+			int index = s.substring(0, Math.min(lenght, s.length()))
+					.lastIndexOf(' ');
+			if (s.length() < lenght || index < 0) {
+				if (sb.length() > 0) {
+					sb.append("\n * ");
+				}
+				sb.append(s.trim());
+				s = "";
+			} else {
+				if (index > 0) {
+					sb.append("\n * ");
+					sb.append(s.substring(0, index).trim());
+					s = s.substring(index + 1, s.length());
+				}
+			}
+		}
+		s = sb.toString();
+		if (s.charAt(s.length() - 1) != '.') {
+			sb.append(".\n");
+		} else {
+			sb.append("\n");
+		}
+		sb.replace(0, 1, "");
+		return sb.toString();
+
+	}
+
+	public static void main(final String[] args) {
+		System.out.println(toJavadocHeader("a\t\t\tb\n\tc    d    e  f"));
+		String s = "'Activated' if bandwidth segment life cycle UUID is part of the reference data category\n\t\t\t\t'Lifecycle State Filter: Bandwidth Segments: Transfer' else 'Deactivated'\n\n\n";
+		System.out.println(toJavadocHeader(s));
+	}
+
 	public static final boolean isListImport(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
 		boolean value = false;
@@ -59,25 +97,16 @@ public abstract class AbstractGenerator {
 		return value;
 	}
 
-	protected final List<ComplexContent> complexMappings;
 	protected final XsdsUtil config;
-	protected final List<ComplexContent> defaultMappings;
-	protected final List<ComplexContent> directMappings;
-	protected final List<ComplexContent> interfaceTypes;
 	protected final Log log;
 	protected String packageName;
 	protected String packageNameImpl;
+	protected final ComplexContentList complexContentList;
 
 	AbstractGenerator(final XsdsUtil config,
-			final List<ComplexContent> directMappings,
-			final List<ComplexContent> defaultMappings,
-			final List<ComplexContent> complexMappings,
-			final List<ComplexContent> interfaceTypes, final Log log) {
+			final ComplexContentList complexContentList, final Log log) {
 		this.config = config;
-		this.directMappings = directMappings;
-		this.defaultMappings = defaultMappings;
-		this.complexMappings = complexMappings;
-		this.interfaceTypes = interfaceTypes;
+		this.complexContentList = complexContentList;
 		this.log = log;
 	}
 
@@ -192,7 +221,8 @@ public abstract class AbstractGenerator {
 
 	protected final ComplexContent getMapperDefinition(final ComplexType ct) {
 		ComplexContent cc = null;
-		for (ComplexContent complexContent : this.directMappings) {
+		for (ComplexContent complexContent : this.complexContentList
+				.getDirectMappings()) {
 			if (complexContent.ct.getClassNameFullQualified().equals(
 					ct.getClassNameFullQualified())) {
 				cc = complexContent;
@@ -200,7 +230,8 @@ public abstract class AbstractGenerator {
 			}
 		}
 		if (cc == null) {
-			for (ComplexContent complexContent : this.defaultMappings) {
+			for (ComplexContent complexContent : this.complexContentList
+					.getDefaultMappings()) {
 				if (complexContent.ct.getClassNameFullQualified().equals(
 						ct.getClassNameFullQualified())) {
 					cc = complexContent;
@@ -209,7 +240,8 @@ public abstract class AbstractGenerator {
 			}
 		}
 		if (cc == null) {
-			for (ComplexContent complexContent : this.complexMappings) {
+			for (ComplexContent complexContent : this.complexContentList
+					.getComplexMappings()) {
 				if (complexContent.ct.getClassNameFullQualified().equals(
 						ct.getClassNameFullQualified())) {
 					cc = complexContent;

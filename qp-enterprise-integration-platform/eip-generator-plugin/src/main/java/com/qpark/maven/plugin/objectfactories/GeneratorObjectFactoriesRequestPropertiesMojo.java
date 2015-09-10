@@ -38,7 +38,8 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  */
 @Mojo(name = "generate-objectfactories", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 @Deprecated
-public class GeneratorObjectFactoriesRequestPropertiesMojo extends AbstractMojo {
+public class GeneratorObjectFactoriesRequestPropertiesMojo
+		extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
@@ -88,14 +89,16 @@ public class GeneratorObjectFactoriesRequestPropertiesMojo extends AbstractMojo 
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
-		ModelObjectFactoryGenerator mof = new ModelObjectFactoryGenerator(xsds,
-				this.outputDirectory, this.messagePackageNameSuffix,
-				this.getLog());
-		mof.generate();
-		ServiceObjectFactoryGenerator sof = new ServiceObjectFactoryGenerator(
-				xsds, this.outputDirectory, this.messagePackageNameSuffix,
-				this.getLog());
-		sof.generate();
+		// ModelObjectFactoryGenerator mof = new
+		// ModelObjectFactoryGenerator(xsds,
+		// this.outputDirectory, this.messagePackageNameSuffix,
+		// this.getLog());
+		// mof.generate();
+		// ServiceObjectFactoryGenerator sof = new
+		// ServiceObjectFactoryGenerator(
+		// xsds, this.outputDirectory, this.messagePackageNameSuffix,
+		// this.getLog());
+		// sof.generate();
 		RequestPropertiesGenerator rp = new RequestPropertiesGenerator(xsds,
 				this.outputDirectory, this.serviceIdCommonServices,
 				this.getLog());
@@ -105,8 +108,8 @@ public class GeneratorObjectFactoriesRequestPropertiesMojo extends AbstractMojo 
 		IntegrationGatewayGenerator ig;
 		for (ElementType element : xsds.getElementTypes()) {
 			if (element.isRequest()) {
-				ig = new IntegrationGatewayGenerator(xsds,
-						this.outputDirectory, element, this.getLog());
+				ig = new IntegrationGatewayGenerator(xsds, this.outputDirectory,
+						element, this.getLog());
 				ig.generate();
 				if (ig.isGenerated()) {
 					igs = serviceIgMap.get(ig.getServiceId());
@@ -127,8 +130,8 @@ public class GeneratorObjectFactoriesRequestPropertiesMojo extends AbstractMojo 
 			sopg.generate();
 		}
 		SpringIntegrationConfigGenerator tc = new SpringIntegrationConfigGenerator(
-				xsds, this.basePackageName, this.outputDirectory,
-				this.getLog(), this.project);
+				xsds, this.basePackageName, this.outputDirectory, this.getLog(),
+				this.project);
 		tc.generate();
 		this.getLog().debug("-execute");
 	}

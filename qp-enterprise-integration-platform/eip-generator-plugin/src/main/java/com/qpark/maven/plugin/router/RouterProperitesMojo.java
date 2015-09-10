@@ -258,7 +258,8 @@ public class RouterProperitesMojo extends AbstractMojo {
 								element.getServiceId(), sid)) {
 					String s = this.getRouterProperties(xsds, element);
 					fileName = new StringBuffer(32)
-							.append(element.getServiceId())
+							.append(Util.lowerize(Util.getXjcClassName(element
+									.getServiceId())))
 							.append(element.getOperationName())
 							.append("RouterConfig.properties").toString();
 					f = Util.getFile(this.outputDirectory, fileName);

@@ -13,15 +13,11 @@
 package com.qpark.maven.plugin.xmapper;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.plugin.logging.Log;
-import org.apache.xmlbeans.SchemaProperty;
-import org.apache.xmlbeans.SchemaType;
 
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
@@ -31,13 +27,14 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * @author bhausen
  */
-public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
+public class ComplexUUIDReferenceDataMappingTypeGenerator extends
+		AbstractMappingTypeGenerator {
 	/**
 	 * @see com.qpark.maven.plugin.xmapper.AbstractMappingTypeGenerator#getMappingType()
 	 */
 	@Override
 	protected String getMappingType() {
-		return "DefaultMappingType";
+		return "ComplexUUIDMappingType";
 	}
 
 	/**
@@ -48,7 +45,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		StringBuffer sb = new StringBuffer(128);
 		sb.append(this.complexType.getPackageName().substring(0,
 				this.complexType.getPackageName().lastIndexOf('.')));
-		sb.append(".mapper.direct");
+		sb.append(".mapper.complex");
 		return sb.toString();
 	}
 
@@ -60,7 +57,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return "createMappingType";
 	}
 
-	public DefaultMappingTypeGenerator(final XsdsUtil config,
+	public ComplexUUIDReferenceDataMappingTypeGenerator(final XsdsUtil config,
 			final ComplexType complexType,
 			final ComplexContentList complexContentList, final Log log) {
 		super(config, complexType, complexContentList, log);
@@ -68,6 +65,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 	public void generateImpl(final File outputDirectory) {
 		String s = this.generateImpl();
+
 		File f = Util.getFile(outputDirectory, this.packageNameImpl,
 				new StringBuffer().append(this.implName).append(".java")
 						.toString());
@@ -83,10 +81,51 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 	String generateImpl() {
 		this.log.debug("+generateImpl");
+		boolean isRefenenceUUIDValueMappingType = this.complexType
+				.getClassName().toLowerCase().endsWith("valuemappingtype");
+		String[] propertyNames = getDirectAccessProperties(this.complexType
+				.getType().getName().getLocalPart());
+		if (propertyNames == null || propertyNames.length == 0) {
+			throw new IllegalStateException(
+					new StringBuffer(128)
+							.append("ComplexUUIDMapperType ")
+							.append(this.complexType
+									.getClassNameFullQualified())
+							.append(" defined in namespace ")
+							.append(this.complexType.getTargetNamespace())
+							.append(" does not define any parameters fields to get the UUID description.")
+							.toString());
+		}
 
 		List<ComplexTypeChild> children = this.getChildren();
 
+		if (children == null || children.size() == 0) {
+			throw new IllegalStateException(
+					new StringBuffer(128)
+							.append("ComplexUUIDMapperType ")
+							.append(this.complexType
+									.getClassNameFullQualified())
+							.append(" defined in namespace ")
+							.append(this.complexType.getTargetNamespace())
+							.append(" does not define any parameters to get the UUID description.")
+							.toString());
+		}
+
+		ComplexTypeChild ctc;
+
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
+		if (propertyNames.length > 0 && children != null && children.size() > 0) {
+			ctc = children.get(0);
+			for (int i = 0; i < propertyNames.length; i++) {
+				ctc = ctc.getComplexType().getChild(propertyNames[i]);
+				if (ctc != null) {
+					importedClasses.addAll(ctc.getComplexType()
+							.getJavaImportClasses());
+				} else {
+					break;
+				}
+			}
+		}
 		for (ComplexTypeChild child : children) {
 			importedClasses.addAll(child.getComplexType()
 					.getJavaImportClasses());
@@ -94,47 +133,6 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
 		importedClasses.addAll(this.getImplImports(childrenTree));
-
-		String defaultValue = "";
-		SchemaProperty defaultProperty = this.complexType.getType()
-				.getElementProperties()[0];
-		if (defaultProperty.getType().isSimpleType()
-				&& defaultProperty.getType().getEnumerationValues() != null
-				&& defaultProperty.getType().getEnumerationValues().length == 1) {
-			defaultValue = defaultProperty.getType().getEnumerationValues()[0]
-					.getStringValue();
-		} else {
-			defaultValue = defaultProperty.getDefaultText();
-		}
-		String defaultPropertyName = "return";
-		Class<?> defaultValueClass = null;
-		for (ComplexTypeChild child : this.complexType.getChildren()) {
-			if (child.getChildName().equals(defaultPropertyName)) {
-				defaultValueClass = XsdsUtil.getBuildInBaseTypeClass(child
-						.getComplexType().getType());
-				break;
-			}
-		}
-		if (defaultValueClass == null) {
-			defaultPropertyName = "value";
-			for (ComplexTypeChild child : this.complexType.getChildren()) {
-				if (child.getChildName().equals(defaultPropertyName)) {
-					defaultValueClass = XsdsUtil.getBuildInBaseTypeClass(child
-							.getComplexType().getType());
-					break;
-				}
-			}
-		}
-		if (defaultValueClass == null) {
-			defaultPropertyName = defaultProperty.getName().getLocalPart();
-			defaultValueClass = XsdsUtil
-					.getBuildInBaseTypeClass(defaultProperty.getType());
-		}
-		if (!defaultValueClass.isPrimitive()
-				&& !defaultValueClass.getPackage().getName()
-						.equals("java.lang")) {
-			importedClasses.add(defaultValueClass.getName());
-		}
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
@@ -157,24 +155,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 					.getAnnotationDocumentation()));
 		}
 		sb.append(" * <p/>\n");
-		sb.append(" * The returned {@link ");
-		sb.append(this.complexType.getClassName());
-		sb.append("} is defined as \n");
-		sb.append(" * <i>");
-		sb.append(this.complexType.getType().getName().getLocalPart());
-		sb.append("</i> in name space\n");
-		sb.append(" * <i>");
-		sb.append(this.complexType.getType().getName().getNamespaceURI());
-		sb.append("</i>\n");
-		sb.append(" * (see ");
-		sb.append(this.config.getXsdContainerMap(
-				this.complexType.getTargetNamespace()).getRelativeName());
-		sb.append(").\n");
-		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
-		sb.append(" * <pre>");
-		sb.append(Util.getGeneratedAt());
-		sb.append("</pre>\n");
 		sb.append(" * @author bhausen\n");
 		sb.append(" */\n");
 		sb.append("@Component\n");
@@ -184,26 +165,18 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.interfaceName);
 		sb.append(" {\n");
 
-		sb.append("\t/** The default value to set. */\n");
-		sb.append("\tpublic static final ");
-		sb.append(defaultValueClass.getSimpleName());
-		sb.append(" DEFAULT_VALUE = ");
-		if (defaultValueClass.isPrimitive()) {
-			sb.append(defaultValue);
-		} else if (BigDecimal.class.equals(defaultValueClass)) {
-			sb.append("new BigDecimal(\"");
-			sb.append(defaultValue);
-			sb.append("\")");
+		String defaultDefinitions = this
+				.getDefaultDefinitions("private static final");
+		if (defaultDefinitions.length() > 0) {
+			sb.append(defaultDefinitions);
 		} else {
-			sb.append(defaultValueClass.getSimpleName());
-			sb.append(".valueOf(\"");
-			sb.append(defaultValue);
-			sb.append("\")");
+			throw new IllegalStateException(new StringBuffer(128)
+					.append("ComplexUUIDMapperType ")
+					.append(this.complexType.getClassNameFullQualified())
+					.append(" defined in namespace ")
+					.append(this.complexType.getTargetNamespace())
+					.append(" does not define any default.").toString());
 		}
-		sb.append(";\n");
-		// sb.append(this.getDefaultDefinitions("private static final"));
-		// sb.append("\n");
-
 		sb.append("\t/** The {@link ObjectFactory}. */\n");
 		sb.append("\tprivate final ObjectFactory of = new ObjectFactory();\n");
 
@@ -222,7 +195,6 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.config.getXsdContainerMap(
 				this.complexType.getTargetNamespace()).getRelativeName());
 		sb.append(".\n");
-
 		sb.append(this.getSeeInterfaceJavaDoc(children));
 		sb.append("\t */\n");
 
@@ -241,33 +213,68 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.getSetterStatements("mappingType", children));
 		sb.append("\n");
 
-		sb.append("\t\tmappingType.set");
-		sb.append(Util.capitalize(defaultPropertyName));
-		sb.append("(DEFAULT_VALUE);\n");
+		String uuidPropertyName = new StringBuffer(32).append(propertyNames[0])
+		// .append("UUIDValue")
+				.toString();
+		String uuidMappedPropertyName = "mappedUUIDValue";
+		sb.append("\t\tString ");
+		sb.append(uuidMappedPropertyName);
+		sb.append(" = null;\n");
+		ctc = children.get(0);
+		for (int i = 0; i < propertyNames.length; i++) {
+			ctc = ctc.getComplexType().getChild(propertyNames[i]);
+			if (ctc != null) {
+				sb.append("\t\t");
+				sb.append(ctc.getJavaVarDefinition());
+				sb.append(" = ");
+				sb.append(ctc.getJavaDefaultValue());
+				sb.append(";\n");
+			} else {
+				break;
+			}
+		}
+		sb.append(this.getProperty(children.get(0), 0, propertyNames));
+
+		if (children != null) {
+			for (ComplexTypeChild child : children) {
+				if (child.getJavaImportClass().endsWith("ReferenceDataType")) {
+					sb.append("\t\tif (");
+					sb.append(uuidPropertyName);
+					sb.append(" != null) {\n");
+					sb.append("\t\t\tfor (ReferenceDataType entryOfEnumerations : enumerations) {\n");
+					sb.append("\t\t\t\tif (");
+					sb.append(uuidPropertyName);
+					sb.append(".equals(entryOfEnumerations.getUUID())) {\n");
+					sb.append("\t\t\t\t\t");
+					sb.append(uuidMappedPropertyName);
+					if (isRefenenceUUIDValueMappingType) {
+						sb.append(" = entryOfEnumerations.getValue();\n");
+					} else {
+						sb.append(" = entryOfEnumerations.getName();\n");
+					}
+					sb.append("\t\t\t\t\tbreak;\n");
+					sb.append("\t\t\t\t}\n");
+					sb.append("\t\t\t}\n");
+					sb.append("\t\t}\n");
+					break;
+				}
+			}
+		}
+
+		sb.append("\n");
+		sb.append("\t\tmappingType.setValue(");
+		sb.append(uuidMappedPropertyName);
+		sb.append(");\n");
+		sb.append("\t\tmappingType.setReturn(");
+		sb.append(uuidMappedPropertyName);
+		sb.append(");\n");
 
 		sb.append("\t\treturn mappingType;\n");
 		sb.append("\t}\n");
 		sb.append("}\n");
+
 		this.log.debug("-generateImpl");
 		return sb.toString();
-	}
-
-	private static void listProperties(final SchemaType type) {
-		Object[] empty = new Object[0];
-		Method[] ms = SchemaType.class.getMethods();
-		for (Method m : ms) {
-			if (
-			// m.getModifiers() == Modifier.PUBLIC
-			// &&
-			m.getParameterTypes().length == 0) {
-				try {
-					System.out.println(m.getName() + " "
-							+ m.invoke(type, empty));
-				} catch (Exception e) {
-					System.out.println("\t" + e.getMessage());
-				}
-			}
-		}
 	}
 
 	private String getProperty(final ComplexTypeChild object, int index,
@@ -277,37 +284,38 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		String propertyName = Util.getXjcPropertyName(propertyNames[index]);
 		ComplexTypeChild child = object.getComplexType().getChild(
 				propertyNames[index]);
+		if (child != null) {
+			sb.append("").append(tabs);
+			sb.append("if (").append(object.getJavaChildName())
+					.append(" != null");
+			if (object.isList()) {
+				sb.append(" && ").append(object.getJavaChildName())
+						.append(".size() > 0");
+			}
+			sb.append("){\n");
+			sb.append(tabs).append("\t/* Get the ");
+			sb.append(propertyName);
+			sb.append(" of ");
+			sb.append(object.getComplexType().getType().getName());
+			if (object.isList()) {
+				sb.append(" (first entry out of the list)");
+			}
+			sb.append(". */\n");
 
-		sb.append("").append(tabs);
-		sb.append("if (").append(object.getJavaChildName()).append(" != null");
-		if (object.isList()) {
-			sb.append(" && ").append(object.getJavaChildName())
-					.append(".size() > 0");
-		}
-		sb.append("){\n");
-		sb.append(tabs).append("\t/* Get the ");
-		sb.append(propertyName);
-		sb.append(" of ");
-		sb.append(object.getComplexType().getType().getName());
-		if (object.isList()) {
-			sb.append(" (first entry out of the list)");
-		}
-		sb.append(". */\n");
+			sb.append(tabs).append("\t");
+			sb.append(propertyName).append(" = ");
+			sb.append(object.getJavaChildName());
+			if (object.isList()) {
+				sb.append(".get(0)");
+			}
+			sb.append(".").append(child.getGetterName()).append("();\n");
+			index++;
+			if (index < propertyNames.length) {
+				sb.append(this.getProperty(child, index, propertyNames));
+			}
 
-		sb.append(tabs).append("\t");
-		sb.append(propertyName).append(" = ");
-		sb.append(object.getJavaChildName());
-		if (object.isList()) {
-			sb.append(".get(0)");
+			sb.append(tabs).append("}\n");
 		}
-		sb.append(".").append(child.getGetterName()).append("();\n");
-		index++;
-		if (index < propertyNames.length) {
-			sb.append(this.getProperty(child, index, propertyNames));
-		}
-
-		sb.append(tabs).append("}\n");
-
 		return sb.toString();
 	}
 

@@ -26,7 +26,9 @@ public class ServiceIdRegistry {
 	 * @return
 	 */
 	public static Collection<String> getAllServiceIds() {
-		return serviceIds;
+		Set<String> ts = new TreeSet<String>();
+		ts.addAll(serviceIds);
+		return ts;
 	}
 
 	private static int getIndexDeltaSuffix(final String packageName,
@@ -123,6 +125,7 @@ public class ServiceIdRegistry {
 				}
 				entry = new ServiceIdEntry(serviceId, packageName,
 						targetNamespace);
+				System.out.println(entry);
 				serviceIdPackageNameMap.put(packageName, entry);
 				serviceIdTargetNamespaceMap.put(targetNamespace, entry);
 				serviceIdMap.put(serviceId, entry);
@@ -231,13 +234,20 @@ public class ServiceIdRegistry {
 	private static void setServiceEntryImports(final ServiceIdEntry entry,
 			final Map<String, XsdContainer> map) {
 		XsdContainer container = map.get(entry.getTargetNamespace());
-		ServiceIdEntry child;
-		for (String importedTargetNamespace : container
-				.getImportedTargetNamespaces()) {
-			child = serviceIdTargetNamespaceMap.get(importedTargetNamespace);
-			if (child != null) {
-				entry.getImportedServiceEntries().add(child);
-				setServiceEntryImports(child, map);
+		if (container == null) {
+			throw new IllegalStateException(
+					"No ServiceIdEntry found for target namespace \""
+							+ entry.getTargetNamespace() + "\"!");
+		} else {
+			ServiceIdEntry child;
+			for (String importedTargetNamespace : container
+					.getImportedTargetNamespaces()) {
+				child = serviceIdTargetNamespaceMap
+						.get(importedTargetNamespace);
+				if (child != null) {
+					entry.getImportedServiceEntries().add(child);
+					setServiceEntryImports(child, map);
+				}
 			}
 		}
 	}
@@ -246,7 +256,13 @@ public class ServiceIdRegistry {
 		ServiceIdEntry entry;
 		for (String serviceId : serviceIds) {
 			entry = serviceIdMap.get(serviceId);
-			setServiceEntryImports(entry, xsds.getXsdContainerMap());
+			if (entry == null) {
+				throw new IllegalStateException(
+						"No ServiceIdEntry found for serviceId \"" + serviceId
+								+ "\"!");
+			} else {
+				setServiceEntryImports(entry, xsds.getXsdContainerMap());
+			}
 		}
 	}
 
