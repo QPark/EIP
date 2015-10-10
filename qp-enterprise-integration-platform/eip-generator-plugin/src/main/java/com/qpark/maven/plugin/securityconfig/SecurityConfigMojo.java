@@ -421,6 +421,11 @@ public class SecurityConfigMojo extends AbstractMojo {
 								.append("ROLE_")
 								.append(element.getServiceId().toUpperCase())
 								.toString();
+						String serviceVersionLessRole = serviceRole;
+						if (serviceRole.indexOf(".V") > 0) {
+							serviceVersionLessRole = serviceRole.substring(0,
+									serviceRole.indexOf(".V"));
+						}
 						String operationRole = new StringBuffer(64)
 								.append(serviceRole)
 								.append("_")
@@ -434,9 +439,19 @@ public class SecurityConfigMojo extends AbstractMojo {
 									.getChannelSecurityPatternService());
 							sb.append("\" send-access=\"");
 							sb.append(serviceRole);
+							if (!serviceRole.equals(serviceVersionLessRole)) {
+								sb.append(", ");
+								sb.append(serviceVersionLessRole);
+								this.roleList.add(serviceVersionLessRole);
+							}
 							sb.append(", ROLE_ALL_OPERATIONS");
 							sb.append("\" receive-access=\"");
 							sb.append(serviceRole);
+							if (!serviceRole.equals(serviceVersionLessRole)) {
+								sb.append(", ");
+								sb.append(serviceVersionLessRole);
+								this.roleList.add(serviceVersionLessRole);
+							}
 							sb.append(", ROLE_ALL_OPERATIONS");
 							sb.append("\" />\n");
 						}

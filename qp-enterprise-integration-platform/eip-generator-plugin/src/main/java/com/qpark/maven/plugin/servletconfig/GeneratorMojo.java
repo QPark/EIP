@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -91,6 +91,12 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The bean definition of the additional web service payload interceptors. */
 	@Parameter(property = "additionalWebservicePayloadInterceptors", defaultValue = "")
 	private String additionalWebservicePayloadInterceptors;
+	/**
+	 * <code>true</code>, if no payload validation should be added to the web
+	 * service endpoint .
+	 */
+	@Parameter(property = "disableWebservicePayloadValidation", defaultValue = "false")
+	private boolean disableWebservicePayloadValidation;
 
 	/** The class name of the implementing webservice pay load logger. */
 	@Parameter(property = "webservicePayloadLoggerImplementation", defaultValue = "com.qpark.eip.core.spring.PayloadLogger")
@@ -129,6 +135,7 @@ public class GeneratorMojo extends AbstractMojo {
 		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds,
 				this.basePackageName, this.serviceId,
 				this.serviceIdCommonServices, this.serviceCreationWithCommon,
+				this.disableWebservicePayloadValidation,
 				this.webservicePayloadLoggerImplementation,
 				this.additionalWebservicePayloadInterceptors,
 				this.outputDirectory, this.project, this.getLog());

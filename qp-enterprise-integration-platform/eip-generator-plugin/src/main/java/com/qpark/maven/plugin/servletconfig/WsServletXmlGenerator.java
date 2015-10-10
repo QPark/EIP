@@ -50,7 +50,7 @@ public class WsServletXmlGenerator {
 	private final String basePackageName;
 	private final String additionalWebservicePayloadInterceptors;
 	private final String webservicePayloadLoggerImplementation;
-
+	private final boolean disableWebservicePayloadValidation;
 	private final MavenProject project;
 
 	public static void main(final String[] args) {
@@ -87,6 +87,7 @@ public class WsServletXmlGenerator {
 			final String basePackageName, final String serviceId,
 			final String serviceIdCommonServices,
 			final boolean serviceCreationWithCommon,
+			final boolean disableWebservicePayloadValidation,
 			final String webservicePayloadLoggerImplementation,
 			final String additionalWebservicePayloadInterceptors,
 			final File outputDirectory, final MavenProject project,
@@ -100,7 +101,7 @@ public class WsServletXmlGenerator {
 		this.project = project;
 		this.log = log;
 		this.elementTypes = config.getElementTypes();
-
+		this.disableWebservicePayloadValidation = disableWebservicePayloadValidation;
 		if (webservicePayloadLoggerImplementation == null) {
 			this.webservicePayloadLoggerImplementation = PAYLOAD_LOGGER;
 		} else {
@@ -132,8 +133,10 @@ public class WsServletXmlGenerator {
 		sb.append("\n");
 		sb.append(this.getPayloadLoggingInterceptor());
 		sb.append("\n");
-		sb.append(this.getPayloadValidatingInterceptor());
-		sb.append("\n");
+		if (!this.disableWebservicePayloadValidation) {
+			sb.append(this.getPayloadValidatingInterceptor());
+			sb.append("\n");
+		}
 		sb.append(this.getEndPointMappings());
 		sb.append("</beans>\n");
 
@@ -168,7 +171,9 @@ public class WsServletXmlGenerator {
 		sb.append("\t\t\t<list>\n");
 		sb.append("\t\t\t\t<ref local=\"wsSecurityInterceptor\" />\n");
 		sb.append("\t\t\t\t<ref local=\"payloadLoggingInterceptor\" />\n");
-		sb.append("\t\t\t\t<ref local=\"payloadValidatingInterceptor\" />\n");
+		if (!this.disableWebservicePayloadValidation) {
+			sb.append("\t\t\t\t<ref local=\"payloadValidatingInterceptor\" />\n");
+		}
 		List<String> beanIds = this
 				.getAdditionalWebservicePayloadInterceptors();
 		for (String beanId : beanIds) {

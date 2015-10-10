@@ -97,12 +97,6 @@ public class OperationProviderMockGenerator {
 			sb.append("import ");
 			sb.append(this.failureHandlerClassName);
 			sb.append(";\n");
-			// sb.append("import ");
-			// sb.append(this.config.getBasePackageName());
-			// sb.append(".ServiceObjectFactory;\n");
-			sb.append("import ");
-			sb.append(this.config.getBasePackageName());
-			sb.append(".RequestProperties;\n");
 			sb.append("import ");
 			sb.append(this.fqRequestType);
 			sb.append(";\n");
@@ -138,9 +132,6 @@ public class OperationProviderMockGenerator {
 			sb.append(this.elementRequest.getClassNameMockOperationProvider());
 			sb.append(".class);\n");
 
-			// sb.append("	/** The {@link ServiceObjectFactory}. */\n");
-			// sb.append("	@Autowired\n");
-			// sb.append("	private ServiceObjectFactory of;\n");
 			sb.append("\n");
 			sb.append("	/** The {@link ObjectFactory}. */\n");
 			sb.append("	private final ObjectFactory of = new ObjectFactory();\n");
@@ -180,12 +171,6 @@ public class OperationProviderMockGenerator {
 			sb.append(this.responseType);
 			sb.append("();\n");
 
-			sb.append("\t\tRequestProperties<");
-			sb.append(this.requestType);
-			sb.append("> rp = new RequestProperties<");
-			sb.append(this.requestType);
-			sb.append(">(request, response);\n");
-
 			sb.append("\t\tlong start = System.currentTimeMillis();\n");
 
 			sb.append("\t\ttry {\n");
@@ -197,12 +182,11 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t\tif (responseSample != null) {\n");
 			sb.append("\t\t\t\tresponse = responseSample;\n");
 			sb.append("\t\t\t}\n");
-			sb.append("\t\t\t// rp.addFailures(response);\n");
-			sb.append("\t\t\tresponse.getFailure().clear();\n");
+			sb.append("\t\t\t// response.getFailure().clear();\n");
 			sb.append("\t\t\t// The operation {0} of service {1} is not implement!!\n");
-			sb.append("\t\t\tresponse.getFailure().add(\n");
-			sb.append("\t\t\t\tFailureHandler.getFailureType(\"E_NOT_IMPLEMENTED_OPERATION\", \n");
-			sb.append("\t\t\t\t\t\"");
+			sb.append("\t\t\t// response.getFailure().add(\n");
+			sb.append("\t\t\t//\tFailureHandler.getFailureType(\"E_NOT_IMPLEMENTED_OPERATION\", \n");
+			sb.append("\t\t\t//\t\t\"");
 			sb.append(Util.splitOnCapital(this.methodName));
 			sb.append("\", \"");
 			sb.append(this.serviceId);
@@ -212,7 +196,8 @@ public class OperationProviderMockGenerator {
 
 			sb.append("\t\t\t/* Add a not covered error to the response. */\n");
 			sb.append("\t\t\tthis.logger.error(e.getMessage(), e);\n");
-			sb.append("\t\t\tFailureHandler.handleException(e, rp, \"E_ALL_NOT_KNOWN_ERROR\",\n");
+			sb.append("\t\t\t// response.getFailure().add(\n");
+			sb.append("\t\t\tFailureHandler.handleException(e, \"E_ALL_NOT_KNOWN_ERROR\",\n");
 			sb.append("\t\t\t\t\tthis.logger);\n");
 
 			sb.append("\t\t} finally {\n");
