@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+	xmlns:ISScty="http://www.samples.com/CommonTypes"
+	xmlns:ISSctym="http://www.samples.com/Common/CommonServiceMessages"
+	targetNamespace="http://www.samples.com/Common/CommonServiceMessages"
+	elementFormDefault="unqualified" >
+	
+	<import schemaLocation="http://www.samples.com/model/ISS/Common/Common.xsd" namespace="http://www.samples.com/CommonTypes"/>
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.samples.platform.service.common.msg" />
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>
 <!--
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
  * 
@@ -10,24 +24,6 @@
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	xmlns:ISSctym="http://www.samples.com/Common/CommonServiceMessages"
-	targetNamespace="http://www.samples.com/Common/CommonServiceMessages"
-	xmlns:ISScty="http://www.samples.com/CommonTypes"
-	elementFormDefault="unqualified" jaxb:version="2.0" >
-	
-	<import
-		schemaLocation="http://www.samples.com/model/ISS/Common/Common.xsd"
-		namespace="http://www.samples.com/CommonTypes">
-	</import>
-	<annotation>
-		<appinfo>
-			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.service.common.msg" />
-			</jaxb:schemaBindings>
-		</appinfo>
-		<documentation>
 			Message definitions of the common web service.
 		</documentation>
 	</annotation>

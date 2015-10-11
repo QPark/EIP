@@ -33,7 +33,7 @@ and contained in the resulting maven artefact.
 
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
-		<domain.schema.location.prefix>http://www.samples.com, http://www.qpark.com</domain.schema.location.prefix>
+		<domain.schema.location.prefix>http://www.samples.com/model, http://www.qpark.com/model</domain.schema.location.prefix>
 		<eip.version>1.0.13</eip.version>
 		<eip.generator.version>2.0.0</eip.generator.version>
 		<jaxb.impl.version>2.2.7</jaxb.impl.version>
@@ -170,26 +170,30 @@ and contained in the resulting maven artefact.
 			</plugin>
 		</plugins>
 	</build>
-	
-	<scm>
-		<connection>scm:svn:https://10.8.128.17/svn/com.samples.domain.gen/trunk</connection>
-		<developerConnection>scm:svn:https://10.8.128.17/svn/com.samples.domain.gen/trunk</developerConnection>
-		<url>https://10.8.128.17/svn/com.samples.domain.gen/trunk</url>
-	</scm>
 	<repositories>
-		<repository>
-			<id>osp</id>
-			<url>http://nexus.dev.osp.ses:8081/nexus/content/groups/osp</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>osp</id>
-			<url>http://nexus.dev.osp.ses:8081/nexus/content/groups/osp</url>
-		</pluginRepository>
-	</pluginRepositories>
+    <repository>
+      <id>java.net</id>
+      <url>https://maven.java.net/content/repositories/public/</url>
+    </repository>
+    <repository>
+    <id>spring-milestones</id>
+    <url>http://repo.spring.io/libs-milestone/</url>
+    </repository>
+ </repositories>
+	
 	<organization>
-		<name>SES</name>
-		<url>http://www.ses.com</url>
+		<name>QPark Consulting s.a r.l</name>
+		<url>http://www.qpark-consulting.com</url>
 	</organization>
+
+	<distributionManagement>
+		<repository>
+			<id>${repository.id}</id>
+			<url>${repository.url}</url>
+		</repository>
+		<site>
+			<id>site-server</id>
+			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
+		</site>
+	</distributionManagement>
 </project>

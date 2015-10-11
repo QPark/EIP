@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+	xmlns:EIPcty="http://www.qpark.com/CommonTypes" 
+	targetNamespace="http://www.qpark.com/CommonTypes" elementFormDefault="unqualified">
+    <annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.model.common"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>
 <!--
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
  * 
@@ -10,21 +20,7 @@
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
 -->
-<!--  
-Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to license terms. 
--->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"  
-	xmlns:EIPcty="http://www.qpark.com/CommonTypes" 
-	targetNamespace="http://www.qpark.com/CommonTypes" elementFormDefault="unqualified">
-
-    <annotation>
-		<appinfo>
-			<jaxb:schemaBindings>
-				<jaxb:package name="com.qpark.eip.model.common"/>
-			</jaxb:schemaBindings>
-		</appinfo>
+		</documentation>
 	</annotation>
 	
 	<simpleType name="RegularExpressionType">
