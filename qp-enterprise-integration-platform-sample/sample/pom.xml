@@ -23,6 +23,18 @@
 		<![CDATA[Sample Platform.]]>
 	</description>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.sprin g.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>${io.spring.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<modules>
 		<module>platform-domain-model-persistence</module>
 		<module>platform-domain-model-ddl</module>
@@ -42,6 +54,18 @@
 		</dependency>
 	</dependencies>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.test.failure.ignore>false</maven.test.failure.ignore>
+
+		<com.ses.domain.version>3.1.4</com.ses.domain.version>
+
+		<io.spring.platform.version>1.1.2.RELEASE</io.spring.platform.version>
+		<jaxb.impl.version>2.2.7</jaxb.impl.version>
+		<junit.version>4.9</junit.version>
+	</properties>
+<!--
 	<properties>
 		<maven.test.skip.exec>true</maven.test.skip.exec>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -112,7 +136,7 @@
 		<log4j.version>1.2.16</log4j.version>
 		<junit.version>4.9</junit.version>
 	</properties>
-
+-->
 	<inceptionYear>2013</inceptionYear>
 
 	<developers>

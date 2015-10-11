@@ -1,0 +1,184 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.samples.domain.gen</groupId>
+	<artifactId>domain-gen-flow</artifactId>
+	<version>2.0.0</version>
+	<packaging>jar</packaging>
+	<name>domain-gen-flow</name>
+	<description>
+This pom contains the call of the EIP generators that create the flow, mapping 
+operation and mapper interfaces. Additionally the direct mappers are generated 
+and contained in the resulting maven artefact.
+	</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<base.package.name>com.samples.bus</base.package.name>
+
+		<interface.gen.dir>${project.build.directory}/generated-sources</interface.gen.dir>
+		<impl.gen.dir>${project.build.directory}/generated-xxx</impl.gen.dir>
+
+		<model.dir>${project.build.directory}/model</model.dir>
+		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
+		<domain.schema.location.prefix>http://213.169.104.125:8080/schemas, http://www.ses.com/model</domain.schema.location.prefix>
+		<eip.version>1.0.12</eip.version>
+		<eip.generator.version>2.0.0</eip.generator.version>
+		<jaxb.impl.version>2.2.7</jaxb.impl.version>
+		<javax.servlet.version>3.0.1</javax.servlet.version>
+		<commons.beanutils.version>1.8.3</commons.beanutils.version>
+		<org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+		<com.springsource.insight.version>1.9.2.RELEASE</com.springsource.insight.version>
+		<org.slf4j.version>1.7.5</org.slf4j.version>
+	</properties>
+	<dependencies>
+	<!-- -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>domain-gen-jaxb</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+<dependency>
+  <groupId>com.springsource.insight</groupId>
+  <artifactId>insight-annotation</artifactId>
+  <version>${com.springsource.insight.version}</version>
+</dependency>
+		<!-- -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb.impl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons.beanutils.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<sourceDirectory>${interface.gen.dir}</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>add-source-folders</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${interface.gen.dir}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-generator-plugin</artifactId>
+				<version>${eip.generator.version}</version>
+				<executions>
+					<execution>
+						<id>generate schema file list and catalog to prepare xjc</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-mapper</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputInterfacesDirectory>${interface.gen.dir}</outputInterfacesDirectory>
+							<outputClassesDirectory>${impl.gen.dir}</outputClassesDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>unpack-xsds</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.samples.domain</groupId>
+									<artifactId>model</artifactId>
+									<version>${project.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.samples.domain</groupId>
+									<artifactId>service</artifactId>
+									<version>${project.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.5</version>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly-generated-java-sources.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generated-java-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<scm>
+		<connection>scm:svn:https://10.8.128.17/svn/com.samples.domain.gen/trunk</connection>
+		<developerConnection>scm:svn:https://10.8.128.17/svn/com.samples.domain.gen/trunk</developerConnection>
+		<url>https://10.8.128.17/svn/com.samples.domain.gen/trunk</url>
+	</scm>
+	<repositories>
+		<repository>
+			<id>osp</id>
+			<url>http://nexus.dev.osp.ses:8081/nexus/content/groups/osp</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>osp</id>
+			<url>http://nexus.dev.osp.ses:8081/nexus/content/groups/osp</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<organization>
+		<name>SES</name>
+		<url>http://www.ses.com</url>
+	</organization>
+</project>

@@ -16,8 +16,8 @@
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
-		<eip.version>1.0.12</eip.version>
-		<eip.generator.version>1.0.14</eip.generator.version>
+		<eip.version>1.0.13</eip.version>
+		<eip.generator.version>2.0.0</eip.generator.version>
 		<jaxb.impl.version>2.2.7</jaxb.impl.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 	</properties>
