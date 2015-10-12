@@ -36,16 +36,6 @@
 			<artifactId>jaxb-impl</artifactId>
 			<version>${jaxb.impl.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.xml</groupId>
-			<artifactId>jsr173</artifactId>
-			<version>${javax.xml.jsr173.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>${java.gen.dir}</sourceDirectory>
