@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:MPmp="http://www.ses.com/Interfaces/MappingTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.ses.com/Interfaces/MappingTypes">
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.ses.osp.bus.inf.icd.map"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Interfaces-trunk: Basic mapping type domain model</documentation>
+	</annotation>
+
+	<complexType abstract="true" name="InterfaceType">
+		<sequence>
+			<element name="interfaceName" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType abstract="true" name="InterfaceReferenceType">
+		<sequence>
+			<element name="interfaceName" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType abstract="true" name="MappingType">
+		<sequence>
+			<element name="value" type="anyType"/>
+		</sequence>
+	</complexType>
+	<complexType abstract="true" name="DirectMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="EntityUUIDMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="EntityNameMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="EntityMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="CustomEnumerationMappingType">
+        <annotation>
+        	<documentation>Custom variant of the mapping where the clear text value needs to be derived.</documentation>
+        </annotation>
+        <complexContent>
+			<extension base="MPmp:EnumerationMappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="EnumerationMappingType">
+        <annotation>
+        	<documentation>Mapping of an enuemeration UUID to an EnumerationType containing the UUID and the clear text value.</documentation>
+        </annotation>
+        <complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="ComplexMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="ComplexUUIDMappingType">
+		<complexContent>
+			<extension base="MPmp:ComplexMappingType">
+				<sequence>
+					<element name="return" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType abstract="true" name="CustomMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="DateMappingType">
+		<complexContent>
+			<extension base="MPmp:DirectMappingType">
+				<sequence>
+					<element name="return" type="date" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="DateTimeMappingType">
+		<complexContent>
+			<extension base="MPmp:DirectMappingType">
+				<sequence>
+					<element name="return" type="dateTime" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="NULLMappingType">
+		<complexContent>
+			<extension base="MPmp:DirectMappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="ApplicationUserMappingType">
+		<complexContent>
+			<extension base="MPmp:DirectMappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="NoMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="OpenMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>	</complexType>
+	<complexType name="UnmodifiedMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="IdType">
+		<complexContent>
+			<extension base="MPmp:InterfaceType"/>
+		</complexContent>
+	</complexType>
+</schema>
