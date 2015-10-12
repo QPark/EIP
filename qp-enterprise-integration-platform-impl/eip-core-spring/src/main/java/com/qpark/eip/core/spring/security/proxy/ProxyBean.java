@@ -30,65 +30,77 @@ public final class ProxyBean {
 
     /**
      * gets the password used to connect to proxy server.
+     * 
      * @return the password
      */
     public String getPassword() {
-        return password;
+	return password;
     }
 
     /**
      * gets the proxy host name or IP address.
+     * 
      * @return proxy host name or IP address as a String
      */
     public String getProxyHost() {
-        return proxyHost;
+	return proxyHost;
     }
 
     /**
      * gets the proxy port.
+     * 
      * @return proxy port as a String
      */
     public String getProxyPort() {
-        return proxyPort;
+	return proxyPort;
     }
 
     /**
      * gets the username used to connect to proxy server.
+     * 
      * @return the username.
      */
     public String getUsername() {
-        return username;
+	return username;
     }
 
     /**
      * sets the password that will be used to connect to the proxy server.
-     * @param aPassword the password.
+     * 
+     * @param aPassword
+     *            the password.
      */
     public void setPassword(final String aPassword) {
-        this.password = aPassword;
+	this.password = aPassword;
     }
 
     /**
      * sets the proxy host name or IP address.
-     * @param aProxyHost proxy host name or IP address as a String
+     * 
+     * @param aProxyHost
+     *            proxy host name or IP address as a String
      */
     public void setProxyHost(final String aProxyHost) {
-        this.proxyHost = aProxyHost;
+	this.proxyHost = aProxyHost;
     }
 
     /**
      * sets the proxy port.
-     * @param aProxyPort proxy port a String
+     * 
+     * @param aProxyPort
+     *            proxy port a String
      */
     public void setProxyPort(final String aProxyPort) {
-        this.proxyPort = aProxyPort;
+	this.proxyPort = aProxyPort;
     }
 
     /**
      * sets the username that will be used to connect to the proxy server.
-     * @param aUsername the username.
+     * 
+     * @param aUsername
+     *            the username.
      */
     public void setUsername(final String aUsername) {
-        this.username = aUsername;
+	this.username = aUsername;
     }
 }

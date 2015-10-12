@@ -21,6 +21,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that this class implements an operation.
+ * 
  * @author bhausen
  */
 @Target(ElementType.TYPE)
@@ -28,5 +29,5 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface OperationProvider {
-	String value() default "";
+    String value() default "";
 }

@@ -27,61 +27,59 @@ import javax.xml.transform.stream.StreamSource;
  * @author bhausen
  */
 public abstract class AbstractUnmarschaller {
-	private JAXBContext context = null;
+    private JAXBContext context = null;
 
-	protected abstract String getContextPath();
+    protected abstract String getContextPath();
 
-	protected final JAXBContext getJAXBContext() throws JAXBException {
-		if (this.context == null) {
-			this.context = JAXBContext.newInstance(this.getContextPath());
+    protected final JAXBContext getJAXBContext() throws JAXBException {
+	if (this.context == null) {
+	    this.context = JAXBContext.newInstance(this.getContextPath());
+	}
+	return this.context;
+    }
+
+    public Object getValue(final InputStream is) throws JAXBException {
+	return this.getValue(is, null);
+    }
+
+    public Object getValue(final InputStream is, final Class<?> rootType) throws JAXBException {
+	Object value = null;
+	if (is != null) {
+	    JAXBContext context = this.getJAXBContext();
+	    Unmarshaller unmarshaller = context.createUnmarshaller();
+	    Object element = null;
+	    if (rootType == null) {
+		element = unmarshaller.unmarshal(is);
+	    } else {
+		StreamSource ss = new StreamSource(is);
+		element = unmarshaller.unmarshal(ss, rootType);
+	    }
+	    if (element != null) {
+		if (JAXBElement.class.isInstance(element)) {
+		    value = ((JAXBElement<?>) element).getValue();
+		} else {
+		    value = element;
 		}
-		return this.context;
+	    }
 	}
+	return value;
+    }
 
-	public Object getValue(final InputStream is) throws JAXBException {
-		return this.getValue(is, null);
+    public void writeXml(final OutputStream os, final JAXBElement<?> elem) throws JAXBException {
+	if (os != null && elem != null) {
+	    JAXBContext context = this.getJAXBContext();
+	    Marshaller marshaller = context.createMarshaller();
+	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	    marshaller.marshal(elem, os);
 	}
+    }
 
-	public Object getValue(final InputStream is, final Class<?> rootType)
-			throws JAXBException {
-		Object value = null;
-		if (is != null) {
-			JAXBContext context = this.getJAXBContext();
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			Object element = null;
-			if (rootType == null) {
-				element = unmarshaller.unmarshal(is);
-			} else {
-				StreamSource ss = new StreamSource(is);
-				element = unmarshaller.unmarshal(ss, rootType);
-			}
-			if (element != null) {
-				if (JAXBElement.class.isInstance(element)) {
-					value = ((JAXBElement<?>) element).getValue();
-				} else {
-					value = element;
-				}
-			}
-		}
-		return value;
-	}
-
-	public void writeXml(final OutputStream os, final JAXBElement<?> elem)
-			throws JAXBException {
-		if (os != null && elem != null) {
-			JAXBContext context = this.getJAXBContext();
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.marshal(elem, os);
-		}
-	}
-
-	public String getXml(final JAXBElement<?> elem) throws JAXBException {
-		JAXBContext context = this.getJAXBContext();
-		Marshaller marshaller = context.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		StringWriter sw = new StringWriter();
-		marshaller.marshal(elem, sw);
-		return sw.toString();
-	}
+    public String getXml(final JAXBElement<?> elem) throws JAXBException {
+	JAXBContext context = this.getJAXBContext();
+	Marshaller marshaller = context.createMarshaller();
+	marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	StringWriter sw = new StringWriter();
+	marshaller.marshal(elem, sw);
+	return sw.toString();
+    }
 }

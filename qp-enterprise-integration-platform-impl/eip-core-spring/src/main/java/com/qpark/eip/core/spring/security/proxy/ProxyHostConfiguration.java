@@ -15,40 +15,41 @@ package com.qpark.eip.core.spring.security.proxy;
 import org.apache.commons.httpclient.HostConfiguration;
 
 public class ProxyHostConfiguration extends HostConfiguration {
-	private ProxyBean proxyBean;
+    private ProxyBean proxyBean;
 
-	/**
-	 * @return the proxyBean.
-	 */
-	public ProxyBean getProxyBean() {
-		return this.proxyBean;
-	}
+    /**
+     * @return the proxyBean.
+     */
+    public ProxyBean getProxyBean() {
+	return this.proxyBean;
+    }
 
-	/**
-	 * @see org.apache.commons.httpclient.HostConfiguration#getProxyHost()
-	 */
-	@Override
-	public synchronized String getProxyHost() {
-		return this.proxyBean.getProxyHost();
-	}
+    /**
+     * @see org.apache.commons.httpclient.HostConfiguration#getProxyHost()
+     */
+    @Override
+    public synchronized String getProxyHost() {
+	return this.proxyBean.getProxyHost();
+    }
 
-	/**
-	 * @see org.apache.commons.httpclient.HostConfiguration#getProxyPort()
-	 */
-	@Override
-	public synchronized int getProxyPort() {
-		String s = this.proxyBean.getProxyPort();
-		if (s == null) {
-			return 0;
-		} else {
-			return Integer.parseInt(s);
-		}
+    /**
+     * @see org.apache.commons.httpclient.HostConfiguration#getProxyPort()
+     */
+    @Override
+    public synchronized int getProxyPort() {
+	String s = this.proxyBean.getProxyPort();
+	if (s == null) {
+	    return 0;
+	} else {
+	    return Integer.parseInt(s);
 	}
+    }
 
-	/**
-	 * @param proxyBean the proxyBean to set.
-	 */
-	public void setProxyBean(final ProxyBean proxyBean) {
-		this.proxyBean = proxyBean;
-	}
+    /**
+     * @param proxyBean
+     *            the proxyBean to set.
+     */
+    public void setProxyBean(final ProxyBean proxyBean) {
+	this.proxyBean = proxyBean;
+    }
 }

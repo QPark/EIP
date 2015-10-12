@@ -12,13 +12,11 @@
  ******************************************************************************/
 package com.qpark.eip.core.spring;
 
-
 /**
  * Provides properties loaded by the {@link ApplicationPlaceholderConfigurer}
  * routines.
  * 
  * @author bhausen
  */
-public class ApplicationPlaceholderConfigurer extends
-		AbstractPlaceholderConfigurer {
+public class ApplicationPlaceholderConfigurer extends AbstractPlaceholderConfigurer {
 }

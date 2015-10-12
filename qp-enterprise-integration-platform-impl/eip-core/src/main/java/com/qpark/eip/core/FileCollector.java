@@ -19,48 +19,47 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class FileCollector {
-	private static final FileFilter DIRFILTER = new FileFilter() {
+    private static final FileFilter DIRFILTER = new FileFilter() {
+	@Override
+	public boolean accept(final File pathname) {
+	    return pathname.isDirectory();
+	}
+    };
+
+    public static LinkedList<File> getFiles(final File dir, final String ext) {
+	FilenameFilter ff = null;
+	if (ext != null) {
+	    ff = new FilenameFilter() {
 		@Override
-		public boolean accept(final File pathname) {
-			return pathname.isDirectory();
+		public boolean accept(final File dir, final String name) {
+		    return name.endsWith(ext);
 		}
-	};
-
-	public static LinkedList<File> getFiles(final File dir, final String ext) {
-		FilenameFilter ff = null;
-		if (ext != null) {
-			ff = new FilenameFilter() {
-				@Override
-				public boolean accept(final File dir, final String name) {
-					return name.endsWith(ext);
-				}
-			};
-		}
-		LinkedList<File> list = new LinkedList<File>();
-		getFiles(list, dir, ff);
-		return list;
+	    };
 	}
+	LinkedList<File> list = new LinkedList<File>();
+	getFiles(list, dir, ff);
+	return list;
+    }
 
-	static void getFiles(final LinkedList<File> list, final File dir,
-			final FilenameFilter ff) {
-		if (dir != null) {
-			File[] fs = null;
-			if (ff == null) {
-				fs = dir.listFiles();
-				for (File f : fs) {
-					if (f.isDirectory()) {
-						getFiles(list, f, ff);
-					} else {
-						list.add(f);
-					}
-				}
-			} else {
-				fs = dir.listFiles(DIRFILTER);
-				for (File f : fs) {
-					getFiles(list, f, ff);
-				}
-				list.addAll(Arrays.asList(dir.listFiles(ff)));
-			}
+    static void getFiles(final LinkedList<File> list, final File dir, final FilenameFilter ff) {
+	if (dir != null) {
+	    File[] fs = null;
+	    if (ff == null) {
+		fs = dir.listFiles();
+		for (File f : fs) {
+		    if (f.isDirectory()) {
+			getFiles(list, f, ff);
+		    } else {
+			list.add(f);
+		    }
 		}
+	    } else {
+		fs = dir.listFiles(DIRFILTER);
+		for (File f : fs) {
+		    getFiles(list, f, ff);
+		}
+		list.addAll(Arrays.asList(dir.listFiles(ff)));
+	    }
 	}
+    }
 }

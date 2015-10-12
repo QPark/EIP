@@ -19,11 +19,12 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Indicates that some thing has to be done on this code.
+ * 
  * @author bhausen
  */
 @Retention(RetentionPolicy.SOURCE)
 @Inherited
 @Documented
 public @interface Todo {
-	String value() default "something missing";
+    String value() default "something missing";
 }

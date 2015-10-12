@@ -18,6 +18,6 @@ package com.qpark.eip.core;
  * @author bhausen
  */
 public interface ReInitalizeable {
-	/** Do the initialization again. */
-	void reInitalize();
+    /** Do the initialization again. */
+    void reInitalize();
 }

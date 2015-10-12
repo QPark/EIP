@@ -23,32 +23,29 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 
 /**
- * {@link JAXBHashCodeStrategy} extended by hash code generators for {@link BigDecimal} and
- * {@link XMLGregorianCalendar}.
+ * {@link JAXBHashCodeStrategy} extended by hash code generators for
+ * {@link BigDecimal} and {@link XMLGregorianCalendar}.
+ * 
  * @author bhausen
  */
 public class ExtendedJAXBHashCodeStrategy extends JAXBHashCodeStrategy {
-	private static final int BIG_DECIMAL_SCALE = 10;
-	public static HashCodeStrategy INSTANCE = new ExtendedJAXBHashCodeStrategy();
+    private static final int BIG_DECIMAL_SCALE = 10;
+    public static HashCodeStrategy INSTANCE = new ExtendedJAXBHashCodeStrategy();
 
-	@Override
-	protected int hashCodeInternal(final ObjectLocator locator,
-			final int hashCode, final Object value) {
-		if (value instanceof BigDecimal) {
-			final BigDecimal scaled = ((BigDecimal) value)
-					.setScale(BIG_DECIMAL_SCALE);
-			return super.hashCodeInternal(locator, hashCode, scaled);
-		} else if (value instanceof List<?>) {
-			/* Only hashCodes of sorted lists could be compared. */
-			final List<?> list = ExtendedJAXBEqualsStrategy
-					.getSortedByObjectHashCode((List<?>) value);
-			return this.hashCodeInternal(locator, hashCode, list);
-		} else if (value instanceof XMLGregorianCalendar) {
-			final GregorianCalendar gc = ((XMLGregorianCalendar) value)
-					.toGregorianCalendar();
-			return super.hashCodeInternal(locator, hashCode, gc);
-		} else {
-			return super.hashCodeInternal(locator, hashCode, value);
-		}
+    @Override
+    protected int hashCodeInternal(final ObjectLocator locator, final int hashCode, final Object value) {
+	if (value instanceof BigDecimal) {
+	    final BigDecimal scaled = ((BigDecimal) value).setScale(BIG_DECIMAL_SCALE);
+	    return super.hashCodeInternal(locator, hashCode, scaled);
+	} else if (value instanceof List<?>) {
+	    /* Only hashCodes of sorted lists could be compared. */
+	    final List<?> list = ExtendedJAXBEqualsStrategy.getSortedByObjectHashCode((List<?>) value);
+	    return this.hashCodeInternal(locator, hashCode, list);
+	} else if (value instanceof XMLGregorianCalendar) {
+	    final GregorianCalendar gc = ((XMLGregorianCalendar) value).toGregorianCalendar();
+	    return super.hashCodeInternal(locator, hashCode, gc);
+	} else {
+	    return super.hashCodeInternal(locator, hashCode, value);
 	}
+    }
 }

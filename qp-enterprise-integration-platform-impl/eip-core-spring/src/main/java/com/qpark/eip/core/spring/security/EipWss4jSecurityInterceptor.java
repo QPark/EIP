@@ -15,30 +15,28 @@ package com.qpark.eip.core.spring.security;
 import org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor;
 
 /**
- * A {@link Wss4jSecurityInterceptor} setup by a {@link SecurmentPropertyProvider}.
+ * A {@link Wss4jSecurityInterceptor} setup by a
+ * {@link SecurmentPropertyProvider}.
+ * 
  * @author bhausen
  */
 public class EipWss4jSecurityInterceptor extends Wss4jSecurityInterceptor {
-	/** The {@link SecurmentPropertyProvider}. */
-	private SecurmentPropertyProvider securementPropertyProvider;
+    /** The {@link SecurmentPropertyProvider}. */
+    private SecurmentPropertyProvider securementPropertyProvider;
 
-	/**
-	 * @param securementPropertyProvider the securementPropertyProvider to set
-	 */
-	public void setSecurementPropertyProvider(
-			final SecurmentPropertyProvider securementPropertyProvider) {
-		this.securementPropertyProvider = securementPropertyProvider;
-		if (this.securementPropertyProvider != null) {
-			this.setSecurementActions(this.securementPropertyProvider
-					.getSecurementActions());
-			this.setSecurementUsername(this.securementPropertyProvider
-					.getSecurementUsername());
-			this.setSecurementPassword(this.securementPropertyProvider
-					.getSecurementPassword());
-			this.setSecurementPasswordType(this.securementPropertyProvider
-					.getSecurementPasswordType());
-			this.setSecurementUsernameTokenElements(this.securementPropertyProvider
-					.getSecurementUsernameTokenElements());
-		}
+    /**
+     * @param securementPropertyProvider
+     *            the securementPropertyProvider to set
+     */
+    public void setSecurementPropertyProvider(final SecurmentPropertyProvider securementPropertyProvider) {
+	this.securementPropertyProvider = securementPropertyProvider;
+	if (this.securementPropertyProvider != null) {
+	    this.setSecurementActions(this.securementPropertyProvider.getSecurementActions());
+	    this.setSecurementUsername(this.securementPropertyProvider.getSecurementUsername());
+	    this.setSecurementPassword(this.securementPropertyProvider.getSecurementPassword());
+	    this.setSecurementPasswordType(this.securementPropertyProvider.getSecurementPasswordType());
+	    this.setSecurementUsernameTokenElements(
+		    this.securementPropertyProvider.getSecurementUsernameTokenElements());
 	}
+    }
 }

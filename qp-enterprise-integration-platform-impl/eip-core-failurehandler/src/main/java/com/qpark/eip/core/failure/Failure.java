@@ -24,37 +24,40 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 /**
- * The failure annotation. Error codes of {@link Severity#ERROR} should start with E_, error codes of
- * {@link Severity#WARNING} should start with W_.
+ * The failure annotation. Error codes of {@link Severity#ERROR} should start
+ * with E_, error codes of {@link Severity#WARNING} should start with W_.
+ * 
  * @author bhausen
  *
  */
 @interface Failure {
-	/** The {@link Failure} severity. */
-	public enum Severity {
-		/** Severity waring and error. */
-		WARNING, ERROR
-	}
+    /** The {@link Failure} severity. */
+    public enum Severity {
+	/** Severity waring and error. */
+	WARNING, ERROR
+    }
 
-	/**
-	 * The error code of {@link Severity#ERROR} should start with E_, the error code of
-	 * {@link Severity#WARNING} should start with W_.
-	 * @return the error code.
-	 */
-	String code();
+    /**
+     * The error code of {@link Severity#ERROR} should start with E_, the error
+     * code of {@link Severity#WARNING} should start with W_.
+     * 
+     * @return the error code.
+     */
+    String code();
 
-	/**
-	 * @return the severity of the {@link Failure} (defaults to {@link Severity#ERROR}).
-	 */
-	Severity severity() default Severity.ERROR;
+    /**
+     * @return the severity of the {@link Failure} (defaults to
+     *         {@link Severity#ERROR}).
+     */
+    Severity severity() default Severity.ERROR;
 
-	/**
-	 * @return the user message.
-	 */
-	String userMessage() default "";
+    /**
+     * @return the user message.
+     */
+    String userMessage() default "";
 
-	/**
-	 * @return the error details.
-	 */
-	String errorDetails() default "";
+    /**
+     * @return the error details.
+     */
+    String errorDetails() default "";
 }

@@ -18,14 +18,14 @@ import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 /**
  * @author bhausen
  */
-public class FullQualifiedAnnotationBeanNameGenerator extends
-		AnnotationBeanNameGenerator {
-	/**
-	 * Get the full qualified class name as part of the default spring bean id.
-	 * @see org.springframework.context.annotation.AnnotationBeanNameGenerator#buildDefaultBeanName(org.springframework.beans.factory.config.BeanDefinition)
-	 */
-	@Override
-	protected String buildDefaultBeanName(final BeanDefinition definition) {
-		return definition.getBeanClassName();
-	}
+public class FullQualifiedAnnotationBeanNameGenerator extends AnnotationBeanNameGenerator {
+    /**
+     * Get the full qualified class name as part of the default spring bean id.
+     * 
+     * @see org.springframework.context.annotation.AnnotationBeanNameGenerator#buildDefaultBeanName(org.springframework.beans.factory.config.BeanDefinition)
+     */
+    @Override
+    protected String buildDefaultBeanName(final BeanDefinition definition) {
+	return definition.getBeanClassName();
+    }
 }

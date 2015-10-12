@@ -19,24 +19,25 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Indicates that there is a thing to be attend.
+ * 
  * @author bhausen
  */
 @Retention(RetentionPolicy.SOURCE)
 @Inherited
 @Documented
 public @interface Attention {
-	public static enum Category {
-		/** Take attention that here a implementation is missing. */
-		MISSING_IMPLEMENTATION,
-		/** This code may run into errors. */
-		ERROR_POSSIBLE,
-		/** Not categorized. */
-		NOT_CATEGORIESED
-	}
+    public static enum Category {
+	/** Take attention that here a implementation is missing. */
+	MISSING_IMPLEMENTATION,
+	/** This code may run into errors. */
+	ERROR_POSSIBLE,
+	/** Not categorized. */
+	NOT_CATEGORIESED
+    }
 
-	String value();
+    String value();
 
-	Category category() default Category.NOT_CATEGORIESED;
+    Category category() default Category.NOT_CATEGORIESED;
 
-	String date() default "";
+    String date() default "";
 }

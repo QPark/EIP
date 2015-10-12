@@ -16,39 +16,40 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Maps <T> into <V>.
+ * 
  * @author bhausen
  * @param <T>
  * @param <V>
  */
 public abstract class AbstractMapper<T, V> {
 
-	protected final T source;
-	protected V destination;
+    protected final T source;
+    protected V destination;
 
-	public AbstractMapper(final T pT) {
-		super();
-		this.source = pT;
+    public AbstractMapper(final T pT) {
+	super();
+	this.source = pT;
+    }
+
+    /** Maps <T> into <V>. */
+    public void run() {
+	this.destination = this.map();
+    }
+
+    protected abstract V map();
+
+    /**
+     * @return the mapped object.
+     */
+    public V getDestination() {
+	return this.destination;
+    }
+
+    public boolean hasValue(final Object o) {
+	if (o instanceof String) {
+	    return StringUtils.isNotBlank((String) o);
 	}
-
-	/** Maps <T> into <V>. */
-	public void run() {
-		this.destination = this.map();
-	}
-
-	protected abstract V map();
-
-	/**
-	 * @return the mapped object.
-	 */
-	public V getDestination() {
-		return this.destination;
-	}
-
-	public boolean hasValue(final Object o) {
-		if (o instanceof String) {
-			return StringUtils.isNotBlank((String) o);
-		}
-		return o != null;
-	}
+	return o != null;
+    }
 
 }

@@ -17,5 +17,5 @@ package com.qpark.eip.core;
  */
 public class EipPropertieNames {
 
-	public static final String EIP_UTIL_MAX_DATABASE_LINES = "eip.util.database.max.lines";
+    public static final String EIP_UTIL_MAX_DATABASE_LINES = "eip.util.database.max.lines";
 }

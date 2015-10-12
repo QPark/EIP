@@ -18,8 +18,8 @@ import org.springframework.security.core.userdetails.User;
  * @author bhausen
  */
 public interface EipUserProvider {
-	/**
-	 * @return the {@link User} for the name.
-	 */
-	User getUser(String username);
+    /**
+     * @return the {@link User} for the name.
+     */
+    User getUser(String username);
 }
