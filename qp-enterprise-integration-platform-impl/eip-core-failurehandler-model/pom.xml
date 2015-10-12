@@ -41,11 +41,9 @@
 			<artifactId>jsr173</artifactId>
 			<version>${javax.xml.jsr173.version}</version>
 		</dependency>
-		<!-- test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
