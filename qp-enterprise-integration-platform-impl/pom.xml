@@ -22,6 +22,7 @@
 
 	<modules>
 		<module>eip-core</module>
+    <module>eip-core-persistence<module>
 		<module>eip-core-failurehandler-model</module>
 		<module>eip-core-failurehandler</module>
 		<module>eip-core-logback</module>
