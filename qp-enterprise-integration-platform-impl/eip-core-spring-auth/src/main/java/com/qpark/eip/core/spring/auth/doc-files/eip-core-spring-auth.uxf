@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>250</x>
+      <y>260</y>
+      <w>320</w>
+      <h>470</h>
+    </coordinates>
+    <panel_attributes>symbol=artifact
+bus-util-auth
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Database</type>
+    <coordinates>
+      <x>810</x>
+      <y>320</y>
+      <w>110</w>
+      <h>390</h>
+    </coordinates>
+    <panel_attributes>bus user
+database</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>290</x>
+      <y>320</y>
+      <w>220</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>symbol=component
+EipUserProvider impl
+accessing database</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>290</x>
+      <y>510</y>
+      <w>220</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>symbol=component
+create, 
+update and
+retrieval 
+operations</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>290</x>
+      <y>410</y>
+      <w>220</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>symbol=component
+Sysuser access logger</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>290</x>
+      <y>610</y>
+      <w>220</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>symbol=component
+XSDs defining 
+persistence and
+operations</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>500</x>
+      <y>340</y>
+      <w>330</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+Retrieve UserPrincipalType</panel_attributes>
+    <additional_attributes>310.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>500</x>
+      <y>530</y>
+      <w>330</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+Create, change and retrieve UserPrincipalType</panel_attributes>
+    <additional_attributes>310.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>500</x>
+      <y>430</y>
+      <w>330</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+Log user access into</panel_attributes>
+    <additional_attributes>310.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>500</x>
+      <y>630</y>
+      <w>330</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+Define the schema</panel_attributes>
+    <additional_attributes>310.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>500</x>
+      <y>560</y>
+      <w>310</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+Define types and messages</panel_attributes>
+    <additional_attributes>10.0;10.0;210.0;10.0;210.0;60.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>0</x>
+      <y>260</y>
+      <w>240</w>
+      <h>470</h>
+    </coordinates>
+    <panel_attributes>bus-util-auth
+--
+eip-core-spring-auth is a maven artifact to provide authentication and authorisation customizing for webapps.
+The user data needed by the spring-integration security package is retrieved out of a database. The user access is logged into the database.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

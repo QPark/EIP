@@ -1,5 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 <!--
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
@@ -24,8 +26,14 @@
 	<packaging>jar</packaging>
 
 	<properties>
+		<maven.test.skip>true</maven.test.skip>
 		<model.dir>src/main/xsd</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
+		
+<property name="javax.persistence.schema-generation.scripts.action" value="create"/>
+<property name="javax.persistence.schema-generation.create-source" value="metadata"/>
+<property name="javax.persistence.schema-generation.scripts.create-target" value="target/jpa/sql/create-schema.sql"/>
+		
 		<jaxb.impl.version>2.2.7</jaxb.impl.version>
 		<persistence.unit.name>com.qpark.eip.core.persistence</persistence.unit.name>
 		<hyperjaxb3.version>0.5.6</hyperjaxb3.version>
@@ -33,7 +41,13 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-jpamodelgen</artifactId>
+    <scope>compile</scope>
+    <optional>true</optional>
+  </dependency>
+  		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core</artifactId>
 			<version>${project.version}</version>
@@ -70,6 +84,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
 				<executions>
 					<execution>
 					<id>add-source</id>
@@ -122,6 +137,7 @@
 						</goals>
 						<configuration>
 							<target>
+								<delete file="${project.build.directory}/generated-sources/RoundtripTest.java"/> 
 								<property name="meta.inf" value="${project.build.directory}/classes/META-INF" />
 								<mkdir dir="${meta.inf}/${persistence.unit.name}"/>
 								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${meta.inf}/${persistence.unit.name}"/>
@@ -131,36 +147,26 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.bsc.maven</groupId>
-				<artifactId>maven-processor-plugin</artifactId>
-				<version>2.2.4</version>
-				<executions>
-					<execution>
-						<id>process</id>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<sourceDirectory>${java.gen.dir}</sourceDirectory>
-							<outputDirectory>${java.gen.dir}</outputDirectory>
-							<processors>
-								<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-							</processors>
-							<outputDiagnostics>false</outputDiagnostics>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.hibernate</groupId>
-						<artifactId>hibernate-jpamodelgen</artifactId>
-						<version>1.1.1.Final</version>
-						<scope>compile</scope>
-					</dependency>
-				</dependencies>
-			</plugin>
+<plugin>
+
+    <artifactId>maven-compiler-plugin</artifactId>
+
+    <configuration>
+
+        <source>1.8</source>
+
+        <target>1.8</target>
+
+        <compilerArguments>
+
+            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+
+        </compilerArguments>
+
+    </configuration>
+
+</plugin>
+<!-- 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>hibernate3-maven-plugin</artifactId>
@@ -202,6 +208,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
