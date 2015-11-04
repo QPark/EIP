@@ -20,7 +20,7 @@
 		<phrase>The first item supplied has been used.</phrase>
 	</messagePhrase>
 	<message>
-		<code>E_ALL_NOT_KNOWN_ERROR</code>
+		<code>E_NOT_KNOWN_ERROR</code>
 		<whatHappened><text>An unidentified error has occurred.</text></whatHappened>
 		<whyHappened><text>An unexpected combination of events or data has occurred. The application has no rules about what to do in these circumstances.</text></whyHappened>
 		<whatToDo><phraseKey>noRetry</phraseKey><text>Make a note of what you were doing when the problem occurred and inform your system administrator about the error and what you were doing.</text></whatToDo>

@@ -1,21 +1,33 @@
+/*******************************************************************************
+ * Copyright (c) 2013 QPark Consulting S.�r.l. This program and the accompanying
+ * materials are made available under the terms of the Eclipse Public License
+ * v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
+ ******************************************************************************/
 package com.qpark.eip.core.persistence;
 
 import java.util.concurrent.Callable;
 
 /**
  * Call the database operation of the channel invocation asynchronous.
+ * 
  * @author bhausen
  */
 public class AsyncDatabaseOperation implements Callable<Void> {
 	private final AbstractEipDao dao;
-	private final String userName;
 	private final Object obj;
+	private final String userName;
 
 	/**
 	 * Ctor.
-	 * @param dao the {@link AbstractEipDao}.
-	 * @param userName the user name.
-	 * @param obj the object to persist.
+	 * 
+	 * @param dao
+	 *            the {@link AbstractEipDao}.
+	 * @param userName
+	 *            the user name.
+	 * @param obj
+	 *            the object to persist.
 	 */
 	public AsyncDatabaseOperation(final AbstractEipDao dao,
 			final String userName, final Object obj) {
@@ -26,6 +38,7 @@ public class AsyncDatabaseOperation implements Callable<Void> {
 
 	/**
 	 * Call the database operation of the channel invocation asynchronous.
+	 * 
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
