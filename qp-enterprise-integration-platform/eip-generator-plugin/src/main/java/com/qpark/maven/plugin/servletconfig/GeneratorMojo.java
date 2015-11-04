@@ -28,6 +28,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * Create the servlet definitions in <code>web.xml</code>,
  * <code>ws-servlet.xml</code> and <code>http-servlet.xml</code>.
+ *
  * @author bhausen
  */
 @Mojo(name = "generate-servlet-config", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
@@ -62,16 +63,9 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The name of the service id to generate. If empty use all. */
 	@Parameter(property = "serviceId", defaultValue = "")
 	private String serviceId;
-	/** The name of the service id of common services. */
-	@Parameter(property = "serviceIdCommonServices", defaultValue = "common")
-	private String serviceIdCommonServices;
-	/** <code>true</code>, if common service/config... should be generated too. */
-	@Parameter(property = "serviceCreationWithCommon", defaultValue = "true")
-	private boolean serviceCreationWithCommon;
-	/** URL pattern of the http servlet-mapping. */
-	@Parameter(property = "httpServletUrl", defaultValue = "")
-	private String httpServletUrl;
-	/** The version of the service to generate. Defaults to <code>trunk</code>. */
+	/**
+	 * The version of the service to generate. Defaults to <code>trunk</code>.
+	 */
 	@Parameter(property = "serviceVersion", defaultValue = "trunk")
 	private String serviceVersion;
 	/**
@@ -88,7 +82,9 @@ public class GeneratorMojo extends AbstractMojo {
 	private String serviceResponseSuffix;
 	@Component
 	private MavenProject project;
-	/** The bean definition of the additional web service payload interceptors. */
+	/**
+	 * The bean definition of the additional web service payload interceptors.
+	 */
 	@Parameter(property = "additionalWebservicePayloadInterceptors", defaultValue = "")
 	private String additionalWebservicePayloadInterceptors;
 	/**
@@ -115,31 +111,19 @@ public class GeneratorMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		boolean enableHttpServlet = this.httpServletUrl != null
-				&& this.httpServletUrl.trim().length() > 0;
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
-				this.serviceRequestSuffix, this.serviceResponseSuffix);
-		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId,
-				this.serviceVersion, this.revisionNumber, this.warName,
-				this.additionalWebappFilter, this.httpServletUrl,
-				this.outputDirectory, this.getLog());
+
+		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
+
+		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId, this.serviceVersion, this.revisionNumber,
+				this.warName, this.additionalWebappFilter, this.outputDirectory, this.getLog());
 		wx.generate();
-		if (enableHttpServlet) {
-			HttpServletXmlGenerator hsx = new HttpServletXmlGenerator(xsds,
-					this.serviceId, this.serviceVersion, this.revisionNumber,
-					this.warName, this.outputDirectory, this.project,
-					this.getLog());
-			hsx.generate();
-		}
-		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds,
-				this.basePackageName, this.serviceId,
-				this.serviceIdCommonServices, this.serviceCreationWithCommon,
-				this.disableWebservicePayloadValidation,
-				this.webservicePayloadLoggerImplementation,
-				this.additionalWebservicePayloadInterceptors,
-				this.outputDirectory, this.project, this.getLog());
+
+		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds, this.basePackageName, this.serviceId,
+				this.disableWebservicePayloadValidation, this.webservicePayloadLoggerImplementation,
+				this.additionalWebservicePayloadInterceptors, this.outputDirectory, this.project, this.getLog());
 		wsx.generate();
+
 		this.getLog().debug("-execute");
 	}
 }

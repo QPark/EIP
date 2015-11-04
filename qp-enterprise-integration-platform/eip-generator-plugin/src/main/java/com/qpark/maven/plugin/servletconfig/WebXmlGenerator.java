@@ -22,6 +22,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
  * Generates a ServiceObjectFactory out of the XSDs containing elements.
+ * 
  * @author bhausen
  */
 public class WebXmlGenerator {
@@ -33,8 +34,6 @@ public class WebXmlGenerator {
 	private final File outputDirectory;
 	private final String serviceId;
 	private final String warName;
-	private final boolean enableHttpServlet;
-	private final String httpServletUrl;
 	private final String revisionNumber;
 	private final Date d = new Date();
 
@@ -42,22 +41,15 @@ public class WebXmlGenerator {
 	 * @param config
 	 * @param elementTypes
 	 */
-	public WebXmlGenerator(final XsdsUtil config, final String serviceId,
-			final String serviceVersion, final String revisionNumber,
-			final String warName, final String additionalWebappFilter,
-			final String httpServletUrl, final File outputDirectory,
-			final Log log) {
+	public WebXmlGenerator(final XsdsUtil config, final String serviceId, final String serviceVersion,
+			final String revisionNumber, final String warName, final String additionalWebappFilter,
+			final File outputDirectory, final Log log) {
 		this.config = config;
-		this.serviceId = serviceId == null ? "" : serviceId.replace(',', '-')
-				.replaceAll(" ", "");
+		this.serviceId = serviceId == null ? "" : serviceId.replace(',', '-').replaceAll(" ", "");
 		this.serviceVersion = serviceVersion;
 		this.revisionNumber = revisionNumber;
 		this.warName = warName;
-		this.additionalWebappFilter = additionalWebappFilter == null ? ""
-				: additionalWebappFilter;
-		this.httpServletUrl = httpServletUrl;
-		this.enableHttpServlet = this.httpServletUrl != null
-				&& this.httpServletUrl.trim().length() > 0;
+		this.additionalWebappFilter = additionalWebappFilter == null ? "" : additionalWebappFilter;
 		this.outputDirectory = outputDirectory;
 		this.log = log;
 	}
@@ -66,8 +58,7 @@ public class WebXmlGenerator {
 		this.log.debug("+generate");
 
 		File f = Util.getFile(this.outputDirectory, "", "web.xml");
-		this.log.info(new StringBuffer().append("Write ").append(
-				f.getAbsolutePath()));
+		this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 
 		try {
 			Util.writeToFile(f, this.getWebXml());
@@ -84,7 +75,8 @@ public class WebXmlGenerator {
 		sb.append("<web-app xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n");
 		sb.append("\txmlns=\"http://java.sun.com/xml/ns/javaee\"  \n");
 		sb.append("\txmlns:web=\"http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\" \n");
-		sb.append("\txsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\" \n");
+		sb.append(
+				"\txsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd\" \n");
 		sb.append("\tid=\"WebApp_ID\" version=\"2.5\"> \n");
 		sb.append("\t<!-- ");
 		sb.append(Util.getGeneratedAt(this.d));
@@ -170,8 +162,7 @@ public class WebXmlGenerator {
 		sb.append("\t\t<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>\n");
 		sb.append("\t</filter>\n");
 
-		if (this.additionalWebappFilter != null
-				&& this.additionalWebappFilter.trim().length() > 0) {
+		if (this.additionalWebappFilter != null && this.additionalWebappFilter.trim().length() > 0) {
 			sb.append("\t<!-- Additional filter -->\n");
 			sb.append("\t<filter>\n");
 			sb.append("\t\t<filter-name>comQparkMavenPluginServletConfigAdditionalFilter</filter-name>\n");
@@ -195,15 +186,15 @@ public class WebXmlGenerator {
 		sb.append("\t\t<url-pattern>/*</url-pattern>\n");
 		sb.append("\t</filter-mapping>\n");
 
-		if (this.additionalWebappFilter != null
-				&& this.additionalWebappFilter.trim().length() > 0) {
+		if (this.additionalWebappFilter != null && this.additionalWebappFilter.trim().length() > 0) {
 			sb.append("\t<filter-mapping>\n");
 			sb.append("\t\t<filter-name>comQparkMavenPluginServletConfigAdditionalFilter</filter-name>\n");
 			sb.append("\t\t<url-pattern>/*</url-pattern>\n");
 			sb.append("\t</filter-mapping>\n");
 		}
 
-		sb.append("\t<!-- logback should be the first in the list (http://logback.qos.ch/manual/loggingSeparation.html)! -->\n");
+		sb.append(
+				"\t<!-- logback should be the first in the list (http://logback.qos.ch/manual/loggingSeparation.html)! -->\n");
 		sb.append("\t<listener>\n");
 		sb.append("\t\t<listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>\n");
 		sb.append("\t</listener>\n");
@@ -211,31 +202,16 @@ public class WebXmlGenerator {
 		sb.append("\t\t<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>\n");
 		sb.append("\t</listener>\n");
 
-		if (this.enableHttpServlet) {
-			sb.append("\t<servlet>\n");
-			sb.append("\t\t<servlet-name>http</servlet-name>\n");
-			sb.append("\t\t<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>\n");
-			sb.append("\t\t<init-param>\n");
-			sb.append("\t\t\t<param-name>contextConfigLocation</param-name>\n");
-			sb.append("\t\t\t<param-value>/WEB-INF/http-servlet.xml</param-value>\n");
-			sb.append("\t\t\t<param-name>defaultHtmlEscape</param-name>\n");
-			sb.append("\t\t\t<param-value>true</param-value>\n");
-			sb.append("\t\t</init-param>\n");
-			sb.append("\t\t<load-on-startup>1</load-on-startup>\n");
-			sb.append("\t</servlet>\n");
-		}
 		sb.append("\t<servlet>\n");
 		sb.append("\t\t<servlet-name>ws</servlet-name>\n");
-		sb.append("\t\t<servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>\n");
+		sb.append(
+				"\t\t<servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>\n");
 
 		sb.append("\t\t\t<init-param>\n");
 		sb.append("\t\t\t<param-name>transformWsdlLocations</param-name>\n");
 		sb.append("\t\t\t<param-value>true</param-value>\n");
 		sb.append("\t\t\t</init-param>\n");
 
-		if (!this.enableHttpServlet) {
-			sb.append("\t\t<load-on-startup>1</load-on-startup>\n");
-		}
 		sb.append("\t</servlet>\n");
 		sb.append("\t<servlet-mapping>\n");
 		sb.append("\t\t<servlet-name>ws</servlet-name>\n");
@@ -250,28 +226,6 @@ public class WebXmlGenerator {
 		sb.append("\t\t<servlet-name>ws</servlet-name>\n");
 		sb.append("\t\t<url-pattern>*.wsdl</url-pattern>\n");
 		sb.append("\t</servlet-mapping>\n");
-
-		if (this.enableHttpServlet) {
-			sb.append("\t<servlet-mapping>\n");
-			sb.append("\t\t<servlet-name>http</servlet-name>\n");
-			sb.append("\t\t<url-pattern>/");
-			if (this.warName.contains("##")) {
-				sb.append(this.serviceVersion);
-				sb.append("/");
-			}
-			sb.append(this.httpServletUrl);
-			sb.append("/*</url-pattern>\n");
-			sb.append("\t</servlet-mapping>\n");
-			// sb.append("\t<servlet-mapping>\n");
-			// sb.append("\t\t<servlet-name>httpServlet</servlet-name>\n");
-			// sb.append("\t\t<url-pattern>/");
-			// if (this.warName.contains("##")) {
-			// sb.append(this.serviceVersion);
-			// sb.append("/");
-			// }
-			// sb.append("schemas/*</url-pattern>\n");
-			// sb.append("\t</servlet-mapping>\n");
-		}
 
 		sb.append("\t<filter>\n");
 		sb.append("\t\t<filter-name>httpMethodFilter</filter-name>\n");

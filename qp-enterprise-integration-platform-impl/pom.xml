@@ -2,27 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-<!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
- * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
--->
+	<!-- * Copyright (c) 2013 QPark Consulting S.a r.l. * * This program and 
+		the accompanying materials are made available under the * terms of the Eclipse 
+		Public License v1.0. * The Eclipse Public License is available at * http://www.eclipse.org/legal/epl-v10.html. 
+		* * Contributors: * Bernhard Hausen - Initial API and implementation -->
 
 	<groupId>com.qpark.eip.core</groupId>
 	<artifactId>eip-base</artifactId>
-	<version>2.0.0</version><!--qp-eip-impl-project-version-->
+	<version>2.0.0</version><!--qp-eip-impl-project-version -->
 	<packaging>pom</packaging>
 	<name>eip-base</name>
 
 	<modules>
 		<module>eip-core</module>
-    <module>eip-core-persistence<module>
+		<module>eip-core-persistence</module>
 		<module>eip-core-failurehandler-model</module>
 		<module>eip-core-failurehandler</module>
 		<module>eip-core-logback</module>
@@ -288,13 +281,8 @@
 								<artifactId>maven-overview-plugin</artifactId>
 								<version>RELEASE</version>
 							</plugin>
-							<!--
-							<plugin>
-								<groupId>org.codehaus.mojo</groupId>
-								<artifactId>cobertura-maven-plugin</artifactId>
-								<version>2.5.2</version>
-							</plugin>
-							-->
+							<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>cobertura-maven-plugin</artifactId> 
+								<version>2.5.2</version> </plugin> -->
 						</reportPlugins>
 					</configuration>
 				</plugin>

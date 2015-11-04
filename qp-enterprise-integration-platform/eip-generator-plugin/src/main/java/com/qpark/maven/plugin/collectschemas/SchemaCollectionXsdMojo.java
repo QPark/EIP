@@ -32,6 +32,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * Collect the message defining schemas into one schema that importing them.
  * This is needed to use the maven-hyperjaxb3-plugin of org.jvnet.hyperjaxb3.
+ *
  * @author bhausen
  */
 @Mojo(name = "generate-collected-schemas", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
@@ -45,13 +46,6 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 	/** The length of a string to be mapped. */
 	@Parameter(property = "stringLength", defaultValue = "255")
 	protected String stringLength;
-	/**
-	 * The package name of the messages should end with this. Default is
-	 * <code>msg</code>.
-	 */
-	@Parameter(property = "messagePackageNameSuffix", defaultValue = "msg")
-	@Deprecated
-	protected String messagePackageNameSuffix;
 	/**
 	 * The package names of the messages should end with - separation by space.
 	 * Default is <code>msg restmsg</code>.
@@ -68,8 +62,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		Map<String, XsdContainer> xsdContainerMap = XsdsUtil
-				.getXsdContainers(this.baseDirectory);
+		Map<String, XsdContainer> xsdContainerMap = XsdsUtil.getXsdContainers(this.baseDirectory);
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(this.getXmlDefinition());
 		sb.append("\t<!-- ");
@@ -83,9 +76,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 		sb.append("</schema>\n");
 
 		File f = Util.getFile(this.outputDirectory, "collected-schemas.xsd");
-		this.getLog()
-				.info(new StringBuffer().append("Write ").append(
-						f.getAbsolutePath()));
+		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
@@ -104,8 +95,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 		sb.append("\t\t\t</jaxb:globalBindings>\n");
 		sb.append("\t\t\t<hj:persistence>\n");
 		sb.append("\t\t\t\t<hj:default-generated-id transient=\"true\" name=\"Hjid\"/>\n");
-		if (this.stringLength != null && this.stringLength.trim().length() > 0
-				&& !this.stringLength.equals("255")) {
+		if (this.stringLength != null && this.stringLength.trim().length() > 0 && !this.stringLength.equals("255")) {
 			sb.append("\t\t\t\t<hj:default-single-property type=\"string\"><hj:basic><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:basic></hj:default-single-property>\n");
@@ -115,20 +105,25 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 			sb.append("\t\t\t\t<hj:default-single-property type=\"normalizedString\"><hj:basic><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:basic></hj:default-single-property>\n");
-			sb.append("\t\t\t\t<hj:default-single-property type=\"xsd:normalizedString\"><hj:basic><orm:column length=\"");
+			sb.append(
+					"\t\t\t\t<hj:default-single-property type=\"xsd:normalizedString\"><hj:basic><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:basic></hj:default-single-property>\n");
 
-			sb.append("\t\t\t\t<hj:default-collection-property type=\"string\"><hj:element-collection><orm:column length=\"");
+			sb.append(
+					"\t\t\t\t<hj:default-collection-property type=\"string\"><hj:element-collection><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:element-collection></hj:default-collection-property>\n");
-			sb.append("\t\t\t\t<hj:default-collection-property type=\"xsd:string\"><hj:element-collection><orm:column length=\"");
+			sb.append(
+					"\t\t\t\t<hj:default-collection-property type=\"xsd:string\"><hj:element-collection><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:element-collection></hj:default-collection-property>\n");
-			sb.append("\t\t\t\t<hj:default-collection-property type=\"normalizedString\"><hj:element-collection><orm:column length=\"");
+			sb.append(
+					"\t\t\t\t<hj:default-collection-property type=\"normalizedString\"><hj:element-collection><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:element-collection></hj:default-collection-property>\n");
-			sb.append("\t\t\t\t<hj:default-collection-property type=\"xsd:normalizedString\"><hj:element-collection><orm:column length=\"");
+			sb.append(
+					"\t\t\t\t<hj:default-collection-property type=\"xsd:normalizedString\"><hj:element-collection><orm:column length=\"");
 			sb.append(this.stringLength);
 			sb.append("\"/></hj:element-collection></hj:default-collection-property>\n");
 		}
@@ -142,17 +137,12 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 		boolean isMessagePackageName = false;
 		if (packageName != null) {
 			TreeSet<String> packages = new TreeSet<String>();
-			if (this.messagePackageNameSuffix != null
-					&& this.messagePackageNameSuffix.trim().length() > 0) {
-				packages.add(this.messagePackageNameSuffix);
-			}
 			if (this.messagePackageNameSuffixes != null) {
-				String[] suffixes = this.messagePackageNameSuffixes.replaceAll(
-						",", " ").split(" ");
+				String[] suffixes = this.messagePackageNameSuffixes.replaceAll(",", " ").split(" ");
 				for (String suffix : suffixes) {
 					if (suffix != null && suffix.trim().length() > 0) {
-						packages.add(new StringBuffer(suffix.length() + 1)
-								.append(".").append(suffix.trim()).toString());
+						packages.add(
+								new StringBuffer(suffix.length() + 1).append(".").append(suffix.trim()).toString());
 					}
 				}
 			}
@@ -166,8 +156,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 		return isMessagePackageName;
 	}
 
-	private String getSchemaImports(
-			final Map<String, XsdContainer> xsdContainerMap) {
+	private String getSchemaImports(final Map<String, XsdContainer> xsdContainerMap) {
 		StringBuffer sb = new StringBuffer(1024);
 		for (XsdContainer xc : xsdContainerMap.values()) {
 			/* If NOT is message! */
@@ -175,8 +164,7 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 				sb.append("\t<import namespace=\"");
 				sb.append(xc.getTargetNamespace());
 				sb.append("\" schemaLocation=\"");
-				sb.append(Util.getRelativePathTranslated(this.baseDirectory,
-						xc.getFile()).substring(1));
+				sb.append(Util.getRelativePathTranslated(this.baseDirectory, xc.getFile()).substring(1));
 				sb.append("\"/>\n");
 			}
 		}
@@ -185,11 +173,19 @@ public class SchemaCollectionXsdMojo extends AbstractMojo {
 
 	private String getXmlDefinition() {
 		StringBuffer sb = new StringBuffer(1024);
+		/*
+		 * <persistence xmlns="http://java.sun.com/xml/ns/persistence"
+		 * xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 * xsi:schemaLocation=" http://xmlns.jcp.org/xml/ns/persistence
+		 * http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd
+		 * http://xmlns.jcp.org/xml/ns/persistence/orm
+		 * http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" version="2.1">
+		 */
 		sb.append("<schema xmlns=\"http://www.w3.org/2001/XMLSchema\" \n");
 		sb.append("\txmlns:hj=\"http://hyperjaxb3.jvnet.org/ejb/schemas/customizations\" \n");
-		sb.append("\txmlns:orm=\"http://java.sun.com/xml/ns/persistence/orm\"\n");
+		sb.append("\txmlns:orm=\"http://xmlns.jcp.org/xml/ns/persistence/orm\"\n");
 		sb.append("\txmlns:jaxb=\"http://java.sun.com/xml/ns/jaxb\" \n");
-		sb.append("\tjaxb:version=\"2.0\"\n");
+		sb.append("\tjaxb:version=\"2.1\"\n");
 		sb.append("\tjaxb:extensionBindingPrefixes=\"hj orm\"\n");
 		sb.append("\telementFormDefault=\"unqualified\" >\n");
 		return sb.toString();

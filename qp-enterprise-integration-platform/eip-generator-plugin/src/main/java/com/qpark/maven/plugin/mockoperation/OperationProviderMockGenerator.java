@@ -40,28 +40,24 @@ public class OperationProviderMockGenerator {
 	private final String operationName;
 	private final String serviceId;
 	private final File outputDirectory;
-	private final String failureHandlerClassName;
+	private final boolean useInsightAnnotation;
 
-	public OperationProviderMockGenerator(final XsdsUtil config,
-			final File outputDirectory, final ElementType element,
-			final String failureHandlerClassName, final Log log) {
+	public OperationProviderMockGenerator(final XsdsUtil config, final File outputDirectory, final ElementType element,
+			final boolean useInsightAnnotation, final Log log) {
 		this.config = config;
 		this.outputDirectory = outputDirectory;
-		this.failureHandlerClassName = failureHandlerClassName;
 		this.log = log;
 		this.elementRequest = element;
 		this.packageName = element.getPackageNameMockOperationProvider();
 		this.operationName = element.getOperationName();
 		this.serviceId = element.getServiceId();
 		this.methodName = element.getMethodName();
+		this.useInsightAnnotation = useInsightAnnotation;
 
-		this.elementResponse = XsdsUtil.findResponse(this.elementRequest,
-				config.getElementTypes(), config);
+		this.elementResponse = XsdsUtil.findResponse(this.elementRequest, config.getElementTypes(), config);
 		if (this.elementResponse != null) {
-			this.ctRequest = new ComplexType(this.elementRequest.getElement()
-					.getType(), this.config);
-			this.ctResponse = new ComplexType(this.elementResponse.getElement()
-					.getType(), this.config);
+			this.ctRequest = new ComplexType(this.elementRequest.getElement().getType(), this.config);
+			this.ctResponse = new ComplexType(this.elementResponse.getElement().getType(), this.config);
 
 			this.fqRequestType = this.ctRequest.getClassNameFullQualified();
 			this.fqResponseType = this.ctResponse.getClassNameFullQualified();
@@ -73,8 +69,7 @@ public class OperationProviderMockGenerator {
 
 	public void generate() {
 		this.log.debug("+generate");
-		if (this.elementResponse != null && this.ctResponse != null
-				&& !this.ctResponse.isSimpleType()
+		if (this.elementResponse != null && this.ctResponse != null && !this.ctResponse.isSimpleType()
 				&& !this.ctResponse.isPrimitiveType()) {
 			StringBuffer sb = new StringBuffer(1024);
 			sb.append("package ");
@@ -82,6 +77,7 @@ public class OperationProviderMockGenerator {
 			sb.append(";\n");
 			sb.append("\n");
 			sb.append("import java.io.StringReader;\n");
+			sb.append("import java.util.concurrent.TimeUnit;\n");
 			sb.append("\n");
 			sb.append("import javax.xml.bind.JAXBContext;\n");
 			sb.append("import javax.xml.bind.JAXBElement;\n");
@@ -89,14 +85,11 @@ public class OperationProviderMockGenerator {
 			sb.append("import javax.xml.bind.Unmarshaller;\n");
 			sb.append("\n");
 			sb.append("import org.springframework.beans.factory.annotation.Autowired;\n");
-			// sb.append("import org.springframework.beans.factory.annotation.Qualifier;\n");
+			// sb.append("import
+			// org.springframework.beans.factory.annotation.Qualifier;\n");
 			sb.append("import org.springframework.integration.annotation.ServiceActivator;\n");
 			sb.append("import org.springframework.stereotype.Component;\n");
 			sb.append("\n");
-			sb.append("import com.qpark.eip.core.DateUtil;\n");
-			sb.append("import ");
-			sb.append(this.failureHandlerClassName);
-			sb.append(";\n");
 			sb.append("import ");
 			sb.append(this.fqRequestType);
 			sb.append(";\n");
@@ -106,7 +99,9 @@ public class OperationProviderMockGenerator {
 			sb.append("import ");
 			sb.append(this.elementRequest.getPackageName());
 			sb.append(".ObjectFactory;\n");
-			sb.append("import com.springsource.insight.annotation.InsightEndPoint;\n");
+			if (this.useInsightAnnotation) {
+				sb.append("import com.springsource.insight.annotation.InsightEndPoint;\n");
+			}
 			sb.append("\n");
 			sb.append("/**\n");
 			sb.append(" * Operation ");
@@ -146,7 +141,9 @@ public class OperationProviderMockGenerator {
 			sb.append("}.\n");
 			sb.append("\t */\n");
 
-			sb.append("	@InsightEndPoint\n");
+			if (this.useInsightAnnotation) {
+				sb.append("	@InsightEndPoint\n");
+			}
 			sb.append("	@ServiceActivator\n");
 			sb.append("	public final JAXBElement<");
 			sb.append(this.responseType);
@@ -197,15 +194,13 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t\t/* Add a not covered error to the response. */\n");
 			sb.append("\t\t\tthis.logger.error(e.getMessage(), e);\n");
 			sb.append("\t\t\t// response.getFailure().add(\n");
-			sb.append("\t\t\tFailureHandler.handleException(e, \"E_ALL_NOT_KNOWN_ERROR\",\n");
-			sb.append("\t\t\t\t\tthis.logger);\n");
-
+			sb.append("\t\t\t// FailureHandler.handleException(e, \"E_ALL_NOT_KNOWN_ERROR\", this.logger);\n");
 			sb.append("\t\t} finally {\n");
 
 			sb.append("\t\t\tthis.logger.debug(\" ");
 			sb.append(this.methodName);
 			sb.append(" duration {}\",\n");
-			sb.append("\t\t\t\t\tDateUtil.getDuration(start, System.currentTimeMillis()));\n");
+			sb.append("\t\t\t\t\trequestDuration(start));\n");
 
 			sb.append("\t\t\tthis.logger.debug(\"-");
 			sb.append(this.methodName);
@@ -267,17 +262,28 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\treturn sb.toString();\n");
 			sb.append("\t}\n");
 
+			sb.append("\t/**\n");
+			sb.append("\t * @param start\n");
+			sb.append("\t * @return the duration in 000:00:00.000 format.\n");
+			sb.append("\t */\n");
+			sb.append("\tprivate String requestDuration(final long start) {\n");
+			sb.append("\t\tlong millis = System.currentTimeMillis() - start;\n");
+			sb.append(
+					"\t\tString hmss = String.format(\"%03d:%02d:%02d.%03d\",TimeUnit.MILLISECONDS.toHours(millis),\n");
+			sb.append(
+					"\t\t\tTimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),\n");
+			sb.append(
+					"\t\t\tTimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),\n");
+			sb.append(
+					"\t\t\tTimeUnit.MILLISECONDS.toMillis(millis) - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)));\n");
+			sb.append("\t\treturn hmss;\n");
+			sb.append("\t}\n");
+
 			sb.append("}\n");
 			sb.append("\n");
-			File f = Util.getFile(
-					this.outputDirectory,
-					this.packageName,
-					new StringBuffer()
-							.append(this.elementRequest
-									.getClassNameMockOperationProvider())
-							.append(".java").toString());
-			this.log.info(new StringBuffer().append("Write ").append(
-					f.getAbsolutePath()));
+			File f = Util.getFile(this.outputDirectory, this.packageName, new StringBuffer()
+					.append(this.elementRequest.getClassNameMockOperationProvider()).append(".java").toString());
+			this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sb.toString());
 			} catch (Exception e) {

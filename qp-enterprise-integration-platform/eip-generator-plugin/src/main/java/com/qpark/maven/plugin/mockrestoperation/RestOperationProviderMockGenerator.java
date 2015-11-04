@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
  *
@@ -41,14 +41,11 @@ public class RestOperationProviderMockGenerator {
 	private final String operationName;
 	private final String serviceId;
 	private final File outputDirectory;
-	private final String failureHandlerClassName;
 
-	public RestOperationProviderMockGenerator(final XsdsUtil config,
-			final File outputDirectory, final ElementType element,
-			final String failureHandlerClassName, final Log log) {
+	public RestOperationProviderMockGenerator(final XsdsUtil config, final File outputDirectory,
+			final ElementType element, final Log log) {
 		this.config = config;
 		this.outputDirectory = outputDirectory;
-		this.failureHandlerClassName = failureHandlerClassName;
 		this.log = log;
 		this.elementRequest = element;
 		this.packageName = element.getPackageNameMockOperationProvider();
@@ -56,19 +53,15 @@ public class RestOperationProviderMockGenerator {
 		this.serviceId = element.getServiceId();
 
 		if (element.getMethodName().endsWith("Rest")) {
-			this.methodName = element.getMethodName().substring(0,
-					element.getMethodName().length() - 4);
+			this.methodName = element.getMethodName().substring(0, element.getMethodName().length() - 4);
 		} else {
 			this.methodName = element.getMethodName();
 		}
 
-		this.elementResponse = XsdsUtil.findResponse(this.elementRequest,
-				config.getElementTypes(), config);
+		this.elementResponse = XsdsUtil.findResponse(this.elementRequest, config.getElementTypes(), config);
 		if (this.elementResponse != null) {
-			this.ctRequest = new ComplexType(this.elementRequest.getElement()
-					.getType(), this.config);
-			this.ctResponse = new ComplexType(this.elementResponse.getElement()
-					.getType(), this.config);
+			this.ctRequest = new ComplexType(this.elementRequest.getElement().getType(), this.config);
+			this.ctResponse = new ComplexType(this.elementResponse.getElement().getType(), this.config);
 
 			this.fqRequestType = this.ctRequest.getClassNameFullQualified();
 			this.fqResponseType = this.ctResponse.getClassNameFullQualified();
@@ -80,8 +73,7 @@ public class RestOperationProviderMockGenerator {
 
 	public void generate() {
 		this.log.debug("+generate");
-		if (this.elementResponse != null && this.ctResponse != null
-				&& !this.ctResponse.isSimpleType()
+		if (this.elementResponse != null && this.ctResponse != null && !this.ctResponse.isSimpleType()
 				&& !this.ctResponse.isPrimitiveType()) {
 			StringBuffer sb = new StringBuffer(1024);
 			sb.append("package ");
@@ -110,14 +102,11 @@ public class RestOperationProviderMockGenerator {
 			sb.append("import org.springframework.web.bind.annotation.RequestParam;\n");
 			sb.append("import org.springframework.web.bind.annotation.ResponseBody;\n");
 			sb.append("import org.springframework.web.context.request.WebRequest;\n");
-			// sb.append("import org.springframework.beans.factory.annotation.Qualifier;\n");
+			// sb.append("import
+			// org.springframework.beans.factory.annotation.Qualifier;\n");
 			sb.append("import org.springframework.integration.annotation.ServiceActivator;\n");
 			sb.append("import org.springframework.stereotype.Component;\n");
 			sb.append("\n");
-			sb.append("import com.qpark.eip.core.DateUtil;\n");
-			sb.append("import ");
-			sb.append(this.failureHandlerClassName);
-			sb.append(";\n");
 			sb.append("import ");
 			sb.append(this.config.getBasePackageName());
 			sb.append(".ServiceObjectFactory;\n");
@@ -161,9 +150,9 @@ public class RestOperationProviderMockGenerator {
 			sb.append("	private ServiceObjectFactory of;\n");
 			sb.append("\n");
 
-			SchemaProperty[] requestElements = this.ctRequest.getType()
-					.getElementProperties();
+			SchemaProperty[] requestElements = this.ctRequest.getType().getElementProperties();
 
+			this.requestType.trim();
 			// sb.append("\t/* ");
 			// for (int i = 0; i < requestElements.length; i++) {
 			// sb.append("/");
@@ -194,11 +183,9 @@ public class RestOperationProviderMockGenerator {
 				sb.append("\t * @param ");
 				sb.append(requestElements[i].getName().getLocalPart());
 				sb.append(" the ");
-				sb.append(Util.splitOnCapital(requestElements[i].getName()
-						.getLocalPart()));
+				sb.append(Util.splitOnCapital(requestElements[i].getName().getLocalPart()));
 				sb.append(" as {@link ");
-				sb.append(XsdsUtil.getBuildInBaseTypeClass(
-						requestElements[i].getType()).getSimpleName());
+				sb.append(XsdsUtil.getBuildInBaseTypeClass(requestElements[i].getType()).getSimpleName());
 				sb.append("}.\n");
 			}
 			sb.append("\t * @return the {@link ");
@@ -208,9 +195,7 @@ public class RestOperationProviderMockGenerator {
 			sb.append("	@InsightEndPoint\n");
 
 			sb.append("	@RequestMapping(value = \"");
-			if (requestElements.length == 0
-					|| !this.serviceId.equals(requestElements[0].getName()
-							.getLocalPart())) {
+			if (requestElements.length == 0 || !this.serviceId.equals(requestElements[0].getName().getLocalPart())) {
 				sb.append("/");
 				sb.append(this.serviceId);
 			}
@@ -235,11 +220,9 @@ public class RestOperationProviderMockGenerator {
 				sb.append("\t\t\t@PathVariable(\"");
 				sb.append(requestElements[i].getName().getLocalPart());
 				sb.append("\") ");
-				sb.append(XsdsUtil.getBuildInBaseTypeFormat(requestElements[i]
-						.getType()));
+				sb.append(XsdsUtil.getBuildInBaseTypeFormat(requestElements[i].getType()));
 				sb.append(" final ");
-				sb.append(XsdsUtil.getBuildInBaseTypeClass(
-						requestElements[i].getType()).getSimpleName());
+				sb.append(XsdsUtil.getBuildInBaseTypeClass(requestElements[i].getType()).getSimpleName());
 				sb.append(" ");
 				sb.append(requestElements[i].getName().getLocalPart());
 				sb.append(",\n");
@@ -274,11 +257,9 @@ public class RestOperationProviderMockGenerator {
 				} else {
 					sb.append(")");
 				}
-				sb.append(XsdsUtil.getBuildInBaseTypeFormat(requestElements[i]
-						.getType()));
+				sb.append(XsdsUtil.getBuildInBaseTypeFormat(requestElements[i].getType()));
 				sb.append(" final ");
-				sb.append(XsdsUtil.getBuildInBaseTypeClass(
-						requestElements[i].getType()).getSimpleName());
+				sb.append(XsdsUtil.getBuildInBaseTypeClass(requestElements[i].getType()).getSimpleName());
 				sb.append(" ");
 
 				sb.append(requestElements[i].getName().getLocalPart());
@@ -334,15 +315,15 @@ public class RestOperationProviderMockGenerator {
 
 			sb.append("\t\t} catch (Throwable e) {\n");
 
-			sb.append("\t\t\tFailureHandler.handleException(e, null /* rp */, \"E_ALL_NOT_KNOWN_ERROR\",\n");
-			sb.append("\t\t\t\t\tthis.logger);\n");
+			sb.append(
+					"\t\t\t//FailureHandler.handleException(e, null /* rp */, \"E_ALL_NOT_KNOWN_ERROR\", this.logger);\n");
 
 			sb.append("\t\t} finally {\n");
 
 			sb.append("\t\t\tthis.logger.debug(\" ");
 			sb.append(this.methodName);
 			sb.append(" duration {}\",\n");
-			sb.append("\t\t\t\t\tDateUtil.getDuration(start, System.currentTimeMillis()));\n");
+			sb.append("\t\t\t\t\trequestDuration(start));\n");
 
 			sb.append("\t\t\tthis.logger.debug(\"-");
 			sb.append(this.methodName);
@@ -399,17 +380,28 @@ public class RestOperationProviderMockGenerator {
 			sb.append("\t\treturn sb.toString();\n");
 			sb.append("\t}\n");
 
+			sb.append("\t/**\n");
+			sb.append("\t * @param start\n");
+			sb.append("\t * @return the duration in 000:00:00.000 format.\n");
+			sb.append("\t */\n");
+			sb.append("\tprivate String requestDuration(final long start) {\n");
+			sb.append("\t\tlong millis = System.currentTimeMillis() - start;\n");
+			sb.append(
+					"\t\tString hmss = String.format(\"%03d:%02d:%02d.%03d\",TimeUnit.MILLISECONDS.toHours(millis),\n");
+			sb.append(
+					"\t\t\tTimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),\n");
+			sb.append(
+					"\t\t\tTimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),\n");
+			sb.append(
+					"\t\t\tTimeUnit.MILLISECONDS.toMillis(millis) - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)));\n");
+			sb.append("\t\treturn hmss;\n");
+			sb.append("\t}\n");
+
 			sb.append("}\n");
 			sb.append("\n");
-			File f = Util.getFile(
-					this.outputDirectory,
-					this.packageName,
-					new StringBuffer()
-							.append(this.elementRequest
-									.getClassNameMockOperationProvider())
-							.append(".java").toString());
-			this.log.info(new StringBuffer().append("Write ").append(
-					f.getAbsolutePath()));
+			File f = Util.getFile(this.outputDirectory, this.packageName, new StringBuffer()
+					.append(this.elementRequest.getClassNameMockOperationProvider()).append(".java").toString());
+			this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sb.toString());
 			} catch (Exception e) {

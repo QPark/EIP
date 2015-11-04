@@ -35,6 +35,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * config</li>
  * <li>main spring application conifg</li>
  * </ul>
+ *
  * @author bhausen
  */
 @Mojo(name = "generate-spring-config", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
@@ -63,19 +64,14 @@ public class GenerateMojo extends AbstractMojo {
 	/** The name of the service id to generate. If empty use all. */
 	@Parameter(property = "serviceId", defaultValue = "")
 	private String serviceId;
-	/** The name of the service id of common services. */
-	@Parameter(property = "serviceIdCommonServices", defaultValue = "common")
-	private String serviceIdCommonServices;
-	/** <code>true</code>, if common service/config... should be generated too. */
-	@Parameter(property = "serviceCreationWithCommon", defaultValue = "true")
-	private boolean serviceCreationWithCommon;
-	/** The version of the service to generate. Defaults to <code>trunk</code>. */
+	/**
+	 * The version of the service to generate. Defaults to <code>trunk</code>.
+	 */
 	@Parameter(property = "serviceVersion", defaultValue = "trunk")
 	private String serviceVersion;
 	/** The SCM revision number to generate. Defaults to <code>r0</code>. */
 	@Parameter(property = "revisionNumber", defaultValue = "r0")
 	private String revisionNumber;
-
 	/**
 	 * The this set to <code>true</code> the Application context does not load
 	 * the persistence-spring-config.xml (e.g. needed if you only the generate
@@ -114,25 +110,22 @@ public class GenerateMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
-				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 
-		WebServiceDispatcherXmlGenerator wsdx = new WebServiceDispatcherXmlGenerator(
-				xsds, this.serviceId, this.serviceIdCommonServices,
-				this.serviceCreationWithCommon, this.warName,
+		WebServiceDispatcherXmlGenerator wsdx = new WebServiceDispatcherXmlGenerator(xsds, this.serviceId, this.warName,
 				this.outputDirectory, this.project, this.getLog());
 		wsdx.generate();
-		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(
-				xsds, this.basePackageName, this.serviceIdCommonServices,
-				this.serviceVersion, this.revisionNumber,
-				this.placeholderConfigurerImpl, this.outputDirectory,
-				this.project, this.getLog());
-		pcx.generate();
-		MainApplicationContextXmlGenerator macx = new MainApplicationContextXmlGenerator(
-				this.basePackageName, this.applicationWithoutPersistenceConfig,
+
+		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(this.basePackageName,
+				this.serviceId, this.serviceVersion, this.revisionNumber, this.placeholderConfigurerImpl,
 				this.outputDirectory, this.project, this.getLog());
+		pcx.generate();
+
+		MainApplicationContextXmlGenerator macx = new MainApplicationContextXmlGenerator(this.basePackageName,
+				this.applicationWithoutPersistenceConfig, this.outputDirectory, this.project, this.getLog());
 		macx.generate();
+
 		this.getLog().debug("-execute");
 	}
 }

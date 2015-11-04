@@ -33,6 +33,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * definitions. These standard router properties are using the
  * {@link RouterProperitesMojo#ROUTER_TYPE_FORWARD} to the generated mock
  * operation providers.
+ *
  * @author bhausen
  */
 @Mojo(name = "generate-router-properties", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
@@ -78,15 +79,9 @@ public class RouterProperitesMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/classes/router/definitions")
 	protected File outputDirectory;
-	/** <code>true</code>, if common service/config... should be generated too. */
-	@Parameter(property = "serviceCreationWithCommon", defaultValue = "true")
-	private boolean serviceCreationWithCommon;
 	/** The name of the service id to generate. If empty use all. */
 	@Parameter(property = "serviceId", defaultValue = "")
 	private String serviceId;
-	/** The name of the service id of common services. */
-	@Parameter(property = "serviceIdCommonServices", defaultValue = "common")
-	private String serviceIdCommonServices;
 	/**
 	 * The service request name need to end with this suffix (Default
 	 * <code>Request</code>).
@@ -100,17 +95,13 @@ public class RouterProperitesMojo extends AbstractMojo {
 	@Parameter(property = "serviceResponseSuffix", defaultValue = "Response")
 	private String serviceResponseSuffix;
 
-	private String getRouterProperties(final XsdsUtil xsds,
-			final ElementType element) {
+	private String getRouterProperties(final XsdsUtil xsds, final ElementType element) {
 		StringBuffer sb = new StringBuffer(1024);
 
-		ElementType elementResponse = XsdsUtil.findResponse(element,
-				xsds.getElementTypes(), xsds);
+		ElementType elementResponse = XsdsUtil.findResponse(element, xsds.getElementTypes(), xsds);
 		if (elementResponse != null) {
-			ComplexType ctResponse = new ComplexType(elementResponse
-					.getElement().getType(), xsds);
-			if (ctResponse != null && !ctResponse.isSimpleType()
-					&& !ctResponse.isPrimitiveType()) {
+			ComplexType ctResponse = new ComplexType(elementResponse.getElement().getType(), xsds);
+			if (ctResponse != null && !ctResponse.isSimpleType() && !ctResponse.isPrimitiveType()) {
 				sb.append("# Router properties of ");
 				sb.append(element.getServiceId());
 				sb.append(".");
@@ -148,8 +139,7 @@ public class RouterProperitesMojo extends AbstractMojo {
 				sb.append(" needs to be set.\n");
 				sb.append(ROUTER_OPERATION_PROVIDER_CLASS_NAME_MOCK);
 				sb.append("=");
-				sb.append(element
-						.getClassNameFullQualifiedMockOperationProvider());
+				sb.append(element.getClassNameFullQualifiedMockOperationProvider());
 				sb.append("\n");
 				sb.append("#\n");
 				sb.append("# Alternativly you can route to directly to a channel.\n");
@@ -168,7 +158,8 @@ public class RouterProperitesMojo extends AbstractMojo {
 				sb.append("=");
 				sb.append("\n");
 				sb.append("#\n");
-				sb.append("# Or you can route to a list of beans or channels (request to output and response to input.\n");
+				sb.append(
+						"# Or you can route to a list of beans or channels (request to output and response to input.\n");
 				sb.append("#");
 				sb.append(ROUTER_TYPE);
 				sb.append("=");
@@ -205,8 +196,10 @@ public class RouterProperitesMojo extends AbstractMojo {
 				sb.append("\n");
 
 				sb.append("#\n");
-				sb.append("# Additionaly a list header enricher bean names could be entered before routing the message.\n");
-				sb.append("# The ref bean needs to implement the method Object getHeaderValue(Message<JAXBElement<?>> message)\n");
+				sb.append(
+						"# Additionaly a list header enricher bean names could be entered before routing the message.\n");
+				sb.append(
+						"# The ref bean needs to implement the method Object getHeaderValue(Message<JAXBElement<?>> message)\n");
 				sb.append("#");
 				sb.append(ROUTER_HEADER_ENRICHER_HEADER_NAME);
 				sb.append(".0=\n");
@@ -223,8 +216,10 @@ public class RouterProperitesMojo extends AbstractMojo {
 				sb.append("=\n");
 
 				sb.append("#\n");
-				sb.append("# At least an last transformation could be run before releasing the response to the caller.\n");
-				sb.append("# The ref bean needs to implement the method Message<JAXBElement<?>> transform(Message<JAXBElement<?>> message)\n");
+				sb.append(
+						"# At least an last transformation could be run before releasing the response to the caller.\n");
+				sb.append(
+						"# The ref bean needs to implement the method Message<JAXBElement<?>> transform(Message<JAXBElement<?>> message)\n");
 				sb.append("#");
 				sb.append(ROUTER_LAST_TRANSFORMER_BEAN_NAME);
 				sb.append("=\n");
@@ -241,32 +236,23 @@ public class RouterProperitesMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
-				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		String fileName;
 		File f;
-		Collection<String> serviceIds = ServiceIdRegistry
-				.getServiceIds(this.serviceId);
+		Collection<String> serviceIds = ServiceIdRegistry.getServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
-				if (element.isRequest()
-						&& ServiceIdRegistry.isValidServiceId(
-								element.getServiceId(), sid)) {
+				if (element.isRequest() && ServiceIdRegistry.isValidServiceId(element.getServiceId(), sid)) {
 					String s = this.getRouterProperties(xsds, element);
-					fileName = new StringBuffer(32)
-							.append(Util.lowerize(Util.getXjcClassName(element
-									.getServiceId())))
-							.append(element.getOperationName())
-							.append("RouterConfig.properties").toString();
+					fileName = new StringBuffer(32).append(Util.lowerize(Util.getXjcClassName(element.getServiceId())))
+							.append(element.getOperationName()).append("RouterConfig.properties").toString();
 					f = Util.getFile(this.outputDirectory, fileName);
 					if (s != null && s.trim().length() > 0 && !f.exists()) {
-						this.getLog().info(
-								new StringBuffer().append("Write ").append(
-										f.getAbsolutePath()));
+						this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 						try {
 							Util.writeToFile(f, s);
 						} catch (Exception e) {
