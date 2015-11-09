@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
+	
+	xmlns:ISSlib="http://www.samples.com/Library/LibraryTypes"
+	
+	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
+	xmlns:ISSlibm="http://www.sample.com/Library/LibraryServiceMessages"
+	
+	targetNamespace="http://www.sample.com/Library/LibraryServiceMessages"
+	elementFormDefault="qualified">
+
+	<import schemaLocation="http://www.samples.com/model/ISS/Library/Library.xsd" namespace="http://www.samples.com/Library/LibraryTypes"/>
+	<import schemaLocation="../../EIP/Common/CommonServiceMessages.xsd" namespace="http://www.qpark.com/Common/CommonServiceMessages"/>
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package
+					name="com.samples.platform.service.library.msg" />
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+			Message definitions of the library web service.
+		</documentation>
+	</annotation>
+
+	<complexType name="CreateBookRequestType">
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="book" type="ISSlib:BookType" maxOccurs="unbounded" minOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="CreateBookResponseType">
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="book" type="ISSlib:BookType" maxOccurs="unbounded" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="CreateBookRequest" type="ISSlibm:CreateBookRequestType"></element>
+    <element name="CreateBookResponse" type="ISSlibm:CreateBookResponseType"></element>
+</schema>

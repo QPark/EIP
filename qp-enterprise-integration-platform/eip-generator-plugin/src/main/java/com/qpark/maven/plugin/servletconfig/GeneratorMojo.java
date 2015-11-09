@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven.plugin.servletconfig;
 
@@ -22,6 +17,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -31,13 +27,16 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-servlet-config", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+@Mojo(name = "generate-servlet-config",
+		defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -85,17 +84,20 @@ public class GeneratorMojo extends AbstractMojo {
 	/**
 	 * The bean definition of the additional web service payload interceptors.
 	 */
-	@Parameter(property = "additionalWebservicePayloadInterceptors", defaultValue = "")
+	@Parameter(property = "additionalWebservicePayloadInterceptors",
+			defaultValue = "")
 	private String additionalWebservicePayloadInterceptors;
 	/**
 	 * <code>true</code>, if no payload validation should be added to the web
 	 * service endpoint .
 	 */
-	@Parameter(property = "disableWebservicePayloadValidation", defaultValue = "false")
+	@Parameter(property = "disableWebservicePayloadValidation",
+			defaultValue = "false")
 	private boolean disableWebservicePayloadValidation;
 
 	/** The class name of the implementing webservice pay load logger. */
-	@Parameter(property = "webservicePayloadLoggerImplementation", defaultValue = "com.qpark.eip.core.spring.PayloadLogger")
+	@Parameter(property = "webservicePayloadLoggerImplementation",
+			defaultValue = "com.qpark.eip.core.spring.PayloadLogger")
 	private String webservicePayloadLoggerImplementation;
 	/**
 	 * The class name of the implementing a javax.servlet.Filter to be applied
@@ -109,19 +111,26 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
 
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
+				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
+				this.serviceRequestSuffix, this.serviceResponseSuffix);
 
-		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId, this.serviceVersion, this.revisionNumber,
-				this.warName, this.additionalWebappFilter, this.outputDirectory, this.getLog());
+		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId,
+				this.serviceVersion, this.revisionNumber, this.warName,
+				this.additionalWebappFilter, this.outputDirectory,
+				this.getLog());
 		wx.generate();
 
-		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds, this.basePackageName, this.serviceId,
-				this.disableWebservicePayloadValidation, this.webservicePayloadLoggerImplementation,
-				this.additionalWebservicePayloadInterceptors, this.outputDirectory, this.project, this.getLog());
+		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds,
+				this.basePackageName, this.serviceId,
+				this.disableWebservicePayloadValidation,
+				this.webservicePayloadLoggerImplementation,
+				this.additionalWebservicePayloadInterceptors,
+				this.outputDirectory, this.project, this.getLog());
 		wsx.generate();
 
 		this.getLog().debug("-execute");

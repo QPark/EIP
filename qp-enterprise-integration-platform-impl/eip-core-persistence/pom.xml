@@ -38,8 +38,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 		</dependency>
-			
-
 
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
@@ -169,34 +167,6 @@
 					</compilerArguments>
 				</configuration>
 			</plugin>
-			<!--
-			<plugin>
-				<groupId>com.qpark.maven</groupId>
-				<artifactId>eip-generator-plugin</artifactId>
-				<executions>
-					<execution>
-					<phase>process-sources</phase>
-					<goals>
-						<goal>generate-persistence-ddl</goal>
-					</goals>
-					<configuration>
-						<persistenceUnitName>${persistence.unit.name}</persistenceUnitName>
-					</configuration>
-				</execution>
-			</executions>
-			</plugin>-->
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>hibernate3-maven-plugin</artifactId> 
-				<version>2.2</version> <executions> <execution> <id>hbm2ddl</id> <phase>prepare-package</phase> 
-				<goals> <goal>hbm2ddl</goal> </goals> </execution> </executions> <configuration> 
-				<components> <component> <name>hbm2ddl</name> <implementation>jpaconfiguration</implementation> 
-				<outputDirectory>target/generated-resources</outputDirectory> </component> 
-				</components> <componentProperties> <persistenceunit>${persistence.unit.name}</persistenceunit> 
-				<propertyfile>src/main/persistence/persistence.properties</propertyfile> 
-				<outputfilename>eip-core-persistence-schema.sql</outputfilename> <drop>false</drop> 
-				<create>true</create> <export>false</export> <format>true</format> <update>false</update> 
-				<validate>false</validate> </componentProperties> </configuration> <dependencies> 
-				<dependency> <groupId>cglib</groupId> <artifactId>cglib</artifactId> <version>2.1_3</version> 
-				</dependency> </dependencies> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -205,7 +175,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

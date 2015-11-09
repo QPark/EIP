@@ -30,12 +30,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>eip-core-failurehandler-model</artifactId>
+			<artifactId>eip-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>eip-core-xml</artifactId>
+			<artifactId>eip-core-failurehandler-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

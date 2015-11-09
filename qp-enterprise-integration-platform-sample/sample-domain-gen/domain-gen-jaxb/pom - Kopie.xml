@@ -1,0 +1,225 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ *
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.qpark.eip</groupId>
+		<artifactId>eip-platform-bom</artifactId>
+		<version>1.0.0</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.samples.domain.gen</groupId>
+	<artifactId>domain-gen-jaxb</artifactId>
+	<version>2.0.0</version>
+	<packaging>jar</packaging>
+	<name>domain-gen-jaxb</name>
+	<description>
+This pom contains the generation of all types defined in the com.samples.domain model and service artefact contained xsds. 
+The generator used is xjc.
+
+Additionally to that a human readable version of the xsds is generated.
+	</description>
+
+	<organization>
+		<name>QPark Consulting s.a r.l</name>
+		<url>http://www.qpark-consulting.com</url>
+	</organization>
+
+	<distributionManagement>
+		<repository>
+			<id>${repository.id}</id>
+			<url>${repository.url}</url>
+		</repository>
+		<site>
+			<id>site-server</id>
+			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
+		</site>
+	</distributionManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<base.package.name>com.samples.bus</base.package.name>
+
+		<model.dir>${project.build.directory}/model</model.dir>
+		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
+		<domain.schema.location.prefix>http://www.samples.com/model, http://www.qpark.com/model</domain.schema.location.prefix>
+	</properties>
+	<build>
+		<sourceDirectory>${java.gen.dir}</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-generator-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate schema file list and catalog to prepare xjc</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-xjc-preparations</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<schemalocationPrefix>${domain.schema.location.prefix}</schemalocationPrefix>
+							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+							<includeAllModels>true</includeAllModels>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate integration gateways</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-integration-java</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>call xjc</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources>
+							<source>${model.dir}</source>
+							</sources>
+							<catalog>${project.build.directory}/catalog.xml</catalog>
+							<enableIntrospection>true</enableIntrospection>
+							<encoding>UTF-8</encoding>
+							<schemaListFileName>${project.build.directory}/schemaFileList.txt</schemaListFileName>
+							<outputDirectory>${java.gen.dir}</outputDirectory>
+							<clearOutputDir>false</clearOutputDir>
+							<quiet>false</quiet>
+							<verbose>true</verbose>
+							<generateEpisode>false</generateEpisode>
+							<!-- 
+							<target>2.1</target>
+							
+							 -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>call xslt</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<catalogs>
+						<catalog>${project.build.directory}/catalog.cat</catalog>
+					</catalogs>
+					<forceCreation>true</forceCreation>
+					<transformationSets>
+						<transformationSet>
+							<dir>${model.dir}</dir>
+							<outputDir>${project.build.directory}/html</outputDir>
+							<includes><include>**/*.xsd</include></includes>
+							<stylesheet>src/main/resources/xs3p.xsl</stylesheet>
+							<fileMappers>
+								<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+									<targetExtension>.html</targetExtension>
+								</fileMapper>
+							</fileMappers>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>8.7</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-xsds</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.samples.domain</groupId>
+									<artifactId>model</artifactId>
+									<version>${project.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+									<includes>**/*.xsd</includes>
+									<!--
+									-->
+									<excludes>**/*MappingTypes.xsd</excludes>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.samples.domain</groupId>
+									<artifactId>service</artifactId>
+									<version>${project.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+									<includes>**/*.xsd</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly-generated-java-sources.xml</descriptor>
+						<descriptor>assembly-generated-html-doc.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generated-java-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes><exclude>**/*xsl</exclude></excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

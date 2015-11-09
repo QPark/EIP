@@ -13,6 +13,13 @@
 -->
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.qpark.eip</groupId>
+		<artifactId>eip-platform-bom</artifactId>
+		<version>1.0.0</version>
+		<relativePath/>
+	</parent>
+
 	<groupId>com.samples.domain.gen</groupId>
 	<artifactId>domain-gen-flow</artifactId>
 	<version>2.0.0</version>
@@ -29,31 +36,12 @@ and contained in the resulting maven artefact.
 		<base.package.name>com.samples.bus</base.package.name>
 
 		<interface.gen.dir>${project.build.directory}/generated-sources</interface.gen.dir>
-		<impl.gen.dir>${project.build.directory}/generated-xxx</impl.gen.dir>
+		<impl.gen.dir>${project.build.directory}/prepared-sources</impl.gen.dir>
 
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<domain.schema.location.prefix>http://www.samples.com/model, http://www.qpark.com/model</domain.schema.location.prefix>
-
-		<eip.version>1.0.13</eip.version>
-		<eip.generator.version>2.0.0</eip.generator.version>
-
-		<io.spring.platform.version>1.1.3.RELEASE</io.spring.platform.version>
-
-		<com.springsource.insight.version>1.9.2.RELEASE</com.springsource.insight.version>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.spring.platform</groupId>
-				<artifactId>platform-bom</artifactId>
-				<version>${io.spring.platform.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -65,7 +53,6 @@ and contained in the resulting maven artefact.
 		<dependency>
 			<groupId>com.springsource.insight</groupId>
 			<artifactId>insight-annotation</artifactId>
-			<version>${com.springsource.insight.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -82,7 +69,6 @@ and contained in the resulting maven artefact.
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.9.1</version>
 				<executions>
 					<execution>
 						<id>add-source-folders</id>
@@ -101,13 +87,12 @@ and contained in the resulting maven artefact.
 			<plugin>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>${eip.generator.version}</version>
 				<executions>
 					<execution>
 						<id>generate schema file list and catalog to prepare xjc</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>generate-mapper</goal>
+							<goal>generate-flow-mapper</goal>
 						</goals>
 						<configuration>
 							<baseDirectory>${model.dir}</baseDirectory>
@@ -120,7 +105,6 @@ and contained in the resulting maven artefact.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
 				<executions>
 					<execution>
 						<id>unpack-xsds</id>

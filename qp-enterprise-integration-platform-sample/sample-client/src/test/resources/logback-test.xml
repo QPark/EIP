@@ -1,0 +1,42 @@
+<configuration scan="true">
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyyMMdd-HHmmss.SSS}[%-5level][%logger] %msg%n</pattern>
+		</encoder>
+	</appender>
+	<logger name="com.ses.osp.bus.client" level="INFO" />
+	
+	<!-- spring -->
+	<logger name="org.springframework" level="WARN" />
+	<!--
+	<logger name="org.springframework.ws.server.endpoint.interceptor.AbstractValidatingInterceptor" level="WARN" />
+	<logger name="org.springframework.security" level="WARN" />
+	<logger name="org.springframework.ldap" level="WARN" />
+	<logger name="org.springframework.integration" level="WARN" />
+	-->
+	<!-- To log all server-side messages, simply set the org.springframework.ws.server.MessageTracing logger to level DEBUG or TRACE. On the debug level, only the payload root element is logged; on the TRACE level, the entire message content. If you only want to log sent messages, use the org.springframework.ws.server.MessageTracing.sent logger; or org.springframework.ws.server.MessageTracing.received to log received messages. On the client-side, similar loggers exist: org.springframework.ws.client.MessageTracing.sent and org.springframework.ws.client.MessageTracing.received. -->
+	<!--
+	<logger name="org.springframework.ws.server.MessageTracing.sent" level="TRACE" />
+	<logger name="org.springframework.ws.server.MessageTracing.received" level="TRACE" />
+	<logger name="org.springframework.ws.client.MessageTracing.sent" level="TRACE" />
+	<logger name="org.springframework.ws.client.MessageTracing.received" level="TRACE" />
+
+	<logger name="org.springframework.ws.client.core.WebServiceTemplate" level="DEBUG"/>
+	-->
+	<logger name="org.springframework.ws.client.core.WebServiceTemplate" level="DEBUG"/>
+
+	<!-- spring security -->
+	<!--
+	<logger name="org.springframework.integration.security" level="TRACE" />
+	<logger name="org.springframework.ws.soap.security" level="TRACE" />
+	<logger name="org.springframework.security.core" level="TRACE" />
+	<logger name="org.springframework.security.authentication" level="TRACE" />
+	<logger name="org.springframework.security.access" level="TRACE" />
+	-->
+	
+	<logger name="httpclient" level="WARN" />
+
+	<root level="INFO">
+		<appender-ref ref="console" />
+	</root>
+</configuration>

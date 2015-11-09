@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
- * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.samples.platform.serviceprovider.library.internal.dao;
 
@@ -25,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.qpark.eip.model.common.EntityType_;
 import com.samples.platform.model.library.BookType;
 import com.samples.platform.model.library.BookType_;
 
@@ -42,10 +38,12 @@ public class PlatformDao {
 	private EntityManager em;
 
 	/**
-	 * @param value the {@link BookType} to create.
+	 * @param value
+	 *            the {@link BookType} to create.
 	 * @return the created {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager", propagation = Propagation.REQUIRED)
+	@Transactional(value = "ComSamplesPlatformTransactionManager",
+			propagation = Propagation.REQUIRED)
 	public BookType createBook(final BookType value) {
 		if (value != null) {
 			try {
@@ -63,9 +61,11 @@ public class PlatformDao {
 	}
 
 	/**
-	 * @param value the id of the book to delete.
+	 * @param value
+	 *            the id of the book to delete.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager", propagation = Propagation.REQUIRED)
+	@Transactional(value = "ComSamplesPlatformTransactionManager",
+			propagation = Propagation.REQUIRED)
 	public void deleteBook(final BookType value) {
 		if (value != null) {
 			try {
@@ -81,10 +81,12 @@ public class PlatformDao {
 	}
 
 	/**
-	 * @param ISBN the id of the book to find.
+	 * @param ISBN
+	 *            the ISBN of the book to find.
 	 * @return the {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager", propagation = Propagation.REQUIRED)
+	@Transactional(value = "ComSamplesPlatformTransactionManager",
+			propagation = Propagation.REQUIRED)
 	public BookType getBookByISBN(final String ISBN) {
 		BookType m = null;
 		if (ISBN == null) {
@@ -100,8 +102,8 @@ public class PlatformDao {
 				this.logger.debug("getBookByISBN: "
 						+ ToStringBuilder.reflectionToString(m));
 			} catch (NoResultException e) {
-				this.logger.debug("getBookByISBN: non value found for ISBN="
-						+ ISBN);
+				this.logger.debug(
+						"getBookByISBN: non value found for ISBN=" + ISBN);
 				m = null;
 			}
 		}
@@ -109,10 +111,42 @@ public class PlatformDao {
 	}
 
 	/**
-	 * @param value the {@link BookType} to save.
+	 * @param uuid
+	 *            the id of the book to find.
+	 * @return the {@link BookType}.
+	 */
+	@Transactional(value = "ComSamplesPlatformTransactionManager",
+			propagation = Propagation.REQUIRED)
+	public BookType getBookById(final String uuid) {
+		BookType m = null;
+		if (uuid == null) {
+			this.logger.debug("getBookById: UUID is null.");
+		} else {
+			CriteriaBuilder cb = this.em.getCriteriaBuilder();
+			CriteriaQuery<BookType> q = cb.createQuery(BookType.class);
+			Root<BookType> c = q.from(BookType.class);
+			q.where(cb.equal(c.<String> get(EntityType_.UUID), uuid));
+			TypedQuery<BookType> typedQuery = this.em.createQuery(q);
+			try {
+				m = typedQuery.getSingleResult();
+				this.logger.debug("getBookByISBN: "
+						+ ToStringBuilder.reflectionToString(m));
+			} catch (NoResultException e) {
+				this.logger
+						.debug("getBookByISBN: non value found for id=" + uuid);
+				m = null;
+			}
+		}
+		return m;
+	}
+
+	/**
+	 * @param value
+	 *            the {@link BookType} to save.
 	 * @return the created {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager", propagation = Propagation.REQUIRED)
+	@Transactional(value = "ComSamplesPlatformTransactionManager",
+			propagation = Propagation.REQUIRED)
 	public BookType saveBook(final BookType value) {
 		if (value != null) {
 			try {

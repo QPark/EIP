@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven.plugin.router;
 
@@ -29,6 +24,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ServiceIdRegistry;
@@ -39,7 +35,8 @@ import com.qpark.maven.xmlbeans.ServiceIdRegistry;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-router-xml", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+@Mojo(name = "generate-router-xml",
+		defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class RouterXmlMojo extends AbstractMojo {
 	/**
 	 * Collect the property files recursively.
@@ -49,7 +46,8 @@ public class RouterXmlMojo extends AbstractMojo {
 	 * @param propertyFiles
 	 *            the list of property files.
 	 */
-	private static void scanForProperties(final File f, final List<File> propertyFiles) {
+	private static void scanForProperties(final File f,
+			final List<File> propertyFiles) {
 		File[] cs = f.listFiles();
 		if (cs != null && cs.length > 0) {
 			for (File c : cs) {
@@ -70,11 +68,13 @@ public class RouterXmlMojo extends AbstractMojo {
 	}
 
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/classes/router/definitions")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/classes/router/definitions")
 	protected File baseDirectory;
 
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/classes/router")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/classes/router")
 	protected File outputDirectory;
 
 	@Component
@@ -85,6 +85,7 @@ public class RouterXmlMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		List<File> propertyFiles = new ArrayList<File>();
 		StringBuffer applicationRouterConfig = new StringBuffer(1024);
@@ -106,76 +107,115 @@ public class RouterXmlMojo extends AbstractMojo {
 				bis = new BufferedInputStream(new FileInputStream(file));
 				p.load(bis);
 				bis.close();
-				serviceId = p.getProperty(RouterProperitesMojo.ROUTER_SERVICE_ID, "").trim();
-				operationName = p.getProperty(RouterProperitesMojo.ROUTER_OPERATION_NAME, "").trim();
-				routerType = p.getProperty(RouterProperitesMojo.ROUTER_TYPE, "");
-				operationProviderBeanNames = this.getOperationProviderBeanNames(p);
+				serviceId = p
+						.getProperty(RouterProperitesMojo.ROUTER_SERVICE_ID, "")
+						.trim();
+				operationName = p.getProperty(
+						RouterProperitesMojo.ROUTER_OPERATION_NAME, "").trim();
+				routerType = p.getProperty(RouterProperitesMojo.ROUTER_TYPE,
+						"");
+				operationProviderBeanNames = this
+						.getOperationProviderBeanNames(p);
 				headerEnricherBeans = this.getHeaderEnricher(p);
-				operationProviderChannelPairs = this.getOperationProviderChannelPairs(p);
-				channelNameWsRequest = p.getProperty(RouterProperitesMojo.ROUTER_CHANNEL_WS_REQUEST, "").trim();
-				channelNameWsResponse = p.getProperty(RouterProperitesMojo.ROUTER_CHANNEL_WS_RESPONSE, "").trim();
+				operationProviderChannelPairs = this
+						.getOperationProviderChannelPairs(p);
+				channelNameWsRequest = p.getProperty(
+						RouterProperitesMojo.ROUTER_CHANNEL_WS_REQUEST, "")
+						.trim();
+				channelNameWsResponse = p.getProperty(
+						RouterProperitesMojo.ROUTER_CHANNEL_WS_RESPONSE, "")
+						.trim();
 				if (serviceId.length() == 0) {
-					this.getLog().error(new StringBuffer(128).append("The service is empty in ")
-							.append(file.getAbsolutePath()).append(".").toString());
+					this.getLog()
+							.error(new StringBuffer(128)
+									.append("The service is empty in ")
+									.append(file.getAbsolutePath()).append(".")
+									.toString());
 				} else if (operationName.length() == 0) {
-					this.getLog().error(new StringBuffer(128).append("The operation name is empty in ")
-							.append(file.getAbsolutePath()).append(".").toString());
+					this.getLog()
+							.error(new StringBuffer(128)
+									.append("The operation name is empty in ")
+									.append(file.getAbsolutePath()).append(".")
+									.toString());
 				} else if (channelNameWsRequest.length() == 0) {
 					this.getLog()
-							.error(new StringBuffer(128).append("The web service request channel name is empty in ")
-									.append(file.getAbsolutePath()).append(".").toString());
+							.error(new StringBuffer(128)
+									.append("The web service request channel name is empty in ")
+									.append(file.getAbsolutePath()).append(".")
+									.toString());
 				} else if (channelNameWsResponse.length() == 0) {
 					this.getLog()
-							.error(new StringBuffer(128).append("The web service response channel name is empty in ")
-									.append(file.getAbsolutePath()).append(".").toString());
-				} else if (routerType.length() == 0
-						|| routerType.trim().equals(RouterProperitesMojo.ROUTER_TYPE_FORWARD)) {
+							.error(new StringBuffer(128)
+									.append("The web service response channel name is empty in ")
+									.append(file.getAbsolutePath()).append(".")
+									.toString());
+				} else if (routerType.length() == 0 || routerType.trim()
+						.equals(RouterProperitesMojo.ROUTER_TYPE_FORWARD)) {
 					if (operationProviderBeanNames.size() != 1) {
-						this.getLog()
-								.error(new StringBuffer(128)
-										.append("The list size of operation provider bean names has to be 1 when using router type ")
-										.append(RouterProperitesMojo.ROUTER_TYPE_FORWARD).append(" in ")
-										.append(file.getAbsolutePath()).append(".").toString());
+						this.getLog().error(new StringBuffer(128)
+								.append("The list size of operation provider bean names has to be 1 when using router type ")
+								.append(RouterProperitesMojo.ROUTER_TYPE_FORWARD)
+								.append(" in ").append(file.getAbsolutePath())
+								.append(".").toString());
 					} else if (operationProviderBeanNames.size() == 0) {
 						this.getLog()
 								.error(new StringBuffer(128)
 										.append("The list of operation provider bean names is empty in ")
-										.append(file.getAbsolutePath()).append(".").toString());
+										.append(file.getAbsolutePath())
+										.append(".").toString());
 					}
-					String xml = this.getRouterForward(serviceId, operationName, channelNameWsRequest,
-							channelNameWsResponse, operationProviderBeanNames, p);
+					String xml = this.getRouterForward(serviceId, operationName,
+							channelNameWsRequest, channelNameWsResponse,
+							operationProviderBeanNames, p);
 					applicationRouterConfig.append(xml);
 					this.write(serviceId, operationName, xml);
-				} else if (routerType.length() == 0
-						|| routerType.trim().equals(RouterProperitesMojo.ROUTER_TYPE_RECIPIENT_LIST_ROUTER)) {
-					String aggregatorBeanName = p.getProperty(RouterProperitesMojo.ROUTER_RESPONSE_AGGREGATOR_BEAN_NAME,
+				} else if (routerType.length() == 0 || routerType.trim().equals(
+						RouterProperitesMojo.ROUTER_TYPE_RECIPIENT_LIST_ROUTER)) {
+					String aggregatorBeanName = p.getProperty(
+							RouterProperitesMojo.ROUTER_RESPONSE_AGGREGATOR_BEAN_NAME,
 							"");
 					if (operationProviderBeanNames.size() < 1) {
+						this.getLog().error(new StringBuffer(128)
+								.append("The list size of operation provider bean names has to be greater than 0 when using router type ")
+								.append(RouterProperitesMojo.ROUTER_TYPE_RECIPIENT_LIST_ROUTER)
+								.append(" in ").append(file.getAbsolutePath())
+								.append(".").toString());
+					} else if (aggregatorBeanName.trim().length() == 0) {
 						this.getLog()
 								.error(new StringBuffer(128)
-										.append("The list size of operation provider bean names has to be greater than 0 when using router type ")
-										.append(RouterProperitesMojo.ROUTER_TYPE_RECIPIENT_LIST_ROUTER).append(" in ")
-										.append(file.getAbsolutePath()).append(".").toString());
-					} else if (aggregatorBeanName.trim().length() == 0) {
-						this.getLog().error(new StringBuffer(128).append("The aggregator bean names is empty in ")
-								.append(file.getAbsolutePath()).append(".").toString());
+										.append("The aggregator bean names is empty in ")
+										.append(file.getAbsolutePath())
+										.append(".").toString());
 					}
-					String xml = this.getRouterRecipientListRouter(serviceId, operationName, channelNameWsRequest,
-							channelNameWsResponse, operationProviderBeanNames, headerEnricherBeans,
-							operationProviderChannelPairs, aggregatorBeanName, p);
+					String xml = this.getRouterRecipientListRouter(serviceId,
+							operationName, channelNameWsRequest,
+							channelNameWsResponse, operationProviderBeanNames,
+							headerEnricherBeans, operationProviderChannelPairs,
+							aggregatorBeanName, p);
 					applicationRouterConfig.append(xml);
 					this.write(serviceId, operationName, xml);
-				} else if (routerType.trim().equals(RouterProperitesMojo.ROUTER_TYPE_CHANNEL_ROUTER)) {
-					String channelOutgoing = p.getProperty(RouterProperitesMojo.ROUTER_CHANNEL_OUTGOING, "");
-					String channelIncoming = p.getProperty(RouterProperitesMojo.ROUTER_CHANNEL_INCOMING, "");
-					if (channelOutgoing.trim().length() == 0 || channelIncoming.trim().length() == 0) {
-						this.getLog().error(new StringBuffer(128).append("The both channels ")
-								.append(RouterProperitesMojo.ROUTER_CHANNEL_OUTGOING).append(" and ")
-								.append(RouterProperitesMojo.ROUTER_CHANNEL_INCOMING).append(" need to be defined in ")
-								.append(file.getAbsolutePath()).append(".").toString());
+				} else if (routerType.trim().equals(
+						RouterProperitesMojo.ROUTER_TYPE_CHANNEL_ROUTER)) {
+					String channelOutgoing = p.getProperty(
+							RouterProperitesMojo.ROUTER_CHANNEL_OUTGOING, "");
+					String channelIncoming = p.getProperty(
+							RouterProperitesMojo.ROUTER_CHANNEL_INCOMING, "");
+					if (channelOutgoing.trim().length() == 0
+							|| channelIncoming.trim().length() == 0) {
+						this.getLog()
+								.error(new StringBuffer(128)
+										.append("The both channels ")
+										.append(RouterProperitesMojo.ROUTER_CHANNEL_OUTGOING)
+										.append(" and ")
+										.append(RouterProperitesMojo.ROUTER_CHANNEL_INCOMING)
+										.append(" need to be defined in ")
+										.append(file.getAbsolutePath())
+										.append(".").toString());
 					}
-					String xml = this.getRouterChannelRouter(serviceId, operationName, channelNameWsRequest,
-							channelNameWsResponse, channelOutgoing, channelIncoming, p);
+					String xml = this.getRouterChannelRouter(serviceId,
+							operationName, channelNameWsRequest,
+							channelNameWsResponse, channelOutgoing,
+							channelIncoming, p);
 					applicationRouterConfig.append(xml);
 					this.write(serviceId, operationName, xml);
 				}
@@ -192,17 +232,19 @@ public class RouterXmlMojo extends AbstractMojo {
 	 * @param p
 	 * @return
 	 */
-	private List<SimpleEntry<String, String>> getOperationProviderChannelPairs(final Properties p) {
+	private List<SimpleEntry<String, String>> getOperationProviderChannelPairs(
+			final Properties p) {
 		List<SimpleEntry<String, String>> list = new ArrayList<SimpleEntry<String, String>>();
 		SimpleEntry<String, String> entry;
 		String suffix;
 		for (String key : p.stringPropertyNames()) {
-			if (key != null && key.startsWith(RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_OUTGOINGCHANNEL_NAME)) {
+			if (key != null && key.startsWith(
+					RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_OUTGOINGCHANNEL_NAME)) {
 				entry = new SimpleEntry<String, String>(p.getProperty(key), "");
 				suffix = key.substring(key.lastIndexOf('.'), key.length());
 				for (String keyx : p.stringPropertyNames()) {
-					if (keyx != null
-							&& keyx.startsWith(RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_INCOMINGCHANNEL_NAME)) {
+					if (keyx != null && keyx.startsWith(
+							RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_INCOMINGCHANNEL_NAME)) {
 						if (keyx.endsWith(suffix)) {
 							entry.setValue(p.getProperty(keyx));
 							list.add(entry);
@@ -216,7 +258,8 @@ public class RouterXmlMojo extends AbstractMojo {
 	}
 
 	private String getLastTransformerBeanName(final Properties p) {
-		String lastTransformerBeanName = p.getProperty(RouterProperitesMojo.ROUTER_LAST_TRANSFORMER_BEAN_NAME);
+		String lastTransformerBeanName = p.getProperty(
+				RouterProperitesMojo.ROUTER_LAST_TRANSFORMER_BEAN_NAME);
 		return lastTransformerBeanName;
 	}
 
@@ -224,16 +267,19 @@ public class RouterXmlMojo extends AbstractMojo {
 	 * @param p
 	 * @return
 	 */
-	private List<SimpleEntry<String, String>> getHeaderEnricher(final Properties p) {
+	private List<SimpleEntry<String, String>> getHeaderEnricher(
+			final Properties p) {
 		List<SimpleEntry<String, String>> list = new ArrayList<SimpleEntry<String, String>>();
 		SimpleEntry<String, String> entry;
 		String suffix;
 		for (String key : p.stringPropertyNames()) {
-			if (key != null && key.startsWith(RouterProperitesMojo.ROUTER_HEADER_ENRICHER_HEADER_NAME)) {
+			if (key != null && key.startsWith(
+					RouterProperitesMojo.ROUTER_HEADER_ENRICHER_HEADER_NAME)) {
 				entry = new SimpleEntry<String, String>(p.getProperty(key), "");
 				suffix = key.substring(key.lastIndexOf('.'), key.length());
 				for (String keyx : p.stringPropertyNames()) {
-					if (keyx != null && keyx.startsWith(RouterProperitesMojo.ROUTER_HEADER_ENRICHER_BEAN_NAME)) {
+					if (keyx != null && keyx.startsWith(
+							RouterProperitesMojo.ROUTER_HEADER_ENRICHER_BEAN_NAME)) {
 						if (keyx.endsWith(suffix)) {
 							entry.setValue(p.getProperty(keyx));
 							list.add(entry);
@@ -250,7 +296,8 @@ public class RouterXmlMojo extends AbstractMojo {
 		List<String> list = new ArrayList<String>();
 		String value;
 		for (String key : p.stringPropertyNames()) {
-			if (key != null && key.startsWith(RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_BEAN_NAME)) {
+			if (key != null && key.startsWith(
+					RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_BEAN_NAME)) {
 				value = p.getProperty(key);
 				if (value != null && value.trim().length() > 0) {
 					list.add(value.trim());
@@ -260,17 +307,21 @@ public class RouterXmlMojo extends AbstractMojo {
 		return list;
 	}
 
-	private String getRouterChannelRouter(final String serviceId, final String operationName,
-			final String channelNameWsRequest, final String channelNameWsResponse, final String channelOutgoing,
+	private String getRouterChannelRouter(final String serviceId,
+			final String operationName, final String channelNameWsRequest,
+			final String channelNameWsResponse, final String channelOutgoing,
 			final String channelIncoming, final Properties p) {
-		String transformerBeanName = new StringBuffer(64).append("routingTranformerOf")
-				.append(ServiceIdRegistry.capitalize(serviceId)).append(operationName).toString();
+		String transformerBeanName = new StringBuffer(64)
+				.append("routingTranformerOf")
+				.append(ServiceIdRegistry.capitalize(serviceId))
+				.append(operationName).toString();
 
 		StringBuffer sb = new StringBuffer(1024);
 
 		sb.append("\t<bean id=\"");
 		sb.append(transformerBeanName);
-		sb.append("\" class=\"com.qpark.eip.core.spring.NoOperationTransformer\" />\n");
+		sb.append(
+				"\" class=\"com.qpark.eip.core.spring.NoOperationTransformer\" />\n");
 
 		sb.append("\t<int:transformer ref=\"");
 		sb.append(transformerBeanName);
@@ -302,17 +353,20 @@ public class RouterXmlMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
-	private String getRouterForward(final String serviceId, final String operationName,
-			final String channelNameWsRequest, final String channelNameWsResponse,
+	private String getRouterForward(final String serviceId,
+			final String operationName, final String channelNameWsRequest,
+			final String channelNameWsResponse,
 			final List<String> operationProviderBeanNames, final Properties p) {
 
-		String operationProviderMockClassName = p
-				.getProperty(RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_CLASS_NAME_MOCK, "");
+		String operationProviderMockClassName = p.getProperty(
+				RouterProperitesMojo.ROUTER_OPERATION_PROVIDER_CLASS_NAME_MOCK,
+				"");
 
 		StringBuffer sb = new StringBuffer(1024);
 
 		if (operationProviderMockClassName.trim().length() > 0) {
-			sb.append("\t<!-- Using the mock since there is no real operation implementation. -->\n");
+			sb.append(
+					"\t<!-- Using the mock since there is no real operation implementation. -->\n");
 			sb.append("\t<bean id=\"");
 			sb.append(operationProviderBeanNames.get(0));
 			sb.append("\" class=\"");
@@ -322,8 +376,9 @@ public class RouterXmlMojo extends AbstractMojo {
 		String lastTransformerBeanName = this.getLastTransformerBeanName(p);
 		String serviceActivatorOutputChannel = channelNameWsResponse;
 		if (lastTransformerBeanName != null) {
-			serviceActivatorOutputChannel = new StringBuffer("internalServiceActivatorOutputChannel")
-					.append(System.currentTimeMillis()).toString();
+			serviceActivatorOutputChannel = new StringBuffer(
+					"internalServiceActivatorOutputChannel")
+							.append(System.currentTimeMillis()).toString();
 			sb.append("\t<int:transformer ref=\"");
 			sb.append(lastTransformerBeanName);
 			sb.append("\" method=\"transform\"\n");
@@ -354,11 +409,13 @@ public class RouterXmlMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
-	private String getRouterRecipientListRouter(final String serviceId, final String operationName,
-			final String channelNameWsRequest, final String channelNameWsResponse,
-			final List<String> operationProviderBeanNames, final List<SimpleEntry<String, String>> headerEnricherBeans,
-			final List<SimpleEntry<String, String>> operationProviderChannelPairs, final String aggregatorBeanName,
-			final Properties p) {
+	private String getRouterRecipientListRouter(final String serviceId,
+			final String operationName, final String channelNameWsRequest,
+			final String channelNameWsResponse,
+			final List<String> operationProviderBeanNames,
+			final List<SimpleEntry<String, String>> headerEnricherBeans,
+			final List<SimpleEntry<String, String>> operationProviderChannelPairs,
+			final String aggregatorBeanName, final Properties p) {
 
 		int numberOfRecipients = 0;
 		StringBuffer recipients = new StringBuffer(128);
@@ -370,14 +427,17 @@ public class RouterXmlMojo extends AbstractMojo {
 		StringBuffer sb = new StringBuffer(1024);
 
 		@SuppressWarnings("unused")
-		String releaseStrategyBeanName = new StringBuffer(32).append(aggregatorBeanName).append("ReleaseStrategy")
+		String releaseStrategyBeanName = new StringBuffer(32)
+				.append(aggregatorBeanName).append("ReleaseStrategy")
 				.append(System.currentTimeMillis()).toString();
-		String aggregatorInputChannelName = new StringBuffer(32).append("internal")
-				.append(Util.capitalize(aggregatorBeanName)).append("InputChannel").append(System.currentTimeMillis())
+		String aggregatorInputChannelName = new StringBuffer(32)
+				.append("internal").append(Util.capitalize(aggregatorBeanName))
+				.append("InputChannel").append(System.currentTimeMillis())
 				.toString();
-		String recipientListRouterChannelName = new StringBuffer(32).append("internal")
-				.append(ServiceIdRegistry.capitalize(serviceId)).append(operationName).append("RouterChannel")
-				.toString();
+		String recipientListRouterChannelName = new StringBuffer(32)
+				.append("internal")
+				.append(ServiceIdRegistry.capitalize(serviceId))
+				.append(operationName).append("RouterChannel").toString();
 		channels.append("\t<int:publish-subscribe-channel id=\"");
 		channels.append(aggregatorInputChannelName);
 		channels.append("\" />\n");
@@ -389,8 +449,9 @@ public class RouterXmlMojo extends AbstractMojo {
 		// <int:header-enricher input-channel="in" output-channel="out">
 		// <int:header name="foo" method="computeValue" ref="myBean"/>
 		if (!headerEnricherBeans.isEmpty()) {
-			correlationHeaderEnricherOutputChannel = new StringBuffer(recipientListRouterChannelName)
-					.append(System.currentTimeMillis()).toString();
+			correlationHeaderEnricherOutputChannel = new StringBuffer(
+					recipientListRouterChannelName)
+							.append(System.currentTimeMillis()).toString();
 			channels.append("\t<int:channel id=\"");
 			channels.append(correlationHeaderEnricherOutputChannel);
 			channels.append("\" />\n");
@@ -410,9 +471,11 @@ public class RouterXmlMojo extends AbstractMojo {
 		}
 
 		for (String operationProviderBeanName : operationProviderBeanNames) {
-			String operationChannelName = new StringBuffer(64).append("internal")
-					.append(ServiceIdRegistry.capitalize(serviceId)).append(operationName)
-					.append(System.currentTimeMillis()).toString();
+			String operationChannelName = new StringBuffer(64)
+					.append("internal")
+					.append(ServiceIdRegistry.capitalize(serviceId))
+					.append(operationName).append(System.currentTimeMillis())
+					.toString();
 			channels.append("\t<int:channel id=\"");
 			channels.append(operationChannelName);
 			channels.append("\" />\n");
@@ -454,8 +517,9 @@ public class RouterXmlMojo extends AbstractMojo {
 		String lastTransformerBeanName = this.getLastTransformerBeanName(p);
 		String aggregatorOutputChannelName = channelNameWsResponse;
 		if (lastTransformerBeanName != null) {
-			aggregatorOutputChannelName = new StringBuffer("internalServiceActivatorOutputChannel")
-					.append(System.currentTimeMillis()).toString();
+			aggregatorOutputChannelName = new StringBuffer(
+					"internalServiceActivatorOutputChannel")
+							.append(System.currentTimeMillis()).toString();
 			sb.append("\t<int:transformer ref=\"");
 			sb.append(lastTransformerBeanName);
 			sb.append("\" method=\"transform\"\n");
@@ -546,12 +610,16 @@ public class RouterXmlMojo extends AbstractMojo {
 
 	private String getXmlDefinition() {
 		StringBuffer sb = new StringBuffer(512);
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
-		sb.append("<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		sb.append(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
+		sb.append(
+				"<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
 		sb.append("\txmlns=\"http://www.springframework.org/schema/beans\"\n");
-		sb.append("\txmlns:int=\"http://www.springframework.org/schema/integration\"\n");
+		sb.append(
+				"\txmlns:int=\"http://www.springframework.org/schema/integration\"\n");
 		sb.append("\txsi:schemaLocation=\"\n");
-		String springVersion = this.project.getProperties().getProperty("org.springframework.version.xsd.version");
+		String springVersion = this.project.getProperties()
+				.getProperty("org.springframework.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans");
 		if (springVersion != null) {
@@ -559,7 +627,8 @@ public class RouterXmlMojo extends AbstractMojo {
 		}
 		sb.append(".xsd\n");
 
-		springVersion = this.project.getProperties().getProperty("org.springframework.integration.version.xsd.version");
+		springVersion = this.project.getProperties().getProperty(
+				"org.springframework.integration.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration");
 		if (springVersion != null) {
@@ -571,7 +640,8 @@ public class RouterXmlMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
-	private void write(final String serviceId, final String operationName, final String xml) {
+	private void write(final String serviceId, final String operationName,
+			final String xml) {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(this.getXmlDefinition());
 		sb.append("\t<!-- ");
@@ -582,13 +652,18 @@ public class RouterXmlMojo extends AbstractMojo {
 		sb.append("</beans>\n");
 		File f = null;
 		if (serviceId == null && operationName == null) {
-			f = Util.getFile(new File(this.project.getBasedir(), "target"), "applicationRouterConfig.xml");
+			f = Util.getFile(new File(this.project.getBasedir(), "target"),
+					"applicationRouterConfig.xml");
 		} else {
 			f = Util.getFile(this.outputDirectory,
-					new StringBuffer(32).append(Util.lowerize(Util.getXjcClassName(serviceId))).append(operationName)
-							.append("RouterConfig.xml").toString());
+					new StringBuffer(32)
+							.append(Util
+									.lowerize(Util.getXjcClassName(serviceId)))
+							.append(operationName).append("RouterConfig.xml")
+							.toString());
 		}
-		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {

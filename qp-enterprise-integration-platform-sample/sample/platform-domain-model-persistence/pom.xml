@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>1.0.1</version><!--project-version-->
+		<version>2.0.0</version><!--project-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -49,6 +49,7 @@
 									<artifactId>model</artifactId>
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
+									<excludes>Interfaces/**/*</excludes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -74,7 +75,7 @@
 			<plugin>
 				<groupId>org.jvnet.hyperjaxb3</groupId>
 				<artifactId>maven-hyperjaxb3-plugin</artifactId>
-				<version>${hyperjaxb3.version}</version>
+				<version>0.6.0</version>
 				<executions>
 					<execution>
 						<id>generate-hyperjaxb3-sources</id>
@@ -88,14 +89,32 @@
 					<forceRegenerate>true</forceRegenerate>
 					<schemaDirectory>${model.dir}</schemaDirectory>
 					<verbose>false</verbose>
-					<specVersion>2.2</specVersion>
-					<persistenceXml>${project.basedir}/src/persistence-template.xml</persistenceXml>
+					<variant>jpa2</variant>
+					<persistenceXml>${project.basedir}/src/main/persistence/persistence-template.xml</persistenceXml>
 					<episode>true</episode>
 					<generateDirectory>${java.gen.dir}</generateDirectory>
 					<extension>true</extension>
 					<persistenceUnitName>${persistence.unit.name}</persistenceUnitName>
-					<roundtripTestClassName>${persistence.unit.name}.RoundtripTest</roundtripTestClassName>
+					<roundtripTestClassName>RoundtripTest</roundtripTestClassName>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<processors>
+								<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+							</processors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -108,57 +127,39 @@
 						</goals>
 						<configuration>
 							<target>
-								<property name="meta.inf" value="${java.gen.dir}/META-INF" />
-								<mkdir dir="${meta.inf}/${persistence.unit.name}"/>
-								<move overwrite="true" file="${meta.inf}/persistence.xml" todir="${meta.inf}/${persistence.unit.name}"/>
-								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${meta.inf}/${persistence.unit.name}" failonerror="false"/>
+								<delete file="${project.build.directory}/generated-sources/RoundtripTest.java" />
+								<property name="meta.inf" value="${project.build.directory}/generated-sources/META-INF" />
+								<mkdir dir="${meta.inf}/${persistence.unit.name}" />
+								<replace file="${meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence/orm]]></replacetoken>
+									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence/orm]]></replacevalue>
+								</replace>
+								<replace file="${meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[orm_2_0.xsd]]></replacetoken>
+									<replacevalue><![CDATA[orm_2_1.xsd]]></replacevalue>
+								</replace>
+								<replace file="${meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence]]></replacetoken>
+									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence]]></replacevalue>
+								</replace>
+								<replace file="${meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[persistence_2_0.xsd]]></replacetoken>
+									<replacevalue><![CDATA[persistence_2_1.xsd]]></replacevalue>
+								</replace>
+								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${meta.inf}/${persistence.unit.name}" />
+								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${meta.inf}/${persistence.unit.name}" failonerror="false" />
 							</target>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.bsc.maven</groupId>
-				<artifactId>maven-processor-plugin</artifactId>
-				<version>2.0.5</version>
-				<executions>
-					<execution>
-						<id>process</id>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<sourceDirectory>${java.gen.dir}</sourceDirectory>
-							<outputDirectory>${java.gen.dir}</outputDirectory>
-							<processors>
-								<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-							</processors>
-							<outputDiagnostics>false</outputDiagnostics>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.hibernate</groupId>
-						<artifactId>hibernate-jpamodelgen</artifactId>
-						<version>1.1.1.Final</version>
-						<scope>compile</scope>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<!--  because of JPAMetaModelEntityProcessor execution -->
+					<source>1.8</source>
+					<target>1.8</target>
 					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +173,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>assembly-generated-java-sources.xml</descriptor>
+								<descriptor>assembly-persistence-generated-java-sources.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -180,7 +181,17 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>META-INF/persistence.xml</exclude>
+						<exclude>RoundtripTest.class</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -188,37 +199,27 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
-			<version>${jaxb.impl.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.jvnet.hyperjaxb3</groupId>
 			<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
-			<version>${hyperjaxb3.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.jvnet.hyperjaxb3</groupId>
 			<artifactId>hyperjaxb3-ejb-runtime</artifactId>
-			<version>${hyperjaxb3.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics</artifactId>
-			<version>${jvnet.jaxb2.basic.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics-runtime</artifactId>
-			<version>${jvnet.jaxb2.basic.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>${hibernate.jpa.version}</version>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>

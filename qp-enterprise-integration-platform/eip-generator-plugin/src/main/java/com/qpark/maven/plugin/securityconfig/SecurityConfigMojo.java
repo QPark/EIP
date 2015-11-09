@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
@@ -55,7 +56,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 	}
 
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base package name where to place the object factories. */
 	@Parameter(property = "basePackageName", defaultValue = "")
@@ -67,7 +69,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 	@Parameter(property = "channelPatternsAdminAuthorisation")
 	private String channelPatternsAdminAuthorisation;
 	/** A list of channel patterns that do not need any authorisation. */
-	@Parameter(property = "channelPatternsAnnonymousAuthorisation", defaultValue = "internal.*")
+	@Parameter(property = "channelPatternsAnnonymousAuthorisation",
+			defaultValue = "internal.*")
 	private String channelPatternsAnnonymousAuthorisation;
 	/** A list of channel patterns that allow users to create. */
 	@Parameter(property = "channelPatternsCreate")
@@ -92,7 +95,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 	 * <code>com.qpark.eip.core.spring.security.EipLimitedAccessDataProvider</code>
 	 * .
 	 */
-	@Parameter(property = "limitedAccessDataProviderBeanName", defaultValue = "")
+	@Parameter(property = "limitedAccessDataProviderBeanName",
+			defaultValue = "")
 	private String limitedAccessDataProviderBeanName;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -101,7 +105,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 	@Parameter(property = "messagePackageNameSuffix", defaultValue = "msg")
 	private String messagePackageNameSuffix;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	@Component
 	private MavenProject project;
@@ -111,7 +116,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 	 * The name of the SecurityContextHolder strategy name (see
 	 * org.springframework.security.core.context.SecurityContextHolder).
 	 */
-	@Parameter(property = "securityContextHolderStrategyName", defaultValue = "")
+	@Parameter(property = "securityContextHolderStrategyName",
+			defaultValue = "")
 	private String securityContextHolderStrategyName;
 
 	/** The name of the service id of common services. */
@@ -141,13 +147,17 @@ public class SecurityConfigMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
+				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
+				this.serviceRequestSuffix, this.serviceResponseSuffix);
 
-		File f = Util.getFile(this.outputDirectory, "security-spring-config.xml");
-		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		File f = Util.getFile(this.outputDirectory,
+				"security-spring-config.xml");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, this.getSecuritySpringConfig());
 		} catch (Exception e) {
@@ -155,8 +165,10 @@ public class SecurityConfigMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 
-		f = Util.getFile(this.outputDirectory, "security-authentication-spring-config.xml");
-		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		f = Util.getFile(this.outputDirectory,
+				"security-authentication-spring-config.xml");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, this.getSecurityAuthenticationSpringConfig());
 		} catch (Exception e) {
@@ -164,17 +176,21 @@ public class SecurityConfigMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 
-		f = Util.getFile(this.outputDirectory, "security-authorisation-spring-config.xml");
-		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		f = Util.getFile(this.outputDirectory,
+				"security-authorisation-spring-config.xml");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
-			Util.writeToFile(f, this.getSecurityAuthorisationSpringConfig(xsds));
+			Util.writeToFile(f,
+					this.getSecurityAuthorisationSpringConfig(xsds));
 		} catch (Exception e) {
 			this.getLog().error(e.getMessage());
 			e.printStackTrace();
 		}
 
 		f = Util.getFile(this.outputDirectory, "security-roles-available.xml");
-		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, this.getAvailableRoles(xsds));
 		} catch (Exception e) {
@@ -183,7 +199,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		}
 
 		f = Util.getFile(this.outputDirectory, "securityPolicy.xml");
-		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, this.getSecurityPolicy());
 		} catch (Exception e) {
@@ -194,7 +211,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		this.getLog().debug("-execute");
 	}
 
-	private String getAccessPolicyAdminAnonymous(final List<String> pattern, final String role) {
+	private String getAccessPolicyAdminAnonymous(final List<String> pattern,
+			final String role) {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("\t\t<!-- ");
 		sb.append(role);
@@ -211,7 +229,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
-	private String getAccessPolicyReadCreateUpdateDelete(final List<String> pattern, final String role) {
+	private String getAccessPolicyReadCreateUpdateDelete(
+			final List<String> pattern, final String role) {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("\t\t<!-- ");
 		sb.append(role);
@@ -239,7 +258,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 	// ACHTUNG: For users UUID use the java.security.Principal class.
 	private String getAvailableRoles(final XsdsUtil xsds) {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append("<com:GetReferenceDataResponse xmlns:com=\"http://www.ses.com/CommonServiceMessages-1.0\">\n");
+		sb.append(
+				"<com:GetReferenceDataResponse xmlns:com=\"http://www.ses.com/CommonServiceMessages-1.0\">\n");
 		for (String role : this.roleList) {
 			sb.append("\t<com:referenceData>\n");
 			sb.append("\t\t<UUID>");
@@ -254,7 +274,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 			sb.append("\t\t<displayValue>");
 			sb.append(role);
 			sb.append("</displayValue>\n");
-			sb.append("\t\t<category>EipSpringIntegrationSecurityRole</category>\n");
+			sb.append(
+					"\t\t<category>EipSpringIntegrationSecurityRole</category>\n");
 			sb.append("\t\t<description>Spring integration security role: ");
 			sb.append(role);
 			sb.append("</description>\n");
@@ -268,12 +289,16 @@ public class SecurityConfigMojo extends AbstractMojo {
 	private String getSecurityAuthenticationSpringConfig() {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
-		sb.append("\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n");
-		sb.append("\txmlns:security=\"http://www.springframework.org/schema/security\"\n");
+		sb.append(
+				"<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
+		sb.append(
+				"\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n");
+		sb.append(
+				"\txmlns:security=\"http://www.springframework.org/schema/security\"\n");
 		sb.append("\txsi:schemaLocation=\"\n");
 
-		String springVersion = this.project.getProperties().getProperty("org.springframework.version.xsd.version");
+		String springVersion = this.project.getProperties()
+				.getProperty("org.springframework.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans");
 		if (springVersion != null) {
@@ -281,7 +306,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		}
 		sb.append(".xsd\n");
 
-		springVersion = this.project.getProperties().getProperty("org.springframework.security.version.xsd.version");
+		springVersion = this.project.getProperties().getProperty(
+				"org.springframework.security.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security");
 		if (springVersion != null) {
@@ -292,9 +318,12 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\t<!-- ");
 		sb.append(Util.getGeneratedAt());
 		sb.append(" -->\n");
-		sb.append("\t<!-- Authentication manager using the eipDaoAuthenticationProvider. -->\n");
-		sb.append("\t<security:authentication-manager alias=\"eipAuthenticationManager\">\n");
-		sb.append("\t\t<security:authentication-provider ref=\"eipDaoAuthenticationProvider\" />\n");
+		sb.append(
+				"\t<!-- Authentication manager using the eipDaoAuthenticationProvider. -->\n");
+		sb.append(
+				"\t<security:authentication-manager alias=\"eipAuthenticationManager\">\n");
+		sb.append(
+				"\t\t<security:authentication-provider ref=\"eipDaoAuthenticationProvider\" />\n");
 		sb.append("\t</security:authentication-manager>\n");
 		sb.append("\t<!-- Authentication provider -->\n");
 		sb.append(
@@ -309,15 +338,18 @@ public class SecurityConfigMojo extends AbstractMojo {
 				"\t<!-- DaoAuthenticationProvider without password check. The password check is done by the wsSecurityInterceptor in the ws-servlet.xml! -->\n");
 		sb.append(
 				"\t<bean id=\"eipDaoAuthenticationProvider\" class=\"com.qpark.eip.core.spring.security.EipDaoAuthenticationProvider\">\n");
-		sb.append("\t\t<property name=\"userDetailsService\" ref=\"eipUserDetailsService\" />\n");
+		sb.append(
+				"\t\t<property name=\"userDetailsService\" ref=\"eipUserDetailsService\" />\n");
 		sb.append("\t</bean>\n");
 		sb.append("</beans>\n");
 		return sb.toString();
 	}
 
 	private String getSecurityAuthorisationSpringConfig(final XsdsUtil xsds) {
-		List<String> annonyoums = getSplitted(this.channelPatternsAnnonymousAuthorisation);
-		List<String> admins = getSplitted(this.channelPatternsAdminAuthorisation);
+		List<String> annonyoums = getSplitted(
+				this.channelPatternsAnnonymousAuthorisation);
+		List<String> admins = getSplitted(
+				this.channelPatternsAdminAuthorisation);
 		List<String> create = getSplitted(this.channelPatternsCreate);
 		List<String> read = getSplitted(this.channelPatternsRead);
 		List<String> update = getSplitted(this.channelPatternsUpdate);
@@ -331,11 +363,15 @@ public class SecurityConfigMojo extends AbstractMojo {
 		TreeSet<String> serviceIds = new TreeSet<String>();
 		StringBuffer operationPolicies = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
-		sb.append("\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n");
-		sb.append("\txmlns:int-security=\"http://www.springframework.org/schema/integration/security\"\n");
+		sb.append(
+				"<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
+		sb.append(
+				"\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n");
+		sb.append(
+				"\txmlns:int-security=\"http://www.springframework.org/schema/integration/security\"\n");
 		sb.append("\txsi:schemaLocation=\"\n");
-		String springVersion = this.project.getProperties().getProperty("org.springframework.version.xsd.version");
+		String springVersion = this.project.getProperties()
+				.getProperty("org.springframework.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans");
 		if (springVersion != null) {
@@ -352,11 +388,13 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\t<!-- Authorization -->\n");
 		sb.append("\t<!-- Role voter. -->\n");
 
-		sb.append("\t<bean id=\"eipRoleVoter\" class=\"com.qpark.eip.core.spring.security.EipRoleVoter\"");
+		sb.append(
+				"\t<bean id=\"eipRoleVoter\" class=\"com.qpark.eip.core.spring.security.EipRoleVoter\"");
 		if (this.limitedAccessDataProviderBeanName != null
 				&& this.limitedAccessDataProviderBeanName.trim().length() > 0) {
 			sb.append(">\n");
-			sb.append("\t\t<property name=\"eipLimitedAccessDataProvider\" ref=\"");
+			sb.append(
+					"\t\t<property name=\"eipLimitedAccessDataProvider\" ref=\"");
 			sb.append(this.limitedAccessDataProviderBeanName);
 			sb.append("\"/>\n");
 			sb.append("\t</bean>\n");
@@ -374,48 +412,70 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\t</bean>\n");
 		sb.append("\n");
 		sb.append("\t<!-- \n");
-		sb.append("\tThe pattern (java.util.regexp.Pattern) of the access policies regarding \n");
-		sb.append("\tthe channel names used in the spring integration configurations.\n");
+		sb.append(
+				"\tThe pattern (java.util.regexp.Pattern) of the access policies regarding \n");
+		sb.append(
+				"\tthe channel names used in the spring integration configurations.\n");
 		sb.append("\n");
-		sb.append("\tEach user gets the role ROLE_ANONYMOUS. If the user has an other role \n");
-		sb.append("\tthen ROLE_ANONYMOUS the role ROLE_COMMON need to be added too.\n");
+		sb.append(
+				"\tEach user gets the role ROLE_ANONYMOUS. If the user has an other role \n");
+		sb.append(
+				"\tthen ROLE_ANONYMOUS the role ROLE_COMMON need to be added too.\n");
 		sb.append("\n");
-		sb.append("\tThe user needs only one of the listed roles. All access-policy\n");
-		sb.append("\twill be checked until the user has a sufficient role or is\n");
+		sb.append(
+				"\tThe user needs only one of the listed roles. All access-policy\n");
+		sb.append(
+				"\twill be checked until the user has a sufficient role or is\n");
 		sb.append("\tnot authorisized to do the operation.");
 		sb.append("\t-->\n");
 		sb.append("\t<int-security:secured-channels \n");
 		sb.append("\t\taccess-decision-manager=\"eipAccessDecisionManager\"\n");
 		sb.append("\t\tauthentication-manager=\"eipAuthenticationManager\">\n");
-		sb.append(this.getAccessPolicyAdminAnonymous(annonyoums, "ROLE_ANONYMOUS"));
+		sb.append(this.getAccessPolicyAdminAnonymous(annonyoums,
+				"ROLE_ANONYMOUS"));
 		sb.append(this.getAccessPolicyAdminAnonymous(admins, "ROLE_ADMIN"));
-		sb.append(this.getAccessPolicyReadCreateUpdateDelete(read, "ROLE_READ"));
-		sb.append(this.getAccessPolicyReadCreateUpdateDelete(create, "ROLE_CREATE"));
-		sb.append(this.getAccessPolicyReadCreateUpdateDelete(update, "ROLE_UPDATE"));
-		sb.append(this.getAccessPolicyReadCreateUpdateDelete(delete, "ROLE_DELETE"));
+		sb.append(
+				this.getAccessPolicyReadCreateUpdateDelete(read, "ROLE_READ"));
+		sb.append(this.getAccessPolicyReadCreateUpdateDelete(create,
+				"ROLE_CREATE"));
+		sb.append(this.getAccessPolicyReadCreateUpdateDelete(update,
+				"ROLE_UPDATE"));
+		sb.append(this.getAccessPolicyReadCreateUpdateDelete(delete,
+				"ROLE_DELETE"));
 
 		sb.append("\t\t<!-- Service wide role securement -->\n");
 
-		operationPolicies.append("\t\t<!-- Operation web service operation channels -->\n");
+		operationPolicies.append(
+				"\t\t<!-- Operation web service operation channels -->\n");
 		for (ElementType element : xsds.getElementTypes()) {
 			if (element.isRequest()) {
-				ElementType elementResponse = XsdsUtil.findResponse(element, xsds.getElementTypes(), xsds);
+				ElementType elementResponse = XsdsUtil.findResponse(element,
+						xsds.getElementTypes(), xsds);
 				if (elementResponse != null) {
-					ComplexType ctResponse = new ComplexType(elementResponse.getElement().getType(), xsds);
-					if (ctResponse != null && !ctResponse.isSimpleType() && !ctResponse.isPrimitiveType()) {
-						String serviceRole = new StringBuffer(32).append("ROLE_")
-								.append(element.getServiceId().toUpperCase()).toString();
+					ComplexType ctResponse = new ComplexType(
+							elementResponse.getElement().getType(), xsds);
+					if (ctResponse != null && !ctResponse.isSimpleType()
+							&& !ctResponse.isPrimitiveType()) {
+						String serviceRole = new StringBuffer(32)
+								.append("ROLE_")
+								.append(element.getServiceId().toUpperCase())
+								.toString();
 						String serviceVersionLessRole = serviceRole;
 						if (serviceRole.indexOf(".V") > 0) {
-							serviceVersionLessRole = serviceRole.substring(0, serviceRole.indexOf(".V"));
+							serviceVersionLessRole = serviceRole.substring(0,
+									serviceRole.indexOf(".V"));
 						}
-						String operationRole = new StringBuffer(64).append(serviceRole).append("_")
-								.append(element.getOperationName().toUpperCase()).toString();
+						String operationRole = new StringBuffer(64)
+								.append(serviceRole).append("_").append(element
+										.getOperationName().toUpperCase())
+								.toString();
 						if (!serviceIds.contains(element.getServiceId())) {
 							serviceIds.add(element.getServiceId());
 							this.roleList.add(serviceRole);
-							sb.append("\t\t<int-security:access-policy pattern=\"");
-							sb.append(element.getChannelSecurityPatternService());
+							sb.append(
+									"\t\t<int-security:access-policy pattern=\"");
+							sb.append(
+									element.getChannelSecurityPatternService());
 							sb.append("\" send-access=\"");
 							sb.append(serviceRole);
 							if (!serviceRole.equals(serviceVersionLessRole)) {
@@ -435,8 +495,10 @@ public class SecurityConfigMojo extends AbstractMojo {
 							sb.append("\" />\n");
 						}
 
-						operationPolicies.append("\t\t<int-security:access-policy pattern=\"");
-						operationPolicies.append(element.getChannelSecurityPatternOperation());
+						operationPolicies.append(
+								"\t\t<int-security:access-policy pattern=\"");
+						operationPolicies.append(
+								element.getChannelSecurityPatternOperation());
 						operationPolicies.append("\" send-access=\"");
 						operationPolicies.append(operationRole);
 						operationPolicies.append(", ");
@@ -470,7 +532,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append(" -->\n");
 		sb.append(
 				"\t<!-- Used in the ws-servlet.xml by the org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor. -->\n");
-		sb.append("     <xwss:RequireUsernameToken passwordDigestRequired=\"true\" nonceRequired=\"true\"/>\n");
+		sb.append(
+				"     <xwss:RequireUsernameToken passwordDigestRequired=\"true\" nonceRequired=\"true\"/>\n");
 		sb.append("</xwss:SecurityConfiguration>\n");
 		sb.append("\n");
 		return sb.toString();
@@ -479,14 +542,20 @@ public class SecurityConfigMojo extends AbstractMojo {
 	private String getSecuritySpringConfig() {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
-		sb.append("\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-		sb.append("\txmlns:s=\"http://www.springframework.org/schema/security\"\n");
+		sb.append(
+				"<beans xmlns=\"http://www.springframework.org/schema/beans\"\n");
+		sb.append(
+				"\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		sb.append(
+				"\txmlns:s=\"http://www.springframework.org/schema/security\"\n");
 		sb.append("\txmlns:p=\"http://www.springframework.org/schema/p\"\n");
-		sb.append("\txmlns:util=\"http://www.springframework.org/schema/util\"\n");
-		sb.append("\txmlns:int-security=\"http://www.springframework.org/schema/integration/security\"\n");
+		sb.append(
+				"\txmlns:util=\"http://www.springframework.org/schema/util\"\n");
+		sb.append(
+				"\txmlns:int-security=\"http://www.springframework.org/schema/integration/security\"\n");
 		sb.append("\txsi:schemaLocation=\"\n");
-		String springVersion = this.project.getProperties().getProperty("org.springframework.version.xsd.version");
+		String springVersion = this.project.getProperties()
+				.getProperty("org.springframework.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans");
 		if (springVersion != null) {
@@ -500,7 +569,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		}
 		sb.append(".xsd\n");
 
-		springVersion = this.project.getProperties().getProperty("org.springframework.security.version.xsd.version");
+		springVersion = this.project.getProperties().getProperty(
+				"org.springframework.security.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security");
 		if (springVersion != null) {
@@ -508,7 +578,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		}
 		sb.append(".xsd\n");
 
-		springVersion = this.project.getProperties().getProperty("org.springframework.integration.version.xsd.version");
+		springVersion = this.project.getProperties().getProperty(
+				"org.springframework.integration.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/integration/security http://www.springframework.org/schema/integration/security/spring-integration-security");
 		if (springVersion != null) {
@@ -525,21 +596,27 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append(this.basePackageName);
 		sb.append(".properties-config.xml\" />\n");
 		sb.append("\t<!-- User and role definition -->\n");
-		sb.append("\t<import resource=\"classpath:/security-authentication-spring-config.xml\" />\n");
-		sb.append("\t<import resource=\"classpath:/security-authorisation-spring-config.xml\" />\n");
+		sb.append(
+				"\t<import resource=\"classpath:/security-authentication-spring-config.xml\" />\n");
+		sb.append(
+				"\t<import resource=\"classpath:/security-authorisation-spring-config.xml\" />\n");
 		sb.append("\n");
 		sb.append("\t<!-- Spring security base definition. -->\n");
 		sb.append("\t<s:http>\n");
-		sb.append("\t\t<s:intercept-url pattern=\"/services/**\" access=\"ROLE_ANONYMOUS\" />\n");
+		sb.append(
+				"\t\t<s:intercept-url pattern=\"/services/**\" access=\"ROLE_ANONYMOUS\" />\n");
 		sb.append("\t\t<s:http-basic />\n");
 		sb.append("\t\t<s:anonymous />\n");
 		sb.append("\t</s:http>\n");
 
 		if (this.securityContextHolderStrategyName != null
 				&& this.securityContextHolderStrategyName.trim().length() > 0) {
-			sb.append("\t<!-- Set the SecurityContextHolder strategy name -->\n");
-			sb.append("\t<bean class=\"org.springframework.beans.factory.config.MethodInvokingFactoryBean\"\n");
-			sb.append("\t\tp:targetClass=\"org.springframework.security.core.context.SecurityContextHolder\"\n");
+			sb.append(
+					"\t<!-- Set the SecurityContextHolder strategy name -->\n");
+			sb.append(
+					"\t<bean class=\"org.springframework.beans.factory.config.MethodInvokingFactoryBean\"\n");
+			sb.append(
+					"\t\tp:targetClass=\"org.springframework.security.core.context.SecurityContextHolder\"\n");
 			sb.append("\t\tp:targetMethod=\"setStrategyName\"\n");
 			sb.append("\t\tp:arguments=\"");
 			sb.append(this.securityContextHolderStrategyName);
@@ -552,7 +629,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append(
 				"\t<bean id=\"eipUserDetailsService\" class=\"com.qpark.eip.core.spring.security.EipUserDetailsService\" >\n");
 		sb.append("\t\t<property name=\"userProvider\" ref=\"");
-		if (this.userProviderBeanName != null && this.userProviderBeanName.trim().length() > 0) {
+		if (this.userProviderBeanName != null
+				&& this.userProviderBeanName.trim().length() > 0) {
 			sb.append(this.userProviderBeanName);
 		} else {
 			sb.append(Util.capitalizePackageName(this.basePackageName));
@@ -562,30 +640,40 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append("\t</bean>\n");
 
 		sb.append("\n");
-		sb.append("\t<bean id=\"proxyBean\" class=\"com.qpark.eip.core.spring.security.proxy.ProxyBean\">\n");
-		sb.append("\t\t<property name=\"proxyHost\" value=\"${eip.proxy.host:localhost}\" />\n");
-		sb.append("\t\t<property name=\"proxyPort\" value=\"${eip.proxy.port:8080}\" />\n");
-		sb.append("\t\t<property name=\"username\" value=\"${eip.proxy.username:userName}\" />\n");
-		sb.append("\t\t<property name=\"password\" value=\"${eip.proxy.password:password}\" />\n");
+		sb.append(
+				"\t<bean id=\"proxyBean\" class=\"com.qpark.eip.core.spring.security.proxy.ProxyBean\">\n");
+		sb.append(
+				"\t\t<property name=\"proxyHost\" value=\"${eip.proxy.host:localhost}\" />\n");
+		sb.append(
+				"\t\t<property name=\"proxyPort\" value=\"${eip.proxy.port:8080}\" />\n");
+		sb.append(
+				"\t\t<property name=\"username\" value=\"${eip.proxy.username:userName}\" />\n");
+		sb.append(
+				"\t\t<property name=\"password\" value=\"${eip.proxy.password:password}\" />\n");
 		sb.append("\t</bean>\n");
 		sb.append(
 				"\t<bean id=\"proxyHostConfiguration\" class=\"com.qpark.eip.core.spring.security.proxy.ProxyHostConfiguration\">\n");
 		sb.append("\t\t<property name=\"proxyBean\" ref=\"proxyBean\" />\n");
 		sb.append("\t</bean>\n");
-		sb.append("\t<bean id=\"httpClient\" class=\"org.apache.commons.httpclient.HttpClient\">\n");
-		sb.append("\t\t<property name=\"hostConfiguration\" ref=\"proxyHostConfiguration\" />\n");
+		sb.append(
+				"\t<bean id=\"httpClient\" class=\"org.apache.commons.httpclient.HttpClient\">\n");
+		sb.append(
+				"\t\t<property name=\"hostConfiguration\" ref=\"proxyHostConfiguration\" />\n");
 		sb.append("\t</bean>\n");
 		sb.append("\n");
 
 		sb.append("\t<!-- Key store handler -->\n");
 		sb.append(
 				"\t<bean id=\"eipX509TrustManager\" class=\"com.qpark.eip.core.spring.security.https.EipX509TrustManager\" init-method=\"init\">\n");
-		sb.append("\t\t<property name=\"keystore\" value=\"${eip.jks.keystore.url}\"/>\n");
-		sb.append("\t\t<property name=\"keystorePassword\" value=\"${eip.jks.keystore.password}\" />\n");
+		sb.append(
+				"\t\t<property name=\"keystore\" value=\"${eip.jks.keystore.url}\"/>\n");
+		sb.append(
+				"\t\t<property name=\"keystorePassword\" value=\"${eip.jks.keystore.password}\" />\n");
 		sb.append("\t</bean>\n");
 
 		sb.append("\t<!-- EipWsChannelInterceptor initialisation -->\n");
-		sb.append("\t<bean class=\"com.qpark.eip.core.spring.EipWsChannelInterceptorInitializer\" />\n");
+		sb.append(
+				"\t<bean class=\"com.qpark.eip.core.spring.EipWsChannelInterceptorInitializer\" />\n");
 		sb.append("\t<!-- EipWsChannelInterceptors have to have a name! -->\n");
 		sb.append(
 				"\t<bean name=\"ComQparkEipCoreSpringRequestIdMessageHeaderEnhancer\" class=\"com.qpark.eip.core.spring.RequestIdMessageHeaderEnhancer\" />\n");

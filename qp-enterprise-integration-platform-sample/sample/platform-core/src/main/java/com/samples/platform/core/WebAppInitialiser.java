@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
- * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.samples.platform.core;
 
@@ -16,8 +11,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
-import org.jvnet.jaxb2_commons.lang.DefaultEqualsStrategy;
-import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -29,9 +22,8 @@ import org.springframework.web.context.ServletContextAware;
 import com.qpark.eip.core.EipSettings;
 import com.qpark.eip.core.failure.BaseFailureHandler;
 import com.qpark.eip.core.logback.LoggingInitializer;
+import com.qpark.eip.core.persistence.JAXBStrategySetup;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
-import com.qpark.eip.core.xml.jaxbplugin.ExtendedJAXBEqualsStrategy;
-import com.qpark.eip.core.xml.jaxbplugin.ExtendedJAXBHashCodeStrategy;
 
 public class WebAppInitialiser implements BeanPostProcessor,
 		ServletContextAware, ApplicationContextAware {
@@ -93,8 +85,7 @@ public class WebAppInitialiser implements BeanPostProcessor,
 	public Object postProcessBeforeInitialization(final Object bean,
 			final String beanName) throws BeansException {
 		if (!this.initialised) {
-			DefaultEqualsStrategy.INSTANCE = ExtendedJAXBEqualsStrategy.INSTANCE;
-			JAXBHashCodeStrategy.INSTANCE = ExtendedJAXBHashCodeStrategy.INSTANCE;
+			JAXBStrategySetup.setup();
 			this.loggingInitializer.initialize(
 					this.properties.get(EipSettings.EIP_APPLICATION_NAME),
 					this.properties.get(EipSettings.EIP_SERVICE_NAME),
@@ -129,17 +120,6 @@ public class WebAppInitialiser implements BeanPostProcessor,
 		}
 	}
 
-	/** The {@link ServletContext} of the web application. */
-	private ServletContext servletContext;
-
-	/**
-	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
-	 */
-	@Override
-	public void setServletContext(final ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
-
 	private ApplicationContext applicationContext;
 
 	/**
@@ -149,5 +129,12 @@ public class WebAppInitialiser implements BeanPostProcessor,
 	public void setApplicationContext(
 			final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+	}
+
+	private ServletContext servletContext;
+
+	@Override
+	public void setServletContext(final ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 }

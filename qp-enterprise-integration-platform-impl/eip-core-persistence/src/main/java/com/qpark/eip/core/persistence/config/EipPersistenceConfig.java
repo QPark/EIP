@@ -89,14 +89,15 @@ public class EipPersistenceConfig {
 	}
 
 	/**
-	 * Get the {@link DataSource}.
+	 * Get the {@link DataSource} out of the JNDI naming context.
 	 *
-	 * @return the {@link DataSource}.
+	 * @return the {@link DataSource} out of the JNDI naming context.
 	 */
 	@Bean(name = "ComQparkEipCoreDataSourceJndi")
-	public DataSource getDataSource() {
+	public DataSource getJndiDataSource() {
 		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
 		DataSource bean = dsLookup.getDataSource("jdbc/BusUtilityDB");
+
 		return bean;
 	}
 
@@ -127,7 +128,7 @@ public class EipPersistenceConfig {
 		bean.setPersistenceXmlLocation(
 				"classpath:/META-INF/com.qpark.eip.core.persistence/persistence.xml");
 		bean.setPersistenceUnitName("com.qpark.eip.core.persistence");
-		bean.setDataSource(this.getDataSource());
+		bean.setDataSource(this.getJndiDataSource());
 
 		jpaVendorAdapter.setShowSql(false);
 		jpaVendorAdapter.setGenerateDdl(false);
@@ -155,7 +156,7 @@ public class EipPersistenceConfig {
 	/**
 	 * Get the {@link AbstractJpaVendorAdapter} out of the property
 	 * {@link #jpaVendorAdapterClassName}.
-	 * 
+	 *
 	 * @return the {@link AbstractJpaVendorAdapter} .
 	 */
 	private AbstractJpaVendorAdapter getJpaVendorAdapter() {

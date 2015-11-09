@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
+ *
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
 -->
-<!--  
-Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to license terms. 
+<!--
+Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to license terms.
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
+	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
 	targetNamespace="http://www.qpark.com/Common/CommonServiceMessages"
-	elementFormDefault="unqualified" jaxb:version="2.0">
+	elementFormDefault="unqualified" jaxb:version="2.1">
 
+	<import schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"/>
 
-	<import schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"></import>
-	
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
@@ -122,7 +121,7 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 			<enumeration value="ERROR" />
 		</restriction>
 	</simpleType>
-	
+
 	<simpleType name="ErrorCode">
 		<annotation>
 			<documentation>Error codes define the type of error that happened in the service provider application.</documentation>
@@ -131,7 +130,7 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 			<enumeration value="E_ALL_NOT_KNOWN_ERROR" />
 		</restriction>
 	</simpleType>
-	
+
 	<complexType name="RequestMessage">
 		<annotation>
 			<documentation>
@@ -194,14 +193,14 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 	</complexType>
 		<complexType name="GetReferenceDataRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer 
+			<documentation>@ServiceConsumer
 tbd
-				@ServiceImplementor 
+				@ServiceImplementor
 ESB
-				@ServiceDataProvider 
+				@ServiceDataProvider
 ESB
-				@ServiceDescription 
-GetReferenceData returns reference data definitions from the ESB core to resolve UUID references. 
+				@ServiceDescription
+GetReferenceData returns reference data definitions from the ESB core to resolve UUID references.
 			</documentation>
 		</annotation>
 		<complexContent>

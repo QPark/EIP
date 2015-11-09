@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven.plugin.springconfig;
 
@@ -22,6 +17,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -38,13 +34,16 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-spring-config", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+@Mojo(name = "generate-spring-config",
+		defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GenerateMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -77,7 +76,8 @@ public class GenerateMojo extends AbstractMojo {
 	 * the persistence-spring-config.xml (e.g. needed if you only the generate
 	 * the wsld for the Interface control document).
 	 */
-	@Parameter(property = "applicationWithoutPersistenceConfig", defaultValue = "false")
+	@Parameter(property = "applicationWithoutPersistenceConfig",
+			defaultValue = "false")
 	private String applicationWithoutPersistenceConfig;
 	/**
 	 * The service request name need to end with this suffix (Default
@@ -98,7 +98,8 @@ public class GenerateMojo extends AbstractMojo {
 	 * The service response name need to end with this suffix (Default
 	 * <code>Response</code>).
 	 */
-	@Parameter(property = "placeholderConfigurerImpl", defaultValue = "com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer")
+	@Parameter(property = "placeholderConfigurerImpl",
+			defaultValue = "com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer")
 	private String placeholderConfigurerImpl;
 	@Component
 	private MavenProject project;
@@ -108,22 +109,27 @@ public class GenerateMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
+				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
+				this.serviceRequestSuffix, this.serviceResponseSuffix);
 
-		WebServiceDispatcherXmlGenerator wsdx = new WebServiceDispatcherXmlGenerator(xsds, this.serviceId, this.warName,
-				this.outputDirectory, this.project, this.getLog());
+		WebServiceDispatcherXmlGenerator wsdx = new WebServiceDispatcherXmlGenerator(
+				xsds, this.serviceId, this.warName, this.outputDirectory,
+				this.project, this.getLog());
 		wsdx.generate();
 
-		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(this.basePackageName,
-				this.serviceId, this.serviceVersion, this.revisionNumber, this.placeholderConfigurerImpl,
+		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(
+				this.basePackageName, this.serviceId, this.serviceVersion,
+				this.revisionNumber, this.placeholderConfigurerImpl,
 				this.outputDirectory, this.project, this.getLog());
 		pcx.generate();
 
-		MainApplicationContextXmlGenerator macx = new MainApplicationContextXmlGenerator(this.basePackageName,
-				this.applicationWithoutPersistenceConfig, this.outputDirectory, this.project, this.getLog());
+		MainApplicationContextXmlGenerator macx = new MainApplicationContextXmlGenerator(
+				this.basePackageName, this.applicationWithoutPersistenceConfig,
+				this.outputDirectory, this.project, this.getLog());
 		macx.generate();
 
 		this.getLog().debug("-execute");

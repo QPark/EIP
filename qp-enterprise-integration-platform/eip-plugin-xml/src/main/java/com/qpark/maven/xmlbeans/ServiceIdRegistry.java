@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.qpark.maven.Util;
 
 /**
@@ -35,7 +38,8 @@ public class ServiceIdRegistry {
 			final String deltaPackageNameSuffix) {
 		int index = -1;
 		if (deltaPackageNameSuffix != null) {
-			List<String> deltaSuffixes = splitByCommaAndSpace(deltaPackageNameSuffix);
+			List<String> deltaSuffixes = splitByCommaAndSpace(
+					deltaPackageNameSuffix);
 			StringBuffer sb = new StringBuffer(16);
 			for (String deltaSuffix : deltaSuffixes) {
 				if (deltaSuffix.charAt(0) != '.') {
@@ -82,6 +86,7 @@ public class ServiceIdRegistry {
 
 	/**
 	 * Get the service id out of the package name.
+	 *
 	 * @param packageName
 	 * @param targetNamespace
 	 * @param messageSuffix
@@ -117,15 +122,17 @@ public class ServiceIdRegistry {
 				int indexDelta = getIndexDeltaSuffix(packageName,
 						deltaPackageNameSuffix);
 				if (indexDelta > 0 && indexService < indexDelta) {
-					serviceId = packageName.substring(indexService
-							+ SERVICE_DEFINITION.length(), indexDelta);
+					serviceId = packageName.substring(
+							indexService + SERVICE_DEFINITION.length(),
+							indexDelta);
 				} else {
-					serviceId = packageName.substring(indexService
-							+ SERVICE_DEFINITION.length(), indexMsg);
+					serviceId = packageName.substring(
+							indexService + SERVICE_DEFINITION.length(),
+							indexMsg);
 				}
 				entry = new ServiceIdEntry(serviceId, packageName,
 						targetNamespace);
-				System.out.println(entry);
+				logger.info("Found {}", entry);
 				serviceIdPackageNameMap.put(packageName, entry);
 				serviceIdTargetNamespaceMap.put(targetNamespace, entry);
 				serviceIdMap.put(serviceId, entry);
@@ -165,13 +172,12 @@ public class ServiceIdRegistry {
 			serviceIds.addAll(list);
 			for (String sid : list) {
 				try {
-					serviceIds.addAll(getServiceIdEntry(sid)
-							.getTotalServiceIdImports());
+					serviceIds.addAll(
+							getServiceIdEntry(sid).getTotalServiceIdImports());
 				} catch (RuntimeException e) {
 					throw new RuntimeException(new StringBuffer(64)
-							.append("Can not find the serviceId \"")
-							.append(sid).append("\" in the ServiceIdRegistry!")
-							.toString());
+							.append("Can not find the serviceId \"").append(sid)
+							.append("\" in the ServiceIdRegistry!").toString());
 				}
 			}
 		}
@@ -196,8 +202,8 @@ public class ServiceIdRegistry {
 				entry = getServiceIdEntry(sid);
 				if (entry != null) {
 					valid = entry.getServiceId().equals(elementServiceId)
-							|| entry.getTotalServiceIdImports().contains(
-									elementServiceId);
+							|| entry.getTotalServiceIdImports()
+									.contains(elementServiceId);
 					if (valid) {
 						break;
 					}
@@ -208,14 +214,14 @@ public class ServiceIdRegistry {
 	}
 
 	public static void main(final String[] args) {
-		System.out
-				.println(splitByCommaAndSpace("appcontrolling, monitoring, busappmonics"));
-		System.out.println(getServiceId(
-				"com.ses.osp.bus.service.directory.v20.delta.msg", "httpx",
-				"msg", "delta"));
-		System.out.println(getServiceId(
-				"com.ses.osp.bus.service.directory.v20.msg", "httpx", "msg",
-				"delta"));
+		System.out.println(splitByCommaAndSpace(
+				"appcontrolling, monitoring, busappmonics"));
+		System.out.println(
+				getServiceId("com.ses.osp.bus.service.directory.v20.delta.msg",
+						"httpx", "msg", "delta"));
+		System.out.println(
+				getServiceId("com.ses.osp.bus.service.directory.v20.msg",
+						"httpx", "msg", "delta"));
 		for (String s : getServiceIds("abc.cde")) {
 			System.out.println(s);
 		}
@@ -230,6 +236,10 @@ public class ServiceIdRegistry {
 
 		System.out.println(isValidServiceId("directory.v20", "directory.v20"));
 	}
+
+	/** The {@link org.slf4j.Logger}. */
+	private static Logger logger = LoggerFactory
+			.getLogger(ServiceIdRegistry.class);
 
 	private static void setServiceEntryImports(final ServiceIdEntry entry,
 			final Map<String, XsdContainer> map) {

@@ -11,15 +11,37 @@
 		<![CDATA[pom to build eip.]]>
 	</description>
 	
-	<modules>
-		<module>qp-enterprise-integration-platform/eip-generator-plugin</module>
-		<module>qp-enterprise-integration-platform/eip-plugin-xml</module>
-		<module>qp-enterprise-integration-platform-impl</module>
-		<!--
-		<module>qp-enterprise-integration-platform-sample/sample-domain</module>
-		<module>qp-enterprise-integration-platform-sample/sample</module>
-		<module>qp-enterprise-integration-platform-sample/sample-templates</module>
-		-->
-	</modules>
+	<profiles>
+    <profile>
+      <id>bom</id>
+      <modules>
+        <module>qp-enterprise-integration-platform/eip-platform-bom</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>platform</id>
+      <modules>
+        <module>qp-enterprise-integration-platform/eip-generator-plugin</module>
+        <module>qp-enterprise-integration-platform/eip-plugin-xml</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>impl</id>
+      <modules>
+        <module>qp-enterprise-integration-platform-impl</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>sample</id>
+      <modules>
+        <module>qp-enterprise-integration-platform-sample/sample-domain</module>
+        <module>qp-enterprise-integration-platform-sample/sample-domain-gen</module>
+        <module>qp-enterprise-integration-platform-sample/sample</module>
+        <module>qp-enterprise-integration-platform-sample/sample-client</module>
+      </modules>
+    </profile>
+	</profiles>
+	
+	
 
 </project>

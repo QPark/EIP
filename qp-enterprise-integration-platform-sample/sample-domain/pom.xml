@@ -12,6 +12,13 @@
  * Contributors:
  *     Bernhard Hausen - Initial API and implementation
 -->
+	<parent>
+		<groupId>com.qpark.eip</groupId>
+		<artifactId>eip-platform-bom</artifactId>
+		<version>1.0.0</version>
+		<relativePath/>
+	</parent>
+
 
 	<groupId>com.samples.domain</groupId>
 	<artifactId>base</artifactId>
@@ -26,22 +33,22 @@
 		<module>service</module>
 	</modules>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<organization>
 		<name>QPark Consulting s.a r.l</name>
 		<url>http://www.qpark-consulting.com</url>
 	</organization>
-
-	<distributionManagement>
-		<repository>
-			<id>${repository.id}</id>
-			<url>${repository.url}</url>
-		</repository>
-		<site>
-			<id>site-server</id>
-			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
-		</site>
-	</distributionManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+    <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

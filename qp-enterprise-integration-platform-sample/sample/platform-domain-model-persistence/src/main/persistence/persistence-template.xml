@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+ 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd
+		http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
+	version="2.1">
+<!--
+Out of persistence-2_1-fr-spec:
+A container-managed entity manager must be a JTA entity manager. JTA entity managers are only specified for use in Java EE containers.
+An application-managed entity manager may be either a JTA entity manager or a resource-local entity manager.
+An entity manager is defined to be of a given transactional type—either JTA or resource-local—at the time its underlying entity manager factory is config ured and created. See sections 8.2.1.2 and 9.1.
+
+	<persistence-unit name="##generated" transaction-type="JTA">
+	<persistence-unit name="##generated" transaction-type="RESOURCE_LOCAL">
+-->
+	<persistence-unit name="##generated" transaction-type="RESOURCE_LOCAL">
+	</persistence-unit>
+</persistence>

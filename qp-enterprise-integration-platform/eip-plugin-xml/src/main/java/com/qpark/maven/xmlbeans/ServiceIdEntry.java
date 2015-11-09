@@ -20,8 +20,7 @@ public class ServiceIdEntry implements Comparable<ServiceIdEntry> {
 			throw new IllegalStateException(new StringBuffer(256)
 					.append("Min one of the mandatory elements serviceId=\"")
 					.append(this.serviceId).append("\" packageName=\"")
-					.append(this.packageName)
-					.append("\" or targetNamespace=\"")
+					.append(this.packageName).append("\" or targetNamespace=\"")
 					.append(this.targetNamespace).append("\" is null!")
 					.toString());
 		}
@@ -33,7 +32,7 @@ public class ServiceIdEntry implements Comparable<ServiceIdEntry> {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(128);
-		sb.append("this.serviceId=\"");
+		sb.append("serviceId=\"");
 		sb.append(this.serviceId);
 		sb.append("\" packageName=\"");
 		sb.append(this.packageName).append("\" or targetNamespace=\"");

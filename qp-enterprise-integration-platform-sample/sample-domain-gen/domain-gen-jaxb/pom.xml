@@ -13,6 +13,13 @@
 -->
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.qpark.eip</groupId>
+		<artifactId>eip-platform-bom</artifactId>
+		<version>1.0.0</version>
+		<relativePath/>
+	</parent>
+
 	<groupId>com.samples.domain.gen</groupId>
 	<artifactId>domain-gen-jaxb</artifactId>
 	<version>2.0.0</version>
@@ -25,6 +32,22 @@ The generator used is xjc.
 Additionally to that a human readable version of the xsds is generated.
 	</description>
 
+	<organization>
+		<name>QPark Consulting s.a r.l</name>
+		<url>http://www.qpark-consulting.com</url>
+	</organization>
+
+	<distributionManagement>
+		<repository>
+			<id>${repository.id}</id>
+			<url>${repository.url}</url>
+		</repository>
+		<site>
+			<id>site-server</id>
+			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
+		</site>
+	</distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<base.package.name>com.samples.bus</base.package.name>
@@ -32,12 +55,6 @@ Additionally to that a human readable version of the xsds is generated.
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<domain.schema.location.prefix>http://www.samples.com/model, http://www.qpark.com/model</domain.schema.location.prefix>
-		
-		<eip.version>1.0.13</eip.version>
-		<eip.generator.version>2.0.0</eip.generator.version>
-		
-		<jaxb.impl.version>2.2.7</jaxb.impl.version>
-
 	</properties>
 	<build>
 		<sourceDirectory>${java.gen.dir}</sourceDirectory>
@@ -45,52 +62,6 @@ Additionally to that a human readable version of the xsds is generated.
 			<plugin>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>${eip.generator.version}</version>
-				<executions>
-					<execution>
-						<id>generate schema file list and catalog to prepare xjc</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate-xjc-preparations</goal>
-						</goals>
-						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<schemalocationPrefix>${domain.schema.location.prefix}</schemalocationPrefix>
-							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
-							<includeAllModels>true</includeAllModels>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate integration gateways</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate-integration-gateways</goal>
-						</goals>
-						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
-							<outputDirectory>${java.gen.dir}</outputDirectory>
-							<basePackageName>${base.package.name}</basePackageName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate integration config</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>generate-integration-config</goal>
-						</goals>
-						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
-							<outputDirectory>${project.build.directory}/classes</outputDirectory>
-							<basePackageName>${base.package.name}</basePackageName>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.5</version>
 				<executions>
 					<execution>
 						<id>call xjc</id>
@@ -99,13 +70,26 @@ Additionally to that a human readable version of the xsds is generated.
 							<goal>xjc</goal>
 						</goals>
 						<configuration>
-							<schemaDirectory>${model.dir}</schemaDirectory>
-							<catalog>${project.build.directory}/catalog.cat</catalog>
-							<schemaListFileName>${project.build.directory}/schemaFileList.txt</schemaListFileName>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<includeAllModels>true</includeAllModels>
+							<schemalocationPrefix>${domain.schema.location.prefix}</schemalocationPrefix>
+							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
 							<outputDirectory>${java.gen.dir}</outputDirectory>
-							<clearOutputDir>false</clearOutputDir>
-							<quiet>false</quiet>
-							<debug>true</debug>
+							<!-- 
+							<catalog>${project.build.directory}/catalog.cat</catalog>
+							<verbose>false</verbose>
+							 -->
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate integration gateways</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-integration-java</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
 						</configuration>
 					</execution>
 				</executions>
@@ -113,7 +97,6 @@ Additionally to that a human readable version of the xsds is generated.
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>xml-maven-plugin</artifactId>
-				<version>1.0</version>
 				<executions>
 					<execution>
 						<id>call xslt</id>
@@ -153,7 +136,6 @@ Additionally to that a human readable version of the xsds is generated.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
 				<executions>
 					<execution>
 						<id>unpack-xsds</id>
@@ -183,7 +165,6 @@ Additionally to that a human readable version of the xsds is generated.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
 				<configuration>
 					<descriptors>
 						<descriptor>assembly-generated-java-sources.xml</descriptor>
@@ -203,26 +184,10 @@ Additionally to that a human readable version of the xsds is generated.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
 				<configuration>
 					<excludes><exclude>**/*xsl</exclude></excludes>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<organization>
-		<name>QPark Consulting s.a r.l</name>
-		<url>http://www.qpark-consulting.com</url>
-	</organization>
-
-	<distributionManagement>
-		<repository>
-			<id>${repository.id}</id>
-			<url>${repository.url}</url>
-		</repository>
-		<site>
-			<id>site-server</id>
-			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
-		</site>
-	</distributionManagement>
 </project>
