@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
+	xmlns:ISScty="http://www.samples.com/CommonTypes"
+	xmlns:ISSlib="http://www.samples.com/Library/LibraryTypes"
+	targetNamespace="http://www.samples.com/Library/LibraryTypes"
+	elementFormDefault="unqualified" >
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+	<import schemaLocation="../../ISS/Common/Common.xsd" namespace="http://www.samples.com/CommonTypes"/>
+	<import schemaLocation="../../EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"/>
+	
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.samples.platform.model.library" />
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+		</documentation>
+	</annotation>
+	
+	<complexType name="BookType">
+		<complexContent>
+			<extension base="EIPcty:EntityType">
+				<sequence>
+					<element name="ISBN" type="string"></element>
+					<element name="title" type="string"></element>
+					<element name="price" type="ISScty:EURType"></element>
+					<element name="category" type="EIPcty:UUIDType"></element>
+					<element name="language" type="EIPcty:UUIDType"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="BookCriteriaType">
+		<complexContent>
+			<extension base="EIPcty:EntityCriteriaType">
+				<sequence>
+					<element name="ISBN" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="LibraryType">
+		<complexContent>
+			<extension base="EIPcty:AssetType">
+				<sequence>
+					<element name="location" type="string" maxOccurs="1"
+						minOccurs="0">
+					</element>
+					<element name="books" type="ISSlib:BookType" maxOccurs="unbounded" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>
