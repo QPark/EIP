@@ -19,91 +19,122 @@
 		<version>2.0.0</version><!--project-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-
 	<artifactId>platform-domain-model-ddl</artifactId>
 	<packaging>jar</packaging>
 	<name>platform-domain-model-ddl</name>
 	<description>Generates the  DDL of the service bus database out of the generated persistence classes.</description>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>hibernate3-maven-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<id>hbm2ddl</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>hbm2ddl</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<components>
-						<component>
-							<name>hbm2ddl</name>
-							<implementation>jpaconfiguration</implementation>
-							<outputDirectory>target/generated-resources</outputDirectory>
-						</component>
-					</components>
-					<componentProperties>
-						<persistenceunit>${persistence.unit.name}</persistenceunit>
-						<propertyfile>src/main/resources/persistence.properties</propertyfile>
-						<outputfilename>${persistence.ddl.file.name}</outputfilename>
-						<drop>false</drop>
-						<create>true</create>
-						<export>false</export>
-						<format>true</format>
-						<update>false</update>
-						<validate>false</validate>
-					</componentProperties>
-				</configuration>
-				<dependencies>
+	<dependencies>
 					<dependency>
 						<groupId>${project.groupId}</groupId>
 						<artifactId>platform-domain-model-persistence</artifactId>
-						<version>${platform.version}</version>
+						<version>${project.version}</version>
 					</dependency>
-					<dependency>
-						<groupId>postgresql</groupId>
-						<artifactId>postgresql</artifactId>
-						<version>9.0-801.jdbc4</version>
-					</dependency>
-					<dependency>
-						<groupId>cglib</groupId>
-						<artifactId>cglib</artifactId>
-						<version>2.1_3</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jvnet.hyperjaxb3</groupId>
+			<artifactId>hyperjaxb3-ejb-runtime</artifactId>
+		</dependency>
+<dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-entitymanager</artifactId>
+</dependency>
+					<!-- 
+<dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-entitymanager</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.eclipse.persistence</groupId>
+	<artifactId>eclipselink</artifactId>
+	<version>2.5.0</version>
+</dependency>
+		-->
+</dependencies>
+	<build>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>assembly-generated-sql-sources.xml</descriptor>
-					</descriptors>
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>assembly-0</id>
-						<phase>package</phase>
+						<id>unpack-sources</id>
+						<phase>process-sources</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>unpack</goal>
 						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>platform-domain-model-persistence</artifactId>
+									<version>${platform.version}</version>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<includes>META-INF/**/*</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+<plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-ddl-create</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                            		<copy overwrite="true" file="${project.build.directory}/classes/META-INF/${persistence.unit.name}/persistence.xml" todir="${project.build.directory}/classes/META-INF" />
+                            </target>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>	
+         <plugin>
+          <groupId>io.github.divinespear</groupId>
+          <artifactId>jpa-schema-maven-plugin</artifactId>
+          <version>0.1.12</version>
+               <executions>
+                    <execution>
+                        <id>generate-ddl-create</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                       </execution>
+                      </executions>
+          
+          <configuration>
+          	
+          	<persistenceUnitName>${persistence.unit.name}</persistenceUnitName>
+          	<scriptAction>create</scriptAction>
+<namingStrategy>org.hibernate.cfg.ImprovedNamingStrategy</namingStrategy>
+          	<dialect>${persistence.jpa.vendor.adapter.databasePlatform}</dialect>
+          	<!-- 
+<namingStrategy>org.hibernate.cfg.ImprovedNamingStrategy</namingStrategy>
+          	<dialect>${persistence.jpa.vendor.adapter.databasePlatform}</dialect>
+             <databaseProductName>Oracle</databaseProductName>
+             <databaseMajorVersion>11</databaseMajorVersion>
+             <databaseMinorVersion>2</databaseMinorVersion>
+              -->
+          </configuration>
+          <dependencies>
+						<dependency>
+							<groupId>org.jvnet.hyperjaxb3</groupId>
+							<artifactId>hyperjaxb3-ejb-runtime</artifactId>
+							<version>0.6.0</version>
+						</dependency>
+          </dependencies>
+         </plugin>
+       </plugins>
+    </build>
+    
 </project>

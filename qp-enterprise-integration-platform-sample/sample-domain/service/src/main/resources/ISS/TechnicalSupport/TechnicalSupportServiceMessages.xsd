@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
+	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
+	xmlns:ISScty="http://www.samples.com/CommonTypes"
+	xmlns:ISStecsup="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
+	xmlns:ISStecsuppm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
+	targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
+	elementFormDefault="unqualified" >
+	
+	<import schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"/>
+	<import schemaLocation="http://www.samples.com/model/ISS/Common/Common.xsd" namespace="http://www.samples.com/CommonTypes"/>
+	<import schemaLocation="http://www.samples.com/model/ISS/TechnicalSupport/TechnicalSupport.xsd" namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"/>
+	
+	<import schemaLocation="../../EIP/Common/CommonServiceMessages.xsd" namespace="http://www.qpark.com/Common/CommonServiceMessages"/>
+	
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.samples.platform.service.iss.tec.support.msg" />
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+			Message definitions of the common web service.
+		</documentation>
+	</annotation>
+	
+	<complexType name="GetAggregatedReferenceDataRequestType">
+		<annotation>
+			<documentation>@ServiceConsumer
+tbd
+				@ServiceImplementor
+ESB
+				@ServiceDataProvider
+ESB
+				@ServiceDescription
+Example of the an aggregated GetReferenceData call.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType">
+						<annotation>
+							<documentation>Reference data search criteria</documentation>
+						</annotation>
+					</element>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetAggregatedReferenceDataResponseType">
+		<annotation>
+			<documentation>Aggregated reference data from ESb enumerations.</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded">
+						<annotation>
+							<documentation>Reference data</documentation>
+						</annotation>
+					</element>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="GetAggregatedReferenceDataRequest"
+		type="ISStecsuppm:GetAggregatedReferenceDataRequestType" />
+	<element name="GetAggregatedReferenceDataResponse"
+		type="ISStecsuppm:GetAggregatedReferenceDataResponseType" />
+	
+	<complexType name="GetSystemUserReportRequestType">
+		<annotation>
+			<documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Example of the an aggregated GetReferenceData call.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="ISStecsup:SystemUserReportCriteriaType"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetSystemUserReportResponseType">
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="report" type="ISStecsup:SystemUserReportType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="GetSystemUserReportRequest"
+		type="ISStecsuppm:GetSystemUserReportRequestType" />
+	<element name="GetSystemUserReportResponse"
+		type="ISStecsuppm:GetSystemUserReportResponseType" />
+
+	<complexType name="GetFlowReportRequestType">
+		<annotation>
+			<documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Example of the an aggregated GetReferenceData call.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="ISStecsup:FlowReportCriteriaType"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetFlowReportResponseType">
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="report" type="ISStecsup:FlowReportType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="GetFlowReportRequest"
+		type="ISStecsuppm:GetFlowReportRequestType" />
+	<element name="GetFlowReportResponse"
+		type="ISStecsuppm:GetFlowReportResponseType" />
+
+</schema>

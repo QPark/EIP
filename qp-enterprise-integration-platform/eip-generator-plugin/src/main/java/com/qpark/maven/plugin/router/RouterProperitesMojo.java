@@ -252,7 +252,7 @@ public class RouterProperitesMojo extends AbstractMojo {
 		String fileName;
 		File f;
 		Collection<String> serviceIds = ServiceIdRegistry
-				.getServiceIds(this.serviceId);
+				.splitServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}

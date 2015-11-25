@@ -24,6 +24,16 @@
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
 
 		<junit.version>4.9</junit.version>
+		
+		<eip.service.ids>common, iss.common, library, iss.tec.support</eip.service.ids>
+		<service.name>library</service.name>
+		<model.dir>${project.build.directory}/model</model.dir>
+
+		<domain.groupId>com.samples.domain</domain.groupId>
+		<domain.version>2.0.0</domain.version>
+		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
+
+		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>		
 	</properties>
 
 	<dependencies>
@@ -57,33 +67,90 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>com.springsource.insight</groupId>
 			<artifactId>insight-annotation</artifactId>
 		</dependency>
+		 -->
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-generator-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate integration config, properties config and mock operation providers</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>generate-test-client</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${java.gen.dir}</outputDirectory>
+							<basePackageName>${project.groupId}</basePackageName>
+							<serviceId>${eip.service.ids}</serviceId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-xsds</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${domain.groupId}</groupId>
+									<artifactId>model</artifactId>
+									<version>${domain.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>${domain.groupId}</groupId>
+									<artifactId>service</artifactId>
+									<version>${domain.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals><goal>add-source</goal></goals>
+						<configuration>
+							<sources>
+								<source>${java.gen.dir}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
+				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
+				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -91,11 +158,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
+				<artifactId>maven-site-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

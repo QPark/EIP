@@ -108,7 +108,7 @@ public class PlatformUser extends User {
 	@Override
 	public void eraseCredentials() {
 		// System.out.println("####################################");
-		System.out.println("###########eraseCredentials#########");
+		//System.out.println("###########eraseCredentials#########");
 		// new Exception(
 		// "org.springframework.security.core.userdetails.User.eraseCredentials
 		// called")

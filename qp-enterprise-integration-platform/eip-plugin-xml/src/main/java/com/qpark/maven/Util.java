@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven;
 
@@ -42,7 +37,8 @@ public class Util {
 	}
 
 	/**
-	 * @param millis the duration in milliseconds.
+	 * @param millis
+	 *            the duration in milliseconds.
 	 * @return a string with the duration formatted with
 	 *         <code>HH:mm:ss.SSS</code>.
 	 */
@@ -101,6 +97,7 @@ public class Util {
 		System.out.println(getXjcCamelCase("Ab-Bc-cd_Ef_fg.Gh.hi2Ij3jk"));
 		System.out.println(getXjcCamelCase("v2kConstraintRow"));
 		System.out.println(getXjcClassName("organi_s2a.tion"));
+		System.out.println(getXjcClassName("iss.common"));
 	}
 
 	public static String getXjcClassName(final String typeQNameLocalPart) {
@@ -168,9 +165,12 @@ public class Util {
 	 * Get a {@link UUID} name for the given {@link Class} and name. To get an
 	 * {@link UUID} object out of the returned string use
 	 * {@link UUID#fromString(String)}.
-	 * @param type the {@link Class} of the Object e.g.
+	 * 
+	 * @param type
+	 *            the {@link Class} of the Object e.g.
 	 *            com.a.b.bus.domain.c.AbcType.
-	 * @param name The name of the object.
+	 * @param name
+	 *            The name of the object.
 	 * @return The UUID as String.
 	 */
 	public static String getUUID(final Class<?> type, final String name) {
@@ -178,21 +178,21 @@ public class Util {
 		if (type != null && name != null) {
 			s = UUID.nameUUIDFromBytes(
 					new StringBuffer(256).append(type.getName()).append("#")
-							.append(name).toString().getBytes()).toString();
+							.append(name).toString().getBytes())
+					.toString();
 		} else if (name != null) {
-			s = UUID.nameUUIDFromBytes(
-					new StringBuffer(256).append("#").append(name).toString()
-							.getBytes()).toString();
+			s = UUID.nameUUIDFromBytes(new StringBuffer(256).append("#")
+					.append(name).toString().getBytes()).toString();
 		} else {
-			s = UUID.nameUUIDFromBytes(
-					new StringBuffer(256).append("#")
-							.append(System.currentTimeMillis()).toString()
-							.getBytes()).toString();
+			s = UUID.nameUUIDFromBytes(new StringBuffer(256).append("#")
+					.append(System.currentTimeMillis()).toString().getBytes())
+					.toString();
 		}
 		return s;
 	}
 
-	private static String getContextPath(final Collection<String> packageNames) {
+	private static String getContextPath(
+			final Collection<String> packageNames) {
 		StringBuffer sb = new StringBuffer(128);
 		String[] array = packageNames.toArray(new String[packageNames.size()]);
 		for (int i = 0; i < array.length; i++) {
@@ -207,7 +207,8 @@ public class Util {
 	/**
 	 * @return the file
 	 */
-	public static File getFile(final File outputDirectory, final String fileName) {
+	public static File getFile(final File outputDirectory,
+			final String fileName) {
 		return getFile(outputDirectory, "", fileName);
 	}
 
@@ -218,12 +219,12 @@ public class Util {
 			final String packageName, final String fileName) {
 		File f = new File(new StringBuffer(outputDirectory.getAbsolutePath())
 				.append(File.separatorChar)
-				.append(packageName == null ? "" : packageName.replace('.',
-						File.separatorChar)).append(File.separatorChar)
-				.append(fileName).toString());
+				.append(packageName == null ? ""
+						: packageName.replace('.', File.separatorChar))
+				.append(File.separatorChar).append(fileName).toString());
 		if (!f.getParentFile().exists() && !f.getParentFile().mkdirs()) {
-			throw new RuntimeException("Can not create directory "
-					+ f.getParent());
+			throw new RuntimeException(
+					"Can not create directory " + f.getParent());
 		}
 		return f;
 	}
@@ -247,7 +248,8 @@ public class Util {
 		return sb.toString();
 	}
 
-	public static String getRelativePath(final File baseDirectory, final File f) {
+	public static String getRelativePath(final File baseDirectory,
+			final File f) {
 		String s = f.getAbsolutePath();
 		String base = baseDirectory.getAbsolutePath();
 		if (s.startsWith(base)) {

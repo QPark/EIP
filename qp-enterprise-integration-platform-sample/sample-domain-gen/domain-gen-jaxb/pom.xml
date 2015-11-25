@@ -22,7 +22,7 @@
 
 	<groupId>com.samples.domain.gen</groupId>
 	<artifactId>domain-gen-jaxb</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.0</version><!--project-version-->
 	<packaging>jar</packaging>
 	<name>domain-gen-jaxb</name>
 	<description>
@@ -76,7 +76,6 @@ Additionally to that a human readable version of the xsds is generated.
 							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
 							<outputDirectory>${java.gen.dir}</outputDirectory>
 							<!-- 
-							<catalog>${project.build.directory}/catalog.cat</catalog>
 							<verbose>false</verbose>
 							 -->
 						</configuration>
@@ -164,6 +163,13 @@ Additionally to that a human readable version of the xsds is generated.
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes><exclude>**/*xsl</exclude></excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptors>
@@ -183,10 +189,19 @@ Additionally to that a human readable version of the xsds is generated.
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<excludes><exclude>**/*xsl</exclude></excludes>
-				</configuration>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

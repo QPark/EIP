@@ -63,7 +63,7 @@ public class FlowExecutionLog {
 	 * @return the result of the flow.
 	 * @throws Throwable
 	 */
-	@Around(value = "execution(* com.ses.osp.bus.inf.Flow+.invokeFlow(..))")
+	@Around(value = "execution(* com.qpark.eip.inf.Flow+.invokeFlow(..))")
 	public Object invokeFlowAspect(final ProceedingJoinPoint joinPoint)
 			throws Throwable {
 		long start = System.currentTimeMillis();

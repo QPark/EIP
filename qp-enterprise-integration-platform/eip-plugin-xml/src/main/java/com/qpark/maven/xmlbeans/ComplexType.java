@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven.xmlbeans;
 
@@ -46,8 +41,8 @@ public class ComplexType {
 	private final String annotationDocumentation;
 
 	/**
-	 * @return <code>true</code>, if the &lt;
-	 *         <code>complexType<code>&gt; is created as an inner &lt;<code>complexType<code>&gt;.
+	 * @return <code>true</code>, if the &lt; <code>complexType<code>&gt; is
+	 *         created as an inner &lt;<code>complexType<code>&gt;.
 	 */
 	public boolean isInnerTypeDefinition() {
 		return this.parent != null;
@@ -63,9 +58,8 @@ public class ComplexType {
 			final XsdsUtil config) {
 		this.type = type;
 		this.parent = parent;
-		if (parent == null
-				&& XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI.equals(type
-						.getName().getNamespaceURI())) {
+		if (parent == null && XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI
+				.equals(type.getName().getNamespaceURI())) {
 			Class<?> c = XsdsUtil.getBuildInJavaClass(type.getName());
 			if (c.isPrimitive()) {
 				this.javaPrimitive = true;
@@ -78,8 +72,8 @@ public class ComplexType {
 			this.className = c.getSimpleName();
 			this.classNameFq = c.getName();
 		} else if (this.type.isSimpleType()
-				&& (this.type.getEnumerationValues() == null || this.type
-						.getEnumerationValues().length == 0)) {
+				&& (this.type.getEnumerationValues() == null
+						|| this.type.getEnumerationValues().length == 0)) {
 			SchemaType buildInBase = XsdsUtil.getBuildInBaseType(this.type);
 			if (buildInBase.isSimpleType()) {
 				buildInBase = XsdsUtil.getBuildInBaseType(buildInBase);
@@ -108,24 +102,26 @@ public class ComplexType {
 			}
 			if (type.getFullJavaName() == null) {
 				if (parent == null) {
-					this.className = Util.getXjcClassName(type.getName()
-							.getLocalPart());
+					this.className = Util
+							.getXjcClassName(type.getName().getLocalPart());
 					this.classNameFq = new StringBuffer(128)
 							.append(this.packageName)
 							.append(this.packageName == null
-									|| this.packageName.trim().length() == 0 ? ""
-									: ".").append(this.className).toString();
+									|| this.packageName.trim().length() == 0
+											? "" : ".")
+							.append(this.className).toString();
 				} else {
-					String name = Util.getXjcClassName(type.getContainerField()
-							.getName().getLocalPart());
+					String name = Util.getXjcClassName(
+							type.getContainerField().getName().getLocalPart());
 					this.className = new StringBuffer(128)
 							.append(parent.getClassName()).append(".")
 							.append(Util.capitalize(name)).toString();
 					this.classNameFq = new StringBuffer(128)
 							.append(this.packageName)
 							.append(this.packageName == null
-									|| this.packageName.trim().length() == 0 ? ""
-									: ".").append(this.className).toString();
+									|| this.packageName.trim().length() == 0
+											? "" : ".")
+							.append(this.className).toString();
 				}
 			} else {
 				this.classNameFq = this.type.getFullJavaName();
@@ -139,12 +135,14 @@ public class ComplexType {
 			if (this.parent != null) {
 				this.parent.getInnerTypeDefs().add(this);
 			}
-			if (this.className.lastIndexOf(config.getServiceRequestSuffix()) > 0) {
+			if (this.className
+					.lastIndexOf(config.getServiceRequestSuffix()) > 0) {
 				this.requestType = true;
 			} else {
 				this.requestType = false;
 			}
-			if (this.className.lastIndexOf(config.getServiceResponseSuffix()) > 0) {
+			if (this.className
+					.lastIndexOf(config.getServiceResponseSuffix()) > 0) {
 				this.responseType = true;
 			} else {
 				this.responseType = false;
@@ -192,8 +190,7 @@ public class ComplexType {
 		} else {
 			this.flowInputType = false;
 		}
-		if (type.getBaseType() != null
-				&& type.getBaseType().getName() != null
+		if (type.getBaseType() != null && type.getBaseType().getName() != null
 				&& type.getBaseType().getName().getNamespaceURI()
 						.endsWith("/Interfaces/Flow")
 				&& type.getBaseType().getName().getLocalPart()
@@ -206,6 +203,7 @@ public class ComplexType {
 
 	/**
 	 * Setup the list of children {@link Entry}s.
+	 *
 	 * @param config
 	 */
 	public void initChildren(final XsdsUtil config) {
@@ -213,12 +211,11 @@ public class ComplexType {
 		QName childType = null;
 		String childName;
 		for (SchemaProperty o : this.getType().getElementProperties()) {
-			if (o.getName() != null && o.getType() != null
-					&& o.getType().getName() != null) {
+			if (o.getName() != null && o.getType() != null&& o.getType().getName() != null) {
 				childType = o.getType().getName();
 				childName = o.getName().getLocalPart();
 				if (childName != null && !this.containsChildName(childName)) {
-					if (o.getType().getName().getNamespaceURI()
+					if (childType.getNamespaceURI()
 							.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)) {
 						child = new ComplexTypeChild(childName,
 								new ComplexType(o.getType(), config),
@@ -247,8 +244,7 @@ public class ComplexType {
 		}
 		for (ComplexTypeChild child : this.getChildren()) {
 			if (!child.getJavaPackage().startsWith("java.lang")
-					&& !child.getJavaPackage()
-							.startsWith("org.apache.xmlbeans")
+					&& !child.getJavaPackage().startsWith("org.apache.xmlbeans")
 					&& !child.isJavaPrimitive()) {
 				ts.add(child.getJavaImportClass());
 			}
@@ -290,7 +286,9 @@ public class ComplexType {
 
 	/**
 	 * Get the {@link ComplexTypeChild} with the give property name.
-	 * @param propertyName the property name.
+	 *
+	 * @param propertyName
+	 *            the property name.
 	 * @return the {@link ComplexTypeChild} found or <code>null</code>.
 	 */
 	public ComplexTypeChild getChild(final String propertyName) {
@@ -413,8 +411,8 @@ public class ComplexType {
 		if (this.type.getName() != null) {
 			targetNamespace = this.type.getName().getNamespaceURI();
 		}
-		if (targetNamespace == null || targetNamespace.length() == 0
-				&& this.parent != null) {
+		if (targetNamespace == null
+				|| targetNamespace.length() == 0 && this.parent != null) {
 			targetNamespace = this.parent.getTargetNamespace();
 		}
 		return targetNamespace;

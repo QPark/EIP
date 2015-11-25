@@ -89,7 +89,7 @@ public class GeneratorMojo extends AbstractMojo {
 		RestOperationProviderMockGenerator mop;
 
 		Collection<String> serviceIds = ServiceIdRegistry
-				.getServiceIds(this.serviceId);
+				.splitServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}

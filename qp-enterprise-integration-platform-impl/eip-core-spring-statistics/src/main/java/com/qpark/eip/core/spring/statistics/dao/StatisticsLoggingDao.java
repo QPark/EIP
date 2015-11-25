@@ -80,7 +80,8 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	private ContextNameProvider contextNameProvider;
 
 	/** The {@link EntityManager}. */
-	@PersistenceContext(unitName = "com.qpark.eip.core.persistence")
+	@PersistenceContext(unitName = "com.qpark.eip.core.persistence",
+			name = "ComQparkEipCoreEntityManagerFactory")
 	private EntityManager em;
 
 	/** The {@link org.slf4j.Logger}. */
@@ -386,7 +387,8 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 		Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
 		q.where(cb.equal(c.<String> get(SystemUserLogType_.context),
 				this.contextNameProvider.getContextName()),
-				cb.equal(c.<Date> get(SystemUserLogType_.logDateItem), date));
+				cb.between(c.<Date> get(SystemUserLogType_.logDateItem),
+						getDayStart(date), getDayEnd(date)));
 
 		TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);
 		return typedQuery.getResultList();

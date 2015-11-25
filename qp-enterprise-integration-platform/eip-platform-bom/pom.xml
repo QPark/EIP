@@ -37,14 +37,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<eip.platform.version>1.0.0</eip.platform.version>
-		<com.qpark.eip.version>2.0.0</com.qpark.eip.version>
+		<com.qpark.eip.platform.version>3.0.0</com.qpark.eip.platform.version>
+		<com.qpark.eip.platform.impl.version>2.0.0</com.qpark.eip.platform.impl.version>
 		<io.spring.platform.version>1.1.4.RELEASE</io.spring.platform.version>
 
 		<javax.javaee-api>7.0</javax.javaee-api>
 		<com.sun.xml.bind.jaxb-impl.version>2.2.11</com.sun.xml.bind.jaxb-impl.version>
 		<org.jvnet.jaxb2_commons.jaxb2-basics.version>0.9.5</org.jvnet.jaxb2_commons.jaxb2-basics.version>
 		<org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>0.6.0</org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>
+		<org.apache.santuario-xmlsec>1.5.8</org.apache.santuario-xmlsec>
 		<org.aspectj.aspectjtools.version>1.8.7</org.aspectj.aspectjtools.version>
 		<net.sourceforge.cardme.cardme.version>0.4.0</net.sourceforge.cardme.cardme.version>
 		<com.springsource.insight.insight-annotation.version>1.9.2.RELEASE</com.springsource.insight.insight-annotation.version>
@@ -66,6 +67,7 @@
 		<plugin.org.apache.maven.plugins.maven-project-info-reports-plugin.version>2.8.1</plugin.org.apache.maven.plugins.maven-project-info-reports-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-resources-plugin.version>2.7</plugin.org.apache.maven.plugins.maven-resources-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-site-plugin.version>3.4</plugin.org.apache.maven.plugins.maven-site-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-source-plugin.version>2.4</plugin.org.apache.maven.plugins.maven-source-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-surefire-plugin.version>2.19</plugin.org.apache.maven.plugins.maven-surefire-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-surefire-report-plugin.version>2.19</plugin.org.apache.maven.plugins.maven-surefire-report-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-war-plugin.version>2.6</plugin.org.apache.maven.plugins.maven-war-plugin.version>
@@ -86,43 +88,48 @@
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>${eip.platform.version}</version>
+				<version>${com.qpark.eip.platform.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-plugin-xml</artifactId>
-				<version>${eip.platform.version}</version>
+				<version>${com.qpark.eip.platform.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core</artifactId>
-				<version>${com.qpark.eip.version}</version>
+				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-failurehandler</artifactId>
-				<version>${com.qpark.eip.version}</version>
+				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-logback</artifactId>
-				<version>${com.qpark.eip.version}</version>
+				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-persistence</artifactId>
-				<version>${com.qpark.eip.version}</version>
+				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring</artifactId>
-				<version>${com.qpark.eip.version}</version>
+				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
-				<artifactId>eip-core-xml</artifactId>
-				<version>${com.qpark.eip.version}</version>
+				<artifactId>eip-core-spring-auth</artifactId>
+				<version>${com.qpark.eip.platform.impl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring-statistics</artifactId>
+				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
 
 			<dependency>
@@ -136,8 +143,18 @@
 				<version>${com.sun.xml.bind.jaxb-impl.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.sun.xml.bind</groupId>
+				<artifactId>jaxb-core</artifactId>
+				<version>${com.sun.xml.bind.jaxb-impl.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.jvnet.jaxb2_commons</groupId>
 				<artifactId>jaxb2-basics</artifactId>
+				<version>${org.jvnet.jaxb2_commons.jaxb2-basics.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jvnet.jaxb2_commons</groupId>
+				<artifactId>jaxb2-basics-runtime</artifactId>
 				<version>${org.jvnet.jaxb2_commons.jaxb2-basics.version}</version>
 			</dependency>
 			<dependency>
@@ -163,6 +180,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.apache.santuario</groupId>
+				<artifactId>xmlsec</artifactId>
+				<version>${org.apache.santuario-xmlsec}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjtools</artifactId>
 				<version>${org.aspectj.aspectjtools.version}</version>
@@ -177,9 +200,6 @@
 				<artifactId>cardme</artifactId>
 				<version>${net.sourceforge.cardme.cardme.version}</version>
 			</dependency>
-
-
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -224,7 +244,6 @@
 							</goals>
 							<configuration>
 								<descriptorRefs>
-									<descriptorRef>src</descriptorRef>
 									<descriptorRef>project</descriptorRef>
 								</descriptorRefs>
 							</configuration>
@@ -276,11 +295,48 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-javadoc-plugin.version}</version>
+					<configuration>
+						<failOnError>false</failOnError>
+						<stylesheet>java</stylesheet>
+					</configuration>
+					<executions>
+<!--
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+-->
+						<execution>
+							<id>aggregate</id>
+							<goals>
+								<goal>aggregate</goal>
+							</goals>
+							<phase>site</phase>
+							<configuration>
+								<aggregate>true</aggregate>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-resources-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${plugin.org.apache.maven.plugins.maven-source-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

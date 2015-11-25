@@ -75,12 +75,12 @@ public class MainApplicationContextXmlGenerator {
 		if (springVersion != null) {
 			sb.append("-").append(springVersion);
 		}
-		sb.append(".xsdn");
+		sb.append(".xsd\n");
 		sb.append("\t\thttp://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop");
 		if (springVersion != null) {
 			sb.append("-").append(springVersion);
 		}
-		sb.append(".xsdn");
+		sb.append(".xsd\n");
 		sb.append("\">\n");
 		sb.append("\t<!-- ");
 		sb.append(Util.getGeneratedAt());

@@ -1,28 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Server>
-	<Listener className="com.springsource.tcserver.serviceability.rmi.JmxSocketListener" 
-		update:bind="0.0.0.0"
-	/>
 	<GlobalNamingResources>
 			<add:Resource name="jdbc/PlatformDB" auth="Container" 
-				username="mpp" password="mpp" url="jdbc:postgresql://localhost:5432" 
-				driverClassName="org.postgresql.Driver" 
+				username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}/platformHSQLDB.bin" 
+				driverClassName="org.hsqldb.jdbc.JDBCDriver" 
 				factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" 
-				testWhileIdle="true" testOnBorrow="false" testOnReturn="false" 
-				validationQuery="SELECT 1 FROM DUAL" validationInterval="30000"
-				timeBetweenEvictionRunsMillis="5000" maxWait="10000" 
 				defaultTransactionIsolation="READ_COMMITTED" 
 				maxActive="20" maxIdle="20" minIdle="3" initialSize="2"
-				minEvictableIdleTimeMillis="30000" jmxEnabled="true"
-				jdbcInterceptors="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;org.apache.tomcat.jdbc.pool.interceptor.SlowQueryReportJmx(threshold=10000)" 
 			/>
-			<!-- add others here -->
 	</GlobalNamingResources>
 	<Service name="Catalina">
 		<Engine name="Catalina">
 			<Host name="localhost"
 			>
-				<remove:Valve className="org.apache.catalina.valves.AccessLogValve" />
+				<Valve className="org.apache.catalina.valves.AccessLogValve" update:pattern="%h %l %u %t &quot;%r&quot; %s %Dms %b" />
+				<add:Valve className="org.apache.catalina.valves.StuckThreadDetectionValve" threshold="60" />
 			</Host>
 		</Engine>
 		<Connector protocol="org.apache.coyote.http11.Http11Protocol"

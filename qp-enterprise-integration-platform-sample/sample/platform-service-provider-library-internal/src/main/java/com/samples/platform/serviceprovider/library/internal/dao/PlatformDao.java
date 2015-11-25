@@ -34,7 +34,8 @@ public class PlatformDao {
 			.getLogger(PlatformDao.class);
 
 	/** The {@link EntityManager}. */
-	@PersistenceContext(unitName = "com.samples.platform.domain")
+	@PersistenceContext(unitName = "com.samples.platform.domain",
+			name = "ComSamplesPlatformEntityManagerFactory")
 	private EntityManager em;
 
 	/**

@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * 
+ * Contributors:
+ *     Bernhard Hausen - Initial API and implementation
+-->
+
+	<parent>
+		<groupId>com.samples.platform</groupId>
+		<artifactId>platform-base</artifactId>
+		<version>2.0.0</version><!--project-version-->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>platform-domain-model-ddl</artifactId>
+	<packaging>jar</packaging>
+	<name>platform-domain-model-ddl</name>
+	<description>Generates the  DDL of the service bus database out of the generated persistence classes.</description>
+
+				<dependencies>
+					<dependency>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>platform-domain-model-persistence</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<!-- 
+							<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.4.2</version>
+		</dependency>
+</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-sources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>platform-domain-model-persistence</artifactId>
+									<version>${platform.version}</version>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<includes>META-INF/**/*</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+<plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-ddl-create</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                            		<copy overwrite="true" file="${project.build.directory}/classes/META-INF/${persistence.unit.name}/persistence.xml" todir="${project.build.directory}/classes/META-INF" />
+                                <!-- ANT Task definition -->
+                                <java classname="JpaSchemaExport"
+                                    fork="true" failonerror="true">
+                                    <arg value="${persistence.unit.name}" />
+                                    <arg value="target/jpa/sql/schema-create.sql" />
+                                    <arg value="${persistence.jpa.vendor.adapter.databasePlatform}"/>
+                                    <!-- reference to the passed-in classpath reference -->
+                                    <classpath refid="maven.compile.classpath" />
+                                </java>
+                            </target>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

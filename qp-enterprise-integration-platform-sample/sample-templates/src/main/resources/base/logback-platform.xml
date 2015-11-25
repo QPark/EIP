@@ -1,113 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration scan="true" scanPeriod="60 seconds">
-	<!-- Properties -->
-	<property name="logfile.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%-5level][%c] %msg [%-10thread]%n%ex" />
-	<property name="logfile.destination" value="${catalina.base}/logs/platform" />
+<configuration  scan="true" scanPeriod="60 seconds">
+	<property name="logfile.datepattern" value="%d{yyyyMMdd-HHmmss.SSS}" />
+	<property name="logfile.pattern" value="%d{yyyyMMdd-HHmmss.SSS}[%contextName][%-5level][%c] %msg [%-10thread]%n%ex" />
+	<property name="logfile.destination" value="${catalina.base}/logs" />
+	<property name="logfile.application" value="com.samples.platform" />
 
 	<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
-	<!-- Appenders -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<!--
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>WARN</level>
-		</filter>
-		-->
-		<encoder>
-			<pattern>${logfile.pattern}</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>WARN</level>
-		</filter>
-		<file>${logfile.destination}/${CONTEXT_NAME}.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/${CONTEXT_NAME}.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>5</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>20MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>${logfile.pattern}</pattern>
-		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter"><level>WARN</level></filter>
+		<encoder><pattern>${logfile.pattern}</pattern></encoder>
 	</appender>
 	<appender name="FILE_TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/${CONTEXT_NAME}.trace.log</file>
+		<!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter"><level>WARN</level></filter>-->
+		<file>${logfile.destination}/${logfile.application}-trace.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/${CONTEXT_NAME}.trace.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>5</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>${logfile.pattern}</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_PLATFORM_INCOMING_MESSAGES" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/platform.messages.incoming.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/platform.messages.incoming.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>15</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%c] %msg%n%ex</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_PLATFORM_OUTGOING_MESSAGES" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/platform.messages.outgoing.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/platform.messages.outgoing.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>15</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%c] %msg%n%ex</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_MESSAGE_SENDING_BUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>ERROR</level>
-		</filter>
-		<file>${logfile.destination}/xxx.message.sending.bug.empty.trace.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/xxx.message.sending.bug.empty.trace.log.%i.zip</fileNamePattern>
+			<fileNamePattern>${logfile.destination}/${logfile.application}-trace.%i.zip</fileNamePattern>
 			<minIndex>1</minIndex>
 			<maxIndex>10</maxIndex>
 		</rollingPolicy>
 		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
+			<maxFileSize>30MB</maxFileSize>
 		</triggeringPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%c] %msg%n</pattern>
-		</encoder>
+		<encoder><pattern>${logfile.pattern}</pattern></encoder>
+	</appender>
+	<appender name="FILE_STATISTICS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logfile.destination}/${logfile.application}-statistic.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${logfile.destination}/${logfile.application}-statistic.%i.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>3</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>20MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder><pattern>%d{yyyyMMdd-HHmmss.SSS}, [%contextName], %msg, [%-10thread]%n</pattern></encoder>
 	</appender>
 
-	<!-- service bus -->
-	<logger name="com.samples.platform" level="DEBUG" />
-	<logger name="com.samples.platform.messages.incoming" level="DEBUG" additivity="true">
-		<appender-ref ref="FILE_PLATFORM_INCOMING_MESSAGES" />
+	<logger name="com.samples.platform" level="DEBUG" additivity="true" />
+	<logger name="com.samples.platform.util.statistics.statistics" level="DEBUG" additivity="true">
+		<appender-ref ref="FILE_STATISTICS" />
+	</logger>
+	<logger name="com.samples.platform.app.core.logback.statistics" level="DEBUG" additivity="true">
+		<appender-ref ref="FILE_STATISTICS" />
 	</logger>
 
-	<logger name="com.qpark.eip.core.spring.PayloadLogger" level="DEBUG"/>
-
-	<!-- add other loggers here -->
-
-
 	<!-- spring -->
-	<logger name="org.springframework.web.context.ContextLoader" level="INFO" />
 	<logger name="org.springframework" level="WARN" />
+	<logger name="org.springframework.web.context.ContextLoader" level="INFO" />
+	<logger name="org.springframework.integration.gateway.GatewayProxyFactoryBean" level="ERROR" />
+
+	<logger name="com.qpark.eip.core.spring.PayloadLogger" level="WARN"/>
 	<!--
 	<logger name="org.springframework.ws.server.endpoint.interceptor.AbstractValidatingInterceptor" level="WARN" />
 	<logger name="org.springframework.security" level="WARN" />
@@ -115,20 +58,35 @@
 	<logger name="org.springframework.integration" level="WARN" />
 	-->
 
-	<!-- Bug: Messages are not visible if not set server.MessageTraceing to TRACE -->
-	<logger name="org.springframework.ws.server.MessageTracing.sent" level="TRACE" additivity="false">
-		 <appender-ref ref="FILE_MESSAGE_SENDING_BUG" />
-	</logger>
-	<logger name="org.springframework.ws.server.MessageTracing.received" level="TRACE" additivity="false">
-		 <appender-ref ref="FILE_MESSAGE_SENDING_BUG" />
-	</logger>
-
 	<!-- To log all server-side messages, simply set the org.springframework.ws.server.MessageTracing logger to level DEBUG or TRACE. On the debug level, only the payload root element is logged; on the TRACE level, the entire message content. If you only want to log sent messages, use the org.springframework.ws.server.MessageTracing.sent logger; or org.springframework.ws.server.MessageTracing.received to log received messages. On the client-side, similar loggers exist: org.springframework.ws.client.MessageTracing.sent and org.springframework.ws.client.MessageTracing.received. -->
 	<!--
 	<logger name="org.springframework.ws.server.MessageTracing.sent" level="TRACE" />
 	<logger name="org.springframework.ws.server.MessageTracing.received" level="TRACE" />
 	<logger name="org.springframework.ws.client.MessageTracing.sent" level="TRACE" />
-	<logger name="org.springframework.ws.client.MessageTracing.sent" level="TRACE" />
+	<logger name="org.springframework.ws.client.MessageTracing.received" level="TRACE" />
+
+	<logger name="org.springframework.ws.client.core.WebServiceTemplate" level="DEBUG"/>
+	-->
+	<logger name="org.springframework.ws.client.core.WebServiceTemplate" level="DEBUG"/>
+
+	<!-- spring security -->
+	<!--
+	<logger name="org.springframework.integration.security" level="TRACE" />
+	<logger name="org.springframework.ws.soap.security" level="TRACE" />
+	<logger name="org.springframework.security.core" level="TRACE" />
+	<logger name="org.springframework.security.authentication" level="TRACE" />
+	<logger name="org.springframework.security.access" level="TRACE" />
+	-->
+
+	<!-- JDBC message store and queue log -->
+	<!--
+	<logger name="org.springframework.jdbc.store" level="TRACE" />
+	<logger name="org.springframework.jdbc.object" level="TRACE" />
+	<logger name="org.springframework.jdbc.support" level="TRACE" />
+	<logger name="org.springframework.jdbc.core" level="TRACE" />
+	<logger name="org.springframework.jdbc.core.namedparam" level="TRACE" />
+	<logger name="org.springframework.integration.jdbc.store" level="TRACE" />
+	<logger name="org.springframework.integration.channel.QueueChannel" level="TRACE" />
 	-->
 
 	<!-- database -->
@@ -144,10 +102,12 @@
 	<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE" />
 	-->
 
+	<include resource="logback-include.xml"/>
+
 	<root>
 		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
 		<appender-ref ref="FILE_TRACE" />
 	</root>
 </configuration>
+

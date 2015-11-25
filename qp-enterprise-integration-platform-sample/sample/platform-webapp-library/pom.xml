@@ -26,7 +26,7 @@
 	<description>Webapp containing the library service.</description>
 
 	<properties>
-		<eip.service.ids>library</eip.service.ids>
+		<eip.service.ids>library, iss.tec.support</eip.service.ids>
 		<service.name>library</service.name>
 		<service.application.name>${bus.application.name}</service.application.name>
 		<service.final.name>${bus.war.prefix}${service.application.name}-${service.name}</service.final.name>
@@ -52,6 +52,54 @@
 							<Implementation-Build>${project.version}-b${buildNumber}</Implementation-Build>
 						</manifestEntries>
 					</archive>
+
+					<packagingIncludes>
+					</packagingIncludes>
+					<packagingExcludes>
+WEB-INF/lib/activation-1.1.1.jar,
+WEB-INF/lib/aopalliance-1.0.jar,
+WEB-INF/lib/aspectjtools-1.8.7.jar,
+WEB-INF/lib/commons-beanutils-1.9.2.jar,
+WEB-INF/lib/commons-codec-1.10.jar,
+WEB-INF/lib/commons-collections-3.2.1.jar,
+WEB-INF/lib/commons-digester-2.1.jar,
+WEB-INF/lib/commons-httpclient-3.1.jar,
+WEB-INF/lib/commons-io-2.4.jar,
+WEB-INF/lib/commons-lang-2.6.jar,
+WEB-INF/lib/commons-lang3-3.3.2.jar,
+WEB-INF/lib/commons-logging-1.2.jar,
+WEB-INF/lib/commons-net-3.3.jar,
+WEB-INF/lib/commons-pool-1.6.jar,
+WEB-INF/lib/commons-pool2-2.2.jar,
+WEB-INF/lib/disruptor-3.2.1.jar,
+WEB-INF/lib/dom4j-1.6.1.jar,
+WEB-INF/lib/gs-collections-5.1.0.jar,
+WEB-INF/lib/gs-collections-api-5.1.0.jar,
+WEB-INF/lib/insight-annotation-1.9.2.RELEASE.jar,
+WEB-INF/lib/javax.persistence-2.1.0.jar,
+WEB-INF/lib/jaxb-api-2.0.jar,
+WEB-INF/lib/jaxb-core-2.2.11.jar,
+WEB-INF/lib/jaxb-impl-2.2.11.jar,
+WEB-INF/lib/jaxws-api-2.1.jar,
+WEB-INF/lib/joda-time-2.5.jar,
+WEB-INF/lib/jsr166e-1.0.jar,
+WEB-INF/lib/jsr173_api-1.0.jar,
+WEB-INF/lib/logback-classic-1.1.3.jar,
+WEB-INF/lib/logback-core-1.1.3.jar,
+WEB-INF/lib/reactor-core-1.1.6.RELEASE.jar,
+WEB-INF/lib/saaj-api-1.3.5.jar,
+WEB-INF/lib/slf4j-api-1.7.12.jar,
+WEB-INF/lib/log4j-over-slf4j-1.7.12.jar,
+WEB-INF/lib/jul-to-slf4j-1.7.12.jar,
+WEB-INF/lib/jcl-over-slf4j-1.7.12.jar,
+WEB-INF/lib/stax-api-1.0.jar,
+WEB-INF/lib/wsdl4j-1.6.3.jar,
+WEB-INF/lib/wss4j-1.6.18.jar,
+WEB-INF/lib/xmlbeans-2.6.0.jar,
+WEB-INF/lib/xmlschema-core-2.1.0.jar,
+WEB-INF/lib/xmlsec-1.5.8.jar,
+WEB-INF/lib/xws-security-3.0.jar
+					</packagingExcludes>
 					<ignoreWebxml>true</ignoreWebxml>
 					<!--<webXml>${project.build.directory}/${service.final.name}/WEB-INF</webXml>-->
 				</configuration>
@@ -167,7 +215,8 @@
 							<serviceId>${eip.service.ids}</serviceId>
 							<serviceVersion>${project.version}</serviceVersion>
 							<warName>${service.war.name}</warName>
-							<applicationWithoutPersistenceConfig>false</applicationWithoutPersistenceConfig>
+							<!-- Pesistence config imported in service provider via JavaConfig -->
+							<applicationWithoutPersistenceConfig>true</applicationWithoutPersistenceConfig>
 						</configuration>
 					</execution>
 					<execution>
@@ -242,11 +291,23 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
+				<artifactId>maven-assembly-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -277,31 +338,62 @@
 		</dependency>
 
 		<dependency>
+	    <groupId>org.apache.ws.security</groupId>
+	    <artifactId>wss4j</artifactId>
+		</dependency>
+		<dependency>
 			<!-- Needed to generate multipe xsd WSDLs -->
 			<groupId>org.apache.ws.xmlschema</groupId>
 			<artifactId>xmlschema-core</artifactId>
 		</dependency>
+<dependency>
+	<groupId>org.apache.santuario</groupId>
+	<artifactId>xmlsec</artifactId>
+</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 		</dependency>
-<!--
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jvnet.hyperjaxb3</groupId>
-			<artifactId>hyperjaxb3-ejb-runtime</artifactId>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+		</dependency>
+			<dependency>
+				<groupId>com.sun.xml.wss</groupId>
+				<artifactId>xws-security</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjtools</artifactId>
 		</dependency>
--->
+	
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+		
 	</dependencies>
+<repositories>
+<repository>
+<id>spring-ext</id>
+<name>Spring repo-ext</name>
+<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
+</repository>
+</repositories>
 </project>

@@ -191,7 +191,7 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 			</extension>
 		</complexContent>
 	</complexType>
-		<complexType name="GetReferenceDataRequestType">
+	<complexType name="GetReferenceDataRequestType">
 		<annotation>
 			<documentation>@ServiceConsumer
 tbd
@@ -206,18 +206,13 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
 		<complexContent>
 			<extension base="EIPctym:RequestMessage">
 				<sequence>
-					<element name="criteria" minOccurs="0" maxOccurs="1">
+					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType">
 						<annotation>
 							<documentation>Reference data search criteria</documentation>
 						</annotation>
-						<complexType>
-							<complexContent>
-								<extension base="EIPcty:ReferenceDataCriteriaType"/>
-							</complexContent>
-						</complexType>
 					</element>
 				</sequence>
-			</extension>
+				</extension>
 		</complexContent>
 	</complexType>
 	<complexType name="GetReferenceDataResponseType">

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
@@ -16,8 +17,8 @@ import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor;
 
 import com.samples.platform.client.LibraryServiceClient;
+import com.samples.platform.client.LibraryServiceClientExtension;
 import com.samples.platform.client.config.util.ClientCallWss4jSecurityInterceptor;
-import com.samples.platform.client.impl.LibraryServiceClientImpl;
 
 /**
  * Spring configuration to enable the server calls of the client.
@@ -25,7 +26,10 @@ import com.samples.platform.client.impl.LibraryServiceClientImpl;
  * @author bhausen
  */
 @Configuration
-@PropertySource(value = "classpath:bus.client.properties")
+@PropertySources({ @PropertySource("classpath:bus.client.properties"),
+		@PropertySource(
+				value = "file:${catalina.base}/conf/bus.client.properties",
+				ignoreResourceNotFound = true), })
 public class ClientConfig {
 	/** The name of the service library. */
 	private static final String SERVICE_LIBRARY = "library";
@@ -104,7 +108,7 @@ public class ClientConfig {
 	public Jaxb2Marshaller marshaller() {
 		Jaxb2Marshaller bean = new Jaxb2Marshaller();
 		StringBuffer path = new StringBuffer(1024);
-		path.append(" com.qpark.eip.service.common.msg");
+		path.append("com.qpark.eip.service.common.msg");
 		path.append(":");
 		path.append("com.samples.platform.service.library.msg");
 		bean.setContextPath(path.toString());
@@ -135,10 +139,11 @@ public class ClientConfig {
 	 * @return the {@link LibraryServiceClient}.
 	 */
 	@Bean
-	public LibraryServiceClient libraryClient(final Jaxb2Marshaller marshaller,
+	public LibraryServiceClientExtension libraryClient(
+			final Jaxb2Marshaller marshaller,
 			final SaajSoapMessageFactory messageFactory,
 			final ClientCallWss4jSecurityInterceptor securityInterceptor) {
-		LibraryServiceClientImpl bean = new LibraryServiceClientImpl();
+		LibraryServiceClientExtension bean = new LibraryServiceClientExtension();
 		bean.setInterceptors(new ClientInterceptor[] { securityInterceptor });
 		bean.setDefaultUri(getServicebusEndpointUrl(this.servicebusServer,
 				this.servicebusVersion, SERVICE_LIBRARY));

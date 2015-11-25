@@ -86,20 +86,21 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 					"No spring JPA vendor adapter supplied. Please use property springJpaVendorAdapter which defaults to org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter.");
 		}
 
+		File f;
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append(this.getSpringPersistenceConfigXml());
 
-		File f = Util.getFile(this.outputDirectory,
-				new StringBuffer().append(this.basePackageName)
-						.append("-persistence-spring-config.xml").toString());
-		this.getLog().info(new StringBuffer().append("Write ")
-				.append(f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, sb.toString());
-		} catch (Exception e) {
-			this.getLog().error(e.getMessage());
-			e.printStackTrace();
-		}
+		// sb.append(this.getSpringPersistenceConfigXml());
+		// File f = Util.getFile(this.outputDirectory,
+		// new StringBuffer().append(this.basePackageName)
+		// .append("-persistence-spring-config.xml").toString());
+		// this.getLog().info(new StringBuffer().append("Write ")
+		// .append(f.getAbsolutePath()));
+		// try {
+		// Util.writeToFile(f, sb.toString());
+		// } catch (Exception e) {
+		// this.getLog().error(e.getMessage());
+		// e.printStackTrace();
+		// }
 
 		sb.setLength(0);
 		sb.append(this.getSpringPersistenceJavaConfig());
@@ -129,6 +130,7 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append(this.basePackageName);
 		sb.append(".persistenceconfig;\n");
 		sb.append("\n");
+		sb.append("import javax.persistence.EntityManagerFactory;\n");
 		sb.append("import javax.sql.DataSource;;\n");
 		sb.append("\n");
 		sb.append("import org.springframework.context.annotation.Bean;\n");
@@ -144,6 +146,7 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 				"import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;\n");
 		sb.append(
 				"import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;\n");
+		sb.append("import org.springframework.orm.jpa.vendor.Database;\n");
 		sb.append(
 				"import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;\n");
 		sb.append(
@@ -178,6 +181,15 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\t */\n");
 		sb.append(
 				"\tpublic static final String DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME = \"org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter\";\n");
+
+		sb.append("\t/**\n");
+		sb.append(
+				"\t * The default value of the database platform to be set into the\n");
+		sb.append("\t * {@link AbstractJpaVendorAdapter}.\n");
+		sb.append("\t */\n");
+		sb.append(
+				"\tpublic static final Boolean DEFAULT_JPA_VENDOR_ADPATER_GENERATE_DDL = Boolean.FALSE;\n");
+
 		sb.append("\t/**\n");
 		sb.append(
 				"\t * The default value of the database platform to be set into the\n");
@@ -185,12 +197,29 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\t */\n");
 		sb.append(
 				"\tpublic static final String DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM = \"org.hibernate.dialect.Oracle10gDialect\";\n");
+
 		sb.append("\t/**\n");
 		sb.append("\t * The jpa Vendor adapter class name to be set in the\n");
 		sb.append("\t * {@link LocalContainerEntityManagerFactoryBean}.\n");
 		sb.append("\t */\n");
 		sb.append(
 				"\tprivate String jpaVendorAdapterClassName = DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME;\n");
+		sb.append("\n");
+
+		sb.append("\t/**\n");
+		sb.append("\t * The generateDdl parameter to be set into the\n");
+		sb.append(
+				"\t * {@link AbstractJpaVendorAdapter}. Defaults to <code>false</code> if not\n");
+		sb.append(
+				"\t * set and {@link #jpaVendorAdpaterDatabasePlatform} not equals to\n");
+		sb.append(
+				"\t * {@link org.hibernate.dialect.HSQLDialect} and not equals\n");
+		sb.append(
+				"\t * {@link org.springframework.orm.jpa.vendor.Database#HSQL}.\n");
+		sb.append("\t */\n");
+		sb.append("\tprivate Boolean jpaVendorAdapterGenerateDdl = null;\n");
+		sb.append("\n");
+
 		sb.append("\t/**\n");
 		sb.append(
 				"\t * The database platform to be set into the {@link AbstractJpaVendorAdapter}\n");
@@ -199,6 +228,7 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append(
 				"\tprivate String jpaVendorAdpaterDatabasePlatform = DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM;\n");
 		sb.append("\n");
+
 		sb.append("\t/**\n");
 		sb.append("\t * Create the spring config of persistence unit <i>");
 		sb.append(this.persistenceUnitName);
@@ -263,7 +293,7 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append(prefix);
 		sb.append("EntityManagerFactory\")\n");
 		sb.append(
-				"\tpublic LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {\n");
+				"\tpublic EntityManagerFactory getEntityManagerFactory() {\n");
 		sb.append(
 				"\t\tAbstractJpaVendorAdapter jpaVendorAdapter = this.getJpaVendorAdapter();\n");
 		sb.append("\t\tif (jpaVendorAdapter == null) {\n");
@@ -301,12 +331,15 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\t\tbean.setDataSource(this.getJndiDataSource());\n");
 		sb.append("\n");
 		sb.append("\t\tjpaVendorAdapter.setShowSql(false);\n");
-		sb.append("\t\tjpaVendorAdapter.setGenerateDdl(false);\n");
+		sb.append(
+				"\t\tjpaVendorAdapter.setGenerateDdl(this.isJpaVendorAdapterGenerateDdl());\n");
 		sb.append("\t\tjpaVendorAdapter\n");
 		sb.append(
 				"\t\t\t\t.setDatabasePlatform(this.jpaVendorAdpaterDatabasePlatform);\n");
 		sb.append("\t\tbean.setJpaVendorAdapter(jpaVendorAdapter);\n");
-		sb.append("\t\treturn bean;\n");
+		sb.append("\t\tbean.afterPropertiesSet();\n");
+		sb.append("\t\treturn bean.getObject();\n");
+		// sb.append("\t\treturn bean;\n");
 		sb.append("\t}\n");
 		sb.append("\n");
 		sb.append("\t/**\n");
@@ -321,12 +354,14 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 				"\tpublic JpaTransactionManager getJpaTransactionManager() {\n");
 		sb.append(
 				"\t\tJpaTransactionManager bean = new JpaTransactionManager();\n");
-		sb.append("\t\tLocalContainerEntityManagerFactoryBean emfb = this\n");
-		sb.append("\t\t\t\t.getEntityManagerFactoryBean();\n");
-		sb.append(
-				"\t\tbean.setPersistenceUnitName(emfb.getPersistenceUnitName());\n");
-		sb.append(
-				"\t\tbean.setEntityManagerFactory(emfb.getNativeEntityManagerFactory());\n");
+		sb.append("\t\tEntityManagerFactory emf = this\n");
+		sb.append("\t\t\t\t.getEntityManagerFactory();\n");
+		sb.append("\t\tbean.setPersistenceUnitName(\"");
+		sb.append(this.persistenceUnitName);
+		sb.append("\");\n");
+		sb.append("\t\tbean.setEntityManagerFactory(emf);\n");
+		// sb.append(
+		// "\t\tbean.setEntityManagerFactory(emfb.getNativeEntityManagerFactory());\n");
 		sb.append("\t\treturn bean;\n");
 		sb.append("\t}\n");
 		sb.append("\n");
@@ -365,6 +400,36 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\t\treturn jpaVendorAdapter;\n");
 		sb.append("\t}\n");
 		sb.append("\n");
+
+		sb.append("\t/**\n");
+		sb.append("\t * Get the generateDdl parameter to be set into the\n");
+		sb.append("\t * {@link AbstractJpaVendorAdapter}.\n");
+		sb.append("\t *\n");
+		sb.append(
+				"\t * @return the generateDdl parameter to be set into the\n");
+		sb.append("\t *         {@link AbstractJpaVendorAdapter}.\n");
+		sb.append("\t */\n");
+		sb.append("\tprivate boolean isJpaVendorAdapterGenerateDdl() {\n");
+		sb.append(
+				"\t	boolean value = DEFAULT_JPA_VENDOR_ADPATER_GENERATE_DDL.booleanValue();\n");
+		sb.append("\t	if (this.jpaVendorAdapterGenerateDdl != null) {\n");
+		sb.append(
+				"\t		value = this.jpaVendorAdapterGenerateDdl.booleanValue();\n");
+		sb.append("\t	} else {\n");
+		sb.append("\t		if (this.jpaVendorAdpaterDatabasePlatform\n");
+		sb.append(
+				"\t				.equals(\"org.hibernate.dialect.HSQLDialect\")\n");
+		sb.append(
+				"\t				|| this.jpaVendorAdpaterDatabasePlatform\n");
+		sb.append(
+				"\t						.equals(Database.HSQL.name())) {\n");
+		sb.append("\t			value = true;\n");
+		sb.append("\t		}\n");
+		sb.append("\t	}\n");
+		sb.append("\t	return value;\n");
+		sb.append("\t}\n");
+		sb.append("\n");
+
 		sb.append("\t/**\n");
 		sb.append(
 				"\t * Set the jpa Vendor adapter class name to be set in the\n");

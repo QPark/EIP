@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.samples.platform.client.LibraryServiceClient;
+import com.samples.platform.client.LibraryServiceClientExtension;
 import com.samples.platform.client.config.ClientConfig;
+import com.samples.platform.model.library.BookCriteriaType;
 import com.samples.platform.model.library.BookType;
 import com.samples.platform.service.library.msg.CreateBookResponseType;
+import com.samples.platform.service.library.msg.GetBookRequestType;
 import com.samples.platform.service.library.msg.GetBookResponseType;
 
 /**
@@ -53,8 +55,8 @@ public class ClientTest {
 	private void run() {
 		this.logger.info("+run");
 		this.logger.info(" run Get client bean");
-		LibraryServiceClient libraryClient = this.applicationContext
-				.getBean(LibraryServiceClient.class);
+		LibraryServiceClientExtension libraryClient = this.applicationContext
+				.getBean(LibraryServiceClientExtension.class);
 
 		String userName = "userName";
 
@@ -78,8 +80,13 @@ public class ClientTest {
 			this.logger.error(" run create book return null response.");
 		}
 		this.logger.info(" run Call bus to get the created book");
-		GetBookResponseType getBookResponse = libraryClient.getBook(ISBN,
-				userName);
+		BookCriteriaType criteria = new BookCriteriaType();
+		criteria.setISBN(ISBN);
+		GetBookRequestType getBookRequest = libraryClient
+				.createGetBookRequestType();
+		getBookRequest.setCriteria(criteria);
+		GetBookResponseType getBookResponse = libraryClient
+				.getBook(getBookRequest);
 		if (getBookResponse != null) {
 			for (BookType bt : getBookResponse.getBook()) {
 				this.logger.info(" run get book returned {} for ISBN {}",

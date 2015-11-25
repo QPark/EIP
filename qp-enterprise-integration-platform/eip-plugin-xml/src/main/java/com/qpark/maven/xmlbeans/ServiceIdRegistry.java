@@ -142,37 +142,27 @@ public class ServiceIdRegistry {
 		return serviceId;
 	}
 
-	public static String getServiceIdBasename(final String serviceId) {
-		StringBuffer sb = new StringBuffer();
-		List<String> list = getServiceIds(serviceId);
-		if (list.size() > 0) {
-			for (String string : list) {
-				sb.append(string);
-			}
-		}
-		return sb.toString();
-	}
-
 	public static ServiceIdEntry getServiceIdEntry(final String serviceId) {
 		return serviceIdMap.get(serviceId);
 	}
 
-	public static List<String> getServiceIds(final String serviceId) {
+	public static List<String> splitServiceIds(final String serviceId) {
 		List<String> list = splitByCommaAndSpace(serviceId);
 		return list;
 	}
 
-	public static String getMarshallerContextPath(final String serviceId) {
+	public static String getCombinedMarshallerContextPath(
+			final String serviceIds) {
 		StringBuffer sb = new StringBuffer(128);
-		Set<String> serviceIds = new TreeSet<String>();
-		List<String> list = splitByCommaAndSpace(serviceId);
+		Set<String> sids = new TreeSet<String>();
+		List<String> list = splitByCommaAndSpace(serviceIds);
 		if (list.isEmpty()) {
-			serviceIds.addAll(getAllServiceIds());
+			sids.addAll(getAllServiceIds());
 		} else {
-			serviceIds.addAll(list);
+			sids.addAll(list);
 			for (String sid : list) {
 				try {
-					serviceIds.addAll(
+					sids.addAll(
 							getServiceIdEntry(sid).getTotalServiceIdImports());
 				} catch (RuntimeException e) {
 					throw new RuntimeException(new StringBuffer(64)
@@ -181,7 +171,7 @@ public class ServiceIdRegistry {
 				}
 			}
 		}
-		for (String sid : serviceIds) {
+		for (String sid : sids) {
 			if (sb.length() > 0) {
 				sb.append(":");
 			}
@@ -193,7 +183,7 @@ public class ServiceIdRegistry {
 	public static boolean isValidServiceId(final String elementServiceId,
 			final String serviceId) {
 		boolean valid = false;
-		Collection<String> serviceIds = getServiceIds(serviceId);
+		Collection<String> serviceIds = splitServiceIds(serviceId);
 		if (serviceIds.isEmpty()) {
 			valid = true;
 		} else {
@@ -213,6 +203,28 @@ public class ServiceIdRegistry {
 		return valid;
 	}
 
+	public static String getCombinedServiceIdCapitalizedPackageName(
+			final String serviceIds) {
+		String s = serviceIds;
+		if (serviceIds != null) {
+			s = serviceIds.replaceAll("-", ".").replaceAll("( )+", ".")
+					.replaceAll("(_)+", ".").replaceAll(",", ".")
+					.replaceAll("(\\.)+", ".");
+			s = Util.capitalizePackageName(s);
+		}
+		return s;
+	}
+
+	public static String getCombinedServiceIdName(final String serviceIds) {
+		String s = serviceIds;
+		if (serviceIds != null) {
+			s = serviceIds.replaceAll("-", ".").replaceAll("( )+", ".")
+					.replaceAll("(_)+", ".").replaceAll(",", ".")
+					.replaceAll("(\\.)+", ".");
+		}
+		return s;
+	}
+
 	public static void main(final String[] args) {
 		System.out.println(splitByCommaAndSpace(
 				"appcontrolling, monitoring, busappmonics"));
@@ -222,19 +234,27 @@ public class ServiceIdRegistry {
 		System.out.println(
 				getServiceId("com.ses.osp.bus.service.directory.v20.msg",
 						"httpx", "msg", "delta"));
-		for (String s : getServiceIds("abc.cde")) {
+		for (String s : splitServiceIds("abc.cde")) {
 			System.out.println(s);
 		}
 		System.out.println("#########");
-		for (String s : getServiceIds("abc.cde, efg.hij")) {
+		for (String s : splitServiceIds("abc.cde, efg.hij")) {
 			System.out.println(s);
 		}
 		System.out.println("#########");
-		System.out.println(getServiceIdBasename("abc.cde"));
+		System.out.println(getCombinedServiceIdName("abc.cde"));
+		System.out
+				.println(getCombinedServiceIdCapitalizedPackageName("abc.cde"));
 		System.out.println("#########");
-		System.out.println(getServiceIdBasename("abc.cde, efg.hij"));
+		System.out.println(getCombinedServiceIdName("abc.cde, efg.hij"));
+		System.out.println(
+				getCombinedServiceIdCapitalizedPackageName("abc.cde, efg.hij"));
 
 		System.out.println(isValidServiceId("directory.v20", "directory.v20"));
+		System.out.println(
+				getCombinedServiceIdName("iss.common,  commmon,     libRary"));
+		System.out.println(getCombinedServiceIdCapitalizedPackageName(
+				"iss.common,  commmon,     libRary"));
 	}
 
 	/** The {@link org.slf4j.Logger}. */

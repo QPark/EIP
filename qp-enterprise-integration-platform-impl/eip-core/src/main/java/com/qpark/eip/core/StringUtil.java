@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.eip.core;
 
@@ -18,9 +13,11 @@ package com.qpark.eip.core;
 public abstract class StringUtil {
 	/**
 	 * Compares s and base.
-	 * 
+	 *
 	 * @param s
+	 *            the {@link String}.
 	 * @param base
+	 *            the base.
 	 * @return equal or not.
 	 */
 	public static final boolean equals(final String s, final String base) {
@@ -29,13 +26,17 @@ public abstract class StringUtil {
 
 	/**
 	 * Compares s and base using the ignore case parameter.
-	 * 
+	 *
 	 * @param s
+	 *            the {@link String}.
 	 * @param base
+	 *            the base.
 	 * @param ignoreCase
+	 *            flag to ignore case.
 	 * @return equal or not.
 	 */
-	public static final boolean equals(final String s, final String base, final boolean ignoreCase) {
+	public static final boolean equals(final String s, final String base,
+			final boolean ignoreCase) {
 		if (s == base) {
 			return true;
 		}
@@ -50,7 +51,8 @@ public abstract class StringUtil {
 		}
 	}
 
-	public static final String shrinkToMaxLength(final String s, final int maxLength) {
+	public static final String shrinkToMaxLength(final String s,
+			final int maxLength) {
 		if (s == null) {
 			return s;
 		} else {
@@ -65,7 +67,7 @@ public abstract class StringUtil {
 	/**
 	 * Checks if the {@link String} is not <code>null</code> and is filled. Non
 	 * blanks will be accepted.
-	 * 
+	 *
 	 * @param s
 	 *            The checked {@link String}.
 	 * @return is a filled value.
@@ -77,7 +79,7 @@ public abstract class StringUtil {
 
 	/**
 	 * Checks if the {@link String} is not <code>null</code> and is filled.
-	 * 
+	 *
 	 * @param s
 	 *            The checked {@link String}.
 	 * @param acceptBlank
@@ -85,7 +87,8 @@ public abstract class StringUtil {
 	 *            {@link String#trim()} called.
 	 * @return is a filled value.
 	 */
-	public static final boolean isValue(final String s, final boolean acceptBlank) {
+	public static final boolean isValue(final String s,
+			final boolean acceptBlank) {
 		if (s == null) {
 			return false;
 		}

@@ -1,8 +1,5 @@
 <?xml version="1.0"?>
 <tomcat-users>
-	<role rolename="manager-gui" />
-	<role rolename="manager-script" />
-	<user username="iss" password="iss" roles="manager-gui, manager-script" />
-	<role rolename="admin" />
+	<user username="eip" password="platform" roles="standard,manager-gui,manager-jmx" />
 </tomcat-users>
 

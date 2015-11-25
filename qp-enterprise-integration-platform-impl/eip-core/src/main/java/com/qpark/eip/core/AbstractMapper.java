@@ -1,25 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.eip.core;
 
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Maps <T> into <V>.
+ * Maps <code>T</code> into <code>V</code>.
  *
  * @author bhausen
  * @param <T>
+ *            type of source.
  * @param <V>
+ *            type of destination.
  */
 public abstract class AbstractMapper<T, V> {
 
@@ -31,7 +28,7 @@ public abstract class AbstractMapper<T, V> {
 		this.source = pT;
 	}
 
-	/** Maps <T> into <V>. */
+	/** Maps <code>T</code> into <code>V</code>. */
 	public void run() {
 		this.destination = this.map();
 	}

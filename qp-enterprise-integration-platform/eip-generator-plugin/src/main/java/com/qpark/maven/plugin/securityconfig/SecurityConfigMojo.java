@@ -330,7 +330,7 @@ public class SecurityConfigMojo extends AbstractMojo {
 				"\t<bean id=\"eipAuthenticationProvider\" class=\"org.springframework.security.authentication.ProviderManager\">\n");
 		sb.append("\t\t<property name=\"providers\">\n");
 		sb.append("\t\t\t<list>\n");
-		sb.append("\t\t\t\t<ref local=\"eipDaoAuthenticationProvider\" />\n");
+		sb.append("\t\t\t\t<ref bean=\"eipDaoAuthenticationProvider\" />\n");
 		sb.append("\t\t\t</list>\n");
 		sb.append("\t\t</property>\n");
 		sb.append("\t</bean>\n");
@@ -404,11 +404,11 @@ public class SecurityConfigMojo extends AbstractMojo {
 
 		sb.append(
 				"\t<bean id=\"eipAccessDecisionManager\" class=\"com.qpark.eip.core.spring.security.EipAffirmativeBased\">\n");
-		sb.append("\t\t<property name=\"decisionVoters\">\n");
+		sb.append("\t\t<constructor-arg>\n");
 		sb.append("\t\t\t<list>\n");
 		sb.append("\t\t\t\t<ref bean=\"eipRoleVoter\"/>\n");
 		sb.append("\t\t\t</list>\n");
-		sb.append("\t\t</property>\n");
+		sb.append("\t\t</constructor-arg>\n");
 		sb.append("\t</bean>\n");
 		sb.append("\n");
 		sb.append("\t<!-- \n");

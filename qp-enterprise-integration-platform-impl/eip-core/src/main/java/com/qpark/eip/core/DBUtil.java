@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.eip.core;
 
@@ -31,16 +26,22 @@ public abstract class DBUtil {
 	 *            The {@link TypedQuery}
 	 * @param maxElements
 	 *            The maximum number of elements if given.
+	 * @param properties
+	 *            containing (eventually) the property of
+	 *            {@value EipSettings.EIP_UTIL_MAX_DATABASE_LINES}
 	 */
-	public static void setMaxElements(final TypedQuery<?> typedQuery, final BigInteger maxElements,
+	public static void setMaxElements(final TypedQuery<?> typedQuery,
+			final BigInteger maxElements,
 			final Map<String, String> properties) {
 		if (typedQuery != null) {
 			int max = EipSettings.EIP_UTIL_MAX_DATABASE_LINES_NUMBER;
 			if (maxElements != null && maxElements.intValue() > 0) {
 				max = maxElements.intValue();
-			} else if (properties.get(EipSettings.EIP_UTIL_MAX_DATABASE_LINES) != null) {
+			} else if (properties
+					.get(EipSettings.EIP_UTIL_MAX_DATABASE_LINES) != null) {
 				try {
-					max = Integer.parseInt(properties.get(EipSettings.EIP_UTIL_MAX_DATABASE_LINES));
+					max = Integer.parseInt(properties
+							.get(EipSettings.EIP_UTIL_MAX_DATABASE_LINES));
 				} catch (NumberFormatException e) {
 					// nothing to do.
 				}
@@ -56,7 +57,8 @@ public abstract class DBUtil {
 	 * @return the connection or null.
 	 */
 	@SuppressWarnings("unused")
-	private static Connection getOracleConnection(final String url, final String username, final String password) {
+	private static Connection getOracleConnection(final String url,
+			final String username, final String password) {
 		Connection connection = null;
 		try {
 			String driverName = "oracle.jdbc.driver.OracleDriver";
@@ -87,7 +89,8 @@ public abstract class DBUtil {
 				s = null;
 			} else {
 				if (!s.startsWith("*")) {
-					s = new StringBuffer(s.length() + 1).append('*').append(s).toString();
+					s = new StringBuffer(s.length() + 1).append('*').append(s)
+							.toString();
 				}
 				if (!s.endsWith("*")) {
 					s = new StringBuffer(s).append('*').toString();

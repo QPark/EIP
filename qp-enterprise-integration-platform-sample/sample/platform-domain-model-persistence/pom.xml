@@ -49,7 +49,7 @@
 									<artifactId>model</artifactId>
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
-									<excludes>Interfaces/**/*</excludes>
+									<excludes>Interfaces/**/*,**/maven-4.0.0.xsd</excludes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -95,7 +95,7 @@
 					<generateDirectory>${java.gen.dir}</generateDirectory>
 					<extension>true</extension>
 					<persistenceUnitName>${persistence.unit.name}</persistenceUnitName>
-					<roundtripTestClassName>RoundtripTest</roundtripTestClassName>
+					<!--<roundtripTestClassName>RoundtripTest</roundtripTestClassName>-->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -121,7 +121,7 @@
 				<executions>
 					<execution>
 						<id>handle-persistence-xml</id>
-						<phase>process-resources</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -129,7 +129,6 @@
 							<target>
 								<delete file="${project.build.directory}/generated-sources/RoundtripTest.java" />
 								<property name="meta.inf" value="${project.build.directory}/generated-sources/META-INF" />
-								<mkdir dir="${meta.inf}/${persistence.unit.name}" />
 								<replace file="${meta.inf}/persistence.xml">
 									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence/orm]]></replacetoken>
 									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence/orm]]></replacevalue>
@@ -148,6 +147,10 @@
 								</replace>
 								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${meta.inf}/${persistence.unit.name}" />
 								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${meta.inf}/${persistence.unit.name}" failonerror="false" />
+								<property name="resouces.meta.inf" value="${project.build.directory}/classes/META-INF" />
+								<mkdir dir="${classes.meta.inf}/${persistence.unit.name}" />
+								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${classes.meta.inf}/${persistence.unit.name}" />
+								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${classes.meta.inf}/${persistence.unit.name}" failonerror="false" />
 							</target>
 						</configuration>
 					</execution>
@@ -181,10 +184,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<excludes>
@@ -193,6 +192,22 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -200,7 +215,7 @@
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jvnet.hyperjaxb3</groupId>
 			<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>

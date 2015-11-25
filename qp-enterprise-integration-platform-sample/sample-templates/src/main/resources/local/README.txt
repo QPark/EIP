@@ -3,5 +3,8 @@ Domain version: xxx-domain.version-xxx
 Build Date: xxx-build.time-xxx
 
 Installation command on local environment (windows):
-	tcruntime-instance.bat create esbserver1 -t bio -t ajp -t insight -t xxx-application.name-xxx-base-xxx-application.version-xxx -t xxx-application.name-xxx-xxx-environment.name-xxx-xxx-application.version-xxx -t xxx-application.name-xxx-xxx-environment.name-xxx-user-xxx-application.version-xxx
 
+tcruntime-instance.bat create platform-library -f templates/xxx-application.name-xxx-base-xxx-application.version-xxx/conf/template-fragment.properties -t bio -t ajp -t insight -t xxx-application.name-xxx-base-xxx-application.version-xxx -t xxx-application.name-xxx-xxx-environment.name-xxx-xxx-application.version-xxx -t xxx-application.name-xxx-xxx-environment.name-xxx-user-xxx-application.version-xxx
+
+Or without insight:
+tcruntime-instance.bat create platform-library -f templates/xxx-application.name-xxx-base-xxx-application.version-xxx/conf/template-fragment.properties -t bio -t ajp -t xxx-application.name-xxx-base-xxx-application.version-xxx -t xxx-application.name-xxx-xxx-environment.name-xxx-xxx-application.version-xxx -t xxx-application.name-xxx-xxx-environment.name-xxx-user-xxx-application.version-xxx

@@ -46,74 +46,16 @@ public class EipStatisticsConfig {
 	/** The {@link EipPersistenceConfig}. */
 	@Autowired
 	private EipPersistenceConfig eipPersistenceConfig;
-
-	/**
-	 * The jpa Vendor adapter class name to be set in the
-	 * {@link LocalContainerEntityManagerFactoryBean}.
-	 */
-	private String jpaVendorAdapterClassName = EipPersistenceConfig.DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME;
-
-	/**
-	 * The database platform to be set into the {@link AbstractJpaVendorAdapter}
-	 * .
-	 */
-	private String jpaVendorAdpaterDatabasePlatform = EipPersistenceConfig.DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM;
-
 	/** The class name of the of the {@link MessageContentProvider}. */
 	private String messageContentProviderClassName;
 	/** The number of weeks to keep the log entries in the database. */
-	private int numberOfWeeksToKeepLogs;
+	private int numberOfWeeksToKeepLogs = 2;
+
 	/**
 	 * Create the spring config of the eip core statistics with 2 weeks keeping
 	 * the logs.
-	 *
-	 * @param contextName
-	 *            the context name.
-	 * @param contextVersion
-	 *            the context version.
-	 * @param messageContentProviderClassName
-	 *            the class name of the {@link MessageContentProvider}
-	 *            implementation.
 	 */
-	public EipStatisticsConfig(final String contextName,
-			final String contextVersion,
-			final String messageContentProviderClassName) {
-		this(contextName, contextVersion, messageContentProviderClassName, 2,
-				EipPersistenceConfig.DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME,
-				EipPersistenceConfig.DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM);
-	}
-
-	/**
-	 * Create the spring config of the eip core authority.
-	 *
-	 * @param contextName
-	 *            the context name.
-	 * @param contextVersion
-	 *            the context version.
-	 * @param messageContentProviderClassName
-	 *            the class name of the {@link MessageContentProvider}
-	 *            implementation.
-	 * @param numberOfWeeksToKeepLogs
-	 *            the number of weeks to keep the logs.
-	 * @param jpaVendorAdapterClassName
-	 *            the jpa Vendor adapter class name to be set in the
-	 *            {@link LocalContainerEntityManagerFactoryBean}.
-	 * @param jpaVendorAdpaterDatabasePlatform
-	 *            the database platform to be set into the
-	 *            {@link AbstractJpaVendorAdapter}.
-	 */
-	public EipStatisticsConfig(final String contextName,
-			final String contextVersion,
-			final String messageContentProviderClassName,
-			final int numberOfWeeksToKeepLogs,
-			final String jpaVendorAdapterClassName,
-			final String jpaVendorAdpaterDatabasePlatform) {
-		this.contextName = contextName;
-		this.contextVersion = contextVersion;
-		this.messageContentProviderClassName = messageContentProviderClassName;
-		this.numberOfWeeksToKeepLogs = numberOfWeeksToKeepLogs;
-		this.jpaVendorAdapterClassName = jpaVendorAdapterClassName;
-		this.jpaVendorAdpaterDatabasePlatform = jpaVendorAdpaterDatabasePlatform;
+	public EipStatisticsConfig() {
 	}
 
 	/**
@@ -231,10 +173,6 @@ public class EipStatisticsConfig {
 	 */
 	@PostConstruct
 	private void init() {
-		this.eipPersistenceConfig
-				.setJpaVendorAdapterClassName(this.jpaVendorAdapterClassName);
-		this.eipPersistenceConfig.setJpaVendorAdpaterDatabasePlatform(
-				this.jpaVendorAdpaterDatabasePlatform);
 	}
 
 	/**
@@ -258,6 +196,16 @@ public class EipStatisticsConfig {
 	}
 
 	/**
+	 * Set the datasource name in the JNDI context.
+	 *
+	 * @param dataSourceJndiName
+	 *            the datasource name in the JNDI context.
+	 */
+	public void setDataSourceJndiName(final String dataSourceJndiName) {
+		this.eipPersistenceConfig.setDataSourceJndiName(dataSourceJndiName);
+	}
+
+	/**
 	 * Set the jpa Vendor adapter class name to be set in the
 	 * {@link LocalContainerEntityManagerFactoryBean}.
 	 *
@@ -267,7 +215,8 @@ public class EipStatisticsConfig {
 	 */
 	public void setJpaVendorAdapterClassName(
 			final String jpaVendorAdapterClassName) {
-		this.jpaVendorAdapterClassName = jpaVendorAdapterClassName;
+		this.eipPersistenceConfig
+				.setJpaVendorAdapterClassName(jpaVendorAdapterClassName);
 	}
 
 	/**
@@ -280,12 +229,13 @@ public class EipStatisticsConfig {
 	 */
 	public void setJpaVendorAdpaterDatabasePlatform(
 			final String jpaVendorAdpaterDatabasePlatform) {
-		this.jpaVendorAdpaterDatabasePlatform = jpaVendorAdpaterDatabasePlatform;
+		this.eipPersistenceConfig.setJpaVendorAdpaterDatabasePlatform(
+				jpaVendorAdpaterDatabasePlatform);
 	}
 
 	/**
 	 * Set the class name of the of the {@link MessageContentProvider}.
-	 * 
+	 *
 	 * @param messageContentProviderClassName
 	 *            the class name of the of the {@link MessageContentProvider}.
 	 */
@@ -296,7 +246,7 @@ public class EipStatisticsConfig {
 
 	/**
 	 * Set the number of weeks to keep the log entries in the database.
-	 * 
+	 *
 	 * @param numberOfWeeksToKeepLogs
 	 *            the number of weeks to keep the log entries in the database.
 	 */

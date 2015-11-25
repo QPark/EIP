@@ -94,7 +94,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 
 	private Collection<String> getInterfaceIds(final XsdsUtil config) {
 		Collection<String> interfaceIds = ServiceIdRegistry
-				.getServiceIds(this.interfaceId);
+				.splitServiceIds(this.interfaceId);
 		if (interfaceIds.size() == 0) {
 			interfaceIds.addAll(ServiceIdRegistry.getAllServiceIds());
 		}

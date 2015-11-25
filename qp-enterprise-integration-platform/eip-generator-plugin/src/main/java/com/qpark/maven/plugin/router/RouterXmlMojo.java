@@ -426,10 +426,16 @@ public class RouterXmlMojo extends AbstractMojo {
 
 		StringBuffer sb = new StringBuffer(1024);
 
-		@SuppressWarnings("unused")
-		String releaseStrategyBeanName = new StringBuffer(32)
-				.append(aggregatorBeanName).append("ReleaseStrategy")
-				.append(System.currentTimeMillis()).toString();
+		headerEnricher.append(
+				"\t<!-- Enrich header to be able to aggregate again. -->\n");
+		headerFilter.append(
+				"\t<!-- Header filter are org.springframework.integration.transformer.Transformer.\n");
+		headerFilter.append(
+				"\t\tHere they are used to combine the response channels of the requests send to the\n");
+		headerFilter.append(
+				"\t\trecipients of the recipient-list-router to the input channel of the aggregator.\n");
+		headerFilter.append("\t-->\n");
+
 		String aggregatorInputChannelName = new StringBuffer(32)
 				.append("internal").append(Util.capitalize(aggregatorBeanName))
 				.append("InputChannel").append(System.currentTimeMillis())
@@ -446,8 +452,6 @@ public class RouterXmlMojo extends AbstractMojo {
 		channels.append("\" />\n");
 
 		String correlationHeaderEnricherOutputChannel = recipientListRouterChannelName;
-		// <int:header-enricher input-channel="in" output-channel="out">
-		// <int:header name="foo" method="computeValue" ref="myBean"/>
 		if (!headerEnricherBeans.isEmpty()) {
 			correlationHeaderEnricherOutputChannel = new StringBuffer(
 					recipientListRouterChannelName)
@@ -455,11 +459,12 @@ public class RouterXmlMojo extends AbstractMojo {
 			channels.append("\t<int:channel id=\"");
 			channels.append(correlationHeaderEnricherOutputChannel);
 			channels.append("\" />\n");
-			headerEnricher.append("\t<int:header-enricher input-channel=\"");
+			headerEnricher
+					.append("\t<int:header-enricher\n\t\tinput-channel=\"");
 			headerEnricher.append(correlationHeaderEnricherOutputChannel);
-			headerEnricher.append("\" output-channel=\"");
+			headerEnricher.append("\"\n\t\toutput-channel=\"");
 			headerEnricher.append(recipientListRouterChannelName);
-			headerEnricher.append("\" >\n");
+			headerEnricher.append("\"\n\t>\n");
 			for (SimpleEntry<String, String> headerEnricherBean : headerEnricherBeans) {
 				headerEnricher.append("\t\t<int:header name=\"");
 				headerEnricher.append(headerEnricherBean.getKey());
@@ -480,12 +485,12 @@ public class RouterXmlMojo extends AbstractMojo {
 			channels.append(operationChannelName);
 			channels.append("\" />\n");
 
-			recipients.append("\t\t<int:recipient channel=\"");
+			recipients.append("\t\t<int:recipient\n\t\t\tchannel=\"");
 			recipients.append(operationChannelName);
 			recipients.append("\" />\n");
 			numberOfRecipients++;
 
-			serviceActivator.append("\t<int:service-activator ref=\"");
+			serviceActivator.append("\t<int:service-activator\n\t\tref=\"");
 			serviceActivator.append(operationProviderBeanName);
 			serviceActivator.append("\" \n");
 			serviceActivator.append("\t\tinput-channel=\"");
@@ -505,12 +510,12 @@ public class RouterXmlMojo extends AbstractMojo {
 			recipients.append("\" />\n");
 			numberOfRecipients++;
 
-			headerFilter.append("\t<int:header-filter input-channel=\"");
+			headerFilter.append("\t<int:header-filter\n\t\tinput-channel=\"");
 			headerFilter.append(channelOutgoinIncoming.getValue());
-			headerFilter.append("\" \n");
-			headerFilter.append("\t\toutput-channel=\"");
+			headerFilter.append("\"\n\t\toutput-channel=\"");
 			headerFilter.append(aggregatorInputChannelName);
-			headerFilter.append("\" header-names=\"notSetHeaderToFilter\" \n");
+			headerFilter.append(
+					"\"\n\t\theader-names=\"ThisIsOnlyForRouting-NoMessageHeaderShouldBeFiltered\"\n");
 			headerFilter.append("\t/>\n");
 		}
 
@@ -520,7 +525,7 @@ public class RouterXmlMojo extends AbstractMojo {
 			aggregatorOutputChannelName = new StringBuffer(
 					"internalServiceActivatorOutputChannel")
 							.append(System.currentTimeMillis()).toString();
-			sb.append("\t<int:transformer ref=\"");
+			sb.append("\t<int:transformer\n\t\tref=\"");
 			sb.append(lastTransformerBeanName);
 			sb.append("\" method=\"transform\"\n");
 			sb.append("\t\tinput-channel=\"");
@@ -535,7 +540,43 @@ public class RouterXmlMojo extends AbstractMojo {
 			channels.append("\" />\n");
 		}
 
-		sb.append("\t<int:aggregator id=\"");
+		headerEnricher.append("\t<int:header-enricher \n\t\tinput-channel=\"");
+		headerEnricher.append(channelNameWsRequest);
+		headerEnricher.append("\"\n\t\toutput-channel=\"");
+		headerEnricher.append(correlationHeaderEnricherOutputChannel);
+		headerEnricher.append("\">\n");
+		headerEnricher.append(
+				"\t\t<int:correlation-id expression=\"headers['id']\" />\n");
+		headerEnricher
+				.append("\t\t<int:header name=\"sequenceSize\" expression=\"");
+		headerEnricher.append(numberOfRecipients);
+		headerEnricher.append("\" />\n");
+		headerEnricher.append("\t</int:header-enricher>\n");
+
+		sb.append(headerEnricher);
+		sb.append("\n");
+
+		sb.append(
+				"\t<!-- Pass the message to the listening recipients. -->\n ");
+		sb.append("\t<int:recipient-list-router \n\t\tid=\"");
+		sb.append(channelNameWsRequest);
+		sb.append("Router\" \n");
+		sb.append("\t\tinput-channel=\"");
+		sb.append(recipientListRouterChannelName);
+		sb.append("\"> \n");
+		sb.append(recipients);
+		sb.append("\t</int:recipient-list-router>\n");
+		sb.append("\n");
+		sb.append("\n");
+
+		sb.append(headerFilter);
+		sb.append("\n");
+
+		sb.append("\t<!-- Combine the messages send via the header-filters.\n");
+		sb.append(
+				"\t\tImplementation by org.springframework.integration.aggregator.AbstractCorrelatingMessageHandler\n");
+		sb.append("\t-->\n ");
+		sb.append("\t<int:aggregator\n\t\tid=\"");
 		sb.append(channelNameWsRequest);
 		sb.append("Aggregator\" \n");
 		sb.append("\t\tinput-channel=\"");
@@ -547,53 +588,23 @@ public class RouterXmlMojo extends AbstractMojo {
 		sb.append("\t\tref=\"");
 		sb.append(aggregatorBeanName);
 		sb.append("\" method=\"aggregate\" \n");
-
-		// sb.append("\t\trelease-strategy-expression=\"size() == ");
-		// sb.append(numberOfRecipients);
-		// sb.append("\" \n");
-
 		sb.append("\t\trelease-strategy=\"");
-		// sb.append(releaseStrategyBeanName);
 		sb.append(aggregatorBeanName);
 		sb.append("\" release-strategy-method=\"canRelease\" \n");
-
 		sb.append("\t\tcorrelation-strategy=\"");
 		sb.append(aggregatorBeanName);
 		sb.append("\" correlation-strategy-method=\"getCorrelationKey\" \n");
-		sb.append("\t\tsend-partial-result-on-expiry=\"true\" \n");
+		sb.append("\t\tsend-partial-result-on-expiry=\"false\" \n");
+		sb.append("\t\tsend-timeout=\"-1\" \n");
 		sb.append("\t/>\n");
-
-		sb.append("\t<int:header-enricher input-channel=\"");
-		sb.append(channelNameWsRequest);
-		sb.append("\" output-channel=\"");
-		sb.append(correlationHeaderEnricherOutputChannel);
-		sb.append("\">\n");
-		sb.append("\t\t<int:correlation-id expression=\"headers['id']\" />\n");
-		// No need to create a new UUID!
-		// sb.append("\t\t<int:correlation-id
-		// expression=\"T(java.util.UUID).randomUUID().toString()\" />\n");
-		sb.append("\t\t<int:header name=\"sequenceSize\" expression=\"");
-		sb.append(numberOfRecipients);
-		sb.append("\" />\n");
-		sb.append("\t</int:header-enricher>\n");
-
-		sb.append(headerEnricher);
-
-		sb.append("\t<int:recipient-list-router id=\"");
-		sb.append(channelNameWsRequest);
-		sb.append("Router\" \n");
-		sb.append("\t\tinput-channel=\"");
-		sb.append(recipientListRouterChannelName);
-		sb.append("\"> \n");
-		sb.append(recipients);
-		sb.append("\t</int:recipient-list-router>\n");
-		sb.append("\n");
-		sb.append(serviceActivator);
-		sb.append("\n");
-		sb.append("\n");
-		sb.append(headerFilter);
 		sb.append("\n");
 
+		if (serviceActivator.toString().trim().length() > 0) {
+			sb.append(serviceActivator);
+			sb.append("\n");
+		}
+
+		sb.append("\t<!-- The used channels ... -->\n ");
 		sb.append(channels);
 
 		/*

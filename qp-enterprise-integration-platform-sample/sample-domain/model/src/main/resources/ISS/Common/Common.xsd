@@ -9,7 +9,7 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.model.common" />
+				<jaxb:package name="com.samples.platform.model.iss.common" />
 			</jaxb:schemaBindings>
 		</appinfo>
 		<documentation>

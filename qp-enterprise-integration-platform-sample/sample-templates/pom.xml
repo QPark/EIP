@@ -13,35 +13,46 @@
  *     Bernhard Hausen - Initial API and implementation
 -->
 
+	<parent>
+		<groupId>com.qpark.eip</groupId>
+		<artifactId>eip-platform-bom</artifactId>
+		<version>1.0.0</version>
+		<relativePath/>
+	</parent>
+
 	<groupId>com.samples.platform.templates</groupId>
 	<artifactId>sample-templates</artifactId>
-	<version>1.0.1</version>
+	<version>2.0.0</version><!--project-version-->
 	<packaging>jar</packaging>
 	<description>
 		<![CDATA[Templates of the platform.]]>
 	</description>
 
 	<properties>
-		<maven.test.skip.exec>true</maven.test.skip.exec>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-
 		<application.name>platform</application.name>
 		<application.groupId>com.samples.platform</application.groupId>
-		<application.version>1.0.1</application.version>
+		<application.version>${project.version}</application.version>
 		<application.base.package.name>com.samples.platform</application.base.package.name>
-		<domain.version>1.0.1</domain.version>
-		<slf4j.version>1.7.5</slf4j.version>
-		<logback.version>1.0.13</logback.version>
+
+		<domain.version>${project.version}</domain.version>
 	</properties>
 
+
+	<organization>
+		<name>QPark Consulting S.a r.l</name>
+		<url>http://www.qpark-consulting.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Eclipse Public License v1.0</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html.</url>
+		</license>
+	</licenses>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.9</version>
 		</dependency>
 	</dependencies>
 
@@ -50,7 +61,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
 				<executions>
 					<execution>
 						<id>make-templates</id>
@@ -76,28 +86,6 @@
 									<target name="user-config" />
 									<target name="handle-readme"/>
 								</ant>
-								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
-									<property name="environment.name">integration</property>
-									<target name="user-config" />
-									<target name="handle-readme"/>
-								</ant>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>zip-or-copy-templates</id>
-						<phase>install</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
-									<target name="templates-zip" />
-									<!--
-									<target name="templates-copy-local" />
-									-->
-								</ant>
 							</target>
 						</configuration>
 					</execution>
@@ -106,7 +94,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.4</version>
 				<executions>
 					<execution>
 						<id>copy-platform</id>
@@ -134,32 +121,12 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+							<outputDirectory>${project.build.directory}/additional-jars</outputDirectory>
 							<artifactItems>
-								<dependency>
-									<groupId>postgresql</groupId>
-									<artifactId>postgresql</artifactId>
-									<version>9.0-801.jdbc4</version>
-								</dependency>
 								<artifactItem>
-									<groupId>ch.qos.logback</groupId>
-									<artifactId>logback-core</artifactId>
-									<version>${logback.version}</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>ch.qos.logback</groupId>
-									<artifactId>logback-access</artifactId>
-									<version>${logback.version}</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>ch.qos.logback</groupId>
-									<artifactId>logback-access</artifactId>
-									<version>${logback.version}</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.slf4j</groupId>
-									<artifactId>slf4j-api</artifactId>
-									<version>${slf4j.version}</version>
+									<groupId>org.hsqldb</groupId>
+									<artifactId>hsqldb</artifactId>
+									<version>2.3.3</version>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -169,7 +136,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.1</version>
 				<configuration>
 					<descriptors>
 						<descriptor>assembly-sources.xml</descriptor>
@@ -187,26 +153,19 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<createChecksum>true</createChecksum>
-				</configuration>
+				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
+				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
+				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.2</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -239,4 +198,5 @@
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
 		</repository>
 	</repositories>
+
 </project>

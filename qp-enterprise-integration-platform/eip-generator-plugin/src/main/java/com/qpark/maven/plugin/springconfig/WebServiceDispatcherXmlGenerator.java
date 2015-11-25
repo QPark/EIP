@@ -1,14 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
+ * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
+ * Initial API and implementation
  ******************************************************************************/
 package com.qpark.maven.plugin.springconfig;
 
@@ -38,8 +33,7 @@ public class WebServiceDispatcherXmlGenerator {
 	private final Log log;
 	private final XsdsUtil config;
 	private final File outputDirectory;
-	private final String warName;
-
+	private final String combinedServiceIdName;
 	private final TreeSet<ElementType> elementTypes;
 	private final String marshallerName;
 	private final MavenProject project;
@@ -49,37 +43,40 @@ public class WebServiceDispatcherXmlGenerator {
 	 * @param config
 	 * @param elementTypes
 	 */
-	public WebServiceDispatcherXmlGenerator(final XsdsUtil config, final String serviceId, final String warName,
-			final File outputDirectory, final MavenProject project, final Log log) {
+	public WebServiceDispatcherXmlGenerator(final XsdsUtil config,
+			final String serviceId, final String warName,
+			final File outputDirectory, final MavenProject project,
+			final Log log) {
 		this.config = config;
 		this.serviceId = serviceId == null ? "" : serviceId;
-		this.warName = warName;
 		this.outputDirectory = outputDirectory;
 		this.project = project;
 		this.log = log;
 		this.elementTypes = config.getElementTypes();
-		this.marshallerName = new StringBuffer(32).append(serviceId).append("Marshaller").toString();
-	}
-
-	private String getFileName(final String wsdlServiceId, final String fileNamePart, final String extension) {
-		Collection<String> serviceIds = ServiceIdRegistry.getServiceIds(wsdlServiceId);
-		if (serviceIds.size() == 0) {
-			serviceIds = ServiceIdRegistry.getAllServiceIds();
+		if (serviceId == null) {
+			Collection<String> serviceIds = ServiceIdRegistry
+					.getAllServiceIds();
+			StringBuffer sb = new StringBuffer(128);
+			for (String sid : serviceIds) {
+				sb.append(sid).append(", ");
+			}
+			this.combinedServiceIdName = ServiceIdRegistry
+					.getCombinedServiceIdCapitalizedPackageName(sb.toString());
+		} else {
+			this.combinedServiceIdName = ServiceIdRegistry
+					.getCombinedServiceIdCapitalizedPackageName(serviceId);
 		}
-		StringBuffer sb = new StringBuffer(128);
-		for (String serviceId : serviceIds) {
-			sb.append(serviceId).append(".");
-		}
-		sb.append(fileNamePart);
-		String fileName = new StringBuffer(128).append(Util.capitalizePackageName(sb.toString())).append(".")
-				.append(extension).toString();
-		return fileName;
+		this.marshallerName = new StringBuffer(32).append("marshaller")
+				.append(this.combinedServiceIdName).toString();
 	}
 
 	private void createWebServiceDynamicWsdlConfig(final String sid) {
-		String fileName = this.getFileName(sid, "DynamicWsdlConfig", "xml");
+		String fileName = new StringBuffer(128)
+				.append(Util.capitalizePackageName(sid))
+				.append("DynamicWsdlConfig.xml").toString();
 		File f = Util.getFile(this.outputDirectory, "dispatcher", fileName);
-		this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		this.log.info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, this.getWebServiceDynamicWsdlConfig(sid));
 		} catch (Exception e) {
@@ -101,9 +98,12 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append(this.getServiceDefinition());
 		sb.append("</beans>\n");
 
-		String fileName = this.getFileName(this.serviceId, "SpringIntegrationDispatcherConfig", "xml");
+		String fileName = new StringBuffer(64)
+				.append(this.combinedServiceIdName)
+				.append("SpringIntegrationDispatcherConfig.xml").toString();
 		File f = Util.getFile(this.outputDirectory, "dispatcher", fileName);
-		this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		this.log.info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
@@ -113,10 +113,11 @@ public class WebServiceDispatcherXmlGenerator {
 
 		if (this.serviceId.length() > 0) {
 			Set<String> totalServiceIds = new TreeSet<String>();
-			List<String> list = ServiceIdRegistry.getServiceIds(this.serviceId);
+			List<String> list = ServiceIdRegistry.splitServiceIds(this.serviceId);
 			totalServiceIds.addAll(list);
 			for (String sid : list) {
-				totalServiceIds.addAll(ServiceIdRegistry.getServiceIdEntry(sid).getTotalServiceIdImports());
+				totalServiceIds.addAll(ServiceIdRegistry.getServiceIdEntry(sid)
+						.getTotalServiceIdImports());
 			}
 			for (String sid : totalServiceIds) {
 				this.createWebServiceDynamicWsdlConfig(sid);
@@ -136,8 +137,8 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append("\t<oxm:jaxb2-marshaller id=\"");
 		sb.append(this.marshallerName);
 		sb.append("\" \n");
-		sb.append("\t\tcontextPath=\"");
-		sb.append(ServiceIdRegistry.getMarshallerContextPath(this.serviceId));
+		sb.append("\t\tcontext-path=\"");
+		sb.append(ServiceIdRegistry.getCombinedMarshallerContextPath(this.serviceId));
 		sb.append("\"\n\t/>\n");
 		return sb.toString();
 	}
@@ -165,16 +166,21 @@ public class WebServiceDispatcherXmlGenerator {
 		String operationNameElement;
 		String serviceIdElement;
 		for (ElementType element : this.elementTypes) {
-			if (element.isRequest() && ServiceIdRegistry.isValidServiceId(element.getServiceId(), this.serviceId)) {
-				ElementType elementResponse = XsdsUtil.findResponse(element, this.config.getElementTypes(),
-						this.config);
+			if (element.isRequest() && ServiceIdRegistry
+					.isValidServiceId(element.getServiceId(), this.serviceId)) {
+				ElementType elementResponse = XsdsUtil.findResponse(element,
+						this.config.getElementTypes(), this.config);
 				if (elementResponse != null) {
-					ComplexType ctResponse = new ComplexType(elementResponse.getElement().getType(), this.config);
-					if (ctResponse != null && !ctResponse.isSimpleType() && !ctResponse.isPrimitiveType()) {
+					ComplexType ctResponse = new ComplexType(
+							elementResponse.getElement().getType(),
+							this.config);
+					if (ctResponse != null && !ctResponse.isSimpleType()
+							&& !ctResponse.isPrimitiveType()) {
 						operationNameElement = element.getOperationName();
 						serviceIdElement = element.getServiceId();
 
-						sb.append("\t<!-- ").append(serviceIdElement).append(".").append(operationNameElement)
+						sb.append("\t<!-- ").append(serviceIdElement)
+								.append(".").append(operationNameElement)
 								.append(" -->");
 
 						sb.append("\n\t<int:channel id=\"");
@@ -206,15 +212,19 @@ public class WebServiceDispatcherXmlGenerator {
 
 	private String getWebServiceDynamicWsdlConfig(final String sid) {
 		ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
-		XsdContainer xc = this.config.getXsdContainerMap(entry.getTargetNamespace());
+		XsdContainer xc = this.config
+				.getXsdContainerMap(entry.getTargetNamespace());
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		sb.append(
+				"<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
 		sb.append("\txmlns=\"http://www.springframework.org/schema/beans\"\n");
-		sb.append("\txmlns:sws=\"http://www.springframework.org/schema/web-services\"\n");
+		sb.append(
+				"\txmlns:sws=\"http://www.springframework.org/schema/web-services\"\n");
 		sb.append("\txsi:schemaLocation=\"\n");
-		String springVersion = this.project.getProperties().getProperty("org.springframework.version.xsd.version");
+		String springVersion = this.project.getProperties()
+				.getProperty("org.springframework.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans");
 		if (springVersion != null) {
@@ -222,7 +232,8 @@ public class WebServiceDispatcherXmlGenerator {
 		}
 		sb.append(".xsd\n");
 
-		springVersion = this.project.getProperties().getProperty("org.springframework.ws.version.xsd.version");
+		springVersion = this.project.getProperties()
+				.getProperty("org.springframework.ws.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services");
 		if (springVersion != null) {
@@ -252,7 +263,8 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append("\t\tcreateSoap11Binding=\"false\"\n");
 		sb.append("\t\tcreateSoap12Binding=\"true\">\n");
 		sb.append("\t\t<sws:xsd location=\"/WEB-INF/classes");
-		sb.append(Util.getRelativePathTranslated(this.config.getBaseDirectory(), xc.getFile()));
+		sb.append(Util.getRelativePathTranslated(this.config.getBaseDirectory(),
+				xc.getFile()));
 		sb.append("\" />\n");
 		sb.append("\t</sws:dynamic-wsdl>\n");
 		sb.append("</beans>\n");
@@ -261,27 +273,35 @@ public class WebServiceDispatcherXmlGenerator {
 
 	private String getXmlDefinition() {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
-		sb.append("<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		sb.append(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
+		sb.append(
+				"<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
 		sb.append("\txmlns=\"http://www.springframework.org/schema/beans\"\n");
-		sb.append("\txmlns:int=\"http://www.springframework.org/schema/integration\"\n");
-		sb.append("\txmlns:int-ws=\"http://www.springframework.org/schema/integration/ws\"\n");
-		sb.append("\txmlns:oxm=\"http://www.springframework.org/schema/oxm\" \n");
+		sb.append(
+				"\txmlns:int=\"http://www.springframework.org/schema/integration\"\n");
+		sb.append(
+				"\txmlns:int-ws=\"http://www.springframework.org/schema/integration/ws\"\n");
+		sb.append(
+				"\txmlns:oxm=\"http://www.springframework.org/schema/oxm\" \n");
 		sb.append("\txsi:schemaLocation=\"\n");
-		String springVersion = this.project.getProperties().getProperty("org.springframework.version.xsd.version");
+		String springVersion = this.project.getProperties()
+				.getProperty("org.springframework.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans");
 		if (springVersion != null) {
 			sb.append("-").append(springVersion);
 		}
 		sb.append(".xsd\n");
-		sb.append("\t\thttp://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm");
+		sb.append(
+				"\t\thttp://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm");
 		if (springVersion != null) {
 			sb.append("-").append(springVersion);
 		}
 		sb.append(".xsd\n");
 
-		springVersion = this.project.getProperties().getProperty("org.springframework.integration.version.xsd.version");
+		springVersion = this.project.getProperties().getProperty(
+				"org.springframework.integration.version.xsd.version");
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration");
 		if (springVersion != null) {

@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<Server>
-	<Service name="Catalina">
-		<remove:Connector protocol="org.apache.coyote.ajp.AjpProtocol" />
-	</Service>
-</Server>

@@ -7,6 +7,7 @@
  ******************************************************************************/
 package com.qpark.eip.core.persistence.config;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
@@ -31,6 +33,8 @@ import com.qpark.eip.core.persistence.JAXBStrategySetup;
 @Configuration
 @EnableTransactionManagement
 public class EipPersistenceConfig {
+	/** The default value of the datasource name in the JNDI context. */
+	public static final String DEFAULT_DATASOURCE_JNDI_NAME = "jdbc/BusUtilityDB";
 	/**
 	 * The default value of the jpa Vendor adapter class name to be set in the
 	 * {@link LocalContainerEntityManagerFactoryBean}.
@@ -42,10 +46,29 @@ public class EipPersistenceConfig {
 	 */
 	public static final String DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM = "org.hibernate.dialect.Oracle10gDialect";
 	/**
+	 * The default value of the database platform to be set into the
+	 * {@link AbstractJpaVendorAdapter}.
+	 */
+	public static final Boolean DEFAULT_JPA_VENDOR_ADPATER_GENERATE_DDL = Boolean.FALSE;
+
+	/** The datasource name in the JNDI context. */
+	private String dataSourceJndiName = DEFAULT_DATASOURCE_JNDI_NAME;
+
+	/**
 	 * The jpa Vendor adapter class name to be set in the
 	 * {@link LocalContainerEntityManagerFactoryBean}.
 	 */
 	private String jpaVendorAdapterClassName = DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME;
+
+	/**
+	 * The generateDdl parameter to be set into the
+	 * {@link AbstractJpaVendorAdapter}. Defaults to <code>false</code> if not
+	 * set and {@link #jpaVendorAdpaterDatabasePlatform} not equals to
+	 * {@link org.hibernate.dialect.HSQLDialect} and not equals
+	 * {@link org.springframework.orm.jpa.vendor.Database#HSQL}.
+	 */
+	private Boolean jpaVendorAdapterGenerateDdl = null;
+
 	/**
 	 * The database platform to be set into the {@link AbstractJpaVendorAdapter}
 	 * .
@@ -56,25 +79,7 @@ public class EipPersistenceConfig {
 	 * Create the spring config of the eip persistence authority.
 	 */
 	public EipPersistenceConfig() {
-		this(DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME,
-				DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM);
-	}
-
-	/**
-	 * Create the spring config of the eip persistence authority.
-	 *
-	 * @param jpaVendorAdapterClassName
-	 *            the jpa Vendor adapter class name to be set in the
-	 *            {@link LocalContainerEntityManagerFactoryBean}.
-	 * @param jpaVendorAdpaterDatabasePlatform
-	 *            the database platform to be set into the
-	 *            {@link AbstractJpaVendorAdapter}.
-	 */
-	public EipPersistenceConfig(final String jpaVendorAdapterClassName,
-			final String jpaVendorAdpaterDatabasePlatform) {
 		JAXBStrategySetup.setup();
-		this.jpaVendorAdapterClassName = jpaVendorAdapterClassName;
-		this.jpaVendorAdpaterDatabasePlatform = jpaVendorAdpaterDatabasePlatform;
 	}
 
 	/**
@@ -89,25 +94,12 @@ public class EipPersistenceConfig {
 	}
 
 	/**
-	 * Get the {@link DataSource} out of the JNDI naming context.
-	 *
-	 * @return the {@link DataSource} out of the JNDI naming context.
-	 */
-	@Bean(name = "ComQparkEipCoreDataSourceJndi")
-	public DataSource getJndiDataSource() {
-		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-		DataSource bean = dsLookup.getDataSource("jdbc/BusUtilityDB");
-
-		return bean;
-	}
-
-	/**
 	 * Get the {@link LocalContainerEntityManagerFactoryBean}.
 	 *
 	 * @return the {@link LocalContainerEntityManagerFactoryBean}.
 	 */
 	@Bean(name = "ComQparkEipCoreEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {
+	public EntityManagerFactory getEntityManagerFactory() {
 		AbstractJpaVendorAdapter jpaVendorAdapter = this.getJpaVendorAdapter();
 		if (jpaVendorAdapter == null) {
 			throw new RuntimeException(
@@ -131,10 +123,23 @@ public class EipPersistenceConfig {
 		bean.setDataSource(this.getJndiDataSource());
 
 		jpaVendorAdapter.setShowSql(false);
-		jpaVendorAdapter.setGenerateDdl(false);
+		jpaVendorAdapter.setGenerateDdl(this.isJpaVendorAdapterGenerateDdl());
 		jpaVendorAdapter
 				.setDatabasePlatform(this.jpaVendorAdpaterDatabasePlatform);
 		bean.setJpaVendorAdapter(jpaVendorAdapter);
+		bean.afterPropertiesSet();
+		return bean.getObject();
+	}
+
+	/**
+	 * Get the {@link DataSource} out of the JNDI naming context.
+	 *
+	 * @return the {@link DataSource} out of the JNDI naming context.
+	 */
+	@Bean(name = "ComQparkEipCoreDataSourceJndi")
+	public DataSource getJndiDataSource() {
+		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+		DataSource bean = dsLookup.getDataSource(this.dataSourceJndiName);
 		return bean;
 	}
 
@@ -146,10 +151,9 @@ public class EipPersistenceConfig {
 	@Bean(name = "ComQparkEipCoreTransactionManager")
 	public JpaTransactionManager getJpaTransactionManager() {
 		JpaTransactionManager bean = new JpaTransactionManager();
-		LocalContainerEntityManagerFactoryBean emfb = this
-				.getEntityManagerFactoryBean();
-		bean.setPersistenceUnitName(emfb.getPersistenceUnitName());
-		bean.setEntityManagerFactory(emfb.getNativeEntityManagerFactory());
+		EntityManagerFactory emf = this.getEntityManagerFactory();
+		bean.setPersistenceUnitName("com.qpark.eip.core.persistence");
+		bean.setEntityManagerFactory(emf);
 		return bean;
 	}
 
@@ -181,6 +185,38 @@ public class EipPersistenceConfig {
 	}
 
 	/**
+	 * Get the generateDdl parameter to be set into the
+	 * {@link AbstractJpaVendorAdapter}.
+	 *
+	 * @return the generateDdl parameter to be set into the
+	 *         {@link AbstractJpaVendorAdapter}.
+	 */
+	private boolean isJpaVendorAdapterGenerateDdl() {
+		boolean value = DEFAULT_JPA_VENDOR_ADPATER_GENERATE_DDL.booleanValue();
+		if (this.jpaVendorAdapterGenerateDdl != null) {
+			value = this.jpaVendorAdapterGenerateDdl.booleanValue();
+		} else {
+			if (this.jpaVendorAdpaterDatabasePlatform
+					.equals("org.hibernate.dialect.HSQLDialect")
+					|| this.jpaVendorAdpaterDatabasePlatform
+							.equals(Database.HSQL.name())) {
+				value = true;
+			}
+		}
+		return value;
+	}
+
+	/**
+	 * Set the datasource name in the JNDI context.
+	 *
+	 * @param dataSourceJndiName
+	 *            the datasource name in the JNDI context.
+	 */
+	public void setDataSourceJndiName(final String dataSourceJndiName) {
+		this.dataSourceJndiName = dataSourceJndiName;
+	}
+
+	/**
 	 * Set the jpa Vendor adapter class name to be set in the
 	 * {@link LocalContainerEntityManagerFactoryBean}.
 	 *
@@ -191,6 +227,21 @@ public class EipPersistenceConfig {
 	public void setJpaVendorAdapterClassName(
 			final String jpaVendorAdapterClassName) {
 		this.jpaVendorAdapterClassName = jpaVendorAdapterClassName;
+	}
+
+	/**
+	 * Set the generateDdl parameter to be set into the
+	 * {@link AbstractJpaVendorAdapter}. Defaults to <code>false</code> if not
+	 * set and {@link #setJpaVendorAdpaterDatabasePlatform(String)} not equals
+	 * to {@link org.hibernate.dialect.HSQLDialect}.
+	 *
+	 * @param jpaVendorAdpaterDatabasePlatform
+	 *            the generateDdl parameter to be set into the
+	 *            {@link AbstractJpaVendorAdapter}.
+	 */
+	public void setJpaVendorAdapterGenerateDdl(
+			final boolean jpaVendorAdapterGenerateDdl) {
+		this.jpaVendorAdapterGenerateDdl = jpaVendorAdapterGenerateDdl;
 	}
 
 	/**

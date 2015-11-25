@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	"
+>
+
+	<bean class="com.samples.platform.config.WebappSpringConfig"/>
+
+
+	<!-- START spring integration config providing infrastructure of the recipient-list-router -->
+	<!-- Define the security interceptor "eipCallerComSamplesPlatformLibraryWss4jSecurityInterceptor" somewhere outside: -->
+	<bean id="ComSamplesPlatformCommonWebServiceSecurmentPropertyProvider" class="com.qpark.eip.core.spring.security.DefaultEipSecurmentPropertyProvider">
+		<property name="securementUsername" value="${com.samples.platform.common.userName}"/>
+		<property name="securementPassword" value="${com.samples.platform.common.password}"/>
+	</bean>
+	<bean id="eipCallerComSamplesPlatformCommonWss4jSecurityInterceptor" class="com.qpark.eip.core.spring.security.EipWss4jSecurityInterceptor">
+		<property name="securementPropertyProvider" ref="ComSamplesPlatformCommonWebServiceSecurmentPropertyProvider" />
+	</bean>
+
+
+	<util:list id="eipCallerComSamplesPlatformCommonWsInterceptors">
+		<ref bean="eipCallerComSamplesPlatformCommonWss4jSecurityInterceptor"/>
+	</util:list>
+	<!-- Marshaller of services -->
+	<oxm:jaxb2-marshaller id="eipCallerComSamplesPlatformCommonMarshaller"
+		context-path="com.qpark.eip.service.common.msg:com.samples.platform.service.iss.tec.support.msg"
+	/>
+	
+	
+	<int:gateway id="eipCallerComSamplesPlatformCommonAggregatGetReferenceDataGateway"
+		service-interface="com.qpark.eip.service.common.msg.gateway.GetReferenceData"
+		default-request-channel="internalEipCallerComSamplesPlatformCommonAggregatGetReferenceDataRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesPlatformCommonAggregatGetReferenceDataResponseChannel"
+	/>
+	<int:channel id="internalEipCallerComSamplesPlatformCommonAggregatGetReferenceDataRequestChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommonAggregatGetReferenceDataResponseChannel" />
+	
+
+
+	<int:gateway id="eipCallerComSamplesPlatformCommon0GetReferenceDataGateway"
+		service-interface="com.qpark.eip.service.common.msg.gateway.GetReferenceData"
+		default-request-channel="internalEipCallerComSamplesPlatformCommon0RequestChannel"
+		default-reply-channel="internalEipCallerComSamplesPlatformCommon0GetReferenceDataResponseChannel"
+	/>
+	<int:channel id="internalEipCallerComSamplesPlatformCommon0RequestChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommon0GetReferenceDataResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommon0WsOutgoingChannel" />
+	<int:router id="internalEipCallerComSamplesPlatformCommon0ResponseTypeRouter"
+		input-channel="internalEipCallerComSamplesPlatformCommon0WsOutgoingChannel"
+		ref="internalEipCallerComSamplesPlatformCommon0JAXBElementAwarePayloadTypeRouter"
+	/>
+	<bean id="internalEipCallerComSamplesPlatformCommon0JAXBElementAwarePayloadTypeRouter" class="com.qpark.eip.core.spring.JAXBElementAwarePayloadTypeRouter">
+		<property name="channelMappings">
+			<map>
+				<entry key="com.qpark.eip.service.common.msg.GetReferenceDataResponseType" value="internalEipCallerComSamplesPlatformCommon0GetReferenceDataResponseChannel"/>
+			</map>
+		</property>
+	</bean>
+	<int-ws:outbound-gateway id="eipCallerComSamplesPlatformCommon0OutboundGateway"
+		request-channel="internalEipCallerComSamplesPlatformCommon0RequestChannel"
+		reply-channel="internalEipCallerComSamplesPlatformCommon0WsOutgoingChannel"
+		uri="${service.endpoint.url.com.samples.platform.common.0}"
+		interceptors="eipCallerComSamplesPlatformCommonWsInterceptors"
+		message-factory="soap12MessageFactory"
+		marshaller="eipCallerComSamplesPlatformCommonMarshaller" unmarshaller="eipCallerComSamplesPlatformCommonMarshaller"
+	/>
+
+	<int:gateway id="eipCallerComSamplesPlatformCommon1GetReferenceDataGateway"
+		service-interface="com.qpark.eip.service.common.msg.gateway.GetReferenceData"
+		default-request-channel="internalEipCallerComSamplesPlatformCommon1RequestChannel"
+		default-reply-channel="internalEipCallerComSamplesPlatformCommon1GetReferenceDataResponseChannel"
+	/>
+	<int:channel id="internalEipCallerComSamplesPlatformCommon1RequestChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommon1GetReferenceDataResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommon1WsOutgoingChannel" />
+	<int:router id="internalEipCallerComSamplesPlatformCommon1ResponseTypeRouter"
+		input-channel="internalEipCallerComSamplesPlatformCommon1WsOutgoingChannel"
+		ref="internalEipCallerComSamplesPlatformCommon1JAXBElementAwarePayloadTypeRouter"
+	/>
+	<bean id="internalEipCallerComSamplesPlatformCommon1JAXBElementAwarePayloadTypeRouter" class="com.qpark.eip.core.spring.JAXBElementAwarePayloadTypeRouter">
+		<property name="channelMappings">
+			<map>
+				<entry key="com.qpark.eip.service.common.msg.GetReferenceDataResponseType" value="internalEipCallerComSamplesPlatformCommon1GetReferenceDataResponseChannel"/>
+			</map>
+		</property>
+	</bean>
+	<int-ws:outbound-gateway id="eipCallerComSamplesPlatformCommon1OutboundGateway"
+		request-channel="internalEipCallerComSamplesPlatformCommon1RequestChannel"
+		reply-channel="internalEipCallerComSamplesPlatformCommon1WsOutgoingChannel"
+		uri="${service.endpoint.url.com.samples.platform.common.1}"
+		interceptors="eipCallerComSamplesPlatformCommonWsInterceptors"
+		message-factory="soap12MessageFactory"
+		marshaller="eipCallerComSamplesPlatformCommonMarshaller" unmarshaller="eipCallerComSamplesPlatformCommonMarshaller"
+	/>
+
+</beans>

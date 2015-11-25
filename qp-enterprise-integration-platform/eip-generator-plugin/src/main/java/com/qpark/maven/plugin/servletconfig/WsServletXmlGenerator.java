@@ -155,14 +155,14 @@ public class WsServletXmlGenerator {
 				"\t\t<description>The endpoint mapping maps the web services to the Spring Integration gateways. The interceptors define the logging and the authentication. The Spring Integration configuration defines the actual authorization by secured channels. </description>\n");
 		sb.append("\t\t<property name=\"interceptors\">\n");
 		sb.append("\t\t\t<list>\n");
-		sb.append("\t\t\t\t<ref local=\"wsSecurityInterceptor\" />\n");
-		sb.append("\t\t\t\t<ref local=\"payloadLoggingInterceptor\" />\n");
+		sb.append("\t\t\t\t<ref bean=\"wsSecurityInterceptor\" />\n");
+		sb.append("\t\t\t\t<ref bean=\"payloadLoggingInterceptor\" />\n");
 		if (!this.disableWebservicePayloadValidation) {
-			sb.append("\t\t\t\t<ref local=\"payloadValidatingInterceptor\" />\n");
+			sb.append("\t\t\t\t<ref bean=\"payloadValidatingInterceptor\" />\n");
 		}
 		List<String> beanIds = this.getAdditionalWebservicePayloadInterceptors();
 		for (String beanId : beanIds) {
-			sb.append("\t\t\t\t<ref local=\"");
+			sb.append("\t\t\t\t<ref bean=\"");
 			sb.append(beanId);
 			sb.append("\" />\n");
 
@@ -225,7 +225,7 @@ public class WsServletXmlGenerator {
 		sb.append(".messages.incoming\"/>\n");
 		sb.append("\t\t<property name=\"contextPath\" value=\"");
 		// sb.append(Util.getContextPath(packageNames));
-		sb.append(ServiceIdRegistry.getMarshallerContextPath(this.serviceId));
+		sb.append(ServiceIdRegistry.getCombinedMarshallerContextPath(this.serviceId));
 		sb.append("\"/>\n");
 		sb.append("\t</bean>\n");
 		return sb.toString();
@@ -239,7 +239,7 @@ public class WsServletXmlGenerator {
 		sb.append("\t\t<property name=\"schemas\">\n");
 		sb.append("\t\t\t<list>\n");
 		if (this.serviceId.length() > 0) {
-			Collection<String> serviceIds = ServiceIdRegistry.getServiceIds(this.serviceId);
+			Collection<String> serviceIds = ServiceIdRegistry.splitServiceIds(this.serviceId);
 			if (serviceIds.size() == 0) {
 				serviceIds = ServiceIdRegistry.getAllServiceIds();
 			}

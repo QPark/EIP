@@ -9,8 +9,7 @@ import org.springframework.messaging.Message;
  */
 public interface MessageContentProvider {
 	/**
-	 * Get the number of {@link com.ses.osp.bus.service.common.msg.FailureType}s
-	 * if the {@link Message} is a {@link ResponseMessage}.
+	 * Get the number of failureTypes.
 	 *
 	 * @param message
 	 *            the {@link Message}, which may be is a ResponseMessage .
@@ -20,8 +19,7 @@ public interface MessageContentProvider {
 	int getNumberOfFailures(Message<?> message);
 
 	/**
-	 * Get the number of returned objects if the {@link Message} is a
-	 * ResponseMessage.
+	 * Get the number of returned objects
 	 *
 	 * @param message
 	 *            the {@link Message}

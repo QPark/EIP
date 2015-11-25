@@ -70,10 +70,14 @@ public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
 	 * Compares {@link BigDecimal} by setting the scale.
 	 *
 	 * @param leftLocator
+	 *            left {@link ObjectLocator}
 	 * @param rightLocator
+	 *            right {@link ObjectLocator}
 	 * @param left
+	 *            left {@link BigDecimal}
 	 * @param right
-	 * @return
+	 *            right {@link BigDecimal}.
+	 * @return equal or not.
 	 */
 	protected boolean equalsInternal(final ObjectLocator leftLocator,
 			final ObjectLocator rightLocator, final BigDecimal left,
@@ -126,10 +130,14 @@ public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
 	 * {@link XMLGregorianCalendar#toGregorianCalendar()}.
 	 *
 	 * @param leftLocator
+	 *            left {@link ObjectLocator}
 	 * @param rightLocator
+	 *            right {@link ObjectLocator}
 	 * @param left
+	 *            left {@link XMLGregorianCalendar}
 	 * @param right
-	 * @return
+	 *            right {@link XMLGregorianCalendar}.
+	 * @return equal or not.
 	 */
 	protected boolean equalsInternal(final ObjectLocator leftLocator,
 			final ObjectLocator rightLocator, final XMLGregorianCalendar left,
