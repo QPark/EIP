@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" 
+	
+	xmlns:FLOW="http://www.qpark.com/Interfaces/Flow" 
+	targetNamespace="http://www.qpark.com/Interfaces/Flow" 
+>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.inf.core.flow" />
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Interface: Flow definitions.</documentation>
+	</annotation>
+
+	<complexType name="FlowInputType"/>
+	<complexType name="FlowOutputType"/>
+</schema>

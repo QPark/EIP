@@ -26,7 +26,7 @@
 	<description>Webapp containing the library service.</description>
 
 	<properties>
-		<eip.service.ids>library, iss.tec.support</eip.service.ids>
+		<eip.service.ids>library, iss.tech.support</eip.service.ids>
 		<service.name>library</service.name>
 		<service.application.name>${bus.application.name}</service.application.name>
 		<service.final.name>${bus.war.prefix}${service.application.name}-${service.name}</service.final.name>
@@ -313,6 +313,11 @@ WEB-INF/lib/xws-security-3.0.jar
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>platform-service-provider-techsupport-flow</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>platform-service-provider-library-internal</artifactId>

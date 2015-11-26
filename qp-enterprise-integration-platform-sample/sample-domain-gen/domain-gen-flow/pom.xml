@@ -90,7 +90,7 @@ and contained in the resulting maven artefact.
 				<executions>
 					<execution>
 						<id>generate schema file list and catalog to prepare xjc</id>
-						<phase>generate-sources</phase>
+						<phase>generate-test-sources</phase>
 						<goals>
 							<goal>generate-flow-mapper</goal>
 						</goals>

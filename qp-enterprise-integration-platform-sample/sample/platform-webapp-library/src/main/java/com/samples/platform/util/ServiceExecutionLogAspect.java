@@ -12,7 +12,7 @@ import org.springframework.core.annotation.Order;
 
 /**
  * Logs durations of the service execution.
- * 
+ *
  * @author bhausen
  */
 @Aspect
@@ -59,8 +59,8 @@ public class ServiceExecutionLogAspect {
 	 * @return the result of the service execution.
 	 * @throws Throwable
 	 */
-	@Around(value = "execution(* com.qpark.eip.serice.*.*(..)) || execution(* com.samples.platform.serice.*.*(..)) ")
-	public Object invokeFlowAspect(final ProceedingJoinPoint joinPoint)
+	@Around(value = "execution(* com.qpark.eip.service.*.*(..)) || execution(* com.samples.platform.service.*.*(..)) ")
+	public Object invokeAspect(final ProceedingJoinPoint joinPoint)
 			throws Throwable {
 		long start = System.currentTimeMillis();
 		String signatureName = this.getSignatureName(joinPoint);

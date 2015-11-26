@@ -46,51 +46,48 @@ public class FlowExecutionLog {
 	 *            the {@link ProceedingJoinPoint}.
 	 * @return the name of the flow.
 	 */
-	private String getFlowName(final ProceedingJoinPoint joinPoint) {
-		String flowName = joinPoint.getTarget().getClass().getSimpleName();
-		if (flowName.toLowerCase().endsWith("impl")) {
-			flowName = flowName.substring(0, flowName.length() - 4);
+	private String getInterfaceName(final ProceedingJoinPoint joinPoint) {
+		String className = joinPoint.getTarget().getClass().getSimpleName();
+		if (className.toLowerCase().endsWith("impl")) {
+			className = className.substring(0, className.length() - 4);
 		}
-		return flowName;
+		return className;
 	}
 
 	/**
 	 * Aspect around the execution of the invokeFlow method of all
-	 * {@link com.ses.osp.bus.inf.Flow} implementations.
+	 * {@link com.qpark.eip.inf.Flow} implementations.
 	 *
 	 * @param joinPoint
 	 *            The {@link ProceedingJoinPoint}.
 	 * @return the result of the flow.
 	 * @throws Throwable
 	 */
+	// @Around(value = "execution(* com.qpark.eip.inf.Flow+.invokeFlow(..)) ||
+	// execution(* com.qpark.eip.inf.FlowGateway+.*(..))")
 	@Around(value = "execution(* com.qpark.eip.inf.Flow+.invokeFlow(..))")
 	public Object invokeFlowAspect(final ProceedingJoinPoint joinPoint)
 			throws Throwable {
 		long start = System.currentTimeMillis();
-		String flowName = this.getFlowName(joinPoint);
+		String interfaceName = this.getInterfaceName(joinPoint);
 		String userName = "";
 		if (joinPoint.getArgs().length > 0 && joinPoint.getArgs()[0] != null) {
 			userName = this.messageContentProvider
 					.getUserName(joinPoint.getArgs()[0]);
 		}
-		this.logger.debug("+{}", flowName);
+		this.logger.debug("+{}", interfaceName);
 		Object result = null;
 		try {
 			result = joinPoint.proceed();
 		} catch (Throwable t) {
-			this.logger.debug(" {} failed with {}: {}", flowName,
+			this.logger.debug(" {} failed with {}: {}", interfaceName,
 					t.getClass().getSimpleName(), t.getMessage());
 			throw t;
 		} finally {
-			this.logger.debug("-{} {}", flowName,
+			this.logger.debug("-{} {}", interfaceName,
 					AppUserStatisticsChannelAdapter.getDuration(start));
 			try {
-				this.logApplicationUserLogType(flowName, userName, start);
-			} catch (Exception e) {
-				// nothing to do here.
-			}
-			try {
-				this.logAndPersistSysUserLogType(flowName, userName);
+				this.logApplicationUserLogType(interfaceName, userName, start);
 			} catch (Exception e) {
 				// nothing to do here.
 			}

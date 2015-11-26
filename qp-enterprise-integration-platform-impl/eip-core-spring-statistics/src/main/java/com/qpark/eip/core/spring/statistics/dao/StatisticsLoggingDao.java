@@ -382,13 +382,17 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 			propagation = Propagation.REQUIRED)
 	public List<SystemUserLogType> getSystemUserLogType(final Date date) {
 		CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		Date d = date;
+		if (d == null) {
+			d = new Date();
+		}
 		CriteriaQuery<SystemUserLogType> q = cb
 				.createQuery(SystemUserLogType.class);
 		Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
 		q.where(cb.equal(c.<String> get(SystemUserLogType_.context),
 				this.contextNameProvider.getContextName()),
 				cb.between(c.<Date> get(SystemUserLogType_.logDateItem),
-						getDayStart(date), getDayEnd(date)));
+						getDayStart(d), getDayEnd(d)));
 
 		TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);
 		return typedQuery.getResultList();

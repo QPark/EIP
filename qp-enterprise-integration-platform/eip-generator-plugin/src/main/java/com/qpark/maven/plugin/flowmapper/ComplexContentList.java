@@ -29,15 +29,16 @@ public class ComplexContentList {
 			if (complexType.isRequestType() && response != null
 					&& isMapRequestType(complexType.getType())
 					&& isMapResponseType(response.getType())) {
-				this.requestResponses.add(new ComplexRequestResponse(
-						complexType, response));
+				this.requestResponses
+						.add(new ComplexRequestResponse(complexType, response));
 			} else if (isDirectMappingType(complexType.getType())) {
 				this.directMappings.add(new ComplexContent(complexType, true,
 						false, false, false));
 			} else if (isComplexUUIDMappingType(complexType.getType())
 					&& !complexType.getClassName().toLowerCase()
 							.contains("lifecycle")
-					&& GeneratorMapperMojo.getValidChildren(complexType).size() > 1) {
+					&& GeneratorMapperMojo.getValidChildren(complexType)
+							.size() > 1) {
 				this.complexUUIDMappings.add(new ComplexContent(complexType,
 						false, true, false, false));
 			} else if (isComplexMappingType(complexType.getType())) {
@@ -55,16 +56,17 @@ public class ComplexContentList {
 
 	public static boolean isDefaultMappingType(final SchemaType schemaType) {
 		boolean validType = false;
-		if (schemaType != null
-				&& schemaType.getName() != null
+		if (schemaType != null && schemaType.getName() != null
 				&& schemaType.getName().getLocalPart().toLowerCase()
 						.contains("default")
 				&& schemaType.getElementProperties() != null
 				&& schemaType.getElementProperties().length == 1) {
-			SchemaProperty defaultProperty = schemaType.getElementProperties()[0];
+			SchemaProperty defaultProperty = schemaType
+					.getElementProperties()[0];
 			if (defaultProperty.getType().isSimpleType()
 					&& defaultProperty.getType().getEnumerationValues() != null
-					&& defaultProperty.getType().getEnumerationValues().length == 1) {
+					&& defaultProperty.getType()
+							.getEnumerationValues().length == 1) {
 				validType = true;
 			} else if (defaultProperty.getType().isSimpleType()
 					&& defaultProperty.getDefaultText() != null) {
@@ -78,45 +80,45 @@ public class ComplexContentList {
 			final String qName) {
 		boolean validType = false;
 		if (schemaType != null && schemaType.getBaseType() != null) {
-			if (qName
-					.equals(String.valueOf(schemaType.getBaseType().getName()))) {
+			if (String.valueOf(schemaType.getBaseType().getName())
+					.matches(qName.replace("{", "\\{").replace("}", "\\}"))) {
 				validType = true;
 			} else {
 				validType = isInstanceOf(schemaType.getBaseType(), qName);
 			}
 		}
 		return validType;
-
 	}
 
 	public static boolean isDirectMappingType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}DirectMappingType");
+				"{http://.*?/Interfaces/MappingTypes}DirectMappingType");
 	}
 
 	public static boolean isInterfaceType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}InterfaceType");
+				"{http://.*?/Interfaces/MappingTypes}InterfaceType");
 	}
 
 	public static boolean isComplexMappingType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}ComplexMappingType");
+				"{http://.*?/Interfaces/MappingTypes}ComplexMappingType");
 	}
 
-	public static boolean isComplexUUIDMappingType(final SchemaType schemaType) {
+	public static boolean isComplexUUIDMappingType(
+			final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/MappingTypes}ComplexUUIDMappingType");
+				"{http://.*?/Interfaces/MappingTypes}ComplexUUIDMappingType");
 	}
 
 	public static boolean isMapRequestType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/Mapping}MappingInputType");
+				"{http://.*?/Interfaces/Mapping}MappingInputType");
 	}
 
 	public static boolean isMapResponseType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://www.ses.com/Interfaces/Mapping}MappingOutputType");
+				"{http://.*?/Interfaces/Mapping}MappingOutputType");
 	}
 
 	/**

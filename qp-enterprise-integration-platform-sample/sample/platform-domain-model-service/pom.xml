@@ -64,6 +64,13 @@
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
+									<groupId>${domain.groupId}.gen</groupId>
+									<artifactId>domain-gen-flow</artifactId>
+									<version>${domain.version}</version>
+									<classifier>sources</classifier>
+									<outputDirectory>${java.gen.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
 									<groupId>${project.groupId}</groupId>
 									<artifactId>platform-domain-model-persistence</artifactId>
 									<version>${platform.version}</version>
@@ -174,6 +181,10 @@
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core-persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.springsource.insight</groupId>
+			<artifactId>insight-annotation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -1,4 +1,4 @@
-package com.samples.platform.service;
+package com.samples.platform.service.common;
 
 import java.util.UUID;
 

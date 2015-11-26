@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" 
+
+	xmlns:EIPcty="http://www.qpark.com/CommonTypes" 
+	xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
+	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"  
+
+	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportTypes"  
+
+	xmlns:MPmap="http://www.qpark.com/Interfaces/Mapping" 
+
+	xmlns:MPTechSupportMapp="http://www.samples.com/Interfaces/TechnicalSupportMappings" 
+	targetNamespace="http://www.samples.com/Interfaces/TechnicalSupportMappings"
+>
+
+	<import schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"/>
+	<import schemaLocation="http://www.samples.com/model/ISS/TechnicalSupport/TechnicalSupport.xsd" namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"/>
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportExternalDefinedTypes.xsd"/>
+
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportTypes.xsd"/>
+
+	<import namespace="http://www.qpark.com/Interfaces/Mapping" schemaLocation="../Mappings.xsd"/>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.samples.platform.inf.iss.tech.support.svc"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Interface: Mapping definitions of the technical support interface.</documentation>
+	</annotation>
+
+	<complexType name="SystemUserReportTypeMapRequestType">
+		<complexContent>
+			<extension base="MPmap:MappingInputType">
+				<sequence>
+					<element name="systemUserLog" type="MPTechSupportExtModel:ExtSystemUserLogType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="SystemUserReportTypeMapResponseType">
+		<complexContent>
+			<extension base="MPmap:MappingOutputType">
+				<sequence>
+					<element name="systemUserReport" type="MPiTechSupport:TechnicalSupport.SystemUserReportType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="SystemUserLogCriteriaTypeMapRequestType">
+		<complexContent>
+			<extension base="MPmap:MappingInputType">
+				<sequence>
+					<element name="criteria" type="ISSTechSupport:SystemUserReportCriteriaType"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="SystemUserLogCriteriaTypeMapResponseType">
+		<complexContent>
+			<extension base="MPmap:MappingOutputType">
+				<sequence>
+					<element name="criteria" type="MPiTechSupport:TechnicalSupport.SystemUserLogCriteriaType"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

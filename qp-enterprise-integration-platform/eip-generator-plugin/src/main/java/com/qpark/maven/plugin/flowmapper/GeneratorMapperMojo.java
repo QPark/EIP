@@ -108,9 +108,6 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		sb.append(basicPackageName);
 		sb.append(";\n");
 		sb.append("\n");
-		sb.append(
-				"import com.springsource.insight.annotation.InsightOperation;");
-		sb.append("\n");
 		sb.append("/**\n");
 		sb.append(" * Basic flow interface.\n");
 		sb.append(" * @author bhausen\n");
@@ -122,12 +119,33 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		sb.append("\t * @param request the {@link Request}\n");
 		sb.append("\t * @return the {@link Response}\n");
 		sb.append("\t */\n");
-		sb.append("\t@InsightOperation\n");
 		sb.append("\tResponse invokeFlow(Request request);\n");
 		sb.append("}\n");
 		sb.append("\n");
 		File f = Util.getFile(this.outputInterfacesDirectory, basicPackageName,
 				"Flow.java");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, sb.toString());
+		} catch (Exception e) {
+			this.getLog().error(e.getMessage());
+			e.printStackTrace();
+		}
+		sb.setLength(0);
+		sb.append("package ");
+		sb.append(basicPackageName);
+		sb.append(";\n");
+		sb.append("\n");
+		sb.append("/**\n");
+		sb.append(" * Basic flow gateway interface.\n");
+		sb.append(" * @author bhausen\n");
+		sb.append(" */\n");
+		sb.append("public interface FlowGateway {\n");
+		sb.append("}\n");
+		sb.append("\n");
+		f = Util.getFile(this.outputInterfacesDirectory, basicPackageName,
+				"FlowGateway.java");
 		this.getLog().info(new StringBuffer().append("Write ")
 				.append(f.getAbsolutePath()));
 		try {
@@ -253,6 +271,14 @@ public class GeneratorMapperMojo extends AbstractMojo {
 				break;
 			}
 		}
+		int flows = 0;
+		int directMappers = 0;
+		int defaultMappers = 0;
+		int complexUUIDMappers = 0;
+		int complexMappers = 0;
+		int interfaceMappers = 0;
+		int mappingOperations = 0;
+
 		if (basicPackageName != null) {
 			IllegalStateException ex = null;
 			this.generateBasicFlowInterface(basicPackageName);
@@ -262,6 +288,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 							config, ct, this.getLog());
 					fig.generateInterface(this.outputInterfacesDirectory,
 							basicPackageName);
+					flows++;
 				}
 			}
 			this.generateReferenceDataTypeProvider(config, basicPackageName);
@@ -275,6 +302,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 					cc.packageName = entry.getKey();
 					cc.interfaceName = entry.getValue();
 					mtg.generateImpl(this.outputInterfacesDirectory);
+					directMappers++;
 				} catch (IllegalStateException e) {
 					if (ex != null) {
 						ex = e;
@@ -290,6 +318,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 					cc.packageName = entry.getKey();
 					cc.interfaceName = entry.getValue();
 					mtg.generateImpl(this.outputInterfacesDirectory);
+					defaultMappers++;
 				} catch (IllegalStateException e) {
 					if (ex != null) {
 						ex = e;
@@ -304,6 +333,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 				cc.packageName = entry.getKey();
 				cc.interfaceName = entry.getValue();
 				mtg.generateImpl(this.outputInterfacesDirectory);
+				complexUUIDMappers++;
 			}
 			for (ComplexContent cc : complexContentList.getComplexMappings()) {
 				ComplexMappingTypeGenerator mtg = new ComplexMappingTypeGenerator(
@@ -312,6 +342,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 				cc.packageName = entry.getKey();
 				cc.interfaceName = entry.getValue();
 				mtg.generateImpl(this.outputClassesDirectory);
+				complexMappers++;
 			}
 			for (ComplexContent cc : complexContentList.getInterfaceTypes()) {
 				InterfaceMappingTypeGenerator mtg = new InterfaceMappingTypeGenerator(
@@ -320,6 +351,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 				cc.packageName = entry.getKey();
 				cc.interfaceName = entry.getValue();
 				mtg.generateImpl(this.outputClassesDirectory);
+				interfaceMappers++;
 			}
 			for (ComplexRequestResponse crr : complexContentList
 					.getRequestResponses()) {
@@ -330,11 +362,26 @@ public class GeneratorMapperMojo extends AbstractMojo {
 				crr.packageName = entry.getKey();
 				crr.interfaceName = entry.getValue();
 				mog.generateImpl(this.outputClassesDirectory);
+				mappingOperations++;
 			}
 			if (ex != null) {
 				throw ex;
 			}
 		}
+		this.getLog().info(new StringBuffer("Generated flows:                ")
+				.append(flows).toString());
+		this.getLog().info(new StringBuffer("Generated direct mappers:       ")
+				.append(directMappers).toString());
+		this.getLog().info(new StringBuffer("Generated default mappers:      ")
+				.append(defaultMappers).toString());
+		this.getLog().info(new StringBuffer("Generated complex UUID mappers: ")
+				.append(complexUUIDMappers).toString());
+		this.getLog().info(new StringBuffer("Generated complex mappers:      ")
+				.append(complexMappers).toString());
+		this.getLog().info(new StringBuffer("Generated interface mappers:    ")
+				.append(interfaceMappers).toString());
+		this.getLog().info(new StringBuffer("Generated mapping operations:   ")
+				.append(mappingOperations).toString());
 
 		this.getLog().debug("-execute");
 

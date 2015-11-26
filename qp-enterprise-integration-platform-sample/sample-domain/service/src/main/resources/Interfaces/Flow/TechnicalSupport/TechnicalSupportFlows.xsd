@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" 
+
+	xmlns:ISSTechSupportm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
+
+	xmlns:MPmap="http://www.qpark.com/Interfaces/Mapping" 
+
+	xmlns:MPTechSupportmsg="http://www.samples.com/Interfaces/TechnicalSupportMessages" 
+	xmlns:MPTechSupportMapp="http://www.samples.com/Interfaces/TechnicalSupportMappings" 
+
+	xmlns:FLOW="http://www.qpark.com/Interfaces/Flow" 
+
+	xmlns:FlowTechSupport="http://www.qpark.com/Interfaces/Flow/SpectrumManagement" 
+	targetNamespace="http://www.qpark.com/Interfaces/Flow/SpectrumManagement"
+>
+	<import namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" schemaLocation="../../../ISS/TechnicalSupport/TechnicalSupportServiceMessages.xsd"/>
+	<import namespace="http://www.qpark.com/Interfaces/Mapping" schemaLocation="../../Mapping/Mappings.xsd"/>
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportMessages" schemaLocation="../../Mapping/TechnicalSupport/TechnicalSupportMessages.xsd"/>
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportMappings" schemaLocation="../../Mapping/TechnicalSupport/TechnicalSupportMappings.xsd"/>
+	<import namespace="http://www.qpark.com/Interfaces/Flow" schemaLocation="../Flow.xsd"/>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.samples.platform.inf.iss.tech.support.flow"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Interface-trunk: Mapping definitions of the Spectrum Flow.</documentation>
+	</annotation>
+
+	<complexType name="SystemUserReportFlowRequestType">
+		<complexContent>
+			<extension base="FLOW:FlowInputType">
+				<sequence>
+					<element name="in" type="ISSTechSupportm:GetSystemUserReportRequestType"/>
+					<element name="mapIn" type="MPTechSupportMapp:SystemUserLogCriteriaTypeMapRequestType"/>
+					<element name="mapOut" type="MPTechSupportMapp:SystemUserLogCriteriaTypeMapResponseType"/>
+					<element name="out" type="MPTechSupportmsg:SystemUserLogRequestType"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="SystemUserReportFlowResponseType">
+		<complexContent>
+			<extension base="FLOW:FlowOutputType">
+				<sequence>
+					<element name="in" type="MPTechSupportmsg:SystemUserLogResponseType"/>
+					<element name="mapIn" type="MPTechSupportMapp:SystemUserReportTypeMapRequestType"/>
+					<element name="mapOut" type="MPTechSupportMapp:SystemUserReportTypeMapResponseType"/>
+					<element name="out" type="ISSTechSupportm:GetSystemUserReportResponseType"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

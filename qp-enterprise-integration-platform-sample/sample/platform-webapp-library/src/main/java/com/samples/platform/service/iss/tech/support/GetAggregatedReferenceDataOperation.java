@@ -1,4 +1,4 @@
-package com.samples.platform.service;
+package com.samples.platform.service.iss.tech.support;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,18 +12,18 @@ import org.springframework.stereotype.Component;
 import com.qpark.eip.service.common.msg.GetReferenceDataRequestType;
 import com.qpark.eip.service.common.msg.GetReferenceDataResponseType;
 import com.qpark.eip.service.common.msg.gateway.GetReferenceData;
-import com.samples.platform.service.iss.tec.support.msg.GetAggregatedReferenceDataRequestType;
-import com.samples.platform.service.iss.tec.support.msg.GetAggregatedReferenceDataResponseType;
-import com.samples.platform.service.iss.tec.support.msg.ObjectFactory;
+import com.samples.platform.service.iss.tech.support.msg.GetAggregatedReferenceDataRequestType;
+import com.samples.platform.service.iss.tech.support.msg.GetAggregatedReferenceDataResponseType;
+import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
 import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get aggregated reference data on service
- * <code>iss.tec.support</code>.
+ * <code>iss.tech.support</code>.
  *
  * @author bhausen
  */
-@Component("operationProviderIssTecSupportGetAggregatedReferenceData")
+@Component("operationProviderIssTechSupportGetAggregatedReferenceData")
 public class GetAggregatedReferenceDataOperation {
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory

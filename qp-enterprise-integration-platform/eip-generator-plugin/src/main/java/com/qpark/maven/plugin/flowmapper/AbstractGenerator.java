@@ -70,15 +70,19 @@ public abstract class AbstractGenerator {
 		} else {
 			sb.append("\n");
 		}
-		sb.replace(0, 1, "");
+		s = sb.toString();
+		if (s.charAt(0) == '\'') {
+			sb.replace(0, 1, "");
+		}
 		return sb.toString();
 
 	}
 
 	public static void main(final String[] args) {
-		System.out.println(toJavadocHeader("a\t\t\tb\n\tc    d    e  f"));
-		String s = "'Activated' if bandwidth segment life cycle UUID is part of the reference data category\n\t\t\t\t'Lifecycle State Filter: Bandwidth Segments: Transfer' else 'Deactivated'\n\n\n";
+		System.out.println(toJavadocHeader("a\t\t\tb\n\tc d e f"));
+		String s = "'Activated' if bandwidth segment life cycle UUID is part 		 of the reference data category\n\t\t\t\t'Lifecycle State Filter: 		 Bandwidth Segments: Transfer' else 'Deactivated'\n\n\n";
 		System.out.println(toJavadocHeader(s));
+		System.out.println(toJavadocHeader("Number of xclj"));
 	}
 
 	public static final boolean isListImport(
@@ -116,8 +120,10 @@ public abstract class AbstractGenerator {
 		ComplexContent cc = null;
 		for (Entry<ComplexTypeChild, List<ComplexTypeChild>> child : childrenTree) {
 			if (!"interfaceName".equals(child.getKey().getChildName())) {
-				AbstractGenerator.addImport(child.getKey().getComplexType()
-						.getClassNameFullQualified(), imports, importClasses);
+				AbstractGenerator.addImport(
+						child.getKey().getComplexType()
+								.getClassNameFullQualified(),
+						imports, importClasses);
 			}
 			for (ComplexTypeChild grandchild : child.getValue()) {
 				cc = this.getMapperDefinition(grandchild.getComplexType());
@@ -126,9 +132,10 @@ public abstract class AbstractGenerator {
 							imports, importClasses);
 				}
 				if (!"interfaceName".equals(grandchild.getChildName())) {
-					AbstractGenerator.addImport(grandchild.getComplexType()
-							.getClassNameFullQualified(), imports,
-							importClasses);
+					AbstractGenerator.addImport(
+							grandchild.getComplexType()
+									.getClassNameFullQualified(),
+							imports, importClasses);
 				}
 			}
 		}
@@ -136,9 +143,10 @@ public abstract class AbstractGenerator {
 
 	protected abstract List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> getChildrenTree();
 
-	protected List<ComplexTypeChild> getDefaultingChildren(final ComplexType ct) {
-		List<ComplexTypeChild> list = new ArrayList<ComplexTypeChild>(ct
-				.getChildren().size());
+	protected List<ComplexTypeChild> getDefaultingChildren(
+			final ComplexType ct) {
+		List<ComplexTypeChild> list = new ArrayList<ComplexTypeChild>(
+				ct.getChildren().size());
 		for (ComplexTypeChild child : ct.getChildren()) {
 			if (child.getDefaultValue() != null) {
 				list.add(child);
@@ -148,15 +156,16 @@ public abstract class AbstractGenerator {
 	}
 
 	protected final String getFqImplName() {
-		return new StringBuffer(this.packageNameImpl.length() + 1
-				+ this.getImplName().length()).append(this.packageNameImpl)
-				.append(".").append(this.getImplName()).toString();
+		return new StringBuffer(
+				this.packageNameImpl.length() + 1 + this.getImplName().length())
+						.append(this.packageNameImpl).append(".")
+						.append(this.getImplName()).toString();
 	}
 
 	protected final String getFqInterfaceName() {
 		return new StringBuffer(this.packageName.length() + 1
 				+ this.getInterfaceName().length()).append(this.packageName)
-				.append(".").append(this.getInterfaceName()).toString();
+						.append(".").append(this.getInterfaceName()).toString();
 	}
 
 	protected final Set<String> getImplImports(
@@ -166,8 +175,8 @@ public abstract class AbstractGenerator {
 		Set<String> importClasses = new TreeSet<String>();
 
 		for (String mandatoryImport : mandatoryImports) {
-			AbstractGenerator
-					.addImport(mandatoryImport, imports, importClasses);
+			AbstractGenerator.addImport(mandatoryImport, imports,
+					importClasses);
 		}
 
 		AbstractGenerator.addImport("org.springframework.stereotype.Component",
@@ -183,8 +192,8 @@ public abstract class AbstractGenerator {
 	}
 
 	protected final String getImplName() {
-		return new StringBuffer().append(this.getInterfaceName())
-				.append("Impl").toString();
+		return new StringBuffer().append(this.getInterfaceName()).append("Impl")
+				.toString();
 	}
 
 	protected final Set<String> getInterfaceImports(
@@ -197,8 +206,9 @@ public abstract class AbstractGenerator {
 			AbstractGenerator.addImport(importClass, imports, importClasses);
 		}
 		for (ComplexTypeChild child : children) {
-			AbstractGenerator.addImport(child.getComplexType()
-					.getClassNameFullQualified(), imports, importClasses);
+			AbstractGenerator.addImport(
+					child.getComplexType().getClassNameFullQualified(), imports,
+					importClasses);
 		}
 
 		if (AbstractGenerator.isChildListImport(children)) {
@@ -223,8 +233,8 @@ public abstract class AbstractGenerator {
 		ComplexContent cc = null;
 		for (ComplexContent complexContent : this.complexContentList
 				.getDirectMappings()) {
-			if (complexContent.ct.getClassNameFullQualified().equals(
-					ct.getClassNameFullQualified())) {
+			if (complexContent.ct.getClassNameFullQualified()
+					.equals(ct.getClassNameFullQualified())) {
 				cc = complexContent;
 				break;
 			}
@@ -232,8 +242,8 @@ public abstract class AbstractGenerator {
 		if (cc == null) {
 			for (ComplexContent complexContent : this.complexContentList
 					.getDefaultMappings()) {
-				if (complexContent.ct.getClassNameFullQualified().equals(
-						ct.getClassNameFullQualified())) {
+				if (complexContent.ct.getClassNameFullQualified()
+						.equals(ct.getClassNameFullQualified())) {
 					cc = complexContent;
 					break;
 				}
@@ -242,8 +252,8 @@ public abstract class AbstractGenerator {
 		if (cc == null) {
 			for (ComplexContent complexContent : this.complexContentList
 					.getComplexMappings()) {
-				if (complexContent.ct.getClassNameFullQualified().equals(
-						ct.getClassNameFullQualified())) {
+				if (complexContent.ct.getClassNameFullQualified()
+						.equals(ct.getClassNameFullQualified())) {
 					cc = complexContent;
 					break;
 				}

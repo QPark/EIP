@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" 
+
+	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"  
+	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportTypes" 
+
+	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" 
+ 
+	xmlns:MPTechSupportmsg="http://www.ses.com/Interfaces/TechnicalSupportMessages" 
+	targetNamespace="http://www.samples.com/Interfaces/TechnicalSupportMessages"
+>
+
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportExternalDefinedTypes.xsd"/>
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportTypes.xsd"/>
+	<import namespace="http://www.qpark.com/Common/CommonServiceMessages" schemaLocation="../../../EIP/Common/CommonServiceMessages.xsd"/>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.samples.platform.inf.iss.tech.support.msg"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Interface: Technical support messages interface.</documentation>
+	</annotation>
+
+	<complexType name="SystemUserLogRequestType">
+		<annotation>
+			<documentation>
+				@ServiceConsumer ESB
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Returns system user log entries.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="MPTechSupportExtModel:ExtSystemUserLogCriteriaType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="SystemUserLogResponseType">
+		<annotation>
+			<documentation>Return message containing system user log entries.</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="systemUserLog" type="MPTechSupportExtModel:ExtSystemUserLogType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+</schema>

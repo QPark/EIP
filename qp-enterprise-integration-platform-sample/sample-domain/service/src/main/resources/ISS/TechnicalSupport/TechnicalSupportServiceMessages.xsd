@@ -3,8 +3,8 @@
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
 	xmlns:ISScty="http://www.samples.com/CommonTypes"
-	xmlns:ISStecsup="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
-	xmlns:ISStecsuppm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
+	xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
+	xmlns:ISSTechSupportm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
 	targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
 	elementFormDefault="unqualified" >
 	
@@ -17,7 +17,7 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.service.iss.tec.support.msg" />
+				<jaxb:package name="com.samples.platform.service.iss.tech.support.msg" />
 			</jaxb:schemaBindings>
 		</appinfo>
 		<documentation>
@@ -38,52 +38,6 @@
 	
 	<complexType name="GetAggregatedReferenceDataRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer
-tbd
-				@ServiceImplementor
-ESB
-				@ServiceDataProvider
-ESB
-				@ServiceDescription
-Example of the an aggregated GetReferenceData call.
-			</documentation>
-		</annotation>
-		<complexContent>
-			<extension base="EIPctym:RequestMessage">
-				<sequence>
-					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType">
-						<annotation>
-							<documentation>Reference data search criteria</documentation>
-						</annotation>
-					</element>
-				</sequence>
-				</extension>
-		</complexContent>
-	</complexType>
-	<complexType name="GetAggregatedReferenceDataResponseType">
-		<annotation>
-			<documentation>Aggregated reference data from ESb enumerations.</documentation>
-		</annotation>
-		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
-				<sequence>
-					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded">
-						<annotation>
-							<documentation>Reference data</documentation>
-						</annotation>
-					</element>
-				</sequence>
-				</extension>
-		</complexContent>
-	</complexType>
-
-	<element name="GetAggregatedReferenceDataRequest"
-		type="ISStecsuppm:GetAggregatedReferenceDataRequestType" />
-	<element name="GetAggregatedReferenceDataResponse"
-		type="ISStecsuppm:GetAggregatedReferenceDataResponseType" />
-	
-	<complexType name="GetSystemUserReportRequestType">
-		<annotation>
 			<documentation>@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
@@ -93,55 +47,133 @@ Example of the an aggregated GetReferenceData call.
 		<complexContent>
 			<extension base="EIPctym:RequestMessage">
 				<sequence>
-					<element name="criteria" type="ISStecsup:SystemUserReportCriteriaType"/>
+					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType"/>
 				</sequence>
 				</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetAggregatedReferenceDataResponseType">
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+	<element name="GetAggregatedReferenceDataRequest" type="ISSTechSupportm:GetAggregatedReferenceDataRequestType" />
+	<element name="GetAggregatedReferenceDataResponse" type="ISSTechSupportm:GetAggregatedReferenceDataResponseType" />
+
+	<complexType name="GetForwardedReferenceDataRequestType">
+		<annotation>
+			<documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Example of the an Forwarded GetReferenceData call.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetForwardedReferenceDataResponseType">
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+				</extension>
+		</complexContent>
+	</complexType>
+	<element name="GetForwardedReferenceDataRequest" type="ISSTechSupportm:GetForwardedReferenceDataRequestType" />
+	<element name="GetForwardedReferenceDataResponse" type="ISSTechSupportm:GetForwardedReferenceDataResponseType" />
+
+	<complexType name="GetSystemUserReportRequestType">
+		<annotation>
+			<documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Get the system user log report entries.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="ISSTechSupport:SystemUserReportCriteriaType"/>
+				</sequence>
+			</extension>
 		</complexContent>
 	</complexType>
 	<complexType name="GetSystemUserReportResponseType">
 		<complexContent>
 			<extension base="EIPctym:ResponseMessage">
 				<sequence>
-					<element name="report" type="ISStecsup:SystemUserReportType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="report" type="ISSTechSupport:SystemUserReportType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
-				</extension>
+			</extension>
 		</complexContent>
 	</complexType>
+	<element name="GetSystemUserReportRequest" type="ISSTechSupportm:GetSystemUserReportRequestType" />
+	<element name="GetSystemUserReportResponse" type="ISSTechSupportm:GetSystemUserReportResponseType" />
 
-	<element name="GetSystemUserReportRequest"
-		type="ISStecsuppm:GetSystemUserReportRequestType" />
-	<element name="GetSystemUserReportResponse"
-		type="ISStecsuppm:GetSystemUserReportResponseType" />
+	<complexType name="GetOperationReportRequestType">
+		<annotation>
+			<documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Get the system user log report entries.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="EIPctym:RequestMessage">
+				<sequence>
+					<element name="criteria" type="ISSTechSupport:OperationReportCriteriaType"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetOperationReportResponseType">
+		<complexContent>
+			<extension base="EIPctym:ResponseMessage">
+				<sequence>
+					<element name="report" type="ISSTechSupport:OperationReportType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<element name="GetOperationReportRequest" type="ISSTechSupportm:GetOperationReportRequestType" />
+	<element name="GetOperationReportResponse" type="ISSTechSupportm:GetOperationReportResponseType" />
 
 	<complexType name="GetFlowReportRequestType">
 		<annotation>
 			<documentation>@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
-				@ServiceDescription Example of the an aggregated GetReferenceData call.
+				@ServiceDescription Get the flow log messages reported.
 			</documentation>
 		</annotation>
 		<complexContent>
 			<extension base="EIPctym:RequestMessage">
 				<sequence>
-					<element name="criteria" type="ISStecsup:FlowReportCriteriaType"/>
+					<element name="criteria" type="ISSTechSupport:FlowReportCriteriaType"/>
 				</sequence>
-				</extension>
+			</extension>
 		</complexContent>
 	</complexType>
 	<complexType name="GetFlowReportResponseType">
 		<complexContent>
 			<extension base="EIPctym:ResponseMessage">
 				<sequence>
-					<element name="report" type="ISStecsup:FlowReportType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="report" type="ISSTechSupport:FlowReportType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
-				</extension>
+			</extension>
 		</complexContent>
 	</complexType>
-
-	<element name="GetFlowReportRequest"
-		type="ISStecsuppm:GetFlowReportRequestType" />
-	<element name="GetFlowReportResponse"
-		type="ISStecsuppm:GetFlowReportResponseType" />
+	<element name="GetFlowReportRequest" type="ISSTechSupportm:GetFlowReportRequestType" />
+	<element name="GetFlowReportResponse" type="ISSTechSupportm:GetFlowReportResponseType" />
 
 </schema>

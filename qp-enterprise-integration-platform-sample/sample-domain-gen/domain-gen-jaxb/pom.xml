@@ -91,6 +91,32 @@ Additionally to that a human readable version of the xsds is generated.
 							<basePackageName>${base.package.name}</basePackageName>
 						</configuration>
 					</execution>
+					<execution>
+<!--
+XJC can only handle one schemalocation per target namespace. It is not possilbe to 
+execute XJC with 
+schemalocation="../../../EIP/Common/CommonTypes.xsd" 
+and
+schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd"
+for target namespace http://www.qpark.com/CommonTypes.
+Pointing twice to the same location as 
+schemalocation="../../../EIP/Common/CommonTypes.xsd" 
+and
+schemalocation="../../../../EIP/Common/CommonTypes.xsd" 
+is valid.
+See:
+https://java.net/jira/browse/JAXB-486
+-->
+						<id>Unify schemalocations to relative pathes</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>relative-schemalocation</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${model.dir}</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

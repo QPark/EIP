@@ -1,7 +1,7 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:ISScty="http://www.samples.com/CommonTypes"
-	xmlns:ISStecSup="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
+	xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
 	targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
 	elementFormDefault="unqualified" >
 <!--
@@ -21,7 +21,7 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.model.iss.tec.support" />
+				<jaxb:package name="com.samples.platform.model.iss.tech.support" />
 			</jaxb:schemaBindings>
 		</appinfo>
 	</annotation>
@@ -41,6 +41,25 @@
 			<element name="requests" type="long"/>
 			<element name="requestsDenied" type="long"/>
 			<element name="errors" type="long"/>
+		</sequence>
+	</complexType>
+	<complexType name="OperationReportCriteriaType">
+		<sequence>
+			<element name="service" type="normalizedString" minOccurs="0"/>
+			<element name="operation" type="normalizedString" minOccurs="0"/>
+			<element name="consumerName" type="normalizedString" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	<complexType name="OperationReportType">
+		<sequence>
+			<element name="date" type="dateTime"/>
+			<element name="serviceProvider" type="normalizedString"/>
+			<element name="service" type="normalizedString"/>
+			<element name="operation" type="normalizedString"/>
+			<element name="version" type="normalizedString"/>
+			<element name="consumerName" type="normalizedString"/>
+			<element name="consumerHost" type="normalizedString"/>
+			<element name="duration" type="normalizedString"/>
 		</sequence>
 	</complexType>
 	<complexType name="FlowReportCriteriaType">

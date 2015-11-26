@@ -648,13 +648,13 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          <userName>?</userName>
       </com:GetServiceStatusRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="iss.tec.supportSoap12" type="wsdl" bindingName="{http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages}iss.tec.supportSoap12" soapVersion="1_2" anonymous="optional" definition="http://localhost:8080/platform-library-2.0.0/services/iss.tec.support.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/platform-library-2.0.0/services/iss.tec.support.wsdl"><con:part><con:url>http://localhost:8080/platform-library-2.0.0/services/iss.tec.support.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:sch1="http://www.qpark.com/CommonTypes" xmlns:sch2="http://www.samples.com/CommonTypes" xmlns:sch3="http://www.qpark.com/Common/CommonServiceMessages" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="iss.tech.supportSoap12" type="wsdl" bindingName="{http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages}iss.tech.supportSoap12" soapVersion="1_2" anonymous="optional" definition="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl"><con:part><con:url>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:sch1="http://www.qpark.com/CommonTypes" xmlns:sch2="http://www.samples.com/CommonTypes" xmlns:sch3="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:sch4="http://www.qpark.com/Common/CommonServiceMessages" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
   <wsdl:types>
-    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:ISSctym="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:ISSTechSupportm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
       <annotation>
         <appinfo>
           <jaxb:schemaBindings>
-            <jaxb:package name="com.samples.platform.service.iss.tec.support.msg"/>
+            <jaxb:package name="com.samples.platform.service.iss.tech.support.msg"/>
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
@@ -672,48 +672,138 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
       </annotation>
       <import namespace="http://www.qpark.com/CommonTypes"/>
       <import namespace="http://www.samples.com/CommonTypes"/>
+      <import namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"/>
       <import namespace="http://www.qpark.com/Common/CommonServiceMessages"/>
       <complexType name="GetAggregatedReferenceDataRequestType">
         <annotation>
-          <documentation>@ServiceConsumer
-tbd
-				@ServiceImplementor
-ESB
-				@ServiceDataProvider
-ESB
-				@ServiceDescription
-Example of the an aggregated GetReferenceData call.</documentation>
+          <documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Example of the an aggregated GetReferenceData call.</documentation>
         </annotation>
         <complexContent>
           <extension base="EIPctym:RequestMessage">
             <sequence>
-              <element name="criteria" type="EIPcty:ReferenceDataCriteriaType">
-                <annotation>
-                  <documentation>Reference data search criteria</documentation>
-                </annotation>
-              </element>
+              <element name="criteria" type="EIPcty:ReferenceDataCriteriaType"/>
             </sequence>
           </extension>
         </complexContent>
       </complexType>
       <complexType name="GetAggregatedReferenceDataResponseType">
-        <annotation>
-          <documentation>Aggregated reference data from ESb enumerations.</documentation>
-        </annotation>
         <complexContent>
           <extension base="EIPctym:ResponseMessage">
             <sequence>
-              <element maxOccurs="unbounded" minOccurs="0" name="referenceData" type="EIPcty:ReferenceDataType">
-                <annotation>
-                  <documentation>Reference data</documentation>
-                </annotation>
-              </element>
+              <element maxOccurs="unbounded" minOccurs="0" name="referenceData" type="EIPcty:ReferenceDataType"/>
             </sequence>
           </extension>
         </complexContent>
       </complexType>
-      <element name="GetAggregatedReferenceDataRequest" type="ISSctym:GetAggregatedReferenceDataRequestType"/>
-      <element name="GetAggregatedReferenceDataResponse" type="ISSctym:GetAggregatedReferenceDataResponseType"/>
+      <element name="GetAggregatedReferenceDataRequest" type="ISSTechSupportm:GetAggregatedReferenceDataRequestType"/>
+      <element name="GetAggregatedReferenceDataResponse" type="ISSTechSupportm:GetAggregatedReferenceDataResponseType"/>
+      <complexType name="GetForwardedReferenceDataRequestType">
+        <annotation>
+          <documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Example of the an Forwarded GetReferenceData call.</documentation>
+        </annotation>
+        <complexContent>
+          <extension base="EIPctym:RequestMessage">
+            <sequence>
+              <element name="criteria" type="EIPcty:ReferenceDataCriteriaType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <complexType name="GetForwardedReferenceDataResponseType">
+        <complexContent>
+          <extension base="EIPctym:ResponseMessage">
+            <sequence>
+              <element maxOccurs="unbounded" minOccurs="0" name="referenceData" type="EIPcty:ReferenceDataType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <element name="GetForwardedReferenceDataRequest" type="ISSTechSupportm:GetForwardedReferenceDataRequestType"/>
+      <element name="GetForwardedReferenceDataResponse" type="ISSTechSupportm:GetForwardedReferenceDataResponseType"/>
+      <complexType name="GetSystemUserReportRequestType">
+        <annotation>
+          <documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Get the system user log report entries.</documentation>
+        </annotation>
+        <complexContent>
+          <extension base="EIPctym:RequestMessage">
+            <sequence>
+              <element name="criteria" type="ISSTechSupport:SystemUserReportCriteriaType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <complexType name="GetSystemUserReportResponseType">
+        <complexContent>
+          <extension base="EIPctym:ResponseMessage">
+            <sequence>
+              <element maxOccurs="unbounded" minOccurs="0" name="report" type="ISSTechSupport:SystemUserReportType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <element name="GetSystemUserReportRequest" type="ISSTechSupportm:GetSystemUserReportRequestType"/>
+      <element name="GetSystemUserReportResponse" type="ISSTechSupportm:GetSystemUserReportResponseType"/>
+      <complexType name="GetOperationReportRequestType">
+        <annotation>
+          <documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Get the system user log report entries.</documentation>
+        </annotation>
+        <complexContent>
+          <extension base="EIPctym:RequestMessage">
+            <sequence>
+              <element name="criteria" type="ISSTechSupport:OperationReportCriteriaType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <complexType name="GetOperationReportResponseType">
+        <complexContent>
+          <extension base="EIPctym:ResponseMessage">
+            <sequence>
+              <element maxOccurs="unbounded" minOccurs="0" name="report" type="ISSTechSupport:OperationReportType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <element name="GetOperationReportRequest" type="ISSTechSupportm:GetOperationReportRequestType"/>
+      <element name="GetOperationReportResponse" type="ISSTechSupportm:GetOperationReportResponseType"/>
+      <complexType name="GetFlowReportRequestType">
+        <annotation>
+          <documentation>@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription Get the flow log messages reported.</documentation>
+        </annotation>
+        <complexContent>
+          <extension base="EIPctym:RequestMessage">
+            <sequence>
+              <element name="criteria" type="ISSTechSupport:FlowReportCriteriaType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <complexType name="GetFlowReportResponseType">
+        <complexContent>
+          <extension base="EIPctym:ResponseMessage">
+            <sequence>
+              <element maxOccurs="unbounded" minOccurs="0" name="report" type="ISSTechSupport:FlowReportType"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <element name="GetFlowReportRequest" type="ISSTechSupportm:GetFlowReportRequestType"/>
+      <element name="GetFlowReportResponse" type="ISSTechSupportm:GetFlowReportResponseType"/>
     </schema>
     <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.qpark.com/CommonTypes" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
       <annotation>
@@ -897,7 +987,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
       <annotation>
         <appinfo>
           <jaxb:schemaBindings>
-            <jaxb:package name="com.samples.platform.model.common"/>
+            <jaxb:package name="com.samples.platform.model.iss.common"/>
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
@@ -916,6 +1006,73 @@ Enumerations allow for a flexible configuration of the the master data aware app
       <simpleType name="EURType">
         <restriction base="decimal"/>
       </simpleType>
+    </schema>
+    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+      <annotation>
+        <appinfo>
+          <jaxb:schemaBindings>
+            <jaxb:package name="com.samples.platform.model.iss.tech.support"/>
+          </jaxb:schemaBindings>
+        </appinfo>
+      </annotation>
+      <import namespace="http://www.samples.com/CommonTypes"/>
+      <import namespace="http://www.qpark.com/CommonTypes"/>
+      <complexType name="SystemUserReportCriteriaType">
+        <sequence>
+          <element minOccurs="0" name="date" type="date"/>
+        </sequence>
+      </complexType>
+      <complexType name="SystemUserReportType">
+        <sequence>
+          <element name="date" type="date"/>
+          <element name="service" type="normalizedString"/>
+          <element name="operation" type="normalizedString"/>
+          <element name="serviceProvider" type="normalizedString"/>
+          <element name="version" type="normalizedString"/>
+          <element name="consumerSystemUser" type="normalizedString"/>
+          <element name="requests" type="long"/>
+          <element name="requestsDenied" type="long"/>
+          <element name="errors" type="long"/>
+        </sequence>
+      </complexType>
+      <complexType name="OperationReportCriteriaType">
+        <sequence>
+          <element minOccurs="0" name="service" type="normalizedString"/>
+          <element minOccurs="0" name="operation" type="normalizedString"/>
+          <element minOccurs="0" name="consumerName" type="normalizedString"/>
+        </sequence>
+      </complexType>
+      <complexType name="OperationReportType">
+        <sequence>
+          <element name="date" type="dateTime"/>
+          <element name="serviceProvider" type="normalizedString"/>
+          <element name="service" type="normalizedString"/>
+          <element name="operation" type="normalizedString"/>
+          <element name="version" type="normalizedString"/>
+          <element name="consumerName" type="normalizedString"/>
+          <element name="consumerHost" type="normalizedString"/>
+          <element name="duration" type="normalizedString"/>
+        </sequence>
+      </complexType>
+      <complexType name="FlowReportCriteriaType">
+        <sequence>
+          <element name="start" type="dateTime"/>
+          <element minOccurs="0" name="end" type="dateTime"/>
+        </sequence>
+      </complexType>
+      <complexType name="FlowReportType">
+        <sequence>
+          <element name="flowSessionId" type="EIPcty:UUIDType"/>
+          <element name="logTime" type="dateTime"/>
+          <element name="severity" type="normalizedString"/>
+          <element name="flowName" type="normalizedString"/>
+          <element name="flowStep" type="normalizedString"/>
+          <element name="messageClassification" type="normalizedString"/>
+          <element name="additionalInformation" type="string"/>
+          <element name="messageType" type="normalizedString"/>
+          <element name="data" type="string"/>
+        </sequence>
+      </complexType>
     </schema>
     <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.1" targetNamespace="http://www.qpark.com/Common/CommonServiceMessages" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
       <annotation>
@@ -1103,21 +1260,45 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
     <wsdl:part element="tns:GetAggregatedReferenceDataResponse" name="GetAggregatedReferenceDataResponse"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="GetReferenceDataResponse">
-    <wsdl:part element="sch3:GetReferenceDataResponse" name="GetReferenceDataResponse"></wsdl:part>
+    <wsdl:part element="sch4:GetReferenceDataResponse" name="GetReferenceDataResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetFlowReportResponse">
+    <wsdl:part element="tns:GetFlowReportResponse" name="GetFlowReportResponse"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="GetAggregatedReferenceDataRequest">
     <wsdl:part element="tns:GetAggregatedReferenceDataRequest" name="GetAggregatedReferenceDataRequest"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="GetServiceStatusResponse">
-    <wsdl:part element="sch3:GetServiceStatusResponse" name="GetServiceStatusResponse"></wsdl:part>
+    <wsdl:part element="sch4:GetServiceStatusResponse" name="GetServiceStatusResponse"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="GetServiceStatusRequest">
-    <wsdl:part element="sch3:GetServiceStatusRequest" name="GetServiceStatusRequest"></wsdl:part>
+  <wsdl:message name="GetSystemUserReportResponse">
+    <wsdl:part element="tns:GetSystemUserReportResponse" name="GetSystemUserReportResponse"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="GetReferenceDataRequest">
-    <wsdl:part element="sch3:GetReferenceDataRequest" name="GetReferenceDataRequest"></wsdl:part>
+    <wsdl:part element="sch4:GetReferenceDataRequest" name="GetReferenceDataRequest"></wsdl:part>
   </wsdl:message>
-  <wsdl:portType name="iss.tec.support">
+  <wsdl:message name="GetForwardedReferenceDataResponse">
+    <wsdl:part element="tns:GetForwardedReferenceDataResponse" name="GetForwardedReferenceDataResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetFlowReportRequest">
+    <wsdl:part element="tns:GetFlowReportRequest" name="GetFlowReportRequest"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetSystemUserReportRequest">
+    <wsdl:part element="tns:GetSystemUserReportRequest" name="GetSystemUserReportRequest"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetForwardedReferenceDataRequest">
+    <wsdl:part element="tns:GetForwardedReferenceDataRequest" name="GetForwardedReferenceDataRequest"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetOperationReportResponse">
+    <wsdl:part element="tns:GetOperationReportResponse" name="GetOperationReportResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetServiceStatusRequest">
+    <wsdl:part element="sch4:GetServiceStatusRequest" name="GetServiceStatusRequest"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetOperationReportRequest">
+    <wsdl:part element="tns:GetOperationReportRequest" name="GetOperationReportRequest"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="iss.tech.support">
     <wsdl:operation name="GetAggregatedReferenceData">
       <wsdl:input message="tns:GetAggregatedReferenceDataRequest" name="GetAggregatedReferenceDataRequest"></wsdl:input>
       <wsdl:output message="tns:GetAggregatedReferenceDataResponse" name="GetAggregatedReferenceDataResponse"></wsdl:output>
@@ -1126,12 +1307,28 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
       <wsdl:input message="tns:GetReferenceDataRequest" name="GetReferenceDataRequest"></wsdl:input>
       <wsdl:output message="tns:GetReferenceDataResponse" name="GetReferenceDataResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetFlowReport">
+      <wsdl:input message="tns:GetFlowReportRequest" name="GetFlowReportRequest"></wsdl:input>
+      <wsdl:output message="tns:GetFlowReportResponse" name="GetFlowReportResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetServiceStatus">
       <wsdl:input message="tns:GetServiceStatusRequest" name="GetServiceStatusRequest"></wsdl:input>
       <wsdl:output message="tns:GetServiceStatusResponse" name="GetServiceStatusResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetSystemUserReport">
+      <wsdl:input message="tns:GetSystemUserReportRequest" name="GetSystemUserReportRequest"></wsdl:input>
+      <wsdl:output message="tns:GetSystemUserReportResponse" name="GetSystemUserReportResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetForwardedReferenceData">
+      <wsdl:input message="tns:GetForwardedReferenceDataRequest" name="GetForwardedReferenceDataRequest"></wsdl:input>
+      <wsdl:output message="tns:GetForwardedReferenceDataResponse" name="GetForwardedReferenceDataResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOperationReport">
+      <wsdl:input message="tns:GetOperationReportRequest" name="GetOperationReportRequest"></wsdl:input>
+      <wsdl:output message="tns:GetOperationReportResponse" name="GetOperationReportResponse"></wsdl:output>
+    </wsdl:operation>
   </wsdl:portType>
-  <wsdl:binding name="iss.tec.supportSoap12" type="tns:iss.tec.support">
+  <wsdl:binding name="iss.tech.supportSoap12" type="tns:iss.tech.support">
     <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="GetAggregatedReferenceData">
       <soap12:operation soapAction=""/>
@@ -1151,6 +1348,15 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
         <soap12:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetFlowReport">
+      <soap12:operation soapAction=""/>
+      <wsdl:input name="GetFlowReportRequest">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetFlowReportResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetServiceStatus">
       <soap12:operation soapAction=""/>
       <wsdl:input name="GetServiceStatusRequest">
@@ -1160,13 +1366,40 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
         <soap12:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetSystemUserReport">
+      <soap12:operation soapAction=""/>
+      <wsdl:input name="GetSystemUserReportRequest">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetSystemUserReportResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetForwardedReferenceData">
+      <soap12:operation soapAction=""/>
+      <wsdl:input name="GetForwardedReferenceDataRequest">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetForwardedReferenceDataResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOperationReport">
+      <soap12:operation soapAction=""/>
+      <wsdl:input name="GetOperationReportRequest">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetOperationReportResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
-  <wsdl:service name="iss.tec.supportService">
-    <wsdl:port binding="tns:iss.tec.supportSoap12" name="iss.tec.supportSoap12">
-      <soap12:address location="http://localhost:8080/platform-library-2.0.0/services/iss.tec.support"/>
+  <wsdl:service name="iss.tech.supportService">
+    <wsdl:port binding="tns:iss.tech.supportSoap12" name="iss.tech.supportSoap12">
+      <soap12:address location="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tec.support</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="GetAggregatedReferenceData" bindingOperationName="GetAggregatedReferenceData" type="Request-Response" outputName="GetAggregatedReferenceDataResponse" inputName="GetAggregatedReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tec.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="GetAggregatedReferenceData" bindingOperationName="GetAggregatedReferenceData" type="Request-Response" outputName="GetAggregatedReferenceDataResponse" inputName="GetAggregatedReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
    <soap:Header/>
    <soap:Body>
       <tec:GetAggregatedReferenceDataRequest>
@@ -1182,7 +1415,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </criteria>
       </tec:GetAggregatedReferenceDataRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tec.support/GetAggregatedReferenceDataRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetReferenceData" bindingOperationName="GetReferenceData" type="Request-Response" outputName="GetReferenceDataResponse" inputName="GetReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tec.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetAggregatedReferenceDataRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetReferenceData" bindingOperationName="GetReferenceData" type="Request-Response" outputName="GetReferenceDataResponse" inputName="GetReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
    <soap:Header/>
    <soap:Body>
       <com:GetReferenceDataRequest>
@@ -1198,11 +1431,62 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </criteria>
       </com:GetReferenceDataRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tec.support/GetReferenceDataRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetServiceStatus" bindingOperationName="GetServiceStatus" type="Request-Response" outputName="GetServiceStatusResponse" inputName="GetServiceStatusRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tec.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetReferenceDataRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetServiceStatus" bindingOperationName="GetServiceStatus" type="Request-Response" outputName="GetServiceStatusResponse" inputName="GetServiceStatusRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
    <soap:Header/>
    <soap:Body>
       <com:GetServiceStatusRequest>
          <userName>?</userName>
       </com:GetServiceStatusRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tec.support/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.common</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.tec.support</con:endpoint></con:endpointStrategy><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetFlowReport" bindingOperationName="GetFlowReport" type="Request-Response" outputName="GetFlowReportResponse" inputName="GetFlowReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+   <soap:Header/>
+   <soap:Body>
+      <tec:GetFlowReportRequest>
+         <userName>?</userName>
+         <criteria>
+            <start>?</start>
+            <!--Optional:-->
+            <end>?</end>
+         </criteria>
+      </tec:GetFlowReportRequest>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetFlowReportRequest"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetSystemUserReport" bindingOperationName="GetSystemUserReport" type="Request-Response" outputName="GetSystemUserReportResponse" inputName="GetSystemUserReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+   <soap:Header/>
+   <soap:Body>
+      <tec:GetSystemUserReportRequest>
+         <userName>bhausen</userName>
+         <criteria><date>2015-11-26</date></criteria>
+      </tec:GetSystemUserReportRequest>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetSystemUserReportRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetForwardedReferenceData" bindingOperationName="GetForwardedReferenceData" type="Request-Response" outputName="GetForwardedReferenceDataResponse" inputName="GetForwardedReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+   <soap:Header/>
+   <soap:Body>
+      <tec:GetForwardedReferenceDataRequest>
+         <userName>?</userName>
+         <criteria>
+            <!--Zero or more repetitions:-->
+            <id>?</id>
+            <!--Optional:-->
+            <maxElements>?</maxElements>
+            <!--Optional:-->
+            <category>?</category>
+            <active>?</active>
+         </criteria>
+      </tec:GetForwardedReferenceDataRequest>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetForwardedReferenceDataRequest"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetOperationReport" bindingOperationName="GetOperationReport" type="Request-Response" outputName="GetOperationReportResponse" inputName="GetOperationReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+   <soap:Header/>
+   <soap:Body>
+      <tec:GetOperationReportRequest>
+         <userName>?</userName>
+         <criteria>
+            <!--Optional:-->
+            <service>?</service>
+            <!--Optional:-->
+            <operation>?</operation>
+            <!--Optional:-->
+            <consumerName>?</consumerName>
+         </criteria>
+      </tec:GetOperationReportRequest>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetOperationReportRequest"/></con:call></con:operation></con:interface><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.common</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint></con:endpointStrategy><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

@@ -25,7 +25,7 @@
 
 		<junit.version>4.9</junit.version>
 		
-		<eip.service.ids>common, iss.common, library, iss.tec.support</eip.service.ids>
+		<eip.service.ids>common, iss.common, library, iss.tech.support</eip.service.ids>
 		<service.name>library</service.name>
 		<model.dir>${project.build.directory}/model</model.dir>
 

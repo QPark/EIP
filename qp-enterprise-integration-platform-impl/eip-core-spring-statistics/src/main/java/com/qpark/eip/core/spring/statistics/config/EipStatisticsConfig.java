@@ -17,12 +17,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ContextNameProvider;
 import com.qpark.eip.core.spring.statistics.AppUserStatisticsChannelAdapter;
+import com.qpark.eip.core.spring.statistics.AsyncFlowLogMessagePersistence;
+import com.qpark.eip.core.spring.statistics.FlowExecutionLog;
 import com.qpark.eip.core.spring.statistics.MessageContentProvider;
 import com.qpark.eip.core.spring.statistics.SysUserStatisticsChannelInvocationListener;
 import com.qpark.eip.core.spring.statistics.dao.StatisticsEraser;
 import com.qpark.eip.core.spring.statistics.dao.StatisticsLoggingDao;
-import com.qpark.eip.core.spring.statistics.flow.AsyncFlowLogMessagePersistence;
-import com.qpark.eip.core.spring.statistics.flow.FlowExecutionLogAspect;
 
 /**
  * Provides the spring config of the eip core authority.
@@ -119,9 +119,9 @@ public class EipStatisticsConfig {
 	 *
 	 * @return the {@link FlowExecutionLogAspect} bean.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringStatisticsFlowExecutionLogAspect")
-	public FlowExecutionLogAspect getFlowLoggingAspect() {
-		FlowExecutionLogAspect bean = new FlowExecutionLogAspect();
+	@Bean(name = "ComQparkEipCoreSpringStatisticsFlowExecutionLog")
+	public FlowExecutionLog getFlowExecutionLog() {
+		FlowExecutionLog bean = new FlowExecutionLog();
 		return bean;
 	}
 

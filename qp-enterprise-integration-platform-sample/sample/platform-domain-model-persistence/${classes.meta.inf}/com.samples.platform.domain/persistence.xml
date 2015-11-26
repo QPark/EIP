@@ -9,10 +9,12 @@ http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persiste
         <class>com.qpark.eip.model.common.PropertyType</class>
         <class>com.qpark.eip.model.common.ReferenceDataCriteriaType</class>
         <class>com.qpark.eip.model.common.ReferenceDataType</class>
-        <class>com.samples.platform.model.iss.tec.support.FlowReportCriteriaType</class>
-        <class>com.samples.platform.model.iss.tec.support.FlowReportType</class>
-        <class>com.samples.platform.model.iss.tec.support.SystemUserReportCriteriaType</class>
-        <class>com.samples.platform.model.iss.tec.support.SystemUserReportType</class>
+        <class>com.samples.platform.model.iss.tech.support.FlowReportCriteriaType</class>
+        <class>com.samples.platform.model.iss.tech.support.FlowReportType</class>
+        <class>com.samples.platform.model.iss.tech.support.OperationReportCriteriaType</class>
+        <class>com.samples.platform.model.iss.tech.support.OperationReportType</class>
+        <class>com.samples.platform.model.iss.tech.support.SystemUserReportCriteriaType</class>
+        <class>com.samples.platform.model.iss.tech.support.SystemUserReportType</class>
         <class>com.samples.platform.model.library.BookCriteriaType</class>
         <class>com.samples.platform.model.library.BookType</class>
         <class>com.samples.platform.model.library.LibraryType</class>

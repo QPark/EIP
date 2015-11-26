@@ -36,6 +36,7 @@
 		<!--<module>platform-domain-model-ddl</module>-->
 		<module>platform-domain-model-service</module>
 		<module>platform-core</module>
+		<module>platform-service-provider-techsupport-flow</module>
 		<module>platform-service-provider-library-internal</module>
 		<module>platform-webapp-library</module>
 	</modules>
