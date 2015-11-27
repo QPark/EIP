@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb">
+  <!--
+
+Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.7 generiert 
+Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+Generiert: 2015.11.27 um 04:03:22 AM CET 
+
+  -->
+  <bindings scd="x-schema::tns" xmlns:tns="http://www.samples.com/Library/LibraryTypes">
+    <schemaBindings map="false">
+      <package name="com.samples.platform.model.library"/>
+    </schemaBindings>
+    <bindings scd="~tns:BookType">
+      <class ref="com.samples.platform.model.library.BookType"/>
+    </bindings>
+    <bindings scd="~tns:LibraryType">
+      <class ref="com.samples.platform.model.library.LibraryType"/>
+    </bindings>
+    <bindings scd="~tns:BookCriteriaType">
+      <class ref="com.samples.platform.model.library.BookCriteriaType"/>
+    </bindings>
+  </bindings>
+  <bindings scd="x-schema::tns" xmlns:tns="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes">
+    <schemaBindings map="false">
+      <package name="com.samples.platform.model.iss.tech.support"/>
+    </schemaBindings>
+    <bindings scd="~tns:SystemUserReportType">
+      <class ref="com.samples.platform.model.iss.tech.support.SystemUserReportType"/>
+    </bindings>
+    <bindings scd="~tns:OperationReportCriteriaType">
+      <class ref="com.samples.platform.model.iss.tech.support.OperationReportCriteriaType"/>
+    </bindings>
+    <bindings scd="~tns:FlowReportCriteriaType">
+      <class ref="com.samples.platform.model.iss.tech.support.FlowReportCriteriaType"/>
+    </bindings>
+    <bindings scd="~tns:SystemUserReportCriteriaType">
+      <class ref="com.samples.platform.model.iss.tech.support.SystemUserReportCriteriaType"/>
+    </bindings>
+    <bindings scd="~tns:OperationReportType">
+      <class ref="com.samples.platform.model.iss.tech.support.OperationReportType"/>
+    </bindings>
+    <bindings scd="~tns:FlowReportType">
+      <class ref="com.samples.platform.model.iss.tech.support.FlowReportType"/>
+    </bindings>
+  </bindings>
+  <bindings scd="x-schema::tns" xmlns:tns="http://www.qpark.com/CommonTypes">
+    <schemaBindings map="false">
+      <package name="com.qpark.eip.model.common"/>
+    </schemaBindings>
+    <bindings scd="~tns:EntityType">
+      <class ref="com.qpark.eip.model.common.EntityType"/>
+    </bindings>
+    <bindings scd="~tns:AssetCriteriaType">
+      <class ref="com.qpark.eip.model.common.AssetCriteriaType"/>
+    </bindings>
+    <bindings scd="~tns:ReferenceDataCriteriaType">
+      <class ref="com.qpark.eip.model.common.ReferenceDataCriteriaType"/>
+    </bindings>
+    <bindings scd="~tns:AssetType">
+      <class ref="com.qpark.eip.model.common.AssetType"/>
+    </bindings>
+    <bindings scd="~tns:ReferenceDataType">
+      <class ref="com.qpark.eip.model.common.ReferenceDataType"/>
+    </bindings>
+    <bindings scd="~tns:EntityCriteriaType">
+      <class ref="com.qpark.eip.model.common.EntityCriteriaType"/>
+    </bindings>
+    <bindings scd="~tns:PropertyType">
+      <class ref="com.qpark.eip.model.common.PropertyType"/>
+    </bindings>
+  </bindings>
+</bindings>
+

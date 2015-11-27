@@ -10,9 +10,15 @@ import com.samples.platform.serviceprovider.techsupport.flow.config.ServiceProvi
 @Configuration
 @Import(value = { ServiceProviderConfig.class })
 public class TestConfig {
-	@Bean
-	public SystemUserLogFlowGateway getSystemUserLogFlowGateway() {
-		SystemUserLogFlowGateway bean = new SystemUserLogFlowGatewayImpl();
-		return bean;
-	}
+    @Bean
+    public SystemUserLogFlowGateway getSystemUserLogFlowGateway() {
+	SystemUserLogFlowGateway bean = new FlowGatewayMockImpl();
+	return bean;
+    }
+
+    @Bean
+    public FlowExecutionLog getFlowExecutionLog() {
+	FlowExecutionLog bean = new FlowExecutionLog();
+	return bean;
+    }
 }

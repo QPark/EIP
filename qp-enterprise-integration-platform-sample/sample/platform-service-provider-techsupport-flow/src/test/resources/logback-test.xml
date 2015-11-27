@@ -12,7 +12,7 @@
 		<encoder><pattern>${logfile.pattern}</pattern></encoder>
 	</appender>
 
-	<logger name="com.qpark.eip" level="DEBUG" additivity="true" />
+	<logger name="com.qpark.eip.inf" level="DEBUG" additivity="true" />
 	<logger name="com.samples.platform" level="DEBUG" additivity="true" />
 
 	<!-- spring -->

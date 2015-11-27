@@ -10,7 +10,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  * @author bhausen
  */
 @RunWith(Suite.class)
-@SuiteClasses({ FlowTestPositive.class })
+@SuiteClasses({ FlowTest.class })
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
-public class TestSuiteSystemUserReportFlow {
+public class TestSuite {
 }
