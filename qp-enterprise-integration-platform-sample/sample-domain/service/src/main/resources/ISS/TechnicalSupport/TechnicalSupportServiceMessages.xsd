@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
-	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
 	xmlns:ISScty="http://www.samples.com/CommonTypes"
 	xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
+
+	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
+	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
+
 	xmlns:ISSTechSupportm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
 	targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages"
-	elementFormDefault="unqualified" >
-	
-	<import schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"/>
-	<import schemaLocation="http://www.samples.com/model/ISS/Common/Common.xsd" namespace="http://www.samples.com/CommonTypes"/>
-	<import schemaLocation="http://www.samples.com/model/ISS/TechnicalSupport/TechnicalSupport.xsd" namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"/>
-	
-	<import schemaLocation="../../EIP/Common/CommonServiceMessages.xsd" namespace="http://www.qpark.com/Common/CommonServiceMessages"/>
-	
+>
+
+	<import namespace="http://www.qpark.com/CommonTypes" schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd"/>
+	<import namespace="http://www.samples.com/CommonTypes" schemaLocation="http://www.samples.com/model/ISS/Common/Common.xsd"/>
+	<import namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" schemaLocation="http://www.samples.com/model/ISS/TechnicalSupport/TechnicalSupport.xsd"/>
+
+	<import namespace="http://www.qpark.com/Common/BaseMessages" schemaLocation="../../EIP/Common/BaseMessage.xsd"/>
+	<import namespace="http://www.qpark.com/Common/CommonServiceMessages" schemaLocation="../../EIP/Common/CommonServiceMessages.xsd"/>
+
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
 				<jaxb:package name="com.samples.platform.service.iss.tech.support.msg" />
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation>
-<!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
- * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
--->
-			Message definitions of the common web service.
-		</documentation>
+		<documentation>Message definitions of the common web service.</documentation>
 	</annotation>
-	
+
 	<complexType name="GetAggregatedReferenceDataRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer tbd
+			<documentation>
+				@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
 				@ServiceDescription Example of the an aggregated GetReferenceData call.
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType"/>
 				</sequence>
@@ -54,7 +56,7 @@
 	</complexType>
 	<complexType name="GetAggregatedReferenceDataResponseType">
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
@@ -66,14 +68,15 @@
 
 	<complexType name="GetForwardedReferenceDataRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer tbd
+			<documentation>
+				@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
 				@ServiceDescription Example of the an Forwarded GetReferenceData call.
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType"/>
 				</sequence>
@@ -82,7 +85,7 @@
 	</complexType>
 	<complexType name="GetForwardedReferenceDataResponseType">
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
@@ -94,14 +97,15 @@
 
 	<complexType name="GetSystemUserReportRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer tbd
+			<documentation>
+				@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
 				@ServiceDescription Get the system user log report entries.
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="ISSTechSupport:SystemUserReportCriteriaType"/>
 				</sequence>
@@ -110,7 +114,7 @@
 	</complexType>
 	<complexType name="GetSystemUserReportResponseType">
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="report" type="ISSTechSupport:SystemUserReportType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
@@ -122,14 +126,15 @@
 
 	<complexType name="GetOperationReportRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer tbd
+			<documentation>
+				@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
 				@ServiceDescription Get the system user log report entries.
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="ISSTechSupport:OperationReportCriteriaType"/>
 				</sequence>
@@ -138,7 +143,7 @@
 	</complexType>
 	<complexType name="GetOperationReportResponseType">
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="report" type="ISSTechSupport:OperationReportType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
@@ -150,14 +155,15 @@
 
 	<complexType name="GetFlowReportRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer tbd
+			<documentation>
+				@ServiceConsumer tbd
 				@ServiceImplementor ESB
 				@ServiceDataProvider ESB
 				@ServiceDescription Get the flow log messages reported.
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="ISSTechSupport:FlowReportCriteriaType"/>
 				</sequence>
@@ -166,7 +172,7 @@
 	</complexType>
 	<complexType name="GetFlowReportResponseType">
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="report" type="ISSTechSupport:FlowReportType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
@@ -175,5 +181,4 @@
 	</complexType>
 	<element name="GetFlowReportRequest" type="ISSTechSupportm:GetFlowReportRequestType" />
 	<element name="GetFlowReportResponse" type="ISSTechSupportm:GetFlowReportResponseType" />
-
 </schema>

@@ -1,18 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 <!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0.
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
 -->
+
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
@@ -69,16 +66,6 @@
 	</developers>
 	<inceptionYear>2013</inceptionYear>
 
-	<distributionManagement>
-		<repository>
-			<id>${repository.id}</id>
-			<url>${repository.url}</url>
-		</repository>
-		<site>
-			<id>site-server</id>
-			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
-		</site>
-	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>repository.apache.org</id>
@@ -111,27 +98,8 @@
 		<persistence.jndi.datasource.name>PlatformDB</persistence.jndi.datasource.name>
 		<persistence.jpa.vendor.adapter>Hibernate</persistence.jpa.vendor.adapter>
 		<persistence.jpa.vendor.adapter.databasePlatform>org.hibernate.dialect.Oracle10gDialect</persistence.jpa.vendor.adapter.databasePlatform>
-<!--
-		<persistence.jpa.vendor.adapter.databasePlatform>org.hibernate.dialect.PostgreSQLDialect</persistence.jpa.vendor.adapter.databasePlatform>
--->
 
 <!--
-		<bus.application.name>platform</bus.application.name>
-		<platform.version>${project.version}</platform.version>
-		<bus.war.prefix></bus.war.prefix>
-
-		<domain.groupId>com.samples.domain.model</domain.groupId>
-		<domain.version>1.0.1</domain.version>
-		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
-		<eip.version>1.0.12</eip.version>
-		<eip.generator.version>1.0.14</eip.generator.version>
-
-		<base.package.name>${project.groupId}</base.package.name>
-		<persistence.unit.name>${project.groupId}.domain</persistence.unit.name>
-		<persistence.hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</persistence.hibernate.dialect>
-		<persistence.jndi.datasource.name>PlatformDB</persistence.jndi.datasource.name>
-		<persistence.ddl.file.name>platform_schema.sql</persistence.ddl.file.name>
-		<failure.handler.class.name>com.samples.platform.core.failure.FailureHandler</failure.handler.class.name>
 		<security.channel.pattern.admin>.*?CommonGetServerStatus.*</security.channel.pattern.admin>
 		<security.channel.pattern.anonymous> nternal.*</security.channel.pattern.anonymous>
 		<security.channel.pattern.create>Create</security.channel.pattern.create>

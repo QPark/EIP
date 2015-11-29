@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration  scan="true" scanPeriod="60 seconds">
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
 	<property name="logfile.datepattern" value="%d{yyyyMMdd-HHmmss.SSS}" />
 	<property name="logfile.pattern" value="%d{yyyyMMdd-HHmmss.SSS}[%contextName][%-5level][%c] %msg [%-10thread]%n%ex" />
 	<property name="logfile.destination" value="${catalina.base}/logs" />
@@ -16,12 +24,13 @@
 	<logger name="com.samples.platform" level="DEBUG" additivity="true" />
 
 	<!-- spring -->
+
+	<logger name="org.springframework" level="DEBUG" />
+	<!--
 	<logger name="org.springframework" level="WARN" />
 	<logger name="org.springframework.web.context.ContextLoader" level="INFO" />
 	<logger name="org.springframework.integration.gateway.GatewayProxyFactoryBean" level="ERROR" />
 
-	<logger name="com.qpark.eip.core.spring.PayloadLogger" level="WARN"/>
-	<!--
 	<logger name="org.springframework.ws.server.endpoint.interceptor.AbstractValidatingInterceptor" level="WARN" />
 	<logger name="org.springframework.security" level="WARN" />
 	<logger name="org.springframework.ldap" level="WARN" />
@@ -60,9 +69,9 @@
 	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
 	<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE" />
 	-->
-
+	<logger name="org.aspectj.weaving.messages" level="TRACE"/>
 	<root>
-		<level value="WARN" />
+		<level value="TRACE" />
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

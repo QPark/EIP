@@ -1,6 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.samples.platform.service.iss.tech.support;
-
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBElement;
 
@@ -8,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.stereotype.Component;
 
+import com.qpark.eip.core.DateUtil;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlow;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlowRequestType;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlowResponseType;
@@ -63,28 +70,11 @@ public class GetSystemUserReportOperation {
 			// this.logger);
 		} finally {
 			this.logger.debug(" getSystemUserReport duration {}",
-					this.requestDuration(start));
+					DateUtil.getDuration(start));
 			this.logger.debug("-getSystemUserReport #{}, #f{}",
 					response/* .get() */ != null ? 1 : 0,
 					response.getFailure().size());
 		}
 		return this.of.createGetSystemUserReportResponse(response);
-	}
-
-	/**
-	 * @param start
-	 * @return the duration in 000:00:00.000 format.
-	 */
-	private String requestDuration(final long start) {
-		long millis = System.currentTimeMillis() - start;
-		String hmss = String.format("%03d:%02d:%02d.%03d",
-				TimeUnit.MILLISECONDS.toHours(millis),
-				TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS
-						.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-				TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
-						.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
-				TimeUnit.MILLISECONDS.toMillis(millis) - TimeUnit.SECONDS
-						.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)));
-		return hmss;
 	}
 }

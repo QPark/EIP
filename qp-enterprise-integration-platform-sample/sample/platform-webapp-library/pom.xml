@@ -2,15 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 <!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
 -->
 
 	<parent>
@@ -52,7 +49,6 @@
 							<Implementation-Build>${project.version}-b${buildNumber}</Implementation-Build>
 						</manifestEntries>
 					</archive>
-
 					<packagingIncludes>
 					</packagingIncludes>
 					<packagingExcludes>
@@ -343,18 +339,18 @@ WEB-INF/lib/xws-security-3.0.jar
 		</dependency>
 
 		<dependency>
-	    <groupId>org.apache.ws.security</groupId>
-	    <artifactId>wss4j</artifactId>
+			<groupId>org.apache.ws.security</groupId>
+			<artifactId>wss4j</artifactId>
 		</dependency>
 		<dependency>
 			<!-- Needed to generate multipe xsd WSDLs -->
 			<groupId>org.apache.ws.xmlschema</groupId>
 			<artifactId>xmlschema-core</artifactId>
 		</dependency>
-<dependency>
-	<groupId>org.apache.santuario</groupId>
-	<artifactId>xmlsec</artifactId>
-</dependency>
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
@@ -383,7 +379,7 @@ WEB-INF/lib/xws-security-3.0.jar
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -392,13 +388,15 @@ WEB-INF/lib/xws-security-3.0.jar
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
-		
+
 	</dependencies>
-<repositories>
-<repository>
-<id>spring-ext</id>
-<name>Spring repo-ext</name>
-<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
-</repository>
-</repositories>
+
+	<!-- This is needed because of org.apache.santuario:xmlsec jar file dependency! -->
+	<repositories>
+		<repository>
+			<id>spring-ext</id>
+			<name>Spring repo-ext</name>
+			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
+		</repository>
+	</repositories>
 </project>

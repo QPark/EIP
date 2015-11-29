@@ -1,7 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
 
 	<parent>
 		<groupId>com.qpark.eip</groupId>
@@ -23,8 +30,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
 
-		<junit.version>4.9</junit.version>
-		
 		<eip.service.ids>common, iss.common, library, iss.tech.support</eip.service.ids>
 		<service.name>library</service.name>
 		<model.dir>${project.build.directory}/model</model.dir>
@@ -33,7 +38,7 @@
 		<domain.version>2.0.0</domain.version>
 		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
 
-		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>		
+		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 	</properties>
 
 	<dependencies>
@@ -67,12 +72,11 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- 
 		<dependency>
-			<groupId>com.springsource.insight</groupId>
-			<artifactId>insight-annotation</artifactId>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<scope>test</scope>
 		</dependency>
-		 -->
 	</dependencies>
 
 	<build>
@@ -167,15 +171,4 @@
 		<name>QPark Consulting s.a r.l</name>
 		<url>http://www.qpark-consulting.com</url>
 	</organization>
-
-	<distributionManagement>
-		<repository>
-			<id>${repository.id}</id>
-			<url>${repository.url}</url>
-		</repository>
-		<site>
-			<id>site-server</id>
-			<url>${site.root}/${project.groupId}-${project.artifactId}-${project.version}</url>
-		</site>
-	</distributionManagement>
 </project>

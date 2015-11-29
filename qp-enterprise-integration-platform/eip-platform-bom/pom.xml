@@ -1,7 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom</artifactId>
@@ -81,7 +88,6 @@
 		<plugin.org.codehaus.mojo.xml-maven-plugin.version>1.0</plugin.org.codehaus.mojo.xml-maven-plugin.version>
 		<plugin.com.googlecode.maven-overview-plugin.maven-overview-plugin.version>1.6</plugin.com.googlecode.maven-overview-plugin.maven-overview-plugin.version>
 	</properties>
-
 
 	<dependencyManagement>
 		<dependencies>
@@ -190,11 +196,11 @@
 				<artifactId>aspectjtools</artifactId>
 				<version>${org.aspectj.aspectjtools.version}</version>
 			</dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
 				<version>${logback.version}</version>
-      </dependency>
+			</dependency>
 			<dependency>
 				<groupId>net.sourceforge.cardme</groupId>
 				<artifactId>cardme</artifactId>
@@ -220,11 +226,10 @@
 				</plugin>
 
 				<plugin>
-				<groupId>org.jvnet.hyperjaxb3</groupId>
-				<artifactId>maven-hyperjaxb3-plugin</artifactId>
-				<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
+					<groupId>org.jvnet.hyperjaxb3</groupId>
+					<artifactId>maven-hyperjaxb3-plugin</artifactId>
+					<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
 				</plugin>
-
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -246,6 +251,7 @@
 								<descriptorRefs>
 									<descriptorRef>project</descriptorRef>
 								</descriptorRefs>
+								<tarLongFileMode>omit</tarLongFileMode>
 							</configuration>
 						</execution>
 					</executions>
@@ -342,7 +348,12 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-surefire-plugin.version}</version>
-				</plugin>
+					<configuration>
+						<systemProperties>
+							<property>java.util.logging.config.file=src/test/resources/logging.properties</property>
+						</systemProperties>
+					</configuration>
+ 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
@@ -482,7 +493,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 	<inceptionYear>2015</inceptionYear>
 	<developers>

@@ -1,9 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.samples.platform.serviceprovider.techsupport.flow;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.qpark.eip.core.DateUtil;
+import com.qpark.eip.core.domain.persistencedefinition.FlowLogMessageType;
+import com.qpark.eip.core.spring.statistics.AsyncFlowLogMessagePersistence;
+import com.qpark.eip.service.base.msg.FailureType;
 import com.samples.platform.core.flow.SystemUserLogFlowGateway;
 import com.samples.platform.inf.iss.tech.support.ext.type.ExtSystemUserLogCriteriaType;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlow;
@@ -34,12 +51,15 @@ import com.springsource.insight.annotation.InsightOperation;
  * @author bhausen
  */
 public class SystemUserReportFlowImpl implements SystemUserReportFlow {
-	/** The {@link org.slf4j.Logger}. */
-	private Logger logger = LoggerFactory
-			.getLogger(SystemUserReportFlowImpl.class);
 	/** The {@link SystemUserLogFlowGateway}. */
 	@Autowired
 	private SystemUserLogFlowGateway flowGateway;
+	/** The {@link AsyncFlowLogMessagePersistence}. */
+	@Autowired
+	private AsyncFlowLogMessagePersistence flowLogMessagePersistence;
+	/** The {@link org.slf4j.Logger}. */
+	private Logger logger = LoggerFactory
+			.getLogger(SystemUserReportFlowImpl.class);
 	/** The {@link SystemUserLogCriteriaTypeMappingOperation}. */
 	@Autowired
 	private SystemUserLogCriteriaTypeMappingOperation systemUserLogCriteriaTypeMappingOperation;
@@ -93,22 +113,97 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	@InsightEndPoint
 	public SystemUserReportFlowResponseType invokeFlow(
 			final SystemUserReportFlowRequestType request) {
-		/* Execute request. */
-		SystemUserLogRequestType executeRequest = this
-				.executeRequest(request.getIn());
+		UUID sessionId = UUID.randomUUID();
+		List<FailureType> failures = new ArrayList<FailureType>();
+		SystemUserLogRequestType executeRequest = null;
+		SystemUserLogResponseType gatewayResponse = null;
+		GetSystemUserReportResponseType processResponse = new GetSystemUserReportResponseType();
 
+		/* Execute request. */
+		try {
+			executeRequest = this.executeRequest(request.getIn());
+		} catch (Exception e) {
+			this.flowLogMessagePersistence
+					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
+							AsyncFlowLogMessagePersistence.TYPE_FLOW,
+							AsyncFlowLogMessagePersistence.STEP_REQUEST_EXECUTION,
+							AsyncFlowLogMessagePersistence.SEVERITY_ERROR,
+							e.getMessage()));
+			this.logger.error(e.getMessage(), e);
+		}
 		/* Call the gateway. */
-		SystemUserLogResponseType gatewayResponse = this.flowGateway
-				.getSystemUserLog(executeRequest);
+		try {
+			gatewayResponse = this.flowGateway.getSystemUserLog(executeRequest);
+			if (gatewayResponse != null) {
+				failures.addAll(gatewayResponse.getFailure());
+			}
+			this.flowLogMessagePersistence
+					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
+							AsyncFlowLogMessagePersistence.TYPE_FLOW,
+							AsyncFlowLogMessagePersistence.STEP_FLOW_GATEWAY_EXECUTION,
+							AsyncFlowLogMessagePersistence.SEVERITY_INFORMATION,
+							"Retrieved SystemUserLogMessages"));
+		} catch (Exception e) {
+			this.flowLogMessagePersistence
+					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
+							AsyncFlowLogMessagePersistence.TYPE_FLOW,
+							AsyncFlowLogMessagePersistence.STEP_FLOW_GATEWAY_EXECUTION,
+							AsyncFlowLogMessagePersistence.SEVERITY_ERROR,
+							e.getMessage()));
+			this.logger.error(e.getMessage(), e);
+		}
 
 		/* Process response. */
-		GetSystemUserReportResponseType processResponse = this
-				.processResponse(gatewayResponse);
+		try {
+			processResponse = this.processResponse(gatewayResponse);
+		} catch (Exception e) {
+			this.flowLogMessagePersistence
+					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
+							AsyncFlowLogMessagePersistence.TYPE_FLOW,
+							AsyncFlowLogMessagePersistence.STEP_RESPONSE_PROCESSING,
+							AsyncFlowLogMessagePersistence.SEVERITY_ERROR,
+							e.getMessage()));
+			this.logger.error(e.getMessage(), e);
+		}
+		/* Enter failure messages. */
+		processResponse.getFailure().addAll(failures);
 
 		/* Prepare return value. */
 		SystemUserReportFlowResponseType value = new SystemUserReportFlowResponseType();
 		value.setOut(processResponse);
 		return value;
+	}
+
+	/**
+	 * Get the {@link FlowLogMessageType}.
+	 *
+	 * @param sessionId
+	 *            the session id.
+	 * @param type
+	 *            the type.
+	 * @param step
+	 *            the step.
+	 * @param severity
+	 *            the severity.
+	 * @param data
+	 *            the data.
+	 * @return the {@link FlowLogMessageType}.
+	 */
+	private FlowLogMessageType getFlowLogMessage(final UUID sessionId,
+			final String type, final String step, final String severity,
+			final String data) {
+		FlowLogMessageType log = new FlowLogMessageType();
+		log.setClassification("");
+		log.setFlowIdentifier(this.getClass().getName());
+		log.setFlowName(this.getClass().getSimpleName());
+		log.setFlowSession(sessionId.toString());
+		log.setFlowStep(step);
+		log.setLogMessageType(type);
+		log.setLogTime(DateUtil.get(new Date()));
+		log.setSeverity(severity);
+		log.setSubClassification("");
+		log.setDataDescription(data);
+		return log;
 	}
 
 	/**

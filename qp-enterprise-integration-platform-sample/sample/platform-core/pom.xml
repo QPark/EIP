@@ -2,15 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 <!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
 -->
 
 	<parent>
@@ -51,12 +48,12 @@
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core-spring-statistics</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
