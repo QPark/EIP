@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
- * Initial API and implementation
+ * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.xmlbeans;
 
@@ -116,15 +115,15 @@ public class XsdsUtil {
 	public static ComplexType findResponse(final ComplexType request,
 			final Set<ComplexType> complexTypes, final XsdsUtil config) {
 		ComplexType response = null;
-		int index = request.getClassName()
-				.lastIndexOf(config.getServiceRequestSuffix());
 		if (request.isRequestType()) {
+			int index = request.getClassName()
+					.lastIndexOf(config.getServiceRequestSuffix());
 			String baseName = request.getClassName().substring(0, index);
 			for (ComplexType complexType : complexTypes) {
 				if (complexType.isResponseType()
 						&& complexType.getPackageName()
 								.equals(request.getPackageName())
-						&& complexType.getClassName().contains(baseName)) {
+						&& complexType.getClassName().startsWith(baseName)) {
 					response = complexType;
 					break;
 				}
@@ -136,15 +135,15 @@ public class XsdsUtil {
 	public static ComplexType findRequest(final ComplexType response,
 			final Set<ComplexType> complexTypes, final XsdsUtil config) {
 		ComplexType request = null;
-		int index = response.getClassName()
-				.lastIndexOf(config.getServiceResponseSuffix());
 		if (response.isResponseType()) {
+			int index = response.getClassName()
+					.lastIndexOf(config.getServiceResponseSuffix());
 			String baseName = response.getClassName().substring(0, index);
 			for (ComplexType complexType : complexTypes) {
 				if (complexType.isRequestType()
 						&& complexType.getPackageName()
 								.equals(response.getPackageName())
-						&& complexType.getClassName().contains(baseName)) {
+						&& complexType.getClassName().startsWith(baseName)) {
 					request = complexType;
 					break;
 				}
@@ -245,6 +244,7 @@ public class XsdsUtil {
 		XsdContainer xsdContainer = null;
 		String text = Util.readFile(f);
 		String targetNameSpace = null;
+		String annotationDocumentation = null;
 		String packageName = null;
 		int index0 = text.indexOf("targetNamespace=\"");
 		if (index0 > 0) {
@@ -264,6 +264,15 @@ public class XsdsUtil {
 				}
 			}
 		}
+		if (packageName != null) {
+			index0 = text.indexOf("<documentation>");
+			int index1 = text.indexOf("</documentation>");
+			if (index0 > 0 && index1 > index0) {
+				index0 += "<documentation>".length();
+				annotationDocumentation = text.substring(index0, index1).trim();
+			}
+		}
+
 		TreeMap<String, String> imports = new TreeMap<String, String>();
 		index0 = text.indexOf("<import");
 		String namespace = null;
@@ -289,7 +298,7 @@ public class XsdsUtil {
 					location = text.substring(indexLocation,
 							indexLocation + index1);
 				}
-				if (namespace != null & location != null) {
+				if (namespace != null && location != null) {
 					if (imports.containsKey(namespace)) {
 						throw new RuntimeException(
 								"Double import of targetNamespace in "
@@ -309,9 +318,50 @@ public class XsdsUtil {
 			}
 		}
 
+		TreeMap<String, String> xmlnss = new TreeMap<String, String>();
+		TreeSet<String> usedXmlnss = new TreeSet<String>();
+		String namespaceToken;
+		index0 = text.indexOf("xmlns:");
+		while (index0 > 0) {
+			index0 += "xmlns:".length();
+			int index1 = text.indexOf("=\"", index0);
+			int index2 = text.indexOf('"', index1 + "=\"".length());
+			if (index1 > 0 && index2 > 0) {
+				namespaceToken = text.substring(index0, index1);
+				namespace = text.substring(index1 + "=\"".length(), index2);
+				if (namespace != null && namespaceToken != null) {
+					if (xmlnss.containsKey(namespaceToken)) {
+						throw new RuntimeException(
+								"Double xmlns namespace token in "
+										+ f.getAbsolutePath() + ":"
+										+ namespaceToken);
+					} else if (xmlnss.containsValue(namespace)) {
+						throw new RuntimeException("Double xmlns namespace in "
+								+ f.getAbsolutePath() + ":" + namespace);
+					}
+					xmlnss.put(namespaceToken, namespace);
+				} else {
+					throw new RuntimeException("Not declared xmlns in "
+							+ f.getAbsolutePath() + ": " + targetNameSpace
+							+ " xmlns:" + namespaceToken + "=" + namespace);
+				}
+				index0 = text.indexOf("xmlns:", index0 + 1);
+			} else {
+				index0 = 0;
+			}
+		}
+		for (String xmlnsNamespaceToken : xmlnss.keySet()) {
+			index0 = text.indexOf(new StringBuffer(16)
+					.append(xmlnsNamespaceToken).append(":").toString());
+			if (index0 > 0) {
+				usedXmlnss.add(xmlnsNamespaceToken);
+			}
+		}
+
 		if (targetNameSpace != null && packageName != null) {
 			xsdContainer = new XsdContainer(f, baseDirectory, packageName,
-					targetNameSpace, imports);
+					targetNameSpace, annotationDocumentation, imports, xmlnss,
+					usedXmlnss);
 		}
 		return xsdContainer;
 	}
@@ -349,7 +399,6 @@ public class XsdsUtil {
 						xsdContainerMap.put(xsdContainer.getTargetNamespace(),
 								xsdContainer);
 					}
-
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -489,6 +538,7 @@ public class XsdsUtil {
 		for (String serviceId : ServiceIdRegistry.getAllServiceIds()) {
 			entry = ServiceIdRegistry.getServiceIdEntry(serviceId);
 			System.out.println(entry.getServiceId());
+			System.out.println("\t" + entry.getAnnotationDocumentation());
 			System.out.println("\t" + entry.getTotalServiceIdImports());
 		}
 		System.out.println(ServiceIdRegistry.isValidServiceId("directory",
@@ -507,7 +557,9 @@ public class XsdsUtil {
 			sb.append("\t");
 		}
 		System.out.println(sb.toString() + entry.getServiceId() + " "
-				+ entry.getPackageName() + " " + entry.getTargetNamespace());
+				+ entry.getPackageName() + " "
+				+ entry.getAnnotationDocumentation() + " "
+				+ entry.getTargetNamespace());
 		for (ServiceIdEntry imported : entry.getImportedServiceEntries()) {
 			testGetServiceIdTree(imported, hierarchy + 1);
 		}
@@ -671,6 +723,8 @@ public class XsdsUtil {
 				sb.append("  ");
 				sb.append(et.getPackageName());
 				sb.append("  ");
+				sb.append(et.getAnnotationDocumentation());
+				sb.append("  ");
 				sb.append(et.getTargetNamespace());
 
 				if (et.getTargetNamespace() != null && !notImportedModels
@@ -768,6 +822,10 @@ public class XsdsUtil {
 					}
 				}
 			}
+			for (String warning : xx.getWarnings()) {
+				System.out.println("WARNING: " + xx.getTargetNamespace() + ":\t"
+						+ warning);
+			}
 		}
 	}
 
@@ -789,6 +847,8 @@ public class XsdsUtil {
 					f.getAbsolutePath().length()));
 			System.out
 					.println("\tpackage " + entry.getValue().getPackageName());
+			System.out.println("\tdocumentation "
+					+ entry.getValue().getAnnotationDocumentation());
 			System.out.println("\timports "
 					+ entry.getValue().getTotalImportedTargetNamespaces());
 			for (String imported : entry.getValue()
@@ -839,6 +899,7 @@ public class XsdsUtil {
 		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain\\mapping\\target\\model";
 		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\38\\com.ses.domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
 		// xsdPath =
 		// "C:\\xnb\\dev\\9.1\\bus.app.monics-2.0\\monics-webapp\\target\\model";
 		File dif = new File(xsdPath);
@@ -864,7 +925,7 @@ public class XsdsUtil {
 		// testPrintElementTypeRequestResponse(xsds, notImportedModels, true);
 		// testPrintComplexTypeRequestResponse(xsds, notImportedModels, true);
 		// testPrintComplexTypeFlowsContent(xsds, notImportedModels, true);
-		testPrintComplexTypeChildContent(xsds, notImportedModels, true);
+		// testPrintComplexTypeChildContent(xsds, notImportedModels, true);
 
 		// testPrintComplexTypeResponseSample(xsds, notImportedModels, true);
 		// testPrintComplexTypeChildContent

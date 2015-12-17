@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
 <schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0" 
+	jaxb:version="2.0"
 
-	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"  
-	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportTypes" 
+	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
+	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportTypes"
 
-	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" 
- 
-	xmlns:MPTechSupportmsg="http://www.ses.com/Interfaces/TechnicalSupportMessages" 
+	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
+
+	xmlns:MPTechSupportmsg="http://www.ses.com/Interfaces/TechnicalSupportMessages"
 	targetNamespace="http://www.samples.com/Interfaces/TechnicalSupportMessages"
 >
 
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportExternalDefinedTypes.xsd"/>
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportTypes.xsd"/>
-	<import namespace="http://www.qpark.com/Common/CommonServiceMessages" schemaLocation="../../../EIP/Common/CommonServiceMessages.xsd"/>
+
+	<import namespace="http://www.qpark.com/Common/BaseMessages" schemaLocation="../../../EIP/Common/BaseMessage.xsd"/>
 
 	<annotation>
 		<appinfo>
@@ -34,7 +43,7 @@
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="MPTechSupportExtModel:ExtSystemUserLogCriteriaType" />
 				</sequence>
@@ -46,7 +55,7 @@
 			<documentation>Return message containing system user log entries.</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="systemUserLog" type="MPTechSupportExtModel:ExtSystemUserLogType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>

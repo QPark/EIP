@@ -1,14 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
  ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
 
@@ -29,61 +23,37 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  */
 public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
-	 */
-	@Override
-	protected String getMappingType() {
-		return "ComplexMappingType";
+	private static String[] getDirectAccessProperties(final String name) {
+		String[] x = new String[0];
+		int index = name.indexOf('.');
+		if (index > 0 && name.endsWith("MappingType")) {
+			String s = name.substring(index + 1,
+					name.length() - "MappingType".length());
+			x = s.split("\\.");
+		}
+		return x;
 	}
 
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getPackageNameInterface()
-	 */
-	@Override
-	protected String getPackageNameInterface() {
-		StringBuffer sb = new StringBuffer(128);
-		sb.append(this.complexType.getPackageName().substring(0,
-				this.complexType.getPackageName().lastIndexOf('.')));
-		sb.append(".mapper.complex");
+	private static String getTabs(final int number) {
+		StringBuffer sb = new StringBuffer(number * 2);
+		for (int i = 0; i < number; i++) {
+			sb.append("\t");
+		}
 		return sb.toString();
 	}
 
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMethodName()
-	 */
-	@Override
-	protected String getMethodName() {
-		return "createMappingType";
-	}
-
 	public ComplexMappingTypeGenerator(final XsdsUtil config,
-			final ComplexType complexType,
+			final String basicFlowPackageName, final ComplexType complexType,
 			final ComplexContentList complexContentList, final Log log) {
-		super(config, complexType, complexContentList, log);
-	}
-
-	public void generateImpl(final File outputDirectory) {
-		String s = this.generateImpl();
-
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
-		this.log.info(new StringBuffer().append("Write Impl ").append(
-				f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, s);
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
+		super(config, basicFlowPackageName, complexType, complexContentList,
+				log);
 	}
 
 	String generateImpl() {
 		this.log.debug("+generateImpl");
 
-		String[] propertyNames = getDirectAccessProperties(this.complexType
-				.getType().getName().getLocalPart());
+		String[] propertyNames = getDirectAccessProperties(
+				this.complexType.getType().getName().getLocalPart());
 		List<ComplexTypeChild> children = this.getChildren();
 
 		boolean returnValueIsList = this.isReturnValueList();
@@ -91,25 +61,28 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		ComplexTypeChild ctc;
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
-		if (propertyNames.length > 0 && children != null && children.size() > 0) {
+		if (propertyNames.length > 0 && children != null
+				&& children.size() > 0) {
 			ctc = children.get(0);
 			for (int i = 0; i < propertyNames.length; i++) {
 				ctc = ctc.getComplexType().getChild(propertyNames[i]);
 				if (ctc != null) {
-					importedClasses.addAll(ctc.getComplexType()
-							.getJavaImportClasses());
+					importedClasses.addAll(
+							ctc.getComplexType().getJavaImportClasses());
 				} else {
 					break;
 				}
 			}
 		}
 		for (ComplexTypeChild child : children) {
-			importedClasses.addAll(child.getComplexType()
-					.getJavaImportClasses());
+			importedClasses
+					.addAll(child.getComplexType().getJavaImportClasses());
 		}
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
 		importedClasses.addAll(this.getImplImports(childrenTree));
+		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
+				.append(".FlowContext").toString());
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
@@ -128,8 +101,8 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("} implementation.\n");
 		if (this.complexType.getAnnotationDocumentation() != null) {
 			sb.append(" * <p/>\n");
-			sb.append(toJavadocHeader(this.complexType
-					.getAnnotationDocumentation()));
+			sb.append(toJavadocHeader(
+					this.complexType.getAnnotationDocumentation()));
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
@@ -159,8 +132,9 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.complexType.getType().getName().getNamespaceURI());
 		sb.append("</i>.\n");
 		sb.append("\t * This name space is stored in file ");
-		sb.append(this.config.getXsdContainerMap(
-				this.complexType.getTargetNamespace()).getRelativeName());
+		sb.append(this.config
+				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getRelativeName());
 		sb.append(".\n");
 		sb.append(this.getSeeInterfaceJavaDoc(children));
 		sb.append("\t */\n");
@@ -169,8 +143,14 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.complexType.getClassName());
 		sb.append(" ");
 		sb.append(this.getMethodName());
+
+		String methodArgs = this.getMethodArgs(children);
 		sb.append("(");
-		sb.append(this.getMethodArgs(children));
+		sb.append(methodArgs);
+		if (methodArgs.trim().length() > 0) {
+			sb.append(", ");
+		}
+		sb.append("FlowContext flowContext");
 		sb.append(") {\n");
 		sb.append("\t\t");
 		sb.append(this.complexType.getClassName());
@@ -193,7 +173,8 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		String propertiesValue = "mappedValue";
 
-		if (propertyNames.length > 0 && children != null && children.size() > 0) {
+		if (propertyNames.length > 0 && children != null
+				&& children.size() > 0) {
 			ctc = children.get(0);
 			for (int i = 0; i < propertyNames.length; i++) {
 				ctc = ctc.getComplexType().getChild(propertyNames[i]);
@@ -217,11 +198,13 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 					sb.append("\t\tif (");
 					sb.append(propertiesValue);
 					sb.append(" != null) {\n");
-					sb.append("\t\t\tfor (ReferenceDataType entryOfEnumerations : enumerations) {\n");
+					sb.append(
+							"\t\t\tfor (ReferenceDataType entryOfEnumerations : enumerations) {\n");
 					sb.append("\t\t\t\tif (");
 					sb.append(propertiesValue);
 					sb.append(".equals(entryOfEnumerations.getUUID())) {\n");
-					sb.append("\t\t\t\t\tmappedValue = entryOfEnumerations.getName();\n");
+					sb.append(
+							"\t\t\t\t\tmappedValue = entryOfEnumerations.getName();\n");
 					sb.append("\t\t\t\t\tbreak;\n");
 					sb.append("\t\t\t\t}\n");
 					sb.append("\t\t\t}\n");
@@ -254,13 +237,57 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
+	public void generateImpl(final File outputDirectory) {
+		String s = this.generateImpl();
+
+		File f = Util.getFile(outputDirectory, this.packageNameImpl,
+				new StringBuffer().append(this.implName).append(".java")
+						.toString());
+		this.log.info(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, s);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
+	 */
+	@Override
+	protected String getMappingType() {
+		return "ComplexMappingType";
+	}
+
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMethodName()
+	 */
+	@Override
+	protected String getMethodName() {
+		return "createMappingType";
+	}
+
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getPackageNameInterface()
+	 */
+	@Override
+	protected String getPackageNameInterface() {
+		StringBuffer sb = new StringBuffer(128);
+		sb.append(this.complexType.getPackageName().substring(0,
+				this.complexType.getPackageName().lastIndexOf('.')));
+		sb.append(".mapper.complex");
+		return sb.toString();
+	}
+
 	private String getProperty(final ComplexTypeChild object, int index,
 			final String[] propertyNames) {
 		StringBuffer sb = new StringBuffer(128);
 		String tabs = getTabs(index + 2);
 		String propertyName = Util.getXjcPropertyName(propertyNames[index]);
-		ComplexTypeChild child = object.getComplexType().getChild(
-				propertyNames[index]);
+		ComplexTypeChild child = object.getComplexType()
+				.getChild(propertyNames[index]);
 		if (child != null) {
 			sb.append("").append(tabs);
 			sb.append("if (").append(object.getJavaChildName())
@@ -294,24 +321,5 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 			sb.append(tabs).append("}\n");
 		}
 		return sb.toString();
-	}
-
-	private static String getTabs(final int number) {
-		StringBuffer sb = new StringBuffer(number * 2);
-		for (int i = 0; i < number; i++) {
-			sb.append("\t");
-		}
-		return sb.toString();
-	}
-
-	private static String[] getDirectAccessProperties(final String name) {
-		String[] x = new String[0];
-		int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
-			String s = name.substring(index + 1,
-					name.length() - "MappingType".length());
-			x = s.split("\\.");
-		}
-		return x;
 	}
 }

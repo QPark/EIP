@@ -1,14 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
  ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
 
@@ -27,40 +21,24 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * @author bhausen
  */
-public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator {
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
-	 */
-	@Override
-	protected String getMappingType() {
-		return "InterfaceMappingType";
-	}
-
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getPackageNameInterface()
-	 */
-	@Override
-	protected String getPackageNameInterface() {
-		StringBuffer sb = new StringBuffer(128);
-		sb.append(this.complexType.getPackageName().substring(0,
-				this.complexType.getPackageName().lastIndexOf('.')));
-		sb.append(".mapper");
-		return sb.toString();
-	}
-
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMethodName()
-	 */
-	@Override
-	protected String getMethodName() {
-		return new StringBuffer(32).append("create")
-				.append(this.complexType.getClassName()).toString();
+public class InterfaceMappingTypeGenerator
+		extends AbstractMappingTypeGenerator {
+	private static String[] getDirectAccessProperties(final String name) {
+		String[] x = new String[0];
+		int index = name.indexOf('.');
+		if (index > 0 && name.endsWith("MappingType")) {
+			String s = name.substring(index + 1,
+					name.length() - "MappingType".length());
+			x = s.split("\\.");
+		}
+		return x;
 	}
 
 	public InterfaceMappingTypeGenerator(final XsdsUtil config,
-			final ComplexType complexType,
+			final String basicFlowPackageName, final ComplexType complexType,
 			final ComplexContentList complexContentList, final Log log) {
-		super(config, complexType, complexContentList, log);
+		super(config, basicFlowPackageName, complexType, complexContentList,
+				log);
 	}
 
 	public void generateImpl(final File outputDirectory) {
@@ -79,6 +57,8 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		for (String importedClass : importedClasses) {
 			sb.append("import ").append(importedClass).append(";\n");
 		}
+		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
+				.append(".FlowContext").toString());
 
 		sb.append("\n");
 		sb.append("/**\n");
@@ -87,8 +67,8 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		sb.append("} implementation.\n");
 		if (this.complexType.getAnnotationDocumentation() != null) {
 			sb.append(" * <p/>\n");
-			sb.append(toJavadocHeader(this.complexType
-					.getAnnotationDocumentation()));
+			sb.append(toJavadocHeader(
+					this.complexType.getAnnotationDocumentation()));
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
@@ -124,8 +104,9 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		sb.append(this.complexType.getType().getName().getNamespaceURI());
 		sb.append("</i>.\n");
 		sb.append("\t * This name space is stored in file ");
-		sb.append(this.config.getXsdContainerMap(
-				this.complexType.getTargetNamespace()).getRelativeName());
+		sb.append(this.config
+				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getRelativeName());
 		sb.append(".\n");
 		sb.append(this.getSeeInterfaceJavaDoc(children));
 		sb.append("\t */\n");
@@ -134,9 +115,16 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		sb.append(this.complexType.getClassName());
 		sb.append(" ");
 		sb.append(this.getMethodName());
+
+		String methodArgs = this.getMethodArgs(children);
 		sb.append("(");
-		sb.append(this.getMethodArgs(children));
+		sb.append(methodArgs);
+		if (methodArgs.trim().length() > 0) {
+			sb.append(", ");
+		}
+		sb.append("FlowContext flowContext");
 		sb.append(") {\n");
+
 		sb.append("\t\t");
 		sb.append(this.complexType.getClassName());
 		sb.append(" mappingType = of.create");
@@ -175,8 +163,8 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		File f = Util.getFile(outputDirectory, this.packageNameImpl,
 				new StringBuffer().append(this.implName).append(".java")
 						.toString());
-		this.log.info(new StringBuffer().append("Write Impl ").append(
-				f.getAbsolutePath()));
+		this.log.info(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
@@ -186,14 +174,32 @@ public class InterfaceMappingTypeGenerator extends AbstractMappingTypeGenerator 
 		this.log.debug("-generateImpl");
 	}
 
-	private static String[] getDirectAccessProperties(final String name) {
-		String[] x = new String[0];
-		int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
-			String s = name.substring(index + 1,
-					name.length() - "MappingType".length());
-			x = s.split("\\.");
-		}
-		return x;
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
+	 */
+	@Override
+	protected String getMappingType() {
+		return "InterfaceMappingType";
+	}
+
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMethodName()
+	 */
+	@Override
+	protected String getMethodName() {
+		return new StringBuffer(32).append("create")
+				.append(this.complexType.getClassName()).toString();
+	}
+
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getPackageNameInterface()
+	 */
+	@Override
+	protected String getPackageNameInterface() {
+		StringBuffer sb = new StringBuffer(128);
+		sb.append(this.complexType.getPackageName().substring(0,
+				this.complexType.getPackageName().lastIndexOf('.')));
+		sb.append(".mapper");
+		return sb.toString();
 	}
 }

@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.samples.platform.inf.iss.tech.support.operation.impl;
 
 import org.slf4j.Logger;
@@ -5,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.qpark.eip.inf.FlowContext;
 import com.qpark.eip.inf.icd.map.DirectMappingType;
 import com.samples.platform.inf.iss.tech.support.ext.type.ExtSystemUserLogType;
 import com.samples.platform.inf.iss.tech.support.map.SystemUserLogContextMappingType;
@@ -83,12 +90,13 @@ public class SystemUserReportTypeMappingOperationImpl
 	 * Maps the {@link SystemUserReportTypeMapResponseType} out of the
 	 * {@link SystemUserReportTypeMapRequestType}.
 	 *
-	 * @see com.samples.platform.inf.iss.tech.support.operation.SystemUserReportTypeMappingOperation#invokeMapping(com.samples.platform.inf.iss.tech.support.svc.SystemUserReportTypeMapRequestType)
+	 * @see com.samples.platform.inf.iss.tech.support.operation.SystemUserReportTypeMappingOperation#invokeMapping(com.samples.platform.inf.iss.tech.support.svc.SystemUserReportTypeMapRequestType,FlowContext)
 	 */
 	@Override
 	public SystemUserReportTypeMapResponseType invokeMapping(
-			final SystemUserReportTypeMapRequestType request) {
-		this.logger.debug("+invokeMapping");
+			final SystemUserReportTypeMapRequestType request,
+			final FlowContext flowContext) {
+		this.logger.debug("+invokeMapping {}", flowContext.getSessionId());
 		SystemUserReportTypeMapResponseType response = this.of
 				.createSystemUserReportTypeMapResponseType();
 
@@ -99,52 +107,52 @@ public class SystemUserReportTypeMappingOperationImpl
 
 			/* Set date into systemUserReport. */
 			SystemUserLogLogDateMappingType systemUserReport_date = this.systemUserLogLogDateMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setDate(systemUserReport_date);
 
 			/* Set service into systemUserReport. */
 			SystemUserLogServiceNameMappingType systemUserReport_service = this.systemUserLogServiceNameMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setService(systemUserReport_service);
 
 			/* Set operation into systemUserReport. */
 			SystemUserLogOperationNameMappingType systemUserReport_operation = this.systemUserLogOperationNameMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setOperation(systemUserReport_operation);
 
 			/* Set serviceProvider into systemUserReport. */
 			SystemUserLogContextMappingType systemUserReport_serviceProvider = this.systemUserLogContextMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport
 					.setServiceProvider(systemUserReport_serviceProvider);
 
 			/* Set version into systemUserReport. */
 			SystemUserLogVersionMappingType systemUserReport_version = this.systemUserLogVersionMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setVersion(systemUserReport_version);
 
 			/* Set consumerSystemUser into systemUserReport. */
 			SystemUserLogUserNameMappingType systemUserReport_consumerSystemUser = this.systemUserLogUserNameMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport
 					.setConsumerSystemUser(systemUserReport_consumerSystemUser);
 
 			/* Set requests into systemUserReport. */
 			TechSupportSystemUserLogRequestsGrantedMappingType systemUserReport_requests = this.techSupportSystemUserLogRequestsGrantedMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setRequests(systemUserReport_requests);
 
 			/* Set requestsDenied into systemUserReport. */
 			TechSupportSystemUserLogRequestsDeniedMappingType systemUserReport_requestsDenied = this.techSupportSystemUserLogRequestsDeniedMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setRequestsDenied(systemUserReport_requestsDenied);
 
 			/* Set errors into systemUserReport. */
 			TechSupportSystemUserLogResponseFaultsMappingType systemUserReport_errors = this.techSupportSystemUserLogResponseFaultsMapper
-					.createMappingType(ext);
+					.createMappingType(ext, flowContext);
 			systemUserReport.setErrors(systemUserReport_errors);
 		}
-		this.logger.debug("-invokeMapping {}",
+		this.logger.debug("-invokeMapping {} {}", flowContext.getSessionId(),
 				response.getSystemUserReport().size());
 		return response;
 	}

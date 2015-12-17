@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0.
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
 -->
-<!--
-Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to license terms.
--->
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
+	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
+
 	xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages"
 	targetNamespace="http://www.qpark.com/Common/CommonServiceMessages"
-	elementFormDefault="unqualified" jaxb:version="2.1">
+>
 
-	<import schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd" namespace="http://www.qpark.com/CommonTypes"/>
+	<import namespace="http://www.qpark.com/CommonTypes" schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd"/>
+	<import namespace="http://www.qpark.com/Common/BaseMessages" schemaLocation="BaseMessage.xsd"/>
 
 	<annotation>
 		<appinfo>
@@ -28,141 +26,20 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 				<jaxb:package name="com.qpark.eip.service.common.msg" />
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation>
-			Message definitions of the common web service.
-		</documentation>
+		<documentation>Message definitions of the common web service.</documentation>
 	</annotation>
-
-
-	<complexType name="ResponseMessage">
-		<annotation>
-			<documentation>Response</documentation>
-		</annotation>
-		<sequence>
-			<element name="failure" type="EIPctym:FailureType"
-				minOccurs="0" maxOccurs="unbounded">
-				<annotation>
-					<documentation>
-						Failures that happened in the ESB
-					</documentation>
-				</annotation>
-			</element>
-		</sequence>
-	</complexType>
-	<complexType name="FailureType">
-		<annotation>
-			<documentation>
-				The FailureType carries information about incidents that
-				happened in the ESB Spring integration service operation
-				gateways. In contrast to that the EIP returns SOAP
-				faults in case of failures in the Spring Web Services
-				and WebService security layer. These failures are
-				maintained in the
-				web-servlet.xmlSoapFaultMappingExceptionResolver bean
-				mapping internal java exceptions to public EIP SOAP
-				messages.
-			</documentation>
-		</annotation>
-		<sequence>
-			<element name="code" type="EIPctym:ErrorCode">
-				<annotation>
-					<documentation>
-						The error code is intended to be used by the
-						service desk to help the end user in resolving
-						the issue. It shall be displayed with the
-						userMessage.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="userMessage" type="string">
-				<annotation>
-					<documentation>
-						The user message is displayed to the end user,
-						for example the EIP client. It describes the
-						incident in a way the end user can understand
-						and gives advice on how to deal with it.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="errorDetails" type="string">
-				<annotation>
-					<documentation>
-						Error details are intended to be logged in the
-						Web Service client. Details contain the stack
-						trace and further information about the incident
-						on the EIP.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="severity" type="EIPctym:Severity">
-				<annotation>
-					<documentation>
-						The severity can be used by EIP clients to react
-						on Service Bus incidents. For example the EIP
-						client can retry the execution of operation. In
-						general the design of the operations does not
-						foresee a retry of operations. (note: this does
-						not refer to retries in case the EIP is not
-						operational. In that case there will be a client
-						side exception.)
-					</documentation>
-				</annotation>
-			</element>
-		</sequence>
-	</complexType>
-	<simpleType name="Severity">
-		<annotation>
-			<documentation>
-				Severity definition for failure types
-			</documentation>
-		</annotation>
-		<restriction base="string">
-			<enumeration value="WARNING" />
-			<enumeration value="ERROR" />
-		</restriction>
-	</simpleType>
-
-	<simpleType name="ErrorCode">
-		<annotation>
-			<documentation>Error codes define the type of error that happened in the service provider application.</documentation>
-		</annotation>
-		<restriction base="string">
-			<enumeration value="E_ALL_NOT_KNOWN_ERROR" />
-		</restriction>
-	</simpleType>
-
-	<complexType name="RequestMessage">
-		<annotation>
-			<documentation>
-				The RequestMessage is inherited by all (but one) request
-				messages. The userName is part of all request messages
-				since the service provider filters the response based on
-				authorisation of the user.
-			</documentation>
-		</annotation>
-		<sequence>
-			<element name="userName" type="string" minOccurs="1"
-				maxOccurs="1">
-				<annotation>
-					<documentation>
-						The EIP application user
-					</documentation>
-				</annotation>
-			</element>
-		</sequence>
-	</complexType>
 
 	<complexType name="GetServiceStatusRequestType">
 		<annotation>
 			<documentation>
-				@ServiceConsumer ESB @ServiceImplementor ESB
-				@ServiceDataProvider ESB @ServiceDescription returns the
-				status of the service (connectivity to databases,
-				external systems ...).
+				@ServiceConsumer ESB
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription returns the status of the service (connectivity to databases, external systems ...).
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage" />
+			<extension base="EIPbasem:RequestMessage" />
 		</complexContent>
 	</complexType>
 	<complexType name="GetServiceStatusResponseType">
@@ -170,7 +47,7 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 			<documentation>The service status.</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="status" type="string">
 						<annotation>
@@ -191,20 +68,20 @@ Copyright © 2013, QPark Consulting sarl. All Rights Reserved. Use is subject to
 			</extension>
 		</complexContent>
 	</complexType>
+	<element name="GetServiceStatusRequest" type="EIPctym:GetServiceStatusRequestType" />
+	<element name="GetServiceStatusResponse" type="EIPctym:GetServiceStatusResponseType" />
+
 	<complexType name="GetReferenceDataRequestType">
 		<annotation>
-			<documentation>@ServiceConsumer
-tbd
-				@ServiceImplementor
-ESB
-				@ServiceDataProvider
-ESB
-				@ServiceDescription
-GetReferenceData returns reference data definitions from the ESB core to resolve UUID references.
+			<documentation>
+				@ServiceConsumer tbd
+				@ServiceImplementor ESB
+				@ServiceDataProvider ESB
+				@ServiceDescription GetReferenceData returns reference data definitions from the ESB core to resolve UUID references.
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:RequestMessage">
+			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType">
 						<annotation>
@@ -220,7 +97,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
 			<documentation>Reference data from ESb enumerations.</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="EIPctym:ResponseMessage">
+			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded">
 						<annotation>
@@ -232,14 +109,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
 		</complexContent>
 	</complexType>
 
-	<element name="GetServiceStatusRequest"
-		type="EIPctym:GetServiceStatusRequestType" />
-	<element name="GetServiceStatusResponse"
-		type="EIPctym:GetServiceStatusResponseType" />
-	<element name="GetReferenceDataRequest"
-		type="EIPctym:GetReferenceDataRequestType" />
-	<element name="GetReferenceDataResponse"
-		type="EIPctym:GetReferenceDataResponseType" />
-
+	<element name="GetReferenceDataRequest" type="EIPctym:GetReferenceDataRequestType" />
+	<element name="GetReferenceDataResponse" type="EIPctym:GetReferenceDataResponseType" />
 </schema>
 

@@ -1,14 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
  ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
 
@@ -32,60 +26,114 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
-	 */
-	@Override
-	protected String getMappingType() {
-		return "DirectMappingType";
+	private static String[] getDirectAccessProperties(final String name) {
+		String[] x = new String[0];
+		int index = name.indexOf('.');
+		if (index > 0 && name.endsWith("MappingType")) {
+			String s = name.substring(index + 1,
+					name.length() - "MappingType".length());
+			x = s.split("\\.");
+		}
+		return x;
 	}
 
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getPackageNameInterface()
-	 */
-	@Override
-	protected String getPackageNameInterface() {
-		StringBuffer sb = new StringBuffer(128);
-		sb.append(this.complexType.getPackageName().substring(0,
-				this.complexType.getPackageName().lastIndexOf('.')));
-		sb.append(".mapper.direct");
+	private static String getTabs(final int number) {
+		StringBuffer sb = new StringBuffer(number * 2);
+		for (int i = 0; i < number; i++) {
+			sb.append("\t");
+		}
 		return sb.toString();
 	}
 
-	/**
-	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMethodName()
-	 */
-	@Override
-	protected String getMethodName() {
-		return "createMappingType";
+	public static void main(final String[] args) {
+		String basePackageName = "com.qpark.eip.inf";
+		String xsdPath = "C:\\xnb\\dev\\xxxx\\domain-gen-flow\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\38\\com.ses.domain\\com.ses.domain.gen\\domain-gen-flow\\target\\model";
+		File dif = new File(xsdPath);
+		String messagePackageNameSuffix = "mapping flow";
+		long start = System.currentTimeMillis();
+		XsdsUtil xsds = new XsdsUtil(dif, "a.b.c.bus", messagePackageNameSuffix,
+				"delta");
+		ComplexContentList complexContentList = new ComplexContentList();
+		complexContentList.setupComplexContentLists(xsds);
+		System.out
+				.println(Util.getDuration(System.currentTimeMillis() - start));
+
+		String source = null;
+		ComplexType ct;
+		SchemaType type;
+		String ctNamespace;
+		String ctName;
+
+		ctName = "TblSaTrace.recIndexMappingType";
+		ctNamespace = "http://www.ses.com/Interfaces/MonicsSMSRBMappingTypes";
+		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
+		type = ct.getType().getElementProperties()[0].getType();
+
+		/* Check direct mapper. */
+		// DirectMappingTypeGenerator directMapper = new
+		// DirectMappingTypeGenerator(
+		// xsds, basePackageName, ct, complexContentList,
+		// new SystemStreamLog());
+		// source = directMapper.generateImpl();
+		//
+		// /* Check complex mapper. */
+		// ComplexMappingTypeGenerator complexMapper = new
+		// ComplexMappingTypeGenerator(
+		// xsds, basePackageName, ct, complexContentList,
+		// new SystemStreamLog());
+		// String[] propertyNames = getDirectAccessProperties(
+		// ct.getType().getName().getLocalPart());
+		// List<ComplexTypeChild> children = complexMapper.getChildren();
+		// ComplexTypeChild firstChild = children.get(0);
+		// source = complexMapper.generateImpl();
+
+		/* Check flow interface. */
+		// FlowInterfaceGenerator flow = new FlowInterfaceGenerator(xsds, ct,
+		// new SystemStreamLog());
+		// source = flow.generateInterface(basePackageName);
+		//
+		// /* Check default mapper. */
+		// DefaultMappingTypeGenerator def = new
+		// DefaultMappingTypeGenerator(xsds,
+		// basePackageName, ct, complexContentList, new SystemStreamLog());
+		// source = def.generateImpl();
+
+		for (ComplexRequestResponse crr : complexContentList
+				.getRequestResponses()) {
+			if (crr.request.getClassName()
+					.startsWith("TransponderMeasurement")) {
+				System.out.println(crr.request.getClassNameFullQualified());
+				// if (crr.request.getClassName().equals(ct.getClassName())) {
+				MappingOperationGenerator oper = new MappingOperationGenerator(
+						xsds, basePackageName, crr.request, crr.response,
+						complexContentList, new SystemStreamLog());
+				source = oper.generateImpl();
+				break;
+				// }
+			}
+		}
+		// /* Check direct mapper. */
+		// DirectMappingTypeGenerator direct = new
+		// DirectMappingTypeGenerator(xsds,
+		// basePackageName, ct, complexContentList, new SystemStreamLog());
+		// source = direct.generateImpl();
+
+		System.out.println(source);
 	}
 
 	public DirectMappingTypeGenerator(final XsdsUtil config,
-			final ComplexType complexType,
+			final String basicFlowPackageName, final ComplexType complexType,
 			final ComplexContentList complexContentList, final Log log) {
-		super(config, complexType, complexContentList, log);
-	}
-
-	public void generateImpl(final File outputDirectory) {
-		String s = this.generateImpl();
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
-		this.log.info(new StringBuffer().append("Write Impl ").append(
-				f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, s);
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
+		super(config, basicFlowPackageName, complexType, complexContentList,
+				log);
 	}
 
 	private String generateImpl() {
 		this.log.debug("+generateImpl");
 
-		String[] propertyNames = getDirectAccessProperties(this.complexType
-				.getType().getName().getLocalPart());
+		String[] propertyNames = getDirectAccessProperties(
+				this.complexType.getType().getName().getLocalPart());
 
 		String returnValueClassName = this.getReturnValueClassName();
 		boolean returnValueIsList = this.isReturnValueList();
@@ -131,12 +179,14 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 			importedClasses.addAll(ctc.getComplexType().getJavaImportClasses());
 		}
 		for (ComplexTypeChild child : children) {
-			importedClasses.addAll(child.getComplexType()
-					.getJavaImportClasses());
+			importedClasses
+					.addAll(child.getComplexType().getJavaImportClasses());
 		}
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
 		importedClasses.addAll(this.getImplImports(childrenTree));
+		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
+				.append(".FlowContext").toString());
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
@@ -155,8 +205,8 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("} implementation.\n");
 		if (this.complexType.getAnnotationDocumentation() != null) {
 			sb.append(" * <p/>\n");
-			sb.append(toJavadocHeader(this.complexType
-					.getAnnotationDocumentation()));
+			sb.append(toJavadocHeader(
+					this.complexType.getAnnotationDocumentation()));
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * The returned {@link ");
@@ -169,8 +219,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.complexType.getType().getName().getNamespaceURI());
 		sb.append("</i>\n");
 		sb.append(" * (see ");
-		sb.append(this.config.getXsdContainerMap(
-				this.complexType.getTargetNamespace()).getRelativeName());
+		sb.append(this.config
+				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getRelativeName());
 		sb.append(").\n");
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
@@ -203,8 +254,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.complexType.getType().getName().getNamespaceURI());
 		sb.append("</i>.\n");
 		sb.append("\t * This name space is stored in file ");
-		sb.append(this.config.getXsdContainerMap(
-				this.complexType.getTargetNamespace()).getRelativeName());
+		sb.append(this.config
+				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getRelativeName());
 		sb.append(".\n");
 
 		sb.append(this.getSeeInterfaceJavaDoc(children));
@@ -214,9 +266,16 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.complexType.getClassName());
 		sb.append(" ");
 		sb.append(this.getMethodName());
+
+		String methodArgs = this.getMethodArgs(children);
 		sb.append("(");
-		sb.append(this.getMethodArgs(children));
+		sb.append(methodArgs);
+		if (methodArgs.trim().length() > 0) {
+			sb.append(", ");
+		}
+		sb.append("FlowContext flowContext");
 		sb.append(") {\n");
+
 		sb.append("\t\t");
 		sb.append(this.complexType.getClassName());
 		sb.append(" mappingType = of.create");
@@ -271,123 +330,47 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	public static void main(final String[] args) {
-		String xsdPath = "C:\\xnb\\dev\\com.ses.domain.gen\\domain-gen-flow\\target\\model";
-		File dif = new File(xsdPath);
-		String messagePackageNameSuffix = "mapping flow";
-		long start = System.currentTimeMillis();
-		XsdsUtil xsds = new XsdsUtil(dif, "a.b.c.bus",
-				messagePackageNameSuffix, "delta");
-		ComplexContentList complexContentList = new ComplexContentList();
-		complexContentList.setupComplexContentLists(xsds);
-		System.out
-				.println(Util.getDuration(System.currentTimeMillis() - start));
+	public void generateImpl(final File outputDirectory) {
+		String s = this.generateImpl();
+		File f = Util.getFile(outputDirectory, this.packageNameImpl,
+				new StringBuffer().append(this.implName).append(".java")
+						.toString());
+		this.log.info(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, s);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
-		String source;
-		ComplexType ct;
-		SchemaType type;
-		String ctNamespace;
-		String ctName;
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
+	 */
+	@Override
+	protected String getMappingType() {
+		return "DirectMappingType";
+	}
 
-		ctNamespace = "http://www.ses.com/Interfaces/MonicsSCDBMappingTypes";
-		ctName = "Monics.DefaultCarrierDeleteMappingType";
-		// listProperties(type);
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMethodName()
+	 */
+	@Override
+	protected String getMethodName() {
+		return "createMappingType";
+	}
 
-		// System.out.println("xx");
-		// x(xsds, ctNamespace, ctName);
-		//
-		// ctNamespace = "http://www.ses.com/Interfaces/CLBTMappingTypes";
-		// ctName = "CLBT.DefaultInstanceMappingType";
-		// System.out.println("int");
-		// x(xsds, ctNamespace, ctName);
-		//
-		// ctName = "CLBT.DefaultZeroConfigSatMappingType";
-		// System.out.println("int");
-		// x(xsds, ctNamespace, ctName);
-		// ctName = "CLBT.DefaultCarrierMultiAccessMappingType";
-		// System.out.println("string");
-		// x(xsds, ctNamespace, ctName);
-		// ctName = "CLBT.DefaultCarrierThresholdCoverNTypeMappingType";
-		// System.out.println("float");
-		// x(xsds, ctNamespace, ctName);
-
-		ctName = "Monics.Satellite.orbitMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/MonicsSCDBMappingTypes";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		ComplexMappingTypeGenerator complexMapper = new ComplexMappingTypeGenerator(
-				xsds, ct, complexContentList, new SystemStreamLog());
-		String[] propertyNames = getDirectAccessProperties(ct.getType()
-				.getName().getLocalPart());
-		List<ComplexTypeChild> children = complexMapper.getChildren();
-		ComplexTypeChild satellite = children.get(0);
-		source = complexMapper.generateImpl();
-
-		ctName = "TransferTransponderViewFlowRequestType";
-		ctNamespace = "http://www.ses.com/Interfaces/Flow/MonitoringViews";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		FlowInterfaceGenerator flow = new FlowInterfaceGenerator(xsds, ct,
-				new SystemStreamLog());
-		source = flow.generateInterface("com.ses.domain.flow.x");
-
-		ctName = "Monics.DefaultCurrMonFlagMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/MonicsViewsMappingTypes";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		ctName = "Monics.DefaultCarrierMonitoringMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/MonicsSCDBMappingTypes";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		ctName = "CLBT.DefaultAntennaTemperatureMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/CLBTMappingTypes";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		DefaultMappingTypeGenerator def = new DefaultMappingTypeGenerator(xsds,
-				ct, complexContentList, new SystemStreamLog());
-		source = def.generateImpl();
-
-		ctName = "CarrierViewTypeMapRequestType";
-		ctNamespace = "http://www.ses.com/Interfaces/MonicsViewsMappings";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		// for (ComplexRequestResponse crr : complexContentList
-		// .getRequestResponses()) {
-		// if (crr.request.getClassName().equals(ct.getClassName())) {
-		// MappingOperationGenerator oper = new MappingOperationGenerator(
-		// xsds, crr.request, crr.response, complexContentList,
-		// new SystemStreamLog());
-		// source = oper.generateImpl();
-		// break;
-		// }
-		// }
-
-		ctName = "Beacon.beam.beamPointing.cSMBeamConfigurationMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/SatelliteMappingTypes";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		DirectMappingTypeGenerator direct = new DirectMappingTypeGenerator(
-				xsds, ct, complexContentList, new SystemStreamLog());
-		source = direct.generateImpl();
-
-		ctName = "CLBT.DefaultDigitalCarrierTypeMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/CLBTMappingTypes";
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-
-		// DefaultMappingTypeGenerator
-		def = new DefaultMappingTypeGenerator(xsds, ct, complexContentList,
-				new SystemStreamLog());
-		source = def.generateImpl();
-
-		System.out.println(source);
+	/**
+	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getPackageNameInterface()
+	 */
+	@Override
+	protected String getPackageNameInterface() {
+		StringBuffer sb = new StringBuffer(128);
+		sb.append(this.complexType.getPackageName().substring(0,
+				this.complexType.getPackageName().lastIndexOf('.')));
+		sb.append(".mapper.direct");
+		return sb.toString();
 	}
 
 	private String getProperty(final ComplexTypeChild object, int index,
@@ -395,8 +378,8 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		StringBuffer sb = new StringBuffer(128);
 		String tabs = getTabs(index + 2);
 		String propertyName = Util.getXjcPropertyName(propertyNames[index]);
-		ComplexTypeChild child = object.getComplexType().getChild(
-				propertyNames[index]);
+		ComplexTypeChild child = object.getComplexType()
+				.getChild(propertyNames[index]);
 
 		sb.append("").append(tabs);
 		sb.append("if (").append(object.getJavaChildName()).append(" != null");
@@ -429,24 +412,5 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(tabs).append("}\n");
 
 		return sb.toString();
-	}
-
-	private static String getTabs(final int number) {
-		StringBuffer sb = new StringBuffer(number * 2);
-		for (int i = 0; i < number; i++) {
-			sb.append("\t");
-		}
-		return sb.toString();
-	}
-
-	private static String[] getDirectAccessProperties(final String name) {
-		String[] x = new String[0];
-		int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
-			String s = name.substring(index + 1,
-					name.length() - "MappingType".length());
-			x = s.split("\\.");
-		}
-		return x;
 	}
 }

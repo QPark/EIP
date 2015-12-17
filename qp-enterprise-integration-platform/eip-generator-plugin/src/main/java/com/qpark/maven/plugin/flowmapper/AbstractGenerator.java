@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
 
 import java.util.ArrayList;
@@ -42,6 +50,29 @@ public abstract class AbstractGenerator {
 		return value;
 	}
 
+	public static final boolean isListImport(
+			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
+		boolean value = false;
+		for (Entry<ComplexTypeChild, List<ComplexTypeChild>> child : childrenTree) {
+			if (child.getKey().isList()) {
+				value = true;
+			} else {
+				value = isChildListImport(child.getValue());
+			}
+			if (value) {
+				break;
+			}
+		}
+		return value;
+	}
+
+	public static void main(final String[] args) {
+		System.out.println(toJavadocHeader("a\t\t\tb\n\tc d e f"));
+		String s = "'Activated' if bandwidth segment life cycle UUID is part 		 of the reference data category\n\t\t\t\t'Lifecycle State Filter: 		 Bandwidth Segments: Transfer' else 'Deactivated'\n\n\n";
+		System.out.println(toJavadocHeader(s));
+		System.out.println(toJavadocHeader("Number of xclj"));
+	}
+
 	public static String toJavadocHeader(final String documentation) {
 		int lenght = 77;
 		String s = documentation.replaceAll("\\t", " ").replaceAll("\\n", " ")
@@ -78,34 +109,11 @@ public abstract class AbstractGenerator {
 
 	}
 
-	public static void main(final String[] args) {
-		System.out.println(toJavadocHeader("a\t\t\tb\n\tc d e f"));
-		String s = "'Activated' if bandwidth segment life cycle UUID is part 		 of the reference data category\n\t\t\t\t'Lifecycle State Filter: 		 Bandwidth Segments: Transfer' else 'Deactivated'\n\n\n";
-		System.out.println(toJavadocHeader(s));
-		System.out.println(toJavadocHeader("Number of xclj"));
-	}
-
-	public static final boolean isListImport(
-			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
-		boolean value = false;
-		for (Entry<ComplexTypeChild, List<ComplexTypeChild>> child : childrenTree) {
-			if (child.getKey().isList()) {
-				value = true;
-			} else {
-				value = isChildListImport(child.getValue());
-			}
-			if (value) {
-				break;
-			}
-		}
-		return value;
-	}
-
+	protected final ComplexContentList complexContentList;
 	protected final XsdsUtil config;
 	protected final Log log;
 	protected String packageName;
 	protected String packageNameImpl;
-	protected final ComplexContentList complexContentList;
 
 	AbstractGenerator(final XsdsUtil config,
 			final ComplexContentList complexContentList, final Log log) {

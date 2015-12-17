@@ -2,5 +2,5 @@ Go to Windows->Preferences->XML->XML Catalog
 Select "User Specified Entries" and press button add.
 Choose "Rewrite Entry" and insert:
 - Key type to match: URI
-- Matching start string: http://213.169.104.125:8080/schemas
-- Rewrite prefix: platform:/resource/bus.domain.model/src/main/resources
+- Matching start string: http://<host>:<port>/schemas
+- Rewrite prefix: platform:/resource/model/src/main/resources

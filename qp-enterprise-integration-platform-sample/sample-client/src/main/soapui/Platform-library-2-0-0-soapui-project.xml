@@ -9,7 +9,7 @@
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
-          <!--* Copyright (c) 2013 QPark Consulting  S.a r.l.
+          <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0. 
@@ -250,7 +250,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
-          <!--* Copyright (c) 2013 QPark Consulting  S.a r.l.
+          <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0. 
@@ -274,7 +274,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
-          <!--* Copyright (c) 2013 QPark Consulting  S.a r.l.
+          <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0. 
@@ -593,7 +593,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
       <soap12:address location="http://localhost:8080/platform-library-2.0.0/services/library"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="CreateBook" bindingOperationName="CreateBook" type="Request-Response" outputName="CreateBookResponse" inputName="CreateBookRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:lib="http://www.sample.com/Library/LibraryServiceMessages">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/platform-library/services/library</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="CreateBook" bindingOperationName="CreateBook" type="Request-Response" outputName="CreateBookResponse" inputName="CreateBookRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:lib="http://www.sample.com/Library/LibraryServiceMessages">
    <soap:Header/>
    <soap:Body>
       <lib:CreateBookRequest>
@@ -610,7 +610,22 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </lib:book>
       </lib:CreateBookRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/CreateBookRequest"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetBook" bindingOperationName="GetBook" type="Request-Response" outputName="GetBookResponse" inputName="GetBookRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:lib="http://www.sample.com/Library/LibraryServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/CreateBookRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call name="create" wssPasswordType="PasswordDigest"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:lib="http://www.sample.com/Library/LibraryServiceMessages">
+   <soap:Header/>
+   <soap:Body>
+      <lib:CreateBookRequest>
+         <userName>xljb</userName>
+         <lib:book>
+<UUID>157B9F3B78170152CF14486349238822</UUID>
+<ISBN>157B9F3B78170152CF14486349238801</ISBN>
+<title>Title 157B9F3B78170152CF14486349238801</title>
+<price>10</price>
+<category>Category</category>
+<language>Language</language>
+         </lib:book>
+      </lib:CreateBookRequest>
+   </soap:Body>
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/CreateBookRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetBook" bindingOperationName="GetBook" type="Request-Response" outputName="GetBookResponse" inputName="GetBookRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:lib="http://www.sample.com/Library/LibraryServiceMessages">
    <soap:Header/>
    <soap:Body>
       <lib:GetBookRequest>
@@ -624,7 +639,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </lib:criteria>
       </lib:GetBookRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetBookRequest"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetReferenceData" bindingOperationName="GetReferenceData" type="Request-Response" outputName="GetReferenceDataResponse" inputName="GetReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetBookRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetReferenceData" bindingOperationName="GetReferenceData" type="Request-Response" outputName="GetReferenceDataResponse" inputName="GetReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
    <soap:Header/>
    <soap:Body>
       <com:GetReferenceDataRequest>
@@ -641,7 +656,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </criteria>
       </com:GetReferenceDataRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetReferenceDataRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetServiceStatus" bindingOperationName="GetServiceStatus" type="Request-Response" outputName="GetServiceStatusResponse" inputName="GetServiceStatusRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetReferenceDataRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetServiceStatus" bindingOperationName="GetServiceStatus" type="Request-Response" outputName="GetServiceStatusResponse" inputName="GetServiceStatusRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1" wssPasswordType="PasswordDigest" outgoingWss="" incomingWss=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/library</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:com="http://www.qpark.com/Common/CommonServiceMessages">
    <soap:Header/>
    <soap:Body>
       <com:GetServiceStatusRequest>
@@ -658,7 +673,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
-          <!--* Copyright (c) 2013 QPark Consulting  S.a r.l.
+          <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0. 
@@ -991,7 +1006,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
-          <!--* Copyright (c) 2013 QPark Consulting  S.a r.l.
+          <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0. 
@@ -1438,7 +1453,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          <userName>?</userName>
       </com:GetServiceStatusRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetFlowReport" bindingOperationName="GetFlowReport" type="Request-Response" outputName="GetFlowReportResponse" inputName="GetFlowReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetFlowReport" bindingOperationName="GetFlowReport" type="Request-Response" outputName="GetFlowReportResponse" inputName="GetFlowReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
    <soap:Header/>
    <soap:Body>
       <tec:GetFlowReportRequest>
@@ -1450,12 +1465,14 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </criteria>
       </tec:GetFlowReportRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetFlowReportRequest"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetSystemUserReport" bindingOperationName="GetSystemUserReport" type="Request-Response" outputName="GetSystemUserReportResponse" inputName="GetSystemUserReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetFlowReportRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetSystemUserReport" bindingOperationName="GetSystemUserReport" type="Request-Response" outputName="GetSystemUserReportResponse" inputName="GetSystemUserReportRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
    <soap:Header/>
    <soap:Body>
       <tec:GetSystemUserReportRequest>
          <userName>bhausen</userName>
-         <criteria><date>2015-11-26</date></criteria>
+         <criteria>
+<date>2015-11-26</date>
+</criteria>
       </tec:GetSystemUserReportRequest>
    </soap:Body>
 </soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetSystemUserReportRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="GetForwardedReferenceData" bindingOperationName="GetForwardedReferenceData" type="Request-Response" outputName="GetForwardedReferenceDataResponse" inputName="GetForwardedReferenceDataRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tec="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
@@ -1489,4 +1506,4 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          </criteria>
       </tec:GetOperationReportRequest>
    </soap:Body>
-</soap:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetOperationReportRequest"/></con:call></con:operation></con:interface><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.common</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint></con:endpointStrategy><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
+</soap:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages/iss.tech.support/GetOperationReportRequest"/></con:call></con:operation></con:interface><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/library</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.common</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library-2.0.0/services/iss.tech.support</con:endpoint><con:endpoint mode="COMPLEMENT" username="bus" password="password" wssType="PasswordDigest">http://localhost:8080/platform-library/services/library</con:endpoint></con:endpointStrategy><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

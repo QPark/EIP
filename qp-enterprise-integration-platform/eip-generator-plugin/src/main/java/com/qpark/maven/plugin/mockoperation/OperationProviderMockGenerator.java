@@ -1,14 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
  ******************************************************************************/
 package com.qpark.maven.plugin.mockoperation;
 
@@ -42,7 +36,8 @@ public class OperationProviderMockGenerator {
 	private final File outputDirectory;
 	private final boolean useInsightAnnotation;
 
-	public OperationProviderMockGenerator(final XsdsUtil config, final File outputDirectory, final ElementType element,
+	public OperationProviderMockGenerator(final XsdsUtil config,
+			final File outputDirectory, final ElementType element,
 			final boolean useInsightAnnotation, final Log log) {
 		this.config = config;
 		this.outputDirectory = outputDirectory;
@@ -54,10 +49,13 @@ public class OperationProviderMockGenerator {
 		this.methodName = element.getMethodName();
 		this.useInsightAnnotation = useInsightAnnotation;
 
-		this.elementResponse = XsdsUtil.findResponse(this.elementRequest, config.getElementTypes(), config);
+		this.elementResponse = XsdsUtil.findResponse(this.elementRequest,
+				config.getElementTypes(), config);
 		if (this.elementResponse != null) {
-			this.ctRequest = new ComplexType(this.elementRequest.getElement().getType(), this.config);
-			this.ctResponse = new ComplexType(this.elementResponse.getElement().getType(), this.config);
+			this.ctRequest = new ComplexType(
+					this.elementRequest.getElement().getType(), this.config);
+			this.ctResponse = new ComplexType(
+					this.elementResponse.getElement().getType(), this.config);
 
 			this.fqRequestType = this.ctRequest.getClassNameFullQualified();
 			this.fqResponseType = this.ctResponse.getClassNameFullQualified();
@@ -69,7 +67,8 @@ public class OperationProviderMockGenerator {
 
 	public void generate() {
 		this.log.debug("+generate");
-		if (this.elementResponse != null && this.ctResponse != null && !this.ctResponse.isSimpleType()
+		if (this.elementResponse != null && this.ctResponse != null
+				&& !this.ctResponse.isSimpleType()
 				&& !this.ctResponse.isPrimitiveType()) {
 			StringBuffer sb = new StringBuffer(1024);
 			sb.append("package ");
@@ -84,10 +83,12 @@ public class OperationProviderMockGenerator {
 			sb.append("import javax.xml.bind.JAXBException;\n");
 			sb.append("import javax.xml.bind.Unmarshaller;\n");
 			sb.append("\n");
-			sb.append("import org.springframework.beans.factory.annotation.Autowired;\n");
+			sb.append(
+					"import org.springframework.beans.factory.annotation.Autowired;\n");
 			// sb.append("import
 			// org.springframework.beans.factory.annotation.Qualifier;\n");
-			sb.append("import org.springframework.integration.annotation.ServiceActivator;\n");
+			sb.append(
+					"import org.springframework.integration.annotation.ServiceActivator;\n");
 			sb.append("import org.springframework.stereotype.Component;\n");
 			sb.append("\n");
 			sb.append("import ");
@@ -100,7 +101,8 @@ public class OperationProviderMockGenerator {
 			sb.append(this.elementRequest.getPackageName());
 			sb.append(".ObjectFactory;\n");
 			if (this.useInsightAnnotation) {
-				sb.append("import com.springsource.insight.annotation.InsightEndPoint;\n");
+				sb.append(
+						"import com.springsource.insight.annotation.InsightEndPoint;\n");
 			}
 			sb.append("\n");
 			sb.append("/**\n");
@@ -122,18 +124,21 @@ public class OperationProviderMockGenerator {
 			sb.append(" {\n");
 
 			sb.append("\t/** The {@link Logger}. */\n");
-			sb.append("\tprivate final org.slf4j.Logger logger = org.slf4j.LoggerFactory\n");
+			sb.append(
+					"\tprivate final org.slf4j.Logger logger = org.slf4j.LoggerFactory\n");
 			sb.append("\t\t\t.getLogger(");
 			sb.append(this.elementRequest.getClassNameMockOperationProvider());
 			sb.append(".class);\n");
 
 			sb.append("\n");
 			sb.append("	/** The {@link ObjectFactory}. */\n");
-			sb.append("	private final ObjectFactory of = new ObjectFactory();\n");
+			sb.append(
+					"	private final ObjectFactory of = new ObjectFactory();\n");
 			sb.append("\n");
 
 			sb.append("\t/**\n");
-			sb.append("\t * @param message the {@link JAXBElement} containing a {@link ");
+			sb.append(
+					"\t * @param message the {@link JAXBElement} containing a {@link ");
 			sb.append(this.requestType);
 			sb.append("}.\n");
 			sb.append("\t * @return the {@link JAXBElement} with a {@link ");
@@ -180,9 +185,11 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t\t\tresponse = responseSample;\n");
 			sb.append("\t\t\t}\n");
 			sb.append("\t\t\t// response.getFailure().clear();\n");
-			sb.append("\t\t\t// The operation {0} of service {1} is not implement!!\n");
+			sb.append(
+					"\t\t\t// The operation {0} of service {1} is not implement!!\n");
 			sb.append("\t\t\t// response.getFailure().add(\n");
-			sb.append("\t\t\t//\tFailureHandler.getFailureType(\"E_NOT_IMPLEMENTED_OPERATION\", \n");
+			sb.append(
+					"\t\t\t//\tFailureHandler.getFailureType(\"E_NOT_IMPLEMENTED_OPERATION\", \n");
 			sb.append("\t\t\t//\t\t\"");
 			sb.append(Util.splitOnCapital(this.methodName));
 			sb.append("\", \"");
@@ -194,7 +201,11 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t\t/* Add a not covered error to the response. */\n");
 			sb.append("\t\t\tthis.logger.error(e.getMessage(), e);\n");
 			sb.append("\t\t\t// response.getFailure().add(\n");
-			sb.append("\t\t\t// FailureHandler.handleException(e, \"E_ALL_NOT_KNOWN_ERROR\", this.logger);\n");
+			sb.append(
+					"\t\t\t// FailureHandler.getFailureType(\"E_NOT_KNOWN_ERROR\", e);\n");
+			sb.append("\t\t\t// response.getFailure().add(\n");
+			sb.append(
+					"\t\t\t// FailureHandler.handleException(e, \"E_NOT_KNOWN_ERROR\", this.logger);\n");
 			sb.append("\t\t} finally {\n");
 
 			sb.append("\t\t\tthis.logger.debug(\" ");
@@ -205,7 +216,8 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t\tthis.logger.debug(\"-");
 			sb.append(this.methodName);
 			sb.append(" #{}, #f{}\",\n");
-			sb.append("\t\t\t\t\tresponse/*.get()*/ != null ? 1 : 0, response.getFailure()\n");
+			sb.append(
+					"\t\t\t\t\tresponse/*.get()*/ != null ? 1 : 0, response.getFailure()\n");
 			sb.append("\t\t\t\t\t\t\t.size());\n");
 
 			sb.append("\t\t}\n");
@@ -234,7 +246,8 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t\t\t\t.newInstance(\"");
 			sb.append(this.ctRequest.getPackageName());
 			sb.append("\");\n");
-			sb.append("\t\t\tUnmarshaller unmarshaller = jaxbContext.createUnmarshaller();\n");
+			sb.append(
+					"\t\t\tUnmarshaller unmarshaller = jaxbContext.createUnmarshaller();\n");
 			sb.append("\t\t\tJAXBElement<");
 			sb.append(this.responseType);
 			sb.append("> jaxb = (JAXBElement<");
@@ -246,7 +259,8 @@ public class OperationProviderMockGenerator {
 			sb.append("\t\t} catch (Exception e) {\n");
 			sb.append("\t\t\tthis.logger.debug(\"");
 			sb.append(this.operationName);
-			sb.append(" generate sample message error: {}\", e.getMessage());\n");
+			sb.append(
+					" generate sample message error: {}\", e.getMessage());\n");
 			sb.append("\t\t\tmock = null;\n");
 			sb.append("\t\t}\n");
 			sb.append("\t\treturn mock;\n");
@@ -258,7 +272,8 @@ public class OperationProviderMockGenerator {
 			sb.append("\t */\n");
 			sb.append("\tprivate String getSampleXml() {\n");
 			sb.append(XsdsUtil.getSampleCodeing(this.ctResponse.getType(),
-					this.elementResponse.getElement().getName().getLocalPart()));
+					this.elementResponse.getElement().getName()
+							.getLocalPart()));
 			sb.append("\t\treturn sb.toString();\n");
 			sb.append("\t}\n");
 
@@ -267,7 +282,8 @@ public class OperationProviderMockGenerator {
 			sb.append("\t * @return the duration in 000:00:00.000 format.\n");
 			sb.append("\t */\n");
 			sb.append("\tprivate String requestDuration(final long start) {\n");
-			sb.append("\t\tlong millis = System.currentTimeMillis() - start;\n");
+			sb.append(
+					"\t\tlong millis = System.currentTimeMillis() - start;\n");
 			sb.append(
 					"\t\tString hmss = String.format(\"%03d:%02d:%02d.%03d\",TimeUnit.MILLISECONDS.toHours(millis),\n");
 			sb.append(
@@ -281,9 +297,13 @@ public class OperationProviderMockGenerator {
 
 			sb.append("}\n");
 			sb.append("\n");
-			File f = Util.getFile(this.outputDirectory, this.packageName, new StringBuffer()
-					.append(this.elementRequest.getClassNameMockOperationProvider()).append(".java").toString());
-			this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+			File f = Util.getFile(this.outputDirectory, this.packageName,
+					new StringBuffer()
+							.append(this.elementRequest
+									.getClassNameMockOperationProvider())
+							.append(".java").toString());
+			this.log.info(new StringBuffer().append("Write ")
+					.append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sb.toString());
 			} catch (Exception e) {

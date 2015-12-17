@@ -1,19 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0. 
  * The Eclipse Public License is available at 
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
  ******************************************************************************/
 package com.samples.platform.core.failure;
 
 import com.qpark.eip.core.failure.FailureDescription;
-import com.qpark.eip.service.common.msg.FailureType;
+import com.qpark.eip.service.base.msg.FailureType;
 
 /**
  * @author bhausen
@@ -57,13 +53,14 @@ public class FailureException extends RuntimeException {
 	 */
 	public FailureType getFailure() {
 		if (this.fd != null && this.ft == null) {
-			this.ft = FailureTypeMapper.getFailureType(this.fd);
+			this.ft = FailureHandler.getFailureType(this.fd);
 		}
 		return this.ft;
 	}
 
 	/**
-	 * @param failure the failure to set.
+	 * @param failure
+	 *            the failure to set.
 	 */
 	public void setFailure(final FailureType failure) {
 		this.ft = failure;

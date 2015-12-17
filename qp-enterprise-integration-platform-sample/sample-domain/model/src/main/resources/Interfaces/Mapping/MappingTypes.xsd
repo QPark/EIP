@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" elementFormDefault="unqualified" jaxb:version="2.0"
-	 
-	xmlns:MPmp="http://www.qpark.com/Interfaces/MappingTypes" 
-	targetNamespace="http://www.qpark.com/Interfaces/MappingTypes">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+
+	xmlns:MPmp="http://www.qpark.com/Interfaces/MappingTypes"
+	targetNamespace="http://www.qpark.com/Interfaces/MappingTypes"
+>
 
 	<annotation>
 		<appinfo>
@@ -11,7 +20,7 @@
 				<jaxb:package name="com.qpark.eip.inf.icd.map"/>
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation>Interfaces-trunk: Basic mapping type domain model</documentation>
+		<documentation>Interfaces: Basic mapping type domain model</documentation>
 	</annotation>
 
 	<complexType abstract="true" name="InterfaceType">
@@ -50,18 +59,18 @@
 		</complexContent>
 	</complexType>
 	<complexType name="CustomEnumerationMappingType">
-        <annotation>
-        	<documentation>Custom variant of the mapping where the clear text value needs to be derived.</documentation>
-        </annotation>
-        <complexContent>
+		<annotation>
+			<documentation>Custom variant of the mapping where the clear text value needs to be derived.</documentation>
+		</annotation>
+		<complexContent>
 			<extension base="MPmp:EnumerationMappingType"/>
 		</complexContent>
 	</complexType>
 	<complexType name="EnumerationMappingType">
-        <annotation>
-        	<documentation>Mapping of an enuemeration UUID to an EnumerationType containing the UUID and the clear text value.</documentation>
-        </annotation>
-        <complexContent>
+		<annotation>
+			<documentation>Mapping of an enuemeration UUID to an EnumerationType containing the UUID and the clear text value.</documentation>
+		</annotation>
+		<complexContent>
 			<extension base="MPmp:MappingType"/>
 		</complexContent>
 	</complexType>

@@ -1,11 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom</artifactId>
-	<version>1.0.0</version>
+	<version>2.1.0</version>
 	<packaging>pom</packaging>
 	<name>eip-platform-bom</name>
 	<description>EIP IO Platform bill of materials</description>
@@ -37,20 +44,21 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<com.qpark.eip.platform.version>3.0.0</com.qpark.eip.platform.version>
-		<com.qpark.eip.platform.impl.version>2.0.0</com.qpark.eip.platform.impl.version>
+		<com.qpark.eip.platform.version>3.1.0</com.qpark.eip.platform.version>
+		<com.qpark.maven.hyperjaxb3-naming.version>1.0.0</com.qpark.maven.hyperjaxb3-naming.version>
+		<com.qpark.eip.platform.impl.version>2.1.0</com.qpark.eip.platform.impl.version>
 		<io.spring.platform.version>1.1.4.RELEASE</io.spring.platform.version>
 
 		<javax.javaee-api>7.0</javax.javaee-api>
 		<com.sun.xml.bind.jaxb-impl.version>2.2.11</com.sun.xml.bind.jaxb-impl.version>
 		<org.jvnet.jaxb2_commons.jaxb2-basics.version>0.9.5</org.jvnet.jaxb2_commons.jaxb2-basics.version>
-		<org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>0.6.0</org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>
+		<org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>0.6.1</org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>
 		<org.apache.santuario-xmlsec>1.5.8</org.apache.santuario-xmlsec>
 		<org.aspectj.aspectjtools.version>1.8.7</org.aspectj.aspectjtools.version>
 		<net.sourceforge.cardme.cardme.version>0.4.0</net.sourceforge.cardme.cardme.version>
+		<com.jcraft-jzlib.version>1.1.3</com.jcraft-jzlib.version>
 		<com.springsource.insight.insight-annotation.version>1.9.2.RELEASE</com.springsource.insight.insight-annotation.version>
 
-		<plugin.com.qpark.maven.eip-generator-plugin.version>3.0.0</plugin.com.qpark.maven.eip-generator-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-antrun-plugin.version>1.8</plugin.org.apache.maven.plugins.maven-antrun-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-assembly-plugin.version>2.6</plugin.org.apache.maven.plugins.maven-assembly-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-clean-plugin.version>3.0.0</plugin.org.apache.maven.plugins.maven-clean-plugin.version>
@@ -82,7 +90,6 @@
 		<plugin.com.googlecode.maven-overview-plugin.maven-overview-plugin.version>1.6</plugin.com.googlecode.maven-overview-plugin.maven-overview-plugin.version>
 	</properties>
 
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -94,6 +101,11 @@
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-plugin-xml</artifactId>
 				<version>${com.qpark.eip.platform.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-hyperjaxb3-naming</artifactId>
+				<version>${com.qpark.maven.hyperjaxb3-naming.version}</version>
 			</dependency>
 
 			<dependency>
@@ -164,6 +176,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jvnet.hyperjaxb3</groupId>
+				<artifactId>hyperjaxb3-ejb-plugin</artifactId>
+				<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jvnet.hyperjaxb3</groupId>
 				<artifactId>maven-hyperjaxb3-plugin</artifactId>
 				<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
 			</dependency>
@@ -190,15 +207,20 @@
 				<artifactId>aspectjtools</artifactId>
 				<version>${org.aspectj.aspectjtools.version}</version>
 			</dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
 				<version>${logback.version}</version>
-      </dependency>
+			</dependency>
 			<dependency>
 				<groupId>net.sourceforge.cardme</groupId>
 				<artifactId>cardme</artifactId>
 				<version>${net.sourceforge.cardme.cardme.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jzlib</artifactId>
+				<version>${com.jcraft-jzlib.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -209,22 +231,28 @@
 				<plugin>
 					<groupId>com.qpark.maven</groupId>
 					<artifactId>eip-generator-plugin</artifactId>
-					<version>${plugin.com.qpark.maven.eip-generator-plugin.version}</version>
+					<version>${com.qpark.eip.platform.version}</version>
 					<dependencies>
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-plugin-xml</artifactId>
-							<version>${plugin.com.qpark.maven.eip-generator-plugin.version}</version>
+							<version>${com.qpark.eip.platform.version}</version>
 						</dependency>
 					</dependencies>
 				</plugin>
 
 				<plugin>
-				<groupId>org.jvnet.hyperjaxb3</groupId>
-				<artifactId>maven-hyperjaxb3-plugin</artifactId>
-				<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
+					<groupId>org.jvnet.hyperjaxb3</groupId>
+					<artifactId>maven-hyperjaxb3-plugin</artifactId>
+					<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>com.qpark.maven</groupId>
+							<artifactId>eip-hyperjaxb3-naming</artifactId>
+							<version>${com.qpark.maven.hyperjaxb3-naming.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
-
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -246,6 +274,7 @@
 								<descriptorRefs>
 									<descriptorRef>project</descriptorRef>
 								</descriptorRefs>
+								<formats><format>zip</format></formats>
 							</configuration>
 						</execution>
 					</executions>
@@ -330,10 +359,16 @@
 					<artifactId>maven-source-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-source-plugin.version}</version>
 					<executions>
+						<!-- here we override the super-pom attach-sources executionid which
+						calls sources:jar goal. That goals forks the lifecycle, causing
+						the generate-sources phase to be called twice for the install goal.
+						This causes any other plugin bound to the generate-sources phase to
+						be called twice which usually has nasty side effects, let alone
+						creating duplicate processing and longer build times. -->
 						<execution>
 							<id>attach-sources</id>
 							<goals>
-								<goal>jar</goal>
+								<goal>jar-no-fork</goal>
 							</goals>
 						</execution>
 					</executions>
@@ -342,7 +377,12 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-surefire-plugin.version}</version>
-				</plugin>
+					<configuration>
+						<systemProperties>
+							<property>java.util.logging.config.file=src/test/resources/logging.properties</property>
+						</systemProperties>
+					</configuration>
+ 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
@@ -482,7 +522,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 	<inceptionYear>2015</inceptionYear>
 	<developers>

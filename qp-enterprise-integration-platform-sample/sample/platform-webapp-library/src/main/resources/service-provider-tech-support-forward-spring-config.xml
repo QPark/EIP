@@ -17,4 +17,41 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 	"
 >
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+
+	<int:gateway id="eipCallerComSamplesPlatformCommonForwardGetReferenceDataGateway"
+		service-interface="com.qpark.eip.service.common.msg.gateway.GetReferenceData"
+		default-request-channel="internalEipCallerComSamplesPlatformCommonForwardRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesPlatformCommonForwardGetReferenceDataResponseChannel"
+	/>
+	<int:channel id="internalEipCallerComSamplesPlatformCommonForwardRequestChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommonForwardGetReferenceDataResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesPlatformCommonForwardWsOutgoingChannel" />
+	<int:router id="internalEipCallerComSamplesPlatformCommonForwardResponseTypeRouter"
+		input-channel="internalEipCallerComSamplesPlatformCommonForwardWsOutgoingChannel"
+		ref="internalEipCallerComSamplesPlatformCommonForwardJAXBElementAwarePayloadTypeRouter"
+	/>
+	<bean id="internalEipCallerComSamplesPlatformCommonForwardJAXBElementAwarePayloadTypeRouter" class="com.qpark.eip.core.spring.JAXBElementAwarePayloadTypeRouter">
+		<property name="channelMappings">
+			<map>
+				<entry key="com.qpark.eip.service.common.msg.GetReferenceDataResponseType" value="internalEipCallerComSamplesPlatformCommonForwardGetReferenceDataResponseChannel"/>
+			</map>
+		</property>
+	</bean>
+	<int-ws:outbound-gateway id="eipCallerComSamplesPlatformCommonForwardOutboundGateway"
+		request-channel="internalEipCallerComSamplesPlatformCommonForwardRequestChannel"
+		reply-channel="internalEipCallerComSamplesPlatformCommonForwardWsOutgoingChannel"
+		uri="${service.endpoint.url.com.samples.platform.common}"
+		interceptors="eipCallerComSamplesPlatformCommonWsInterceptors"
+		message-factory="soap12MessageFactory"
+		marshaller="eipCallerComSamplesPlatformCommonMarshaller" unmarshaller="eipCallerComSamplesPlatformCommonMarshaller"
+	/>
+
 </beans>

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.config;
 
 import java.lang.reflect.Constructor;
@@ -9,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
@@ -16,13 +25,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ContextNameProvider;
-import com.qpark.eip.core.spring.statistics.AppUserStatisticsChannelAdapter;
 import com.qpark.eip.core.spring.statistics.AsyncFlowLogMessagePersistence;
 import com.qpark.eip.core.spring.statistics.FlowExecutionLog;
 import com.qpark.eip.core.spring.statistics.MessageContentProvider;
-import com.qpark.eip.core.spring.statistics.SysUserStatisticsChannelInvocationListener;
 import com.qpark.eip.core.spring.statistics.dao.StatisticsEraser;
 import com.qpark.eip.core.spring.statistics.dao.StatisticsLoggingDao;
+import com.qpark.eip.core.spring.statistics.impl.AppUserStatisticsChannelAdapter;
+import com.qpark.eip.core.spring.statistics.impl.AsyncFlowLogMessagePersistenceImpl;
+import com.qpark.eip.core.spring.statistics.impl.SysUserStatisticsChannelInvocationListener;
 
 /**
  * Provides the spring config of the eip core authority.
@@ -30,8 +40,9 @@ import com.qpark.eip.core.spring.statistics.dao.StatisticsLoggingDao;
  * @author bhausen
  */
 @Configuration
-@EnableScheduling
 @Import({ EipPersistenceConfig.class })
+@EnableScheduling
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class EipStatisticsConfig {
 	/** The {@link org.slf4j.Logger} for the application user statistics. */
 	public static Logger LOGGER_STATISTICS_APP_USER = LoggerFactory.getLogger(
@@ -70,13 +81,13 @@ public class EipStatisticsConfig {
 	}
 
 	/**
-	 * Get the {@link AsyncFlowLogMessagePersistence} bean.
+	 * Get the {@link AsyncFlowLogMessagePersistenceImpl} bean.
 	 *
-	 * @return the {@link AsyncFlowLogMessagePersistence} bean.
+	 * @return the {@link AsyncFlowLogMessagePersistenceImpl} bean.
 	 */
 	@Bean(name = "ComQparkEipCoreSpringStatisticsAsyncFlowLogMessagePersistence")
 	public AsyncFlowLogMessagePersistence getAsyncFlowLogMessagePersistence() {
-		AsyncFlowLogMessagePersistence bean = new AsyncFlowLogMessagePersistence();
+		AsyncFlowLogMessagePersistence bean = new AsyncFlowLogMessagePersistenceImpl();
 		return bean;
 	}
 

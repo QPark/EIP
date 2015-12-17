@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.maven.plugin.xjc;
 
 import java.io.File;
@@ -8,23 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
@@ -227,8 +216,14 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 		List<String> sources = new ArrayList<String>();
 		StringBuffer sb = new StringBuffer(1024);
 		Set<String> imported = new TreeSet<String>();
+		List<String> xsdWarnings = new ArrayList<String>();
+		StringBuffer warnings = new StringBuffer(128);
 		if (!this.includeAllModels) {
 			for (XsdContainer xc : xsdContainerMap.values()) {
+				for (String warning : xc.getWarnings()) {
+					warnings.append(xc.getTargetNamespace()).append(":\t")
+							.append(warning).append("\n");
+				}
 				if (XsdsUtil.isMessagePackageName(xc.getPackageName(),
 						this.messagePackageNameSuffixes,
 						this.messagePackageNameSuffixes)) {
@@ -246,6 +241,10 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 				imported.addAll(xc.getTotalImportedTargetNamespaces());
 			}
 			for (XsdContainer xc : xsdContainerMap.values()) {
+				for (String warning : xc.getWarnings()) {
+					warnings.append(xc.getTargetNamespace()).append(":\t")
+							.append(warning).append("\n");
+				}
 				if (!imported.contains(xc.getTargetNamespace())) {
 					if (sb.length() > 0) {
 						sb.append(",\n");
@@ -261,6 +260,17 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 		for (String source : sources) {
 			this.getLog().info("\t" + source);
 		}
+		File f = Util.getFile(new File(this.outputDirectory, ".."),
+				"domain-warnings.txt");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, warnings.toString());
+		} catch (Exception e) {
+			this.getLog().error(e.getMessage());
+			e.printStackTrace();
+		}
+
 		return sources;
 	}
 

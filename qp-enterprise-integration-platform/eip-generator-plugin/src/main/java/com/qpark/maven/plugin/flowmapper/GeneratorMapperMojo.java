@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
 
 import java.io.File;
@@ -28,18 +34,34 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 @Mojo(name = "generate-flow-mapper",
 		defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMapperMojo extends AbstractMojo {
+	public static List<ComplexTypeChild> getValidChildren(
+			final ComplexType complexType) {
+		List<ComplexTypeChild> list = new ArrayList<ComplexTypeChild>(
+				complexType.getChildren().size());
+		for (ComplexTypeChild child : complexType.getChildren()) {
+			if (!child.getComplexType().isSimpleType()
+			// && !child.getComplexType().isAbstractType()
+			) {
+				if (child.getComplexType().getType().getName().getLocalPart()
+						.equals("NoMappingType")) {
+					/* not to add. */
+				} else if (child.getChildName().equals("return")) {
+					/* not to add. */
+				} else if (child.getComplexType().getType().getName()
+						.getLocalPart().equals("anyType")) {
+					/* not to add. */
+				} else {
+					list.add(child);
+				}
+			}
+		}
+		return list;
+	}
+
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "baseDirectory",
 			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
-	/** The directory where to put the generated interfaces. */
-	@Parameter(property = "outputInterfacesDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
-	private File outputInterfacesDirectory;
-	/** The directory where to put the generated classes. */
-	@Parameter(property = "outputClassesDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
-	private File outputClassesDirectory;
 	/** The base package name where to place the mappings factories. */
 	@Parameter(property = "basePackageName", defaultValue = "")
 	private String basePackageName;
@@ -65,41 +87,161 @@ public class GeneratorMapperMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "mappingResponseSuffix", defaultValue = "Response")
 	private String mappingResponseSuffix;
+	/** The directory where to put the generated classes. */
+	@Parameter(property = "outputClassesDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
+	private File outputClassesDirectory;
+	/** The directory where to put the generated interfaces. */
+	@Parameter(property = "outputInterfacesDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
+	private File outputInterfacesDirectory;
+
 	@Component
 	protected MavenProject project;
 
-	public static List<ComplexTypeChild> getValidChildren(
-			final ComplexType complexType) {
-		List<ComplexTypeChild> list = new ArrayList<ComplexTypeChild>(
-				complexType.getChildren().size());
-		for (ComplexTypeChild child : complexType.getChildren()) {
-			if (!child.getComplexType().isSimpleType()
-			// && !child.getComplexType().isAbstractType()
-			) {
-				if (child.getComplexType().getType().getName().getLocalPart()
-						.equals("NoMappingType")) {
-					/* not to add. */
-				} else if (child.getChildName().equals("return")) {
-					/* not to add. */
-				} else if (child.getComplexType().getType().getName()
-						.getLocalPart().equals("anyType")) {
-					/* not to add. */
-				} else {
-					list.add(child);
-				}
+	/**
+	 * @see org.apache.maven.plugin.Mojo#execute()
+	 */
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		StaticLoggerBinder.getSingleton().setLog(this.getLog());
+		this.getLog().debug("+execute");
+		this.getLog().debug("get xsds");
+		XsdsUtil config = new XsdsUtil(this.baseDirectory, this.basePackageName,
+				this.mappingPackageNameSuffixes, null,
+				this.mappingRequestSuffix, this.mappingResponseSuffix);
+		ComplexContentList complexContentList = new ComplexContentList();
+		complexContentList.setupComplexContentLists(config);
+
+		Collection<String> interfaceIds = this.getInterfaceIds(config);
+
+		String basicPackageName = null;
+		for (ComplexType ct : config.getComplexTypes()) {
+			if (ct.getPackageName().contains(".inf.")) {
+				basicPackageName = ct.getPackageName().substring(0,
+						ct.getPackageName().indexOf(".inf.") + 4);
+				break;
 			}
 		}
-		return list;
-	}
+		int flows = 0;
+		int directMappers = 0;
+		int defaultMappers = 0;
+		int complexUUIDMappers = 0;
+		int complexMappers = 0;
+		int interfaceMappers = 0;
+		int mappingOperations = 0;
 
-	private Collection<String> getInterfaceIds(final XsdsUtil config) {
-		Collection<String> interfaceIds = ServiceIdRegistry
-				.splitServiceIds(this.interfaceId);
-		if (interfaceIds.size() == 0) {
-			interfaceIds.addAll(ServiceIdRegistry.getAllServiceIds());
+		if (basicPackageName != null) {
+			IllegalStateException ex = null;
+			this.generateBasicFlowInterface(basicPackageName);
+			for (ComplexType ct : config.getComplexTypes()) {
+				if (ct.isFlowInputType()) {
+					FlowInterfaceGenerator fig = new FlowInterfaceGenerator(
+							config, ct, this.getLog());
+					fig.generateInterface(this.outputInterfacesDirectory,
+							basicPackageName);
+					flows++;
+				}
+			}
+			this.generateReferenceDataTypeProvider(config, basicPackageName);
+			Entry<String, String> entry;
+			for (ComplexContent cc : complexContentList.getDirectMappings()) {
+				try {
+					DirectMappingTypeGenerator mtg = new DirectMappingTypeGenerator(
+							config, basicPackageName, cc.ct, complexContentList,
+							this.getLog());
+					entry = mtg
+							.generateInterface(this.outputInterfacesDirectory);
+					cc.packageName = entry.getKey();
+					cc.interfaceName = entry.getValue();
+					mtg.generateImpl(this.outputInterfacesDirectory);
+					directMappers++;
+				} catch (IllegalStateException e) {
+					if (ex != null) {
+						ex = e;
+					}
+				}
+			}
+			for (ComplexContent cc : complexContentList.getDefaultMappings()) {
+				try {
+					DefaultMappingTypeGenerator mtg = new DefaultMappingTypeGenerator(
+							config, basicPackageName, cc.ct, complexContentList,
+							this.getLog());
+					entry = mtg
+							.generateInterface(this.outputInterfacesDirectory);
+					cc.packageName = entry.getKey();
+					cc.interfaceName = entry.getValue();
+					mtg.generateImpl(this.outputInterfacesDirectory);
+					defaultMappers++;
+				} catch (IllegalStateException e) {
+					if (ex != null) {
+						ex = e;
+					}
+				}
+			}
+			for (ComplexContent cc : complexContentList
+					.getComplexUUIDMappings()) {
+				ComplexUUIDReferenceDataMappingTypeGenerator mtg = new ComplexUUIDReferenceDataMappingTypeGenerator(
+						config, basicPackageName, cc.ct, complexContentList,
+						this.getLog());
+				entry = mtg.generateInterface(this.outputInterfacesDirectory);
+				cc.packageName = entry.getKey();
+				cc.interfaceName = entry.getValue();
+				mtg.generateImpl(this.outputInterfacesDirectory);
+				complexUUIDMappers++;
+			}
+			for (ComplexContent cc : complexContentList.getComplexMappings()) {
+				ComplexMappingTypeGenerator mtg = new ComplexMappingTypeGenerator(
+						config, basicPackageName, cc.ct, complexContentList,
+						this.getLog());
+				entry = mtg.generateInterface(this.outputInterfacesDirectory);
+				cc.packageName = entry.getKey();
+				cc.interfaceName = entry.getValue();
+				mtg.generateImpl(this.outputClassesDirectory);
+				complexMappers++;
+			}
+			for (ComplexContent cc : complexContentList.getInterfaceTypes()) {
+				InterfaceMappingTypeGenerator mtg = new InterfaceMappingTypeGenerator(
+						config, basicPackageName, cc.ct, complexContentList,
+						this.getLog());
+				entry = mtg.generateInterface(this.outputInterfacesDirectory);
+				cc.packageName = entry.getKey();
+				cc.interfaceName = entry.getValue();
+				mtg.generateImpl(this.outputClassesDirectory);
+				interfaceMappers++;
+			}
+			for (ComplexRequestResponse crr : complexContentList
+					.getRequestResponses()) {
+				MappingOperationGenerator mog = new MappingOperationGenerator(
+						config, basicPackageName, crr.request, crr.response,
+						complexContentList, this.getLog());
+				entry = mog.generateInterface(this.outputInterfacesDirectory);
+				crr.packageName = entry.getKey();
+				crr.interfaceName = entry.getValue();
+				mog.generateImpl(this.outputClassesDirectory);
+				mappingOperations++;
+			}
+			if (ex != null) {
+				throw ex;
+			}
 		}
-		interfaceIds.add("core");
-		return interfaceIds;
+		this.getLog().info(new StringBuffer("Generated flows:                ")
+				.append(flows).toString());
+		this.getLog().info(new StringBuffer("Generated direct mappers:       ")
+				.append(directMappers).toString());
+		this.getLog().info(new StringBuffer("Generated default mappers:      ")
+				.append(defaultMappers).toString());
+		this.getLog().info(new StringBuffer("Generated complex UUID mappers: ")
+				.append(complexUUIDMappers).toString());
+		this.getLog().info(new StringBuffer("Generated complex mappers:      ")
+				.append(complexMappers).toString());
+		this.getLog().info(new StringBuffer("Generated interface mappers:    ")
+				.append(interfaceMappers).toString());
+		this.getLog().info(new StringBuffer("Generated mapping operations:   ")
+				.append(mappingOperations).toString());
+
+		this.getLog().debug("-execute");
+
 	}
 
 	private void generateBasicFlowInterface(final String basicPackageName) {
@@ -117,9 +259,11 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		sb.append(
 				"\t * Invoke the flow. This calls executeRequest and processResponse.\n");
 		sb.append("\t * @param request the {@link Request}\n");
+		sb.append("\t * @param flowContext the {@link FlowContext}\n");
 		sb.append("\t * @return the {@link Response}\n");
 		sb.append("\t */\n");
-		sb.append("\tResponse invokeFlow(Request request);\n");
+		sb.append(
+				"\tResponse invokeFlow(Request request, FlowContext flowContext);\n");
 		sb.append("}\n");
 		sb.append("\n");
 		File f = Util.getFile(this.outputInterfacesDirectory, basicPackageName,
@@ -146,6 +290,112 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		sb.append("\n");
 		f = Util.getFile(this.outputInterfacesDirectory, basicPackageName,
 				"FlowGateway.java");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, sb.toString());
+		} catch (Exception e) {
+			this.getLog().error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		sb.setLength(0);
+		sb.append("package ");
+		sb.append(basicPackageName);
+		sb.append(";\n");
+		sb.append("\n");
+		sb.append("/**\n");
+		sb.append(
+				" * The flow context containing the requester user name, service name and version\n");
+		sb.append(" * and the operation name.\n");
+		sb.append(" * \n");
+		sb.append(" * @author bhausen\n");
+		sb.append(" */\n");
+		sb.append("public interface FlowContext {\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Get the operation name of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @return the operation name of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append("\tString getRequesterOperationName();\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Get the service name of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @return the service name of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append("\tString getRequesterServiceName();\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Get the service version of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @return the service version of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append("\tString getRequesterServiceVersion();\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Get the user name of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @return the user name of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append("\tString getRequesterUserName();\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Get the session id.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @return the session id.\n");
+		sb.append("\t */\n");
+		sb.append("\tString getSessionId();\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Set the operation name of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @param requesterOperationName\n");
+		sb.append(
+				"\t *            the operation name of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append(
+				"\tvoid setRequesterOperationName(String requesterOperationName);\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Set the service name of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @param requesterServiceName\n");
+		sb.append("\t *            the service name of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append(
+				"\tvoid setRequesterServiceName(String requesterServiceName);\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Set the service version of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @param requesterServiceVersion\n");
+		sb.append(
+				"\t *            the service version of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append(
+				"\tvoid setRequesterServiceVersion(String requesterServiceVersion);\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Set the user name of the flow requester.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @param requesterUserName\n");
+		sb.append("\t *            the user name of the flow requester.\n");
+		sb.append("\t */\n");
+		sb.append("\tvoid setRequesterUserName(String requesterUserName);\n");
+		sb.append("\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Set the session id.\n");
+		sb.append("\t *\n");
+		sb.append("\t * @param sessionId\n");
+		sb.append("\t *            the session id.\n");
+		sb.append("\t */\n");
+		sb.append("\tvoid setSessionId(String sessionId);\n");
+		sb.append("\n");
+		sb.append("}\n");
+
+		f = Util.getFile(this.outputInterfacesDirectory, basicPackageName,
+				"FlowContext.java");
 		this.getLog().info(new StringBuffer().append("Write ")
 				.append(f.getAbsolutePath()));
 		try {
@@ -247,143 +497,13 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		}
 	}
 
-	/**
-	 * @see org.apache.maven.plugin.Mojo#execute()
-	 */
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		StaticLoggerBinder.getSingleton().setLog(this.getLog());
-		this.getLog().debug("+execute");
-		this.getLog().debug("get xsds");
-		XsdsUtil config = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.mappingPackageNameSuffixes, null,
-				this.mappingRequestSuffix, this.mappingResponseSuffix);
-		ComplexContentList complexContentList = new ComplexContentList();
-		complexContentList.setupComplexContentLists(config);
-
-		Collection<String> interfaceIds = this.getInterfaceIds(config);
-
-		String basicPackageName = null;
-		for (ComplexType ct : config.getComplexTypes()) {
-			if (ct.getPackageName().contains(".inf.")) {
-				basicPackageName = ct.getPackageName().substring(0,
-						ct.getPackageName().indexOf(".inf.") + 4);
-				break;
-			}
+	private Collection<String> getInterfaceIds(final XsdsUtil config) {
+		Collection<String> interfaceIds = ServiceIdRegistry
+				.splitServiceIds(this.interfaceId);
+		if (interfaceIds.size() == 0) {
+			interfaceIds.addAll(ServiceIdRegistry.getAllServiceIds());
 		}
-		int flows = 0;
-		int directMappers = 0;
-		int defaultMappers = 0;
-		int complexUUIDMappers = 0;
-		int complexMappers = 0;
-		int interfaceMappers = 0;
-		int mappingOperations = 0;
-
-		if (basicPackageName != null) {
-			IllegalStateException ex = null;
-			this.generateBasicFlowInterface(basicPackageName);
-			for (ComplexType ct : config.getComplexTypes()) {
-				if (ct.isFlowInputType()) {
-					FlowInterfaceGenerator fig = new FlowInterfaceGenerator(
-							config, ct, this.getLog());
-					fig.generateInterface(this.outputInterfacesDirectory,
-							basicPackageName);
-					flows++;
-				}
-			}
-			this.generateReferenceDataTypeProvider(config, basicPackageName);
-			Entry<String, String> entry;
-			for (ComplexContent cc : complexContentList.getDirectMappings()) {
-				try {
-					DirectMappingTypeGenerator mtg = new DirectMappingTypeGenerator(
-							config, cc.ct, complexContentList, this.getLog());
-					entry = mtg
-							.generateInterface(this.outputInterfacesDirectory);
-					cc.packageName = entry.getKey();
-					cc.interfaceName = entry.getValue();
-					mtg.generateImpl(this.outputInterfacesDirectory);
-					directMappers++;
-				} catch (IllegalStateException e) {
-					if (ex != null) {
-						ex = e;
-					}
-				}
-			}
-			for (ComplexContent cc : complexContentList.getDefaultMappings()) {
-				try {
-					DefaultMappingTypeGenerator mtg = new DefaultMappingTypeGenerator(
-							config, cc.ct, complexContentList, this.getLog());
-					entry = mtg
-							.generateInterface(this.outputInterfacesDirectory);
-					cc.packageName = entry.getKey();
-					cc.interfaceName = entry.getValue();
-					mtg.generateImpl(this.outputInterfacesDirectory);
-					defaultMappers++;
-				} catch (IllegalStateException e) {
-					if (ex != null) {
-						ex = e;
-					}
-				}
-			}
-			for (ComplexContent cc : complexContentList
-					.getComplexUUIDMappings()) {
-				ComplexUUIDReferenceDataMappingTypeGenerator mtg = new ComplexUUIDReferenceDataMappingTypeGenerator(
-						config, cc.ct, complexContentList, this.getLog());
-				entry = mtg.generateInterface(this.outputInterfacesDirectory);
-				cc.packageName = entry.getKey();
-				cc.interfaceName = entry.getValue();
-				mtg.generateImpl(this.outputInterfacesDirectory);
-				complexUUIDMappers++;
-			}
-			for (ComplexContent cc : complexContentList.getComplexMappings()) {
-				ComplexMappingTypeGenerator mtg = new ComplexMappingTypeGenerator(
-						config, cc.ct, complexContentList, this.getLog());
-				entry = mtg.generateInterface(this.outputInterfacesDirectory);
-				cc.packageName = entry.getKey();
-				cc.interfaceName = entry.getValue();
-				mtg.generateImpl(this.outputClassesDirectory);
-				complexMappers++;
-			}
-			for (ComplexContent cc : complexContentList.getInterfaceTypes()) {
-				InterfaceMappingTypeGenerator mtg = new InterfaceMappingTypeGenerator(
-						config, cc.ct, complexContentList, this.getLog());
-				entry = mtg.generateInterface(this.outputInterfacesDirectory);
-				cc.packageName = entry.getKey();
-				cc.interfaceName = entry.getValue();
-				mtg.generateImpl(this.outputClassesDirectory);
-				interfaceMappers++;
-			}
-			for (ComplexRequestResponse crr : complexContentList
-					.getRequestResponses()) {
-				MappingOperationGenerator mog = new MappingOperationGenerator(
-						config, crr.request, crr.response, complexContentList,
-						this.getLog());
-				entry = mog.generateInterface(this.outputInterfacesDirectory);
-				crr.packageName = entry.getKey();
-				crr.interfaceName = entry.getValue();
-				mog.generateImpl(this.outputClassesDirectory);
-				mappingOperations++;
-			}
-			if (ex != null) {
-				throw ex;
-			}
-		}
-		this.getLog().info(new StringBuffer("Generated flows:                ")
-				.append(flows).toString());
-		this.getLog().info(new StringBuffer("Generated direct mappers:       ")
-				.append(directMappers).toString());
-		this.getLog().info(new StringBuffer("Generated default mappers:      ")
-				.append(defaultMappers).toString());
-		this.getLog().info(new StringBuffer("Generated complex UUID mappers: ")
-				.append(complexUUIDMappers).toString());
-		this.getLog().info(new StringBuffer("Generated complex mappers:      ")
-				.append(complexMappers).toString());
-		this.getLog().info(new StringBuffer("Generated interface mappers:    ")
-				.append(interfaceMappers).toString());
-		this.getLog().info(new StringBuffer("Generated mapping operations:   ")
-				.append(mappingOperations).toString());
-
-		this.getLog().debug("-execute");
-
+		interfaceIds.add("core");
+		return interfaceIds;
 	}
 }

@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.maven.xmlbeans;
 
 import java.util.Set;
@@ -7,6 +13,16 @@ public class ServiceIdEntry implements Comparable<ServiceIdEntry> {
 	private final String serviceId;
 	private final String packageName;
 	private final String targetNamespace;
+	private String annotationDocumentation;
+
+	public String getAnnotationDocumentation() {
+		return this.annotationDocumentation;
+	}
+
+	void setAnnotationDocumentation(final String annotationDocumentation) {
+		this.annotationDocumentation = annotationDocumentation;
+	}
+
 	private final Set<ServiceIdEntry> importedServiceEntries = new TreeSet<ServiceIdEntry>();
 	private Set<String> totalImportedServiceIds = null;
 

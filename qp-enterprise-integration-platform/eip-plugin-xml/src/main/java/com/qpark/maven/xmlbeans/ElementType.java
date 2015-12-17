@@ -1,18 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- *
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
- *
  ******************************************************************************/
 package com.qpark.maven.xmlbeans;
 
 import org.apache.xmlbeans.SchemaGlobalElement;
+import org.apache.xmlbeans.XmlObject;
+import org.w3c.dom.NodeList;
 
 /**
  * @author bhausen
@@ -39,6 +35,11 @@ public class ElementType {
 	private final String packageNameGateway;
 	private final String packageNameMockOperationProvider;
 	private final String serviceId;
+	private final String annotationDocumentation;
+
+	public String getAnnotationDocumentation() {
+		return this.annotationDocumentation;
+	}
 
 	public ElementType(final SchemaGlobalElement elem, final XsdsUtil config) {
 		this.element = elem;
@@ -50,15 +51,15 @@ public class ElementType {
 				.append(".").append(this.getClassNameObject()).toString();
 
 		/* Service Operation definition. */
-		int index = this.getClassNameObject().lastIndexOf(
-				config.getServiceRequestSuffix());
+		int index = this.getClassNameObject()
+				.lastIndexOf(config.getServiceRequestSuffix());
 		if (index > 0) {
 			this.isRequest = true;
 			this.operationName = this.getClassNameObject().substring(0, index);
 		} else {
 			this.isRequest = false;
-			index = this.getClassNameObject().lastIndexOf(
-					config.getServiceResponseSuffix());
+			index = this.getClassNameObject()
+					.lastIndexOf(config.getServiceResponseSuffix());
 			if (index > 0) {
 				this.operationName = this.getClassNameObject().substring(0,
 						index);
@@ -70,7 +71,8 @@ public class ElementType {
 			this.methodName = new StringBuffer()
 					.append(this.operationName.substring(0, 1).toLowerCase())
 					.append(this.operationName.substring(1,
-							this.operationName.length())).toString();
+							this.operationName.length()))
+					.toString();
 		} else {
 			this.methodName = "";
 		}
@@ -87,8 +89,10 @@ public class ElementType {
 		}
 		if (this.packageName.contains(config.getMessagePackageNameSuffix())) {
 			this.packageNameMockOperationProvider = this.packageName
-					.substring(0, this.packageName.length()
-							- config.getMessagePackageNameSuffix().length() - 1);
+					.substring(0,
+							this.packageName.length() - config
+									.getMessagePackageNameSuffix().length()
+							- 1);
 		} else {
 			this.packageNameMockOperationProvider = this.packageName;
 		}
@@ -98,31 +102,56 @@ public class ElementType {
 
 		/* Service gateway definition. */
 		if (this.operationName.length() > 0) {
-			this.classNameGateway = new StringBuffer(128).append(
-					this.operationName).toString();
+			this.classNameGateway = new StringBuffer(128)
+					.append(this.operationName).toString();
 		} else {
-			this.classNameGateway = new StringBuffer(128).append(
-					this.element.getName().getLocalPart()).toString();
+			this.classNameGateway = new StringBuffer(128)
+					.append(this.element.getName().getLocalPart()).toString();
 		}
 		if (this.packageName.contains(config.getMessagePackageNameSuffix())) {
 			this.packageNameGateway = new StringBuffer(128)
 					.append(this.packageName.substring(0,
-							this.packageName.length()
-									- config.getMessagePackageNameSuffix()
-											.length() - 1)).append(".gateway")
-					.toString();
+							this.packageName.length() - config
+									.getMessagePackageNameSuffix().length()
+							- 1))
+					.append(".gateway").toString();
 		} else {
 			this.packageNameGateway = new StringBuffer(128)
 					.append(this.packageName).append(".gateway").toString();
 		}
+		if (this.element.getAnnotation() != null
+				&& this.element.getAnnotation().getUserInformation() != null
+				&& this.element.getAnnotation()
+						.getUserInformation().length > 0) {
+			StringBuffer sb = new StringBuffer(124);
+			for (XmlObject u : this.element.getAnnotation()
+					.getUserInformation()) {
+				if (u.getDomNode() != null) {
+					NodeList nl = u.getDomNode().getChildNodes();
+					for (int i = 0; i < nl.getLength(); i++) {
+						if (i > 0 && sb.length() > 0) {
+							sb.append(" ");
+						}
+						sb.append(nl.item(i).getNodeValue());
+					}
+				}
+			}
+			if (sb.length() > 0) {
+				this.annotationDocumentation = sb.toString().trim();
+			} else {
+				this.annotationDocumentation = null;
+			}
+		} else {
+			this.annotationDocumentation = null;
+		}
+
 		this.classNameFqGateway = new StringBuffer(128)
 				.append(this.packageNameGateway).append(".")
 				.append(this.getClassNameGateway()).toString();
 
 		/* Service id definition. */
 		this.serviceId = ServiceIdRegistry.getServiceId(this.packageName,
-				this.getTargetNamespace(),
-				config.getMessagePackageNameSuffix(),
+				this.getTargetNamespace(), config.getMessagePackageNameSuffix(),
 				config.getDeltaPackageNameSuffix());
 
 		this.beanIdOperationProvider = new StringBuffer(64)
@@ -131,7 +160,8 @@ public class ElementType {
 				.append(this.operationName).toString();
 		this.beanIdMockOperationProvider = new StringBuffer(
 				this.beanIdOperationProvider.length() + 4)
-				.append(this.beanIdOperationProvider).append("Mock").toString();
+						.append(this.beanIdOperationProvider).append("Mock")
+						.toString();
 
 		String serviceChannelNameStart = new StringBuffer(16)
 				.append(WEB_SERVICE_CHANNEL_NAME_PREFIX)

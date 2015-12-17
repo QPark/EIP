@@ -2,21 +2,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 <!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
 -->
 
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>2.0.0</version><!--project-version-->
+		<version>2.1.0</version><!--qp-eip-platform-bom-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -30,8 +27,7 @@
 		<service.name>library</service.name>
 		<service.application.name>${bus.application.name}</service.application.name>
 		<service.final.name>${bus.war.prefix}${service.application.name}-${service.name}</service.final.name>
-		<service.version>${platform.version}</service.version>
-		<service.war.name>${service.final.name}-${service.version}</service.war.name>
+		<service.war.name>${service.final.name}-${project.version}</service.war.name>
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<router.definition.dir>${project.build.directory}/classes/router/definition</router.definition.dir>
@@ -52,7 +48,6 @@
 							<Implementation-Build>${project.version}-b${buildNumber}</Implementation-Build>
 						</manifestEntries>
 					</archive>
-
 					<packagingIncludes>
 					</packagingIncludes>
 					<packagingExcludes>
@@ -138,7 +133,7 @@ WEB-INF/lib/xws-security-3.0.jar
 				<artifactId>eip-generator-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>generate integration config, properties config and mock operation providers</id>
+						<id>generate mock operation providers</id>
 						<phase>process-sources</phase>
 						<goals>
 							<goal>generate-mock-operations</goal>
@@ -330,31 +325,18 @@ WEB-INF/lib/xws-security-3.0.jar
 		</dependency>
 
 		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-logback</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-failurehandler</artifactId>
-		</dependency>
-
-		<dependency>
-	    <groupId>org.apache.ws.security</groupId>
-	    <artifactId>wss4j</artifactId>
+			<groupId>org.apache.ws.security</groupId>
+			<artifactId>wss4j</artifactId>
 		</dependency>
 		<dependency>
 			<!-- Needed to generate multipe xsd WSDLs -->
 			<groupId>org.apache.ws.xmlschema</groupId>
 			<artifactId>xmlschema-core</artifactId>
 		</dependency>
-<dependency>
-	<groupId>org.apache.santuario</groupId>
-	<artifactId>xmlsec</artifactId>
-</dependency>
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
@@ -375,30 +357,28 @@ WEB-INF/lib/xws-security-3.0.jar
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
 		</dependency>
-			<dependency>
-				<groupId>com.sun.xml.wss</groupId>
-				<artifactId>xws-security</artifactId>
+		<dependency>
+			<groupId>com.sun.xml.wss</groupId>
+			<artifactId>xws-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-		
+
 	</dependencies>
-<repositories>
-<repository>
-<id>spring-ext</id>
-<name>Spring repo-ext</name>
-<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
-</repository>
-</repositories>
+
+	<!-- This is needed because of org.apache.santuario:xmlsec jar file dependency! -->
+	<repositories>
+		<repository>
+			<id>spring-ext</id>
+			<name>Spring repo-ext</name>
+			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
+		</repository>
+	</repositories>
 </project>

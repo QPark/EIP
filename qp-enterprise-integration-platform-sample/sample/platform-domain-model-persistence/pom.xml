@@ -1,22 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 <!--
- * Copyright (c) 2013 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
- * 
- * Contributors:
- *     Bernhard Hausen - Initial API and implementation
 -->
 
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>2.0.0</version><!--project-version-->
+		<version>2.1.0</version><!--qp-eip-platform-bom-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -75,7 +72,6 @@
 			<plugin>
 				<groupId>org.jvnet.hyperjaxb3</groupId>
 				<artifactId>maven-hyperjaxb3-plugin</artifactId>
-				<version>0.6.0</version>
 				<executions>
 					<execution>
 						<id>generate-hyperjaxb3-sources</id>
@@ -86,7 +82,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<forceRegenerate>true</forceRegenerate>
+					<!--<forceRegenerate>true</forceRegenerate>-->
 					<schemaDirectory>${model.dir}</schemaDirectory>
 					<verbose>false</verbose>
 					<variant>jpa2</variant>
@@ -147,10 +143,12 @@
 								</replace>
 								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${meta.inf}/${persistence.unit.name}" />
 								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${meta.inf}/${persistence.unit.name}" failonerror="false" />
-								<property name="resouces.meta.inf" value="${project.build.directory}/classes/META-INF" />
+<!--
+								<property name="classes.meta.inf" value="${project.build.directory}/classes/META-INF" />
 								<mkdir dir="${classes.meta.inf}/${persistence.unit.name}" />
 								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${classes.meta.inf}/${persistence.unit.name}" />
 								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${classes.meta.inf}/${persistence.unit.name}" failonerror="false" />
+-->
 							</target>
 						</configuration>
 					</execution>

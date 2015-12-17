@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 QPark Consulting S.a r.l. This program and the
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html. Contributors: Bernhard Hausen -
- * Initial API and implementation
+ * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.persistenceconfig;
 
@@ -117,7 +116,71 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 
+		sb.setLength(0);
+		sb.append(this.getSpringDataSourceJavaConfig());
+		f = Util.getFile(this.outputDirectory,
+				new StringBuffer().append(this.basePackageName)
+						.append(".persistenceconfig").toString(),
+				"JndiDataSourceConfig.java");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, sb.toString());
+		} catch (Exception e) {
+			this.getLog().error(e.getMessage());
+			e.printStackTrace();
+		}
 		this.getLog().debug("-execute");
+	}
+
+	private String getSpringDataSourceJavaConfig()
+			throws MojoExecutionException {
+
+		String prefix = Util.capitalizePackageName(this.basePackageName);
+		StringBuffer sb = new StringBuffer(1024);
+
+		sb.append("package ");
+		sb.append(this.basePackageName);
+		sb.append(".persistenceconfig;\n");
+		sb.append("\n");
+
+		sb.append("import javax.sql.DataSource;\n");
+		sb.append("\n");
+		sb.append("import org.springframework.context.annotation.Bean;\n");
+		sb.append(
+				"import org.springframework.context.annotation.Configuration;\n");
+		sb.append(
+				"import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;\n");
+		sb.append("\n");
+
+		sb.append("/**\n");
+		sb.append(
+				" * Provides the {@link DataSource} out of the JNDI context.\n");
+		sb.append(" *\n");
+		sb.append(" * @author bhausen\n");
+		sb.append(" */\n");
+		sb.append("@Configuration\n");
+		sb.append("public class JndiDataSourceConfig {\n");
+		sb.append("\t/**\n");
+		sb.append(
+				"\t * Get the {@link DataSource} out of the JNDI naming context.\n");
+		sb.append("\t *\n");
+		sb.append(
+				"\t * @return the {@link DataSource} out of the JNDI naming context.\n");
+		sb.append("\t */\n");
+		sb.append("\t@Bean(name = PersistenceConfig.DATASOURCE_BEAN_NAME)\n");
+		sb.append("\tpublic DataSource getJndiDataSource() {\n");
+		sb.append(
+				"\t\tJndiDataSourceLookup dsLookup = new JndiDataSourceLookup();\n");
+		sb.append("\t\tDataSource bean = dsLookup\n");
+		sb.append(
+				"\t\t\t.getDataSource(PersistenceConfig.DATASOURCE_JDNI_NAME);\n");
+		sb.append("\t\treturn bean;\n");
+		sb.append("\t}\n");
+		sb.append("}\n");
+
+		return sb.toString();
+
 	}
 
 	private String getSpringPersistenceJavaConfig()
@@ -131,8 +194,12 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append(".persistenceconfig;\n");
 		sb.append("\n");
 		sb.append("import javax.persistence.EntityManagerFactory;\n");
-		sb.append("import javax.sql.DataSource;;\n");
+		sb.append("import javax.sql.DataSource;\n");
 		sb.append("\n");
+		sb.append(
+				"import org.springframework.beans.factory.annotation.Autowired;\n");
+		sb.append(
+				"import org.springframework.beans.factory.annotation.Qualifier;\n");
 		sb.append("import org.springframework.context.annotation.Bean;\n");
 		sb.append(
 				"import org.springframework.context.annotation.Configuration;\n");
@@ -174,6 +241,27 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("@EnableTransactionManagement\n");
 		sb.append("public class PersistenceConfig {\n");
 
+		sb.append("\t/** The name of the {@link DataSource} bean. */\n");
+		sb.append("\tpublic static final String DATASOURCE_BEAN_NAME = \"");
+		sb.append(prefix);
+		sb.append("DataSource\";\n");
+
+		sb.append("\t/** The JNDI name of the {@link DataSource}. */\n");
+		sb.append(
+				"\tpublic static final String DATASOURCE_JDNI_NAME = \"jdbc/");
+		sb.append(this.datasourceJndiName);
+		sb.append("\";\n");
+
+		sb.append("\t/** The name of the persistence unit. */\n");
+		sb.append("\tpublic static final String PERSISTENCE_UNIT_NAME = \"");
+		sb.append(this.persistenceUnitName);
+		sb.append("\";\n");
+		sb.append(
+				"\t/** The name of the persistence units transaction manager. */\n");
+		sb.append("\tpublic static final String TRANSACTION_MANAGER_NAME = \"");
+		sb.append(prefix);
+		sb.append("TransactionManager\";\n");
+
 		sb.append("\t/**\n");
 		sb.append(
 				"\t * The default value of the jpa Vendor adapter class name to be set in the\n");
@@ -204,7 +292,6 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\t */\n");
 		sb.append(
 				"\tprivate String jpaVendorAdapterClassName = DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME;\n");
-		sb.append("\n");
 
 		sb.append("\t/**\n");
 		sb.append("\t * The generateDdl parameter to be set into the\n");
@@ -218,15 +305,20 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 				"\t * {@link org.springframework.orm.jpa.vendor.Database#HSQL}.\n");
 		sb.append("\t */\n");
 		sb.append("\tprivate Boolean jpaVendorAdapterGenerateDdl = null;\n");
-		sb.append("\n");
 
 		sb.append("\t/**\n");
 		sb.append(
-				"\t * The database platform to be set into the {@link AbstractJpaVendorAdapter}\n");
-		sb.append("\t * .\n");
+				"\t * The database platform to be set into the {@link AbstractJpaVendorAdapter}.\n");
 		sb.append("\t */\n");
 		sb.append(
 				"\tprivate String jpaVendorAdpaterDatabasePlatform = DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM;\n");
+
+		sb.append(
+				"\t/** The {@link DataSource} with name {@value #DATASOURCE_BEAN_NAME}.*/\n");
+		sb.append("\t@Autowired\n");
+		sb.append("\t@Qualifier(DATASOURCE_BEAN_NAME)\n");
+		sb.append("\tprivate DataSource datasource;\n");
+
 		sb.append("\n");
 
 		sb.append("\t/**\n");
@@ -261,25 +353,6 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 				"\t\tthis.jpaVendorAdapterClassName = jpaVendorAdapterClassName;\n");
 		sb.append(
 				"\t\tthis.jpaVendorAdpaterDatabasePlatform = jpaVendorAdpaterDatabasePlatform;\n");
-		sb.append("\t}\n");
-		sb.append("\n");
-		sb.append("\t/**\n");
-		sb.append(
-				"\t * Get the {@link DataSource} out of the JNDI naming context.\n");
-		sb.append("\t *\n");
-		sb.append(
-				"\t * @return the {@link DataSource} out of the JNDI naming context.\n");
-		sb.append("\t */\n");
-		sb.append("\t@Bean(name = \"");
-		sb.append(prefix);
-		sb.append("DataSourceJndi\")\n");
-		sb.append("\tpublic DataSource getJndiDataSource() {\n");
-		sb.append(
-				"\t\tJndiDataSourceLookup dsLookup = new JndiDataSourceLookup();\n");
-		sb.append("\t\tDataSource bean = dsLookup.getDataSource(\"jdbc/");
-		sb.append(this.datasourceJndiName);
-		sb.append("\");\n");
-		sb.append("\t\treturn bean;\n");
 		sb.append("\t}\n");
 		sb.append("\n");
 		sb.append("\t/**\n");
@@ -321,14 +394,14 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\n");
 		sb.append(
 				"\t\tLocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();\n");
-		sb.append("\t\tbean.setPersistenceXmlLocation(\n");
-		sb.append("\t\t\t\t\"classpath:/META-INF/");
-		sb.append(this.persistenceUnitName);
-		sb.append("/persistence.xml\");\n");
-		sb.append("\t\tbean.setPersistenceUnitName(\"");
-		sb.append(this.persistenceUnitName);
-		sb.append("\");\n");
-		sb.append("\t\tbean.setDataSource(this.getJndiDataSource());\n");
+		sb.append("\t\tbean.setPersistenceXmlLocation(new StringBuffer(96)\n");
+		sb.append("\t\t\t\t.append(\"classpath:/META-INF/\")\n");
+		sb.append("\t\t\t\t.append(PERSISTENCE_UNIT_NAME)\n");
+		sb.append("\t\t\t\t.append(\"/persistence.xml\")\n");
+		sb.append("\t\t\t\t\t.toString());\n");
+		sb.append("\t\tbean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);\n");
+
+		sb.append("\t\tbean.setDataSource(this.datasource);\n");
 		sb.append("\n");
 		sb.append("\t\tjpaVendorAdapter.setShowSql(false);\n");
 		sb.append(
@@ -347,18 +420,14 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append("\t *\n");
 		sb.append("\t * @return the {@link JpaTransactionManager}.\n");
 		sb.append("\t */\n");
-		sb.append("\t@Bean(name = \"");
-		sb.append(prefix);
-		sb.append("TransactionManager\")\n");
+		sb.append("\t@Bean(name = TRANSACTION_MANAGER_NAME)\n");
 		sb.append(
 				"\tpublic JpaTransactionManager getJpaTransactionManager() {\n");
 		sb.append(
 				"\t\tJpaTransactionManager bean = new JpaTransactionManager();\n");
 		sb.append("\t\tEntityManagerFactory emf = this\n");
 		sb.append("\t\t\t\t.getEntityManagerFactory();\n");
-		sb.append("\t\tbean.setPersistenceUnitName(\"");
-		sb.append(this.persistenceUnitName);
-		sb.append("\");\n");
+		sb.append("\t\tbean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);\n");
 		sb.append("\t\tbean.setEntityManagerFactory(emf);\n");
 		// sb.append(
 		// "\t\tbean.setEntityManagerFactory(emfb.getNativeEntityManagerFactory());\n");
@@ -465,6 +534,7 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("unused")
 	private String getSpringPersistenceConfigXml()
 			throws MojoExecutionException {
 		StringBuffer sb = new StringBuffer(1024);

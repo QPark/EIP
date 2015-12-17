@@ -10,6 +10,14 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 ">
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
 
 	<bean id="ComSamplesPlatformUserProvider" class="com.samples.platform.core.security.UserProvider" init-method="createUsers"/>
 
@@ -42,6 +50,7 @@
 		<property name="dataSourceJndiName" value="${com.samples.platform.jndi.datasource.name}"/>
 	</bean>
 
+	<bean class="com.samples.platform.persistenceconfig.JndiDataSourceConfig"/>
 	<bean class="com.samples.platform.persistenceconfig.PersistenceConfig">
 		<property name="jpaVendorAdapterClassName" value="${com.samples.platform.jpa.vendor.adapter.class.name}"/>
 		<property name="jpaVendorAdpaterDatabasePlatform" value="${com.samples.platform.jpa.vendor.adapter.database.platform}"/>
