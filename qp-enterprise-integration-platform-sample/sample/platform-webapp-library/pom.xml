@@ -325,19 +325,6 @@ WEB-INF/lib/xws-security-3.0.jar
 		</dependency>
 
 		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-logback</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-failurehandler</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.ws.security</groupId>
 			<artifactId>wss4j</artifactId>
 		</dependency>
@@ -382,10 +369,6 @@ WEB-INF/lib/xws-security-3.0.jar
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
 
 	</dependencies>

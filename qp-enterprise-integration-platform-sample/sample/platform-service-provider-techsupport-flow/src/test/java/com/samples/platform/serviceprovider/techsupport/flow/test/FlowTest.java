@@ -1,15 +1,7 @@
 /*******************************************************************************
-<<<<<<< HEAD
  * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
-=======
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.samples.platform.serviceprovider.techsupport.flow.test;
@@ -29,13 +21,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.qpark.eip.core.DateUtil;
-<<<<<<< HEAD
 import com.qpark.eip.inf.FlowContext;
 import com.qpark.eip.service.base.msg.FailureType;
 import com.samples.platform.core.flow.FlowContextImpl;
-=======
-import com.qpark.eip.service.base.msg.FailureType;
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 import com.samples.platform.inf.iss.tech.support.ext.type.ExtSystemUserLogType;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlow;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlowRequestType;
@@ -61,12 +49,9 @@ public class FlowTest {
 		this.logger.debug("+testPositive");
 		XMLGregorianCalendar requestDate = DateUtil.get(new Date());
 
-<<<<<<< HEAD
 		String userName = "userName";
 
 		FlowContext flowContext = this.setupFlowContext(userName);
-=======
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		this.setupFlowGateway(requestDate);
 
 		SystemUserReportFlowRequestType request = new SystemUserReportFlowRequestType();
@@ -76,11 +61,7 @@ public class FlowTest {
 		request.getIn().getCriteria().setDate(requestDate);
 
 		SystemUserReportFlowResponseType response = this.flow
-<<<<<<< HEAD
 				.invokeFlow(request, flowContext);
-=======
-				.invokeFlow(request);
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 
 		Assert.assertEquals("Request date is not as expected",
 				String.valueOf(requestDate), String.valueOf(this.flowGateway
@@ -98,7 +79,6 @@ public class FlowTest {
 		this.logger.debug("-testPositive");
 	}
 
-<<<<<<< HEAD
 	private FlowContext setupFlowContext(final String userName) {
 		FlowContext flowContext = new FlowContextImpl();
 		flowContext.setRequesterOperationName("techSupportFlowTest");
@@ -108,8 +88,6 @@ public class FlowTest {
 		return flowContext;
 	}
 
-=======
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 	private void setupFlowGateway(final XMLGregorianCalendar requestDate) {
 		SystemUserLogResponseType gatewayResponse = new SystemUserLogResponseType();
 

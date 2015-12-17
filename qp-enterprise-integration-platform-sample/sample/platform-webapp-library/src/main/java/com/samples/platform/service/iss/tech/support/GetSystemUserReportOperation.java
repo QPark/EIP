@@ -1,15 +1,7 @@
 /*******************************************************************************
-<<<<<<< HEAD
  * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
-=======
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.samples.platform.service.iss.tech.support;
@@ -21,11 +13,8 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.stereotype.Component;
 
 import com.qpark.eip.core.DateUtil;
-<<<<<<< HEAD
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.samples.platform.core.flow.FlowContextImpl;
-=======
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlow;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlowRequestType;
 import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlowResponseType;

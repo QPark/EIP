@@ -1,15 +1,7 @@
 /*******************************************************************************
-<<<<<<< HEAD
  * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
-=======
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.samples.platform.serviceprovider.techsupport.flow;
@@ -17,10 +9,6 @@ package com.samples.platform.serviceprovider.techsupport.flow;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-<<<<<<< HEAD
-=======
-import java.util.UUID;
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.qpark.eip.core.DateUtil;
 import com.qpark.eip.core.domain.persistencedefinition.FlowLogMessageType;
 import com.qpark.eip.core.spring.statistics.AsyncFlowLogMessagePersistence;
-<<<<<<< HEAD
 import com.qpark.eip.inf.FlowContext;
-=======
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 import com.qpark.eip.service.base.msg.FailureType;
 import com.samples.platform.core.flow.SystemUserLogFlowGateway;
 import com.samples.platform.inf.iss.tech.support.ext.type.ExtSystemUserLogCriteriaType;
@@ -130,18 +115,12 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	@Override
 	@InsightEndPoint
 	public SystemUserReportFlowResponseType invokeFlow(
-<<<<<<< HEAD
 			final SystemUserReportFlowRequestType request,
 			final FlowContext flowContext) {
-=======
-			final SystemUserReportFlowRequestType request) {
-		UUID sessionId = UUID.randomUUID();
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		List<FailureType> failures = new ArrayList<FailureType>();
 		SystemUserLogRequestType executeRequest = null;
 		SystemUserLogResponseType gatewayResponse = null;
 		GetSystemUserReportResponseType processResponse = new GetSystemUserReportResponseType();
-<<<<<<< HEAD
 
 		/* Execute request. */
 		try {
@@ -158,20 +137,6 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 					.append(flowContext.getRequesterUserName()).append(": ")
 					.append(e.getMessage()).toString(), e);
 
-=======
-
-		/* Execute request. */
-		try {
-			executeRequest = this.executeRequest(request.getIn());
-		} catch (Exception e) {
-			this.flowLogMessagePersistence
-					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
-							AsyncFlowLogMessagePersistence.TYPE_FLOW,
-							AsyncFlowLogMessagePersistence.STEP_REQUEST_EXECUTION,
-							AsyncFlowLogMessagePersistence.SEVERITY_ERROR,
-							e.getMessage()));
-			this.logger.error(e.getMessage(), e);
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		}
 		/* Call the gateway. */
 		try {
@@ -180,62 +145,39 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 				failures.addAll(gatewayResponse.getFailure());
 			}
 			this.flowLogMessagePersistence
-<<<<<<< HEAD
 					.submitFlowLogMessage(this.getFlowLogMessage(flowContext,
-=======
-					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 							AsyncFlowLogMessagePersistence.TYPE_FLOW,
 							AsyncFlowLogMessagePersistence.STEP_FLOW_GATEWAY_EXECUTION,
 							AsyncFlowLogMessagePersistence.SEVERITY_INFORMATION,
 							"Retrieved SystemUserLogMessages"));
 		} catch (Exception e) {
 			this.flowLogMessagePersistence
-<<<<<<< HEAD
 					.submitFlowLogMessage(this.getFlowLogMessage(flowContext,
-=======
-					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 							AsyncFlowLogMessagePersistence.TYPE_FLOW,
 							AsyncFlowLogMessagePersistence.STEP_FLOW_GATEWAY_EXECUTION,
 							AsyncFlowLogMessagePersistence.SEVERITY_ERROR,
 							e.getMessage()));
-<<<<<<< HEAD
 			this.logger.error(new StringBuffer(128)
 					.append(flowContext.getSessionId()).append(" ")
 					.append(flowContext.getRequesterUserName()).append(": ")
 					.append(e.getMessage()).toString(), e);
-=======
-			this.logger.error(e.getMessage(), e);
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		}
 
 		/* Process response. */
 		try {
-<<<<<<< HEAD
 			processResponse = this.processResponse(gatewayResponse,
 					flowContext);
 		} catch (Exception e) {
 			this.flowLogMessagePersistence
 					.submitFlowLogMessage(this.getFlowLogMessage(flowContext,
-=======
-			processResponse = this.processResponse(gatewayResponse);
-		} catch (Exception e) {
-			this.flowLogMessagePersistence
-					.submitFlowLogMessage(this.getFlowLogMessage(sessionId,
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 							AsyncFlowLogMessagePersistence.TYPE_FLOW,
 							AsyncFlowLogMessagePersistence.STEP_RESPONSE_PROCESSING,
 							AsyncFlowLogMessagePersistence.SEVERITY_ERROR,
 							e.getMessage()));
-<<<<<<< HEAD
 			this.logger.error(new StringBuffer(128)
 					.append(flowContext.getSessionId()).append(" ")
 					.append(flowContext.getRequesterUserName()).append(": ")
 					.append(e.getMessage()).toString(), e);
-=======
-			this.logger.error(e.getMessage(), e);
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		}
 		/* Enter failure messages. */
 		processResponse.getFailure().addAll(failures);
@@ -249,13 +191,8 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	/**
 	 * Get the {@link FlowLogMessageType}.
 	 *
-<<<<<<< HEAD
 	 * @param flowContext
 	 *            the {@link FlowContext}.
-=======
-	 * @param sessionId
-	 *            the session id.
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 	 * @param type
 	 *            the type.
 	 * @param step
@@ -266,22 +203,14 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 *            the data.
 	 * @return the {@link FlowLogMessageType}.
 	 */
-<<<<<<< HEAD
 	private FlowLogMessageType getFlowLogMessage(final FlowContext flowContext,
-=======
-	private FlowLogMessageType getFlowLogMessage(final UUID sessionId,
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 			final String type, final String step, final String severity,
 			final String data) {
 		FlowLogMessageType log = new FlowLogMessageType();
 		log.setClassification("");
 		log.setFlowIdentifier(this.getClass().getName());
 		log.setFlowName(this.getClass().getSimpleName());
-<<<<<<< HEAD
 		log.setFlowSession(flowContext.getSessionId());
-=======
-		log.setFlowSession(sessionId.toString());
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		log.setFlowStep(step);
 		log.setLogMessageType(type);
 		log.setLogTime(DateUtil.get(new Date()));

@@ -13,10 +13,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 
-<<<<<<< HEAD
 import com.samples.platform.client.IssTechSupportServiceClient;
-=======
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 import com.samples.platform.client.IssTechSupportServiceClientExtension;
 import com.samples.platform.client.LibraryServiceClient;
 import com.samples.platform.client.LibraryServiceClientExtension;
@@ -31,41 +28,7 @@ import com.samples.platform.client.LibraryServiceClientExtension;
 		@PropertySource(
 				value = "file:${catalina.base}/conf/bus.client.properties",
 				ignoreResourceNotFound = true), })
-<<<<<<< HEAD
 public class ClientConfig extends AbstractClientConfig {
-=======
-public class ClientConfig {
-	/** The name of the service library. */
-	private static final String SERVICE_LIBRARY = "library";
-	/** The name of the service iss technical support. */
-	private static final String SERVICE_ISS_TECH_SUPPORT = "iss.tech.support";
-
-	/**
-	 * Generate the endpoint URL of the service.
-	 *
-	 * @param server
-	 *            the servicebus server to access.
-	 * @param version
-	 *            the version of the service bus.
-	 * @param service
-	 *            the service name.
-	 * @return the endpoint URL.
-	 */
-	private static String getServicebusEndpointUrl(final String server,
-			final String webappName, final String service) {
-		StringBuffer sb = new StringBuffer(64);
-		sb.append(server.trim());
-		if (!server.trim().endsWith("/")) {
-			sb.append("/");
-		}
-		// http://localhost:8080/platform-library-2.0.0/services/library.wsdl
-		sb.append(webappName.trim());
-		sb.append("/services/");
-		sb.append(service.trim());
-		return sb.toString();
-	}
-
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 	/**
 	 * This needs to stay static!
 	 *
@@ -88,7 +51,6 @@ public class ClientConfig {
 	/** The web application name deployed. */
 	@Value("${com.samples.platform.client.endpoint.servicebus.webapp.name:platform-library-2.0.0}")
 	private String servicebusWebappName;
-<<<<<<< HEAD
 
 	/**
 	 * @see com.samples.platform.client.config.AbstractClientConfig#getClientEndPointUrl(java.lang.String)
@@ -122,8 +84,6 @@ public class ClientConfig {
 	public String getClientSystemUserPassword() {
 		return this.clientSystemUserPassword;
 	}
-=======
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 
 	/**
 	 * Setup the {@link TimeZone} to UTC and the
@@ -138,7 +98,6 @@ public class ClientConfig {
 	}
 
 	@Bean
-<<<<<<< HEAD
 	public IssTechSupportServiceClientExtension issTechSupportClient() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 		marshaller
@@ -151,29 +110,6 @@ public class ClientConfig {
 		bean.setMarshaller(marshaller);
 		bean.setUnmarshaller(marshaller);
 		bean.setMessageFactory(this.messageFactory());
-=======
-	public Jaxb2Marshaller marshaller() {
-		Jaxb2Marshaller bean = new Jaxb2Marshaller();
-		StringBuffer path = new StringBuffer(1024);
-		path.append("com.qpark.eip.service.common.msg");
-		path.append(":");
-		path.append("com.samples.platform.service.library.msg");
-		path.append(":");
-		path.append("com.samples.platform.service.iss.tech.support.msg");
-		bean.setContextPath(path.toString());
-		return bean;
-	}
-
-	/**
-	 * Get the message factory supporting SOAP version 1.2.
-	 *
-	 * @return the {@link SaajSoapMessageFactory}.
-	 */
-	@Bean
-	public SaajSoapMessageFactory messageFactory() {
-		SaajSoapMessageFactory bean = new SaajSoapMessageFactory();
-		bean.setSoapVersion(SoapVersion.SOAP_12);
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		return bean;
 	}
 
@@ -194,31 +130,10 @@ public class ClientConfig {
 		marshaller.setContextPath(LibraryServiceClient.CONTEXT_PATH_NAME);
 
 		LibraryServiceClientExtension bean = new LibraryServiceClientExtension();
-<<<<<<< HEAD
 		bean.setInterceptors(
 				new ClientInterceptor[] { this.securityInterceptor() });
 		bean.setDefaultUri(
 				this.getClientEndPointUrl(LibraryServiceClient.SERVICE_ID));
-=======
-		bean.setInterceptors(new ClientInterceptor[] { securityInterceptor });
-		bean.setDefaultUri(getServicebusEndpointUrl(this.servicebusServer,
-				this.servicebusWebappName, SERVICE_LIBRARY));
-		bean.setMarshaller(marshaller);
-		bean.setUnmarshaller(marshaller);
-		bean.setMessageFactory(messageFactory);
-		return bean;
-	}
-
-	@Bean
-	public IssTechSupportServiceClientExtension issTechSupportClient(
-			final Jaxb2Marshaller marshaller,
-			final SaajSoapMessageFactory messageFactory,
-			final ClientCallWss4jSecurityInterceptor securityInterceptor) {
-		IssTechSupportServiceClientExtension bean = new IssTechSupportServiceClientExtension();
-		bean.setInterceptors(new ClientInterceptor[] { securityInterceptor });
-		bean.setDefaultUri(getServicebusEndpointUrl(this.servicebusServer,
-				this.servicebusWebappName, SERVICE_ISS_TECH_SUPPORT));
->>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 		bean.setMarshaller(marshaller);
 		bean.setUnmarshaller(marshaller);
 		bean.setMessageFactory(this.messageFactory());
