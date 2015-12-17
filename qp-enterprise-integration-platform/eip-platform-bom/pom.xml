@@ -245,6 +245,7 @@
 					<groupId>org.jvnet.hyperjaxb3</groupId>
 					<artifactId>maven-hyperjaxb3-plugin</artifactId>
 					<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
+<<<<<<< HEAD
 					<dependencies>
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
@@ -252,6 +253,8 @@
 							<version>${com.qpark.maven.hyperjaxb3-naming.version}</version>
 						</dependency>
 					</dependencies>
+=======
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 				</plugin>
 
 				<plugin>
@@ -274,7 +277,11 @@
 								<descriptorRefs>
 									<descriptorRef>project</descriptorRef>
 								</descriptorRefs>
+<<<<<<< HEAD
 								<formats><format>zip</format></formats>
+=======
+								<tarLongFileMode>omit</tarLongFileMode>
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 							</configuration>
 						</execution>
 					</executions>

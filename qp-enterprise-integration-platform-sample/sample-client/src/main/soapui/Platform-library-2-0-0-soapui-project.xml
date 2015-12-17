@@ -663,6 +663,7 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
          <userName>?</userName>
       </com:GetServiceStatusRequest>
    </soap:Body>
+<<<<<<< HEAD
 </soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="iss.tech.supportSoap12" type="wsdl" bindingName="{http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages}iss.tech.supportSoap12" soapVersion="1_2" anonymous="optional" definition="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl"><con:part><con:url>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:sch1="http://www.qpark.com/CommonTypes" xmlns:sch2="http://www.samples.com/CommonTypes" xmlns:sch3="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:sch4="http://www.qpark.com/Common/CommonServiceMessages" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
   <wsdl:types>
     <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:ISSTechSupportm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
@@ -673,6 +674,18 @@ GetReferenceData returns reference data definitions from the ESB core to resolve
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
+=======
+</soap:Envelope>]]></con:request><con:credentials><con:username>bus</con:username><con:password>password</con:password><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.sample.com/Library/LibraryServiceMessages/library/GetServiceStatusRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="iss.tech.supportSoap12" type="wsdl" bindingName="{http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages}iss.tech.supportSoap12" soapVersion="1_2" anonymous="optional" definition="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl"><con:part><con:url>http://localhost:8080/platform-library-2.0.0/services/iss.tech.support.wsdl</con:url><con:content><![CDATA[<wsdl:definitions targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:sch1="http://www.qpark.com/CommonTypes" xmlns:sch2="http://www.samples.com/CommonTypes" xmlns:sch3="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:sch4="http://www.qpark.com/Common/CommonServiceMessages" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages">
+  <wsdl:types>
+    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:ISSTechSupportm="http://www.samples.com/TechnicalSupport/TechnicalSupportServiceMessages" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+      <annotation>
+        <appinfo>
+          <jaxb:schemaBindings>
+            <jaxb:package name="com.samples.platform.service.iss.tech.support.msg"/>
+          </jaxb:schemaBindings>
+        </appinfo>
+        <documentation>
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
           <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
@@ -973,6 +986,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
               <element name="active" type="boolean">
                 <annotation>
                   <documentation>Flag indicating that the reference data entry is no longer active. 
+<<<<<<< HEAD
 							It shall no longer be used in partner systems.</documentation>
                 </annotation>
               </element>
@@ -1006,6 +1020,41 @@ Enumerations allow for a flexible configuration of the the master data aware app
           </jaxb:schemaBindings>
         </appinfo>
         <documentation>
+=======
+							It shall no longer be used in partner systems.</documentation>
+                </annotation>
+              </element>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <complexType name="PropertyType">
+        <annotation>
+          <documentation>A key with a list of values.</documentation>
+        </annotation>
+        <sequence>
+          <element name="name" type="string">
+            <annotation>
+              <documentation>The key.</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="value" type="string">
+            <annotation>
+              <documentation>The value assigned to the key.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </complexType>
+    </schema>
+    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/CommonTypes" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+      <annotation>
+        <appinfo>
+          <jaxb:schemaBindings>
+            <jaxb:package name="com.samples.platform.model.iss.common"/>
+          </jaxb:schemaBindings>
+        </appinfo>
+        <documentation>
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
           <!--* Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  * 
  * This program and the accompanying materials are made available under the 
@@ -1014,6 +1063,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
  * http://www.eclipse.org/legal/epl-v10.html.
  * 
  * Contributors:
+<<<<<<< HEAD
  *     Bernhard Hausen - Initial API and implementation-->
         </documentation>
       </annotation>
@@ -1113,6 +1163,107 @@ Enumerations allow for a flexible configuration of the the master data aware app
       </complexType>
       <complexType name="FailureType">
         <annotation>
+=======
+ *     Bernhard Hausen - Initial API and implementation-->
+        </documentation>
+      </annotation>
+      <import namespace="http://www.qpark.com/CommonTypes"/>
+      <simpleType name="EURType">
+        <restriction base="decimal"/>
+      </simpleType>
+    </schema>
+    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.0" targetNamespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" xmlns:ISScty="http://www.samples.com/CommonTypes" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+      <annotation>
+        <appinfo>
+          <jaxb:schemaBindings>
+            <jaxb:package name="com.samples.platform.model.iss.tech.support"/>
+          </jaxb:schemaBindings>
+        </appinfo>
+      </annotation>
+      <import namespace="http://www.samples.com/CommonTypes"/>
+      <import namespace="http://www.qpark.com/CommonTypes"/>
+      <complexType name="SystemUserReportCriteriaType">
+        <sequence>
+          <element minOccurs="0" name="date" type="date"/>
+        </sequence>
+      </complexType>
+      <complexType name="SystemUserReportType">
+        <sequence>
+          <element name="date" type="date"/>
+          <element name="service" type="normalizedString"/>
+          <element name="operation" type="normalizedString"/>
+          <element name="serviceProvider" type="normalizedString"/>
+          <element name="version" type="normalizedString"/>
+          <element name="consumerSystemUser" type="normalizedString"/>
+          <element name="requests" type="long"/>
+          <element name="requestsDenied" type="long"/>
+          <element name="errors" type="long"/>
+        </sequence>
+      </complexType>
+      <complexType name="OperationReportCriteriaType">
+        <sequence>
+          <element minOccurs="0" name="service" type="normalizedString"/>
+          <element minOccurs="0" name="operation" type="normalizedString"/>
+          <element minOccurs="0" name="consumerName" type="normalizedString"/>
+        </sequence>
+      </complexType>
+      <complexType name="OperationReportType">
+        <sequence>
+          <element name="date" type="dateTime"/>
+          <element name="serviceProvider" type="normalizedString"/>
+          <element name="service" type="normalizedString"/>
+          <element name="operation" type="normalizedString"/>
+          <element name="version" type="normalizedString"/>
+          <element name="consumerName" type="normalizedString"/>
+          <element name="consumerHost" type="normalizedString"/>
+          <element name="duration" type="normalizedString"/>
+        </sequence>
+      </complexType>
+      <complexType name="FlowReportCriteriaType">
+        <sequence>
+          <element name="start" type="dateTime"/>
+          <element minOccurs="0" name="end" type="dateTime"/>
+        </sequence>
+      </complexType>
+      <complexType name="FlowReportType">
+        <sequence>
+          <element name="flowSessionId" type="EIPcty:UUIDType"/>
+          <element name="logTime" type="dateTime"/>
+          <element name="severity" type="normalizedString"/>
+          <element name="flowName" type="normalizedString"/>
+          <element name="flowStep" type="normalizedString"/>
+          <element name="messageClassification" type="normalizedString"/>
+          <element name="additionalInformation" type="string"/>
+          <element name="messageType" type="normalizedString"/>
+          <element name="data" type="string"/>
+        </sequence>
+      </complexType>
+    </schema>
+    <schema attributeFormDefault="unqualified" elementFormDefault="unqualified" jaxb:version="2.1" targetNamespace="http://www.qpark.com/Common/CommonServiceMessages" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:EIPcty="http://www.qpark.com/CommonTypes" xmlns:EIPctym="http://www.qpark.com/Common/CommonServiceMessages" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+      <annotation>
+        <appinfo>
+          <jaxb:schemaBindings>
+            <jaxb:package name="com.qpark.eip.service.common.msg"/>
+          </jaxb:schemaBindings>
+        </appinfo>
+        <documentation>Message definitions of the common web service.</documentation>
+      </annotation>
+      <import namespace="http://www.qpark.com/CommonTypes"/>
+      <complexType name="ResponseMessage">
+        <annotation>
+          <documentation>Response</documentation>
+        </annotation>
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="0" name="failure" type="EIPctym:FailureType">
+            <annotation>
+              <documentation>Failures that happened in the ESB</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </complexType>
+      <complexType name="FailureType">
+        <annotation>
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
           <documentation>The FailureType carries information about incidents that
 				happened in the ESB Spring integration service operation
 				gateways. In contrast to that the EIP returns SOAP
@@ -1121,6 +1272,7 @@ Enumerations allow for a flexible configuration of the the master data aware app
 				maintained in the
 				web-servlet.xmlSoapFaultMappingExceptionResolver bean
 				mapping internal java exceptions to public EIP SOAP
+<<<<<<< HEAD
 				messages.</documentation>
         </annotation>
         <sequence>
@@ -1142,6 +1294,29 @@ Enumerations allow for a flexible configuration of the the master data aware app
           </element>
           <element name="errorDetails" type="string">
             <annotation>
+=======
+				messages.</documentation>
+        </annotation>
+        <sequence>
+          <element name="code" type="EIPctym:ErrorCode">
+            <annotation>
+              <documentation>The error code is intended to be used by the
+						service desk to help the end user in resolving
+						the issue. It shall be displayed with the
+						userMessage.</documentation>
+            </annotation>
+          </element>
+          <element name="userMessage" type="string">
+            <annotation>
+              <documentation>The user message is displayed to the end user,
+						for example the EIP client. It describes the
+						incident in a way the end user can understand
+						and gives advice on how to deal with it.</documentation>
+            </annotation>
+          </element>
+          <element name="errorDetails" type="string">
+            <annotation>
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
               <documentation>Error details are intended to be logged in the
 						Web Service client. Details contain the stack
 						trace and further information about the incident

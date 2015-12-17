@@ -1,7 +1,15 @@
 /*******************************************************************************
+<<<<<<< HEAD
  * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
+=======
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.samples.platform.core.failure;
@@ -20,6 +28,24 @@ public class FailureHandler extends BaseFailureHandler {
 	public static final String DEFAULT = "E_NOT_KNOWN_ERROR";
 	/** The default database {@link ErrorCode} if non presented. */
 	public static final String DEFAULT_DATABASE = "E_DATABASE_ERROR";
+
+	/**
+	 * @param fd
+	 *            The {@link FailureDescription}.
+	 * @return The {@link FailureType}.
+	 */
+	public static FailureType getFailureType(final FailureDescription fd) {
+		if (fd != null) {
+			FailureType ft = new FailureType();
+			ft.setCode(fd.getErrorCode());
+			ft.setErrorDetails(fd.getSupportInformation());
+			ft.setUserMessage(fd.getUserMessage());
+			ft.setSeverity(fd.getSeverity().name());
+			return ft;
+		} else {
+			return null;
+		}
+	}
 
 	/**
 	 * @param fd

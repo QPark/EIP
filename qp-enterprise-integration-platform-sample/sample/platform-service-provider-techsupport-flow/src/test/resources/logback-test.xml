@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration  scan="true" scanPeriod="60 seconds">
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+	<property name="logfile.datepattern" value="%d{yyyyMMdd-HHmmss.SSS}" />
+	<property name="logfile.pattern" value="%d{yyyyMMdd-HHmmss.SSS}[%contextName][%-5level][%c] %msg [%-10thread]%n%ex" />
+	<property name="logfile.destination" value="${catalina.base}/logs" />
+	<property name="logfile.application" value="com.samples.platform" />
+
+	<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- <filter class="ch.qos.logback.classic.filter.ThresholdFilter"><level>WARN</level></filter>-->
+		<encoder><pattern>${logfile.pattern}</pattern></encoder>
+	</appender>
+
+	<logger name="com.qpark.eip.inf" level="DEBUG" additivity="true" />
+	<logger name="com.samples.platform" level="DEBUG" additivity="true" />
+
+	<!-- spring -->
+
+	<logger name="org.springframework" level="DEBUG" />
+	<!--
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.springframework.web.context.ContextLoader" level="INFO" />
+	<logger name="org.springframework.integration.gateway.GatewayProxyFactoryBean" level="ERROR" />
+
+	<logger name="org.springframework.ws.server.endpoint.interceptor.AbstractValidatingInterceptor" level="WARN" />
+	<logger name="org.springframework.security" level="WARN" />
+	<logger name="org.springframework.ldap" level="WARN" />
+	<logger name="org.springframework.integration" level="WARN" />
+	-->
+
+	<!-- To log all server-side messages, simply set the org.springframework.ws.server.MessageTracing logger to level DEBUG or TRACE. On the debug level, only the payload root element is logged; on the TRACE level, the entire message content. If you only want to log sent messages, use the org.springframework.ws.server.MessageTracing.sent logger; or org.springframework.ws.server.MessageTracing.received to log received messages. On the client-side, similar loggers exist: org.springframework.ws.client.MessageTracing.sent and org.springframework.ws.client.MessageTracing.received. -->
+	<!--
+	<logger name="org.springframework.ws.server.MessageTracing.sent" level="TRACE" />
+	<logger name="org.springframework.ws.server.MessageTracing.received" level="TRACE" />
+	<logger name="org.springframework.ws.client.MessageTracing.sent" level="TRACE" />
+	<logger name="org.springframework.ws.client.MessageTracing.received" level="TRACE" />
+
+	<logger name="org.springframework.ws.client.core.WebServiceTemplate" level="DEBUG"/>
+	-->
+	<logger name="org.springframework.ws.client.core.WebServiceTemplate" level="DEBUG"/>
+
+	<!-- spring security -->
+	<!--
+	<logger name="org.springframework.integration.security" level="TRACE" />
+	<logger name="org.springframework.ws.soap.security" level="TRACE" />
+	<logger name="org.springframework.security.core" level="TRACE" />
+	<logger name="org.springframework.security.authentication" level="TRACE" />
+	<logger name="org.springframework.security.access" level="TRACE" />
+	-->
+
+	<!-- database -->
+	<logger name="org.hibernate" level="WARN" />
+	<logger name="org.springframework.transaction" level="WARN" />
+	<logger name="org.springframework.jdbc" level="WARN" />
+	<logger name="org.springframework.orm.jpa" level="WARN" />
+
+	<!-- SQL logs statements, BasicBinder logs parameters, BasicExtractor logs results -->
+	<!--
+	<logger name="org.hibernate.SQL" level="TRACE" />
+	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+	<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE" />
+	-->
+	<logger name="org.aspectj.weaving.messages" level="TRACE"/>
+	<root>
+		<level value="TRACE" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

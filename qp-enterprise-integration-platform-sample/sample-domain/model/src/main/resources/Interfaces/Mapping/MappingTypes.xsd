@@ -11,8 +11,12 @@
 	jaxb:version="2.0"
 
 	xmlns:MPmp="http://www.qpark.com/Interfaces/MappingTypes"
+<<<<<<< HEAD
 	targetNamespace="http://www.qpark.com/Interfaces/MappingTypes"
 >
+=======
+	targetNamespace="http://www.qpark.com/Interfaces/MappingTypes">
+>>>>>>> d2e28feb83823d2f089847490a12e7352b2037ba
 
 	<annotation>
 		<appinfo>
