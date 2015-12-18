@@ -45,26 +45,26 @@
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>model</artifactId>
-									<version>${domain.version}</version>
+									<version>2.1.0</version><!--qp-eip-platform-bom-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>service</artifactId>
-									<version>${domain.version}</version>
+									<version>2.1.0</version><!--qp-eip-platform-bom-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-jaxb</artifactId>
-									<version>${domain.version}</version>
+									<version>2.1.0</version><!--qp-eip-platform-bom-version-->
 									<classifier>generated-java-sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-flow</artifactId>
-									<version>${domain.version}</version>
+									<version>2.1.0</version><!--qp-eip-platform-bom-version-->
 									<classifier>sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
