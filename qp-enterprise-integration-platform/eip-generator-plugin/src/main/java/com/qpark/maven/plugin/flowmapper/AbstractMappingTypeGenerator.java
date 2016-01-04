@@ -100,7 +100,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append("</i>.\n");
 		sb.append(" * This name space is stored in file ");
 		sb.append(this.config
-				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getXsdContainer(this.complexType.getTargetNamespace())
 				.getRelativeName());
 		sb.append(".\n");
 		sb.append(" * <p/>\n");

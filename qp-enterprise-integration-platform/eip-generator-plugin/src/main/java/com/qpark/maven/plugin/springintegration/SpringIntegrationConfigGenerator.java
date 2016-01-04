@@ -79,7 +79,7 @@ public class SpringIntegrationConfigGenerator {
 		for (ElementType element : this.config.getElementTypes()) {
 			if (element.getServiceId().equals(serviceId)) {
 				messageDefinitionXsdContainer = this.config
-						.getXsdContainerMap(element.getTargetNamespace());
+						.getXsdContainer(element.getTargetNamespace());
 				break;
 			}
 		}

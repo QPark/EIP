@@ -214,7 +214,7 @@ public class WebServiceDispatcherXmlGenerator {
 	private String getWebServiceDynamicWsdlConfig(final String sid) {
 		ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
 		XsdContainer xc = this.config
-				.getXsdContainerMap(entry.getTargetNamespace());
+				.getXsdContainer(entry.getTargetNamespace());
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

@@ -60,7 +60,7 @@ public class ServiceIdObjectFactoryGenerator {
 				.getServiceIdEntry(this.serviceId);
 		if (entry != null) {
 			XsdContainer xc = this.xsds
-					.getXsdContainerMap(entry.getTargetNamespace());
+					.getXsdContainer(entry.getTargetNamespace());
 			String className = new StringBuffer(32)
 					.append(ServiceIdRegistry.capitalize(this.serviceId))
 					.append("ObjectFactory").toString();

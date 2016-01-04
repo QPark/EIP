@@ -241,7 +241,7 @@ public class WsServletXmlGenerator {
 			}
 			for (String sid : serviceIds) {
 				ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
-				XsdContainer xc = this.config.getXsdContainerMap(entry.getTargetNamespace());
+				XsdContainer xc = this.config.getXsdContainer(entry.getTargetNamespace());
 				sb.append("\t\t\t\t<value>/WEB-INF/classes");
 				sb.append(Util.getRelativePathTranslated(this.config.getBaseDirectory(), xc.getFile()));
 				sb.append("</value>\n");

@@ -159,7 +159,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("</i>\n");
 		sb.append(" * (see ");
 		sb.append(this.config
-				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getXsdContainer(this.complexType.getTargetNamespace())
 				.getRelativeName());
 		sb.append(").\n");
 		sb.append(" * <p/>\n");
@@ -212,7 +212,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("</i>.\n");
 		sb.append("\t * This name space is stored in file ");
 		sb.append(this.config
-				.getXsdContainerMap(this.complexType.getTargetNamespace())
+				.getXsdContainer(this.complexType.getTargetNamespace())
 				.getRelativeName());
 		sb.append(".\n");
 
