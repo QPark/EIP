@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence version="2.1" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd
+http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:orm="http://xmlns.jcp.org/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <persistence-unit name="com.qpark.eip.model.docmodel" transaction-type="RESOURCE_LOCAL">
+        <class>com.qpark.eip.model.docmodel.ClusterType</class>
+        <class>com.qpark.eip.model.docmodel.ComplexMappingType</class>
+        <class>com.qpark.eip.model.docmodel.ComplexType</class>
+        <class>com.qpark.eip.model.docmodel.ComplexUUIDMappingType</class>
+        <class>com.qpark.eip.model.docmodel.DataType</class>
+        <class>com.qpark.eip.model.docmodel.DefaultMappingType</class>
+        <class>com.qpark.eip.model.docmodel.DirectMappingType</class>
+        <class>com.qpark.eip.model.docmodel.DomainType</class>
+        <class>com.qpark.eip.model.docmodel.ElementType</class>
+        <class>com.qpark.eip.model.docmodel.EnterpriseType</class>
+        <class>com.qpark.eip.model.docmodel.FieldMappingType</class>
+        <class>com.qpark.eip.model.docmodel.FieldType</class>
+        <class>com.qpark.eip.model.docmodel.FlowFilterType</class>
+        <class>com.qpark.eip.model.docmodel.FlowMapInOutType</class>
+        <class>com.qpark.eip.model.docmodel.FlowProcessType</class>
+        <class>com.qpark.eip.model.docmodel.FlowSubRequestType</class>
+        <class>com.qpark.eip.model.docmodel.FlowType</class>
+        <class>com.qpark.eip.model.docmodel.InterfaceMappingType</class>
+        <class>com.qpark.eip.model.docmodel.OperationType</class>
+        <class>com.qpark.eip.model.docmodel.RequestResponseDataType</class>
+        <class>com.qpark.eip.model.docmodel.ServiceType</class>
+    </persistence-unit>
+</persistence>
