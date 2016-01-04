@@ -24,31 +24,97 @@ import com.qpark.maven.Util;
 /**
  * @author bhausen
  */
-public class ComplexType {
+public class ComplexType implements Comparable<ComplexType> {
 
-	private List<ComplexTypeChild> children;
-	private List<ComplexType> innerTypeDefs;
-	private final String className;
-	private final String classNameFq;
-	private final String packageName;
-	private final ComplexType parent;
-	private final SchemaType type;
-	private boolean requestType;
-	private boolean responseType;
-	private boolean flowInputType;
-	private boolean flowOutputType;
-	private final String annotationDocumentation;
-
-	/**
-	 * @return <code>true</code>, if the &lt; <code>complexType<code>&gt; is
-	 *         created as an inner &lt;<code>complexType<code>&gt;.
-	 */
-	public boolean isInnerTypeDefinition() {
-		return this.parent != null;
+	private static boolean isComplexMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}ComplexMappingType");
 	}
 
-	private boolean javaPrimitive = false;
+	private static boolean isComplexUUIDMappingType(
+			final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}ComplexUUIDMappingType");
+	}
+
+	private static boolean isDefaultMappingType(final SchemaType schemaType) {
+		boolean validType = false;
+		if (schemaType != null && schemaType.getName() != null
+				&& schemaType.getName().getLocalPart().toLowerCase()
+						.contains("default")
+				&& schemaType.getElementProperties() != null
+				&& schemaType.getElementProperties().length == 1) {
+			SchemaProperty defaultProperty = schemaType
+					.getElementProperties()[0];
+			if (defaultProperty.getType().isSimpleType()
+					&& defaultProperty.getType().getEnumerationValues() != null
+					&& defaultProperty.getType()
+							.getEnumerationValues().length == 1) {
+				validType = true;
+			} else if (defaultProperty.getType().isSimpleType()
+					&& defaultProperty.getDefaultText() != null) {
+				validType = true;
+			}
+		}
+		return validType;
+	}
+
+	private static boolean isDirectMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}DirectMappingType");
+	}
+
+	private static boolean isInstanceOf(final SchemaType schemaType,
+			final String qName) {
+		boolean validType = false;
+		if (schemaType != null && schemaType.getBaseType() != null) {
+			if (String.valueOf(schemaType.getBaseType().getName())
+					.matches(qName.replace("{", "\\{").replace("}", "\\}"))) {
+				validType = true;
+			} else {
+				validType = isInstanceOf(schemaType.getBaseType(), qName);
+			}
+		}
+		return validType;
+	}
+
+	private static boolean isInterfaceType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}InterfaceType");
+	}
+
+	private static boolean isMapRequestType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/Mapping}MappingInputType");
+	}
+
+	private static boolean isMapResponseType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/Mapping}MappingOutputType");
+	}
+
+	private final String annotationDocumentation;
+	private ComplexType baseComplexType;
+	private List<ComplexTypeChild> children;
+	private final String className;
+	private final String classNameFq;
+	private final boolean complexMappingType;
+	private final boolean complexUUIDMappingType;
+	private final boolean directMappingType;
+	private final boolean defaultMappingType;
+	private boolean flowInputType;
+	private boolean flowOutputType;
+	private List<ComplexType> innerTypeDefs;
+	private final boolean interfaceMappingType;
 	private boolean javaArray = false;
+	private boolean javaPrimitive = false;
+	private final boolean mapRequestType;
+	private final boolean mapResponseType;
+	private final String packageName;
+	private final ComplexType parent;
+	private boolean requestType;
+	private boolean responseType;
+	private final SchemaType type;
 
 	/**
 	 * @param type
@@ -152,6 +218,14 @@ public class ComplexType {
 			} else {
 				this.responseType = false;
 			}
+			SchemaType st = type.getBaseType();
+			if (st != null && st.getName() != null) {
+				this.baseComplexType = config.getComplexType(st.getName());
+				if (this.baseComplexType != null && this.baseComplexType
+						.toQNameString().equals(this.toQNameString())) {
+					this.baseComplexType = null;
+				}
+			}
 			for (SchemaProperty o : type.getElementProperties()) {
 				if (!o.getType().isSimpleType()
 						&& !o.getType().isPrimitiveType()
@@ -204,6 +278,171 @@ public class ComplexType {
 		} else {
 			this.flowOutputType = false;
 		}
+		this.directMappingType = isDirectMappingType(type);
+		this.defaultMappingType = isDefaultMappingType(type);
+		this.complexMappingType = isComplexMappingType(type);
+		this.complexUUIDMappingType = isComplexUUIDMappingType(type);
+		this.interfaceMappingType = isInterfaceType(type);
+		this.mapRequestType = isMapRequestType(type);
+		this.mapResponseType = isMapResponseType(type);
+	}
+
+	/**
+	 * @param type
+	 * @param packageName
+	 */
+	public ComplexType(final SchemaType type, final XsdsUtil config) {
+		this(type, null, config);
+	}
+
+	@Override
+	public int compareTo(final ComplexType o) {
+		int value = this.getTargetNamespace().compareTo(o.getTargetNamespace());
+		if (value == 0) {
+			value = this.getClassName().compareTo(o.getClassName());
+		}
+		return value;
+	}
+
+	private boolean containsChildName(final String childName) {
+		boolean contains = false;
+		for (ComplexTypeChild child : this.getChildren()) {
+			if (child.getChildName().equals(childName)) {
+				contains = true;
+				break;
+			}
+		}
+		return contains;
+	}
+
+	/**
+	 * @return the annotationDocumentation
+	 */
+	public String getAnnotationDocumentationNormalised() {
+		return this.getAnnotationDocumentation().replaceAll("\\n", " ")
+				.replaceAll("\\r", " ").replaceAll("(\\t)+", " ")
+				.replaceAll("( )+", " ");
+	}
+
+	/**
+	 * @return the annotationDocumentation
+	 */
+	public String getAnnotationDocumentation() {
+		return this.annotationDocumentation == null ? ""
+				: this.annotationDocumentation;
+	}
+
+	public ComplexType getBaseComplexType() {
+		return this.baseComplexType;
+	}
+
+	/**
+	 * Get the {@link ComplexTypeChild} with the give property name.
+	 *
+	 * @param propertyName
+	 *            the property name.
+	 * @return the {@link ComplexTypeChild} found or <code>null</code>.
+	 */
+	public ComplexTypeChild getChild(final String propertyName) {
+		ComplexTypeChild c = null;
+		if (propertyName != null) {
+			for (ComplexTypeChild child : this.getChildren()) {
+				if (child.getChildName().equals(propertyName)) {
+					c = child;
+					break;
+				}
+			}
+		}
+		return c;
+	}
+
+	/**
+	 * @return the children
+	 */
+	public List<ComplexTypeChild> getChildren() {
+		if (this.children == null) {
+			this.children = new ArrayList<ComplexTypeChild>();
+		}
+		return this.children;
+	}
+
+	/**
+	 * @return the simple javaClassName
+	 */
+	public String getClassName() {
+		return this.className;
+	}
+
+	/**
+	 * @return the javaClassName
+	 */
+	public String getClassNameFullQualified() {
+		return this.classNameFq;
+	}
+
+	/**
+	 * @return the innerTypeDefs
+	 */
+	public List<ComplexType> getInnerTypeDefs() {
+		if (this.innerTypeDefs == null) {
+			this.innerTypeDefs = new ArrayList<ComplexType>();
+		}
+		return this.innerTypeDefs;
+	}
+
+	public Set<String> getJavaImportClasses() {
+		TreeSet<String> ts = new TreeSet<String>(new JavaImportComparator());
+		if (!this.isJavaPrimitive() && !this.isJavaArray()
+				&& !this.getPackageName().startsWith("org.apache.xmlbeans")) {
+			ts.add(this.getClassNameFullQualified());
+		}
+		for (ComplexTypeChild child : this.getChildren()) {
+			if (!child.getJavaPackage().startsWith("java.lang")
+					&& !child.getJavaPackage().startsWith("org.apache.xmlbeans")
+					&& !child.isJavaPrimitive() && !child.isJavaArray()) {
+				ts.add(child.getJavaImportClass());
+			}
+			if (child.isList()) {
+				ts.add("java.util.List");
+			}
+		}
+		return ts;
+	}
+
+	/**
+	 * @return the packageName
+	 */
+	public String getPackageName() {
+		return this.packageName;
+	}
+
+	/**
+	 * @return the parent {@link ComplexType}.
+	 */
+	public ComplexType getParent() {
+		return this.parent;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getTargetNamespace() {
+		String targetNamespace = "";
+		if (this.type.getName() != null) {
+			targetNamespace = this.type.getName().getNamespaceURI();
+		}
+		if (targetNamespace == null
+				|| targetNamespace.length() == 0 && this.parent != null) {
+			targetNamespace = this.parent.getTargetNamespace();
+		}
+		return targetNamespace;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public SchemaType getType() {
+		return this.type;
 	}
 
 	/**
@@ -242,119 +481,6 @@ public class ComplexType {
 		}
 	}
 
-	public Set<String> getJavaImportClasses() {
-		TreeSet<String> ts = new TreeSet<String>(new JavaImportComparator());
-		if (!this.isJavaPrimitive() && !this.isJavaArray()
-				&& !this.getPackageName().startsWith("org.apache.xmlbeans")) {
-			ts.add(this.getClassNameFullQualified());
-		}
-		for (ComplexTypeChild child : this.getChildren()) {
-			if (!child.getJavaPackage().startsWith("java.lang")
-					&& !child.getJavaPackage().startsWith("org.apache.xmlbeans")
-					&& !child.isJavaPrimitive() && !child.isJavaArray()) {
-				ts.add(child.getJavaImportClass());
-			}
-			if (child.isList()) {
-				ts.add("java.util.List");
-			}
-		}
-		return ts;
-	}
-
-	private boolean containsChildName(final String childName) {
-		boolean contains = false;
-		for (ComplexTypeChild child : this.getChildren()) {
-			if (child.getChildName().equals(childName)) {
-				contains = true;
-				break;
-			}
-		}
-		return contains;
-	}
-
-	/**
-	 * @param type
-	 * @param packageName
-	 */
-	public ComplexType(final SchemaType type, final XsdsUtil config) {
-		this(type, null, config);
-	}
-
-	/**
-	 * @return the children
-	 */
-	public List<ComplexTypeChild> getChildren() {
-		if (this.children == null) {
-			this.children = new ArrayList<ComplexTypeChild>();
-		}
-		return this.children;
-	}
-
-	/**
-	 * Get the {@link ComplexTypeChild} with the give property name.
-	 *
-	 * @param propertyName
-	 *            the property name.
-	 * @return the {@link ComplexTypeChild} found or <code>null</code>.
-	 */
-	public ComplexTypeChild getChild(final String propertyName) {
-		ComplexTypeChild c = null;
-		if (propertyName != null) {
-			for (ComplexTypeChild child : this.getChildren()) {
-				if (child.getChildName().equals(propertyName)) {
-					c = child;
-					break;
-				}
-			}
-		}
-		return c;
-	}
-
-	/**
-	 * @return the innerTypeDefs
-	 */
-	public List<ComplexType> getInnerTypeDefs() {
-		if (this.innerTypeDefs == null) {
-			this.innerTypeDefs = new ArrayList<ComplexType>();
-		}
-		return this.innerTypeDefs;
-	}
-
-	/**
-	 * @return the simple javaClassName
-	 */
-	public String getClassName() {
-		return this.className;
-	}
-
-	/**
-	 * @return the parent {@link ComplexType}.
-	 */
-	public ComplexType getParent() {
-		return this.parent;
-	}
-
-	/**
-	 * @return the javaClassName
-	 */
-	public String getClassNameFullQualified() {
-		return this.classNameFq;
-	}
-
-	/**
-	 * @return the packageName
-	 */
-	public String getPackageName() {
-		return this.packageName;
-	}
-
-	/**
-	 * @return the type
-	 */
-	public SchemaType getType() {
-		return this.type;
-	}
-
 	/**
 	 * @return is abstract type
 	 */
@@ -362,66 +488,50 @@ public class ComplexType {
 		return this.type.isAbstract();
 	}
 
+	public boolean isComplexMappingType() {
+		return this.complexMappingType;
+	}
+
+	public boolean isComplexUUIDMappingType() {
+		return this.complexUUIDMappingType;
+	}
+
+	public boolean isDirectMappingType() {
+		return this.directMappingType;
+	}
+
+	public boolean isDefaultMappingType() {
+		return this.defaultMappingType;
+	}
+
+	/**
+	 * Get the default value if {@link #isDefaultMappingType()}.
+	 *
+	 * @return the default value or <code>null</code>.
+	 */
+	public String getDefaultValue() {
+		String defaultValue = null;
+		if (this.isDefaultMappingType()) {
+			SchemaProperty defaultProperty = this.getType()
+					.getElementProperties()[0];
+			if (defaultProperty.getType().isSimpleType()
+					&& defaultProperty.getType().getEnumerationValues() != null
+					&& defaultProperty.getType()
+							.getEnumerationValues().length == 1) {
+				defaultValue = defaultProperty.getType()
+						.getEnumerationValues()[0].getStringValue();
+			} else {
+				defaultValue = defaultProperty.getDefaultText();
+			}
+		}
+		return defaultValue;
+	}
+
 	/**
 	 * @return is enum type
 	 */
 	public boolean isEnumType() {
 		return this.type.hasStringEnumValues();
-	}
-
-	/**
-	 * @return is primitive type
-	 */
-	public boolean isPrimitiveType() {
-		return this.type.isPrimitiveType();
-	}
-
-	/**
-	 * @return is simple type
-	 */
-	public boolean isSimpleType() {
-		return this.type.isSimpleType();
-	}
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(this.classNameFq).append("[").append(this.isAbstractType())
-				.append("/").append(this.isEnumType()).append("/")
-				.append(this.isSimpleType()).append("]");
-		return sb.toString();
-	}
-
-	/**
-	 * @return the requestType
-	 */
-	public boolean isRequestType() {
-		return this.requestType;
-	}
-
-	/**
-	 * @return the responseType
-	 */
-	public boolean isResponseType() {
-		return this.responseType;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getTargetNamespace() {
-		String targetNamespace = "";
-		if (this.type.getName() != null) {
-			targetNamespace = this.type.getName().getNamespaceURI();
-		}
-		if (targetNamespace == null
-				|| targetNamespace.length() == 0 && this.parent != null) {
-			targetNamespace = this.parent.getTargetNamespace();
-		}
-		return targetNamespace;
 	}
 
 	/**
@@ -439,10 +549,22 @@ public class ComplexType {
 	}
 
 	/**
-	 * @return the annotationDocumentation
+	 * @return <code>true</code>, if the &lt; <code>complexType<code>&gt; is
+	 *         created as an inner &lt;<code>complexType<code>&gt;.
 	 */
-	public String getAnnotationDocumentation() {
-		return this.annotationDocumentation;
+	public boolean isInnerTypeDefinition() {
+		return this.parent != null;
+	}
+
+	public boolean isInterfaceMappingType() {
+		return this.interfaceMappingType;
+	}
+
+	/**
+	 * @return the javaPrimitive
+	 */
+	public boolean isJavaArray() {
+		return this.javaArray;
 	}
 
 	/**
@@ -452,10 +574,60 @@ public class ComplexType {
 		return this.javaPrimitive;
 	}
 
-	/**
-	 * @return the javaPrimitive
-	 */
-	public boolean isJavaArray() {
-		return this.javaArray;
+	public boolean isMapRequestType() {
+		return this.mapRequestType;
 	}
+
+	public boolean isMapResponseType() {
+		return this.mapResponseType;
+	}
+
+	/**
+	 * @return is primitive type
+	 */
+	public boolean isPrimitiveType() {
+		return this.type.isPrimitiveType();
+	}
+
+	/**
+	 * @return the requestType
+	 */
+	public boolean isRequestType() {
+		return this.requestType;
+	}
+
+	/**
+	 * @return the responseType
+	 */
+	public boolean isResponseType() {
+		return this.responseType;
+	}
+
+	/**
+	 * @return is simple type
+	 */
+	public boolean isSimpleType() {
+		return this.type.isSimpleType();
+	}
+
+	public String toQNameString() {
+		if (this.type.getName() == null) {
+			return String.valueOf(this.type);
+		} else {
+			return this.type.getName().toString();
+		}
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.classNameFq).append("[").append(this.isAbstractType())
+				.append("/").append(this.isEnumType()).append("/")
+				.append(this.isSimpleType()).append("]");
+		return sb.toString();
+	}
+
 }

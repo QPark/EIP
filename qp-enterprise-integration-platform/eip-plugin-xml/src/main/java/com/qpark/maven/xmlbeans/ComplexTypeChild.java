@@ -26,6 +26,35 @@ public class ComplexTypeChild {
 	private final boolean optional;
 	private final boolean list;
 	private final XmlAnySimpleType defaultValue;
+	private String annotationDocumentation;
+
+	/**
+	 * @return the annotationDocumentation
+	 */
+	public String getAnnotationDocumentationNormalised() {
+		return this.getAnnotationDocumentation().replaceAll("\\n", " ")
+				.replaceAll("\\r", " ").replaceAll("(\\t)+", " ")
+				.replaceAll("( )+", " ");
+	}
+
+	/**
+	 * @return the annotationDocumentation
+	 */
+	public String getAnnotationDocumentation() {
+		return this.annotationDocumentation == null ? ""
+				: this.annotationDocumentation;
+	}
+
+	/**
+	 * Set the annotationDocumentation.
+	 *
+	 * @param the
+	 *            annotationDocumentation
+	 */
+	public void setAnnotationDocumentation(
+			final String annotationDocumentation) {
+		this.annotationDocumentation = annotationDocumentation;
+	}
 
 	/**
 	 * @param childName
@@ -100,22 +129,29 @@ public class ComplexTypeChild {
 	}
 
 	/**
+	 * Get cardinality string e.g. <i>[0..*]</i> or <i>[1..1]</i>.
+	 *
+	 * @return the cardinality as string.
+	 */
+	public String getCardinality() {
+		StringBuffer sb = new StringBuffer(8);
+		sb.append("[");
+		sb.append(this.minOccurs);
+		sb.append("..");
+		sb.append(this.maxOccurs == null ? "*" : this.maxOccurs);
+		sb.append("]");
+		return sb.toString();
+	}
+
+	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(128);
-		sb.append(this.childName);
-		sb.append(" ");
-		sb.append(this.ct.getType().getName().getLocalPart());
-		sb.append(" ");
-		sb.append(this.minOccurs);
-		sb.append("/");
-		sb.append(this.maxOccurs);
-		sb.append(" ");
-		sb.append(this.isOptional());
-		sb.append("/");
-		sb.append(this.isList());
+		sb.append(this.getChildName());
+		sb.append(this.getCardinality());
+		sb.append(this.getComplexType().toQNameString());
 		return sb.toString();
 	}
 

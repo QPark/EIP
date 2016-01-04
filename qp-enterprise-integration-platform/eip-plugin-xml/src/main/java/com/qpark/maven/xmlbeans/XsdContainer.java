@@ -14,32 +14,122 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class XsdContainer {
-	private final File file;
-	private final String packageName;
-	private final String targetNamespace;
-	private final String relativeName;
-
-	private final TreeMap<String, String> imports;
-	private final TreeMap<String, String> xmlnss;
-	private final TreeSet<String> usedXmlnss;
-	private final Collection<String> importedTargetNamespaces;
-	private final Collection<String> totalImportedTargetNamespaces = new TreeSet<String>();
 	private final String annotationDocumentation;
+	private final File file;
+	private final Collection<String> importedTargetNamespaces;
+	private final TreeMap<String, String> imports;
+
+	private final String packageName;
+	private final String relativeName;
+	private final String targetNamespace;
+	private final Collection<String> totalImportedTargetNamespaces = new TreeSet<String>();
+	private final TreeSet<String> usedXmlnss;
+	private final String version;
+
+	private final TreeMap<String, String> xmlnss;
+
+	XsdContainer(final File f, final File baseDirectory,
+			final String packageName, final String targetNamespace,
+			final String annotationDocumentation,
+			final TreeMap<String, String> imports,
+			final TreeMap<String, String> xmlnss,
+			final TreeSet<String> usedXmlns) {
+		this.file = f;
+		if (f != null) {
+			String s = f.getAbsolutePath()
+					.replace(baseDirectory.getAbsolutePath(), "");
+			if (s.length() > 0) {
+				s = s.substring(1, s.length());
+			}
+			this.relativeName = s.replaceAll("\\\\", "/");
+		} else {
+			this.relativeName = null;
+		}
+		this.packageName = packageName;
+		this.targetNamespace = targetNamespace;
+		this.annotationDocumentation = annotationDocumentation;
+		if (imports == null) {
+			this.imports = new TreeMap<String, String>();
+			this.importedTargetNamespaces = new ArrayList<String>();
+		} else {
+			this.imports = imports;
+			this.importedTargetNamespaces = imports.keySet();
+			this.importedTargetNamespaces.remove(this.targetNamespace);
+		}
+		if (xmlnss == null) {
+			this.xmlnss = new TreeMap<String, String>();
+		} else {
+			this.xmlnss = xmlnss;
+		}
+		this.usedXmlnss = usedXmlns;
+		if (targetNamespace.matches("^.*?-\\d\\.\\d$")) {
+			this.version = targetNamespace.substring(
+					targetNamespace.lastIndexOf('-') + 1,
+					targetNamespace.length());
+		} else {
+			this.version = "1.0";
+		}
+	}
 
 	public String getAnnotationDocumentation() {
 		return this.annotationDocumentation;
 	}
 
-	public Collection<String> getImportedTargetNamespaces() {
-		return this.importedTargetNamespaces;
+	/**
+	 * @return the domain path name.
+	 */
+	public String getDomainPathName() {
+		return this.relativeName.substring(0,
+				this.relativeName.lastIndexOf('/'));
+	}
+
+	/**
+	 * @return the file
+	 */
+	public File getFile() {
+		return this.file;
 	}
 
 	public String getImportedSchemaLocation(final String targetNamespace) {
 		return this.imports.get(targetNamespace);
 	}
 
+	public Collection<String> getImportedTargetNamespaces() {
+		return this.importedTargetNamespaces;
+	}
+
+	/**
+	 * @return the packageName
+	 */
+	public String getPackageName() {
+		return this.packageName;
+	}
+
+	/**
+	 * @return the relativeName
+	 */
+	public String getRelativeName() {
+		return this.relativeName;
+	}
+
+	/**
+	 * @return the targetNamespace
+	 */
+	public String getTargetNamespace() {
+		return this.targetNamespace;
+	}
+
 	public Collection<String> getTotalImportedTargetNamespaces() {
 		return this.totalImportedTargetNamespaces;
+	}
+
+	/**
+	 * Get the version. If no version is specified 1.0 is assumed.
+	 * 
+	 * @return the version
+	 */
+	public String getVersion() {
+		return this.version;
 	}
 
 	public List<String> getWarnings() {
@@ -78,63 +168,6 @@ public class XsdContainer {
 		return list;
 	}
 
-	XsdContainer(final File f, final File baseDirectory,
-			final String packageName, final String targetNamespace,
-			final String annotationDocumentation,
-			final TreeMap<String, String> imports,
-			final TreeMap<String, String> xmlnss,
-			final TreeSet<String> usedXmlns) {
-		this.file = f;
-		if (f != null) {
-			String s = f.getAbsolutePath()
-					.replace(baseDirectory.getAbsolutePath(), "");
-			if (s.length() > 0) {
-				s = s.substring(1, s.length());
-			}
-			this.relativeName = s.replaceAll("\\\\", "/");
-		} else {
-			this.relativeName = null;
-		}
-		this.packageName = packageName;
-		this.targetNamespace = targetNamespace;
-		this.annotationDocumentation = annotationDocumentation;
-		if (imports == null) {
-			this.imports = new TreeMap<String, String>();
-			this.importedTargetNamespaces = new ArrayList<String>();
-		} else {
-			this.imports = imports;
-			this.importedTargetNamespaces = imports.keySet();
-			this.importedTargetNamespaces.remove(this.targetNamespace);
-		}
-		if (xmlnss == null) {
-			this.xmlnss = new TreeMap<String, String>();
-		} else {
-			this.xmlnss = xmlnss;
-		}
-		this.usedXmlnss = usedXmlns;
-	}
-
-	/**
-	 * @return the file
-	 */
-	public File getFile() {
-		return this.file;
-	}
-
-	/**
-	 * @return the packageName
-	 */
-	public String getPackageName() {
-		return this.packageName;
-	}
-
-	/**
-	 * @return the targetNamespace
-	 */
-	public String getTargetNamespace() {
-		return this.targetNamespace;
-	}
-
 	/**
 	 * @see java.lang.Object#toString()
 	 */
@@ -146,10 +179,4 @@ public class XsdContainer {
 		return sb.toString();
 	}
 
-	/**
-	 * @return the relativeName
-	 */
-	public String getRelativeName() {
-		return this.relativeName;
-	}
 }
