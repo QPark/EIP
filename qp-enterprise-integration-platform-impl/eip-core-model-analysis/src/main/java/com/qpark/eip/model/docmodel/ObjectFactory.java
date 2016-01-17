@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Enterprise_QNAME = new QName("http://www.ses.com/Utility/DocumentationModel", "Enterprise");
+    private final static QName _Enterprise_QNAME = new QName("http://www.qpark-consulting.com/EIP/Utility/DocumentationModel", "Enterprise");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.qpark.eip.model.docmodel
@@ -204,7 +204,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link EnterpriseType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.ses.com/Utility/DocumentationModel", name = "Enterprise")
+    @XmlElementDecl(namespace = "http://www.qpark-consulting.com/EIP/Utility/DocumentationModel", name = "Enterprise")
     public JAXBElement<EnterpriseType> createEnterprise(EnterpriseType value) {
         return new JAXBElement<EnterpriseType>(_Enterprise_QNAME, EnterpriseType.class, null, value);
     }

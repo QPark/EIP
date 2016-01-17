@@ -118,7 +118,7 @@ public class OperationType
      *     
      */
     @Basic
-    @Column(name = "ID", length = 255)
+    @Column(name = "ID", length = 36)
     public String getId() {
         return id;
     }
@@ -149,7 +149,7 @@ public class OperationType
      *     
      */
     @Basic
-    @Column(name = "PARENTID", length = 255)
+    @Column(name = "PARENTID", length = 36)
     public String getParentId() {
         return parentId;
     }
@@ -358,7 +358,7 @@ public class OperationType
      *     
      */
     @Basic
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "DESCRIPTION", length = 2047)
     public String getDescription() {
         return description;
     }

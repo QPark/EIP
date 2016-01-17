@@ -109,7 +109,7 @@ public class RequestResponseDataType
      *     
      */
     @Basic
-    @Column(name = "ID", length = 255)
+    @Column(name = "ID", length = 36)
     public String getId() {
         return id;
     }
@@ -140,7 +140,7 @@ public class RequestResponseDataType
      *     
      */
     @Basic
-    @Column(name = "PARENTID", length = 255)
+    @Column(name = "PARENTID", length = 36)
     public String getParentId() {
         return parentId;
     }
@@ -171,7 +171,7 @@ public class RequestResponseDataType
      *     
      */
     @Basic
-    @Column(name = "NAME_", length = 255)
+    @Column(name = "NAME_", length = 511)
     public String getName() {
         return name;
     }

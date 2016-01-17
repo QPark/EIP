@@ -113,7 +113,7 @@ public class FlowMapInOutType
      *     
      */
     @Basic
-    @Column(name = "ID", length = 255)
+    @Column(name = "ID", length = 36)
     public String getId() {
         return id;
     }
@@ -144,7 +144,7 @@ public class FlowMapInOutType
      *     
      */
     @Basic
-    @Column(name = "PARENTID", length = 255)
+    @Column(name = "PARENTID", length = 36)
     public String getParentId() {
         return parentId;
     }

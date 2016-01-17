@@ -146,7 +146,7 @@ public class ClusterType
      *     
      */
     @Basic
-    @Column(name = "ID", length = 255)
+    @Column(name = "ID", length = 36)
     public String getId() {
         return id;
     }
@@ -177,7 +177,7 @@ public class ClusterType
      *     
      */
     @Basic
-    @Column(name = "PARENTID", length = 255)
+    @Column(name = "PARENTID", length = 36)
     public String getParentId() {
         return parentId;
     }
@@ -239,7 +239,7 @@ public class ClusterType
      *     
      */
     @Basic
-    @Column(name = "FILENAME", length = 255)
+    @Column(name = "FILENAME", length = 511)
     public String getFileName() {
         return fileName;
     }
@@ -301,7 +301,7 @@ public class ClusterType
      *     
      */
     @Basic
-    @Column(name = "PACKAGENAME", length = 255)
+    @Column(name = "PACKAGENAME", length = 511)
     public String getPackageName() {
         return packageName;
     }
@@ -332,7 +332,7 @@ public class ClusterType
      *     
      */
     @Basic
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "DESCRIPTION", length = 2047)
     public String getDescription() {
         return description;
     }
