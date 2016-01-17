@@ -40,19 +40,4 @@
 		</property>
 	</bean>
 	-->
-
-	<bean class="com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig">
-		<property name="contextName" value="${eip.application.maven.artifact.artifactid}"/>
-		<property name="contextVersion" value="${eip.application.maven.artifact.version}"/>
-		<property name="messageContentProviderClassName" value="com.samples.platform.core.SamplesMessageContentProvider"/>
-		<property name="jpaVendorAdapterClassName" value="${com.samples.platform.jpa.vendor.adapter.class.name}"/>
-		<property name="jpaVendorAdpaterDatabasePlatform" value="${com.samples.platform.jpa.vendor.adapter.database.platform}"/>
-		<property name="dataSourceJndiName" value="${com.samples.platform.jndi.datasource.name}"/>
-	</bean>
-
-	<bean class="com.samples.platform.persistenceconfig.JndiDataSourceConfig"/>
-	<bean class="com.samples.platform.persistenceconfig.PersistenceConfig">
-		<property name="jpaVendorAdapterClassName" value="${com.samples.platform.jpa.vendor.adapter.class.name}"/>
-		<property name="jpaVendorAdpaterDatabasePlatform" value="${com.samples.platform.jpa.vendor.adapter.database.platform}"/>
-	</bean>
 </beans>

@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.samples.platform.config;
@@ -26,31 +26,36 @@ import com.samples.platform.util.SystemUserLogFlowGatewayImpl;
  * @author bhausen
  */
 @Configuration
-@Import(value = com.samples.platform.serviceprovider.techsupport.flow.config.ServiceProviderConfig.class)
+@Import(value = {
+
+	com.samples.platform.serviceprovider.techsupport.flow.config.ServiceProviderConfig.class,
+	com.samples.platform.core.config.SpringConfig.class
+
+})
 @ComponentScan("com.samples.platform.service")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebappSpringConfig {
-	/**
-	 * Get the {@link ServiceExecutionLogAspect} bean.
-	 *
-	 * @return the {@link ServiceExecutionLogAspect} bean.
-	 */
-	@Bean
-	public ServiceExecutionLogAspect getServiceExecutionLogAspect() {
-		ServiceExecutionLogAspect bean = new ServiceExecutionLogAspect();
-		return bean;
-	}
+    /**
+     * Get the {@link ServiceExecutionLogAspect} bean.
+     *
+     * @return the {@link ServiceExecutionLogAspect} bean.
+     */
+    @Bean
+    public ServiceExecutionLogAspect getServiceExecutionLogAspect() {
+	ServiceExecutionLogAspect bean = new ServiceExecutionLogAspect();
+	return bean;
+    }
 
-	@Bean(name = "comSamplesPlatformCommonRouterAggregatorGetReferenceData")
-	public AggregatorGetReferenceData getAggregatorGetReferenceData() {
-		AggregatorGetReferenceData bean = new AggregatorGetReferenceData();
-		return bean;
-	}
+    @Bean(name = "comSamplesPlatformCommonRouterAggregatorGetReferenceData")
+    public AggregatorGetReferenceData getAggregatorGetReferenceData() {
+	AggregatorGetReferenceData bean = new AggregatorGetReferenceData();
+	return bean;
+    }
 
-	@Bean
-	public SystemUserLogFlowGateway getSystemUserLogFlowGateway() {
-		SystemUserLogFlowGateway bean = new SystemUserLogFlowGatewayImpl();
-		return bean;
-	}
+    @Bean
+    public SystemUserLogFlowGateway getSystemUserLogFlowGateway() {
+	SystemUserLogFlowGateway bean = new SystemUserLogFlowGatewayImpl();
+	return bean;
+    }
 }
