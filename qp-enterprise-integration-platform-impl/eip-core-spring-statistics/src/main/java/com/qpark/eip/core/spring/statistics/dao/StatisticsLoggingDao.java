@@ -1,7 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0. The Eclipse Public License is available at
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.dao;
@@ -39,6 +41,7 @@ import com.qpark.eip.core.domain.persistencedefinition.SystemUserLogType_;
 import com.qpark.eip.core.persistence.AbstractEipDao;
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ContextNameProvider;
+import com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig;
 
 /**
  * DAO to access the authority database and to log the user calls.
@@ -83,7 +86,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 
 	/** The eip {@link ContextNameProvider}. */
 	@Autowired
-	@Qualifier("ComQparkEipCoreSpringStatisticsContextNameProvider")
+	@Qualifier(EipStatisticsConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
 	private ContextNameProvider contextNameProvider;
 	/** The {@link EntityManager}. */
 	@PersistenceContext(unitName = EipPersistenceConfig.PERSISTENCE_UNIT_NAME,
@@ -100,6 +103,13 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 *            the {@link ApplicationUserLogType} to add.
 	 */
 	private void addChannelInvocation(final ApplicationUserLogType log) {
+		if (this.logger.isTraceEnabled()) {
+			this.logger.trace("{},{},{},{},{},{},{},{}", log.getContext(),
+					log.getHostName(), log.getServiceName(),
+					log.getOperationName(), log.getUserName(),
+					log.getReturnedFailures(), log.getDurationString(),
+					log.getStartItem());
+		}
 		this.em.persist(log);
 	}
 
@@ -210,21 +220,6 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 				String.valueOf(persistence.getUserName()),
 				persistence.getServiceName(), persistence.getOperationName(),
 				persistence.getLogDate().toXMLFormat());
-	}
-
-	private void setupSystemUserLog(final SystemUserLogType l,
-			final SystemUserLogType addition) {
-		if (l != null && addition != null) {
-			l.setRequestsDenied(
-					l.getRequestsDenied() + addition.getRequestsDenied());
-			l.setRequestsGranted(
-					l.getRequestsGranted() + addition.getRequestsGranted());
-			l.setResponseFaults(
-					l.getResponseFaults() + addition.getResponseFaults());
-		}
-		if (l != null && l.getRequestsGranted() == 0) {
-			l.setRequestsGranted(1);
-		}
 	}
 
 	/**
@@ -353,6 +348,34 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	}
 
 	/**
+	 * Get all {@link ApplicationUserLogType}s of the day of the application.
+	 *
+	 * @param date
+	 *            the date the calls are recorded.
+	 * @return the list of {@link SystemUserLogType}s.
+	 */
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<ApplicationUserLogType> getApplicationUserLogType(
+			final Date date) {
+		CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		Date d = date;
+		if (d == null) {
+			d = new Date();
+		}
+		CriteriaQuery<ApplicationUserLogType> q = cb
+				.createQuery(ApplicationUserLogType.class);
+		Root<ApplicationUserLogType> c = q.from(ApplicationUserLogType.class);
+		q.where(cb.equal(c.<String> get(ApplicationUserLogType_.context),
+				this.contextNameProvider.getContextName()),
+				cb.between(c.<Date> get(ApplicationUserLogType_.startItem),
+						getDayStart(d), getDayEnd(d)));
+
+		TypedQuery<ApplicationUserLogType> typedQuery = this.em.createQuery(q);
+		return typedQuery.getResultList();
+	}
+
+	/**
 	 * @see com.qpark.eip.core.persistence.BusUtilDao#getContextName()
 	 */
 	@Override
@@ -401,5 +424,20 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 
 		TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);
 		return typedQuery.getResultList();
+	}
+
+	private void setupSystemUserLog(final SystemUserLogType l,
+			final SystemUserLogType addition) {
+		if (l != null && addition != null) {
+			l.setRequestsDenied(
+					l.getRequestsDenied() + addition.getRequestsDenied());
+			l.setRequestsGranted(
+					l.getRequestsGranted() + addition.getRequestsGranted());
+			l.setResponseFaults(
+					l.getResponseFaults() + addition.getResponseFaults());
+		}
+		if (l != null && l.getRequestsGranted() == 0) {
+			l.setRequestsGranted(1);
+		}
 	}
 }

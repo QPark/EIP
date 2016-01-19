@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.eip.core.spring.lockedoperation;
 
 import java.util.concurrent.Callable;
@@ -97,7 +105,8 @@ public abstract class AbstractAsyncLockableOperation
 	 *            <code>null</code>) to pass to the {@link LockableOperation}.
 	 */
 	@Override
-	protected void invokeOperation(final LockableOperationContext context) {
+	protected final void invokeOperation(
+			final LockableOperationContext context) {
 		this.getLogger().debug("Create AsyncRunner for the operation {} ({})",
 				new Object[] { this.getName(), this.getUUID() });
 		AutowireCapableBeanFactory beanFactory = this.applicationContext
@@ -136,7 +145,7 @@ public abstract class AbstractAsyncLockableOperation
 	 * @see com.qpark.eip.core.spring.lockedoperation.LockableOperation#isAsync()
 	 */
 	@Override
-	public boolean isAsync() {
+	public final boolean isAsync() {
 		return true;
 	}
 

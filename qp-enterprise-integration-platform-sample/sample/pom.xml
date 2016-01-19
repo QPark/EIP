@@ -86,13 +86,13 @@
 	</repositories>
 	<properties>
 		<base.package.name>${project.groupId}</base.package.name>
-		<bus.application.name>platform</bus.application.name>
+		<bus.application.name>iss</bus.application.name>
 		<platform.version>${project.version}</platform.version>
 		<bus.war.prefix></bus.war.prefix>
 
 		<domain.groupId>com.samples.domain</domain.groupId>
 		<domain.version>${project.version}</domain.version>
-  	<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
+		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
 
 		<persistence.unit.name>${project.groupId}.domain</persistence.unit.name>
 		<persistence.jndi.datasource.name>PlatformDB</persistence.jndi.datasource.name>

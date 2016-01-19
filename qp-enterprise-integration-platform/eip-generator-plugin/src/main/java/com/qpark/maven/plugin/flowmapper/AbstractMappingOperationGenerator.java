@@ -44,11 +44,13 @@ public abstract class AbstractMappingOperationGenerator
 	protected final String interfaceName;
 	protected final ComplexType request;
 	protected final ComplexType response;
+	protected final String eipVersion;
 
 	public AbstractMappingOperationGenerator(final XsdsUtil config,
 			final String basicFlowPackageName, final ComplexType request,
 			final ComplexType response,
-			final ComplexContentList complexContentList, final Log log) {
+			final ComplexContentList complexContentList,
+			final String eipVersion, final Log log) {
 		super(config, complexContentList, log);
 		this.basicFlowPackageName = basicFlowPackageName;
 		this.request = request;
@@ -57,6 +59,7 @@ public abstract class AbstractMappingOperationGenerator
 		this.packageNameImpl = this.getPackageNameImpl();
 		this.interfaceName = getInterfaceName(request);
 		this.implName = this.getImplName();
+		this.eipVersion = eipVersion;
 	}
 
 	public Entry<String, String> generateInterface(
@@ -104,10 +107,8 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append("}\n * is defined as <code>");
 		sb.append(this.response.getType().getName());
 		sb.append("</code>.\n");
-		sb.append(" * <pre>");
-		sb.append(Util.getGeneratedAt());
-		sb.append("</pre>\n");
-		sb.append(" * @author bhausen\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				this.eipVersion));
 		sb.append(" */\n");
 		sb.append("public interface ").append(this.interfaceName)
 				.append(" {\n");

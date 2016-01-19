@@ -36,9 +36,10 @@ public class InterfaceMappingTypeGenerator
 
 	public InterfaceMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName, final ComplexType complexType,
-			final ComplexContentList complexContentList, final Log log) {
+			final ComplexContentList complexContentList,
+			final String eipVersion, final Log log) {
 		super(config, basicFlowPackageName, complexType, complexContentList,
-				log);
+				eipVersion, log);
 	}
 
 	public void generateImpl(final File outputDirectory) {
@@ -72,10 +73,8 @@ public class InterfaceMappingTypeGenerator
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
-		sb.append(" * <pre>");
-		sb.append(Util.getGeneratedAt());
-		sb.append("</pre>\n");
-		sb.append(" * @author bhausen\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				this.eipVersion));
 		sb.append(" */\n");
 		sb.append("@Component\n");
 		sb.append("public class ");

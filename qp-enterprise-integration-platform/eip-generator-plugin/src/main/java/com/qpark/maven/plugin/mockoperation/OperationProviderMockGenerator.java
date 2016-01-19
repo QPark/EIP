@@ -35,10 +35,12 @@ public class OperationProviderMockGenerator {
 	private final String serviceId;
 	private final File outputDirectory;
 	private final boolean useInsightAnnotation;
+	private final String eipVersion;
 
 	public OperationProviderMockGenerator(final XsdsUtil config,
 			final File outputDirectory, final ElementType element,
-			final boolean useInsightAnnotation, final Log log) {
+			final boolean useInsightAnnotation, final String eipVersion,
+			final Log log) {
 		this.config = config;
 		this.outputDirectory = outputDirectory;
 		this.log = log;
@@ -48,6 +50,7 @@ public class OperationProviderMockGenerator {
 		this.serviceId = element.getServiceId();
 		this.methodName = element.getMethodName();
 		this.useInsightAnnotation = useInsightAnnotation;
+		this.eipVersion = eipVersion;
 
 		this.elementResponse = XsdsUtil.findResponse(this.elementRequest,
 				config.getElementTypes(), config);
@@ -111,10 +114,8 @@ public class OperationProviderMockGenerator {
 			sb.append(" on service <code>");
 			sb.append(this.serviceId);
 			sb.append("</code>.\n");
-			sb.append(" * <pre>");
-			sb.append(Util.getGeneratedAt());
-			sb.append("</pre>\n");
-			sb.append(" * @author bhausen\n");
+			sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+					this.eipVersion));
 			sb.append(" */\n");
 			sb.append("//@Component(\"");
 			sb.append(this.elementRequest.getBeanIdMockOperationProvider());

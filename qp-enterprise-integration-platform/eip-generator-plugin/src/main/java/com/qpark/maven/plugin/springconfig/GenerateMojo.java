@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.springconfig;
@@ -116,21 +114,25 @@ public class GenerateMojo extends AbstractMojo {
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		String eipVersion = null;
+		if (this.project.getArtifact() != null) {
+			eipVersion = this.project.getArtifact().getVersion();
+		}
 
 		WebServiceDispatcherXmlGenerator wsdx = new WebServiceDispatcherXmlGenerator(
 				xsds, this.serviceId, this.warName, this.outputDirectory,
-				this.project, this.getLog());
+				this.project, eipVersion, this.getLog());
 		wsdx.generate();
 
 		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(
 				this.basePackageName, this.serviceId, this.serviceVersion,
 				this.revisionNumber, this.placeholderConfigurerImpl,
-				this.outputDirectory, this.project, this.getLog());
+				this.outputDirectory, this.project, eipVersion, this.getLog());
 		pcx.generate();
 
 		MainApplicationContextXmlGenerator macx = new MainApplicationContextXmlGenerator(
 				this.basePackageName, this.applicationWithoutPersistenceConfig,
-				this.outputDirectory, this.project, this.getLog());
+				this.outputDirectory, this.project, eipVersion, this.getLog());
 		macx.generate();
 
 		this.getLog().debug("-execute");

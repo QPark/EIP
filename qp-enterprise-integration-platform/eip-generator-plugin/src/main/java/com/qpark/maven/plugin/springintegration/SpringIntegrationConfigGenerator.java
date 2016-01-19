@@ -29,16 +29,18 @@ public class SpringIntegrationConfigGenerator {
 	private final XsdsUtil config;
 	/** The output directory. */
 	private final File outputDirectory;
-
+	private final String eipVersion;
 	private final MavenProject project;
 	private final String basePackageName;
 
 	public SpringIntegrationConfigGenerator(final XsdsUtil config,
 			final String basePackageName, final File outputDirectory,
-			final Log log, final MavenProject project) {
+			final String eipVersion, final Log log,
+			final MavenProject project) {
 		this.config = config;
 		this.basePackageName = basePackageName;
 		this.outputDirectory = outputDirectory;
+		this.eipVersion = eipVersion;
 		this.log = log;
 		this.project = project;
 	}
@@ -89,9 +91,8 @@ public class SpringIntegrationConfigGenerator {
 		StringBuffer properties = new StringBuffer();
 
 		xml.append(this.getXmlDefinition());
-		xml.append("\t<!-- ");
-		xml.append(Util.getGeneratedAt());
-		xml.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 
 		xml.append("\n\t<!-- Define the security interceptor \"eipCaller")
 				.append(capitalizeName)

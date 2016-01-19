@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.impl;
@@ -17,6 +17,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.Message;
@@ -150,10 +152,22 @@ public class AppUserStatisticsChannelAdapter
 						.getNumberOfFailures(message));
 
 				log.setHostName(this.getHostName());
+				if (this.logger.isTraceEnabled()) {
+					this.logger.trace("{},{},{},{},{},{},{},{}",
+							log.getContext(), log.getHostName(),
+							log.getServiceName(), log.getOperationName(),
+							log.getUserName(), log.getReturnedFailures(),
+							log.getDurationString(), log.getStartItem());
+				}
+
 				this.submitApplicationUserLogType(log);
 			}
 		}
 	}
+
+	/** The {@link org.slf4j.Logger}. */
+	private Logger logger = LoggerFactory
+			.getLogger(AppUserStatisticsChannelAdapter.class);
 
 	/**
 	 * @see org.springframework.messaging.support.ChannelInterceptor#afterSendCompletion(org.springframework.messaging.Message,

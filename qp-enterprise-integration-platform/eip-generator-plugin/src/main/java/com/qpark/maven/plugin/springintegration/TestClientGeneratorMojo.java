@@ -92,6 +92,11 @@ public class TestClientGeneratorMojo extends AbstractMojo {
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		String eipVersion = null;
+		if (this.project.getArtifact() != null) {
+			eipVersion = this.project.getArtifact().getVersion();
+		}
+
 		TestClientGenerator tc;
 
 		Collection<String> serviceIds = ServiceIdRegistry
@@ -122,7 +127,8 @@ public class TestClientGeneratorMojo extends AbstractMojo {
 			for (ElementType element : xsds.getElementTypes()) {
 				if (element.isRequest() && element.getServiceId().equals(sid)) {
 					tc = new TestClientGenerator(xsds, element,
-							this.useSpringInsightAnnotation, this.getLog());
+							this.useSpringInsightAnnotation, eipVersion,
+							this.getLog());
 					s = tc.generate();
 					if (s.length() > 0) {
 						if (packageName == null
@@ -166,10 +172,8 @@ public class TestClientGeneratorMojo extends AbstractMojo {
 				sb.append(sid);
 				sb.append("</code> using\n");
 				sb.append(" * the {@link WebServiceGatewaySupport}.\n");
-				sb.append(" * <pre>");
-				sb.append(Util.getGeneratedAt());
-				sb.append("</pre>\n");
-				sb.append(" * @author bhausen\n");
+				sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+						eipVersion));
 				sb.append(" */\n");
 				sb.append("public class ");
 				sb.append(className);

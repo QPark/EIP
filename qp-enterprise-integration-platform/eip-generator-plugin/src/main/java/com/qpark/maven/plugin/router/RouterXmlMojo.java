@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.router;
@@ -80,6 +78,7 @@ public class RouterXmlMojo extends AbstractMojo {
 
 	@Component
 	private MavenProject project;
+	private String eipVersion;
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -92,6 +91,9 @@ public class RouterXmlMojo extends AbstractMojo {
 		StringBuffer applicationRouterConfig = new StringBuffer(1024);
 		scanForProperties(this.baseDirectory, propertyFiles);
 
+		if (this.project.getArtifact() != null) {
+			this.eipVersion = this.project.getArtifact().getVersion();
+		}
 		Properties p;
 		BufferedInputStream bis;
 		String serviceId;
@@ -656,9 +658,9 @@ public class RouterXmlMojo extends AbstractMojo {
 			final String xml) {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(this.getXmlDefinition());
-		sb.append("\t<!-- ");
-		sb.append(Util.getGeneratedAt());
-		sb.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
+
 		sb.append("");
 		sb.append(xml);
 		sb.append("</beans>\n");

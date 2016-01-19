@@ -15,7 +15,7 @@
 
 	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
 
-	xmlns:MPTechSupportmsg="http://www.ses.com/Interfaces/TechnicalSupportMessages"
+	xmlns:MPTechSupportmsg="http://www.samples.com/Interfaces/TechnicalSupportMessages"
 	targetNamespace="http://www.samples.com/Interfaces/TechnicalSupportMessages"
 >
 

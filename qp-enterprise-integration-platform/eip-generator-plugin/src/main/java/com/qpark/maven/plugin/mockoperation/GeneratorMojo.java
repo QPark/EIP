@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.mockoperation;
@@ -99,13 +97,18 @@ public class GeneratorMojo extends AbstractMojo {
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}
+		String version = null;
+		if (this.project.getArtifact() != null) {
+			version = this.project.getArtifact().getVersion();
+		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
 				if (element.isRequest() && ServiceIdRegistry
 						.isValidServiceId(element.getServiceId(), sid)) {
 					mop = new OperationProviderMockGenerator(xsds,
 							this.outputDirectory, element,
-							this.useSpringInsightAnnotation, this.getLog());
+							this.useSpringInsightAnnotation, version,
+							this.getLog());
 					mop.generate();
 				}
 			}

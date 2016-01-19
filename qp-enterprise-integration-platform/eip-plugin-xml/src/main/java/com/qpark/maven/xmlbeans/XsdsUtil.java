@@ -1068,6 +1068,11 @@ public class XsdsUtil {
 			i++;
 			long startf = System.currentTimeMillis();
 			SchemaTypeSystem sts = getSchemaTypeSystem(f, this.entityResolver);
+			if (sts == null) {
+				throw new IllegalStateException(String.format(
+						"Could not parse a valid SchemaTypeSystem from file %s",
+						f.getAbsolutePath()));
+			}
 			stsSum += System.currentTimeMillis() - startf;
 			for (SchemaGlobalElement elem : sts.globalElements()) {
 				ElementType elementType = new ElementType(elem, this);

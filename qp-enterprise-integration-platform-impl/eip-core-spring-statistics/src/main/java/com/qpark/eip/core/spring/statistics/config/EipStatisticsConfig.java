@@ -1,7 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0. The Eclipse Public License is available at
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.config;
@@ -31,7 +33,8 @@ import com.qpark.eip.core.spring.statistics.impl.SysUserStatisticsChannelInvocat
  * Provides the spring config of the eip core statistics. Requires a
  * {@link MessageContentProvider} with name
  * {@value #STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME} in the spring context
- * deployed.
+ * deployed. Requires a {@link ContextNameProvider} with name
+ * {@value #CONTEXTNAME_PROVIDER_BEAN_NAME} in the spring context deployed.
  *
  * @author bhausen
  */
@@ -40,6 +43,8 @@ import com.qpark.eip.core.spring.statistics.impl.SysUserStatisticsChannelInvocat
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class EipStatisticsConfig {
+	/** The bean name of the {@link ContextNameProvider}. */
+	public static final String CONTEXTNAME_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringStatisticsContextNameProvider";
 	/** The {@link org.slf4j.Logger} for the application user statistics. */
 	public static Logger LOGGER_STATISTICS_APP_USER = LoggerFactory.getLogger(
 			"com.qpark.eip.core.spring.statistics.statistics.AppUserStats");
@@ -48,23 +53,16 @@ public class EipStatisticsConfig {
 			"com.qpark.eip.core.spring.statistics.statistics.SysUserStats");
 	/** The name of the statistics message content provider bean. */
 	public static final String STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringStatisticsMessageContentProvider";
-	/** The context name of the eip core authority. */
-	private String contextName;
-	/** The version of the context. */
-	private String contextVersion;
-	/** The number of weeks to keep the log entries in the database. */
-	private int numberOfWeeksToKeepLogs = 2;
+	/** The {@link ContextNameProvider}. */
+	@Autowired
+	@Qualifier(CONTEXTNAME_PROVIDER_BEAN_NAME)
+	private ContextNameProvider contextNameProvider;
 	/** The {@link MessageContentProvider} of the statistics. */
 	@Autowired
 	@Qualifier(STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME)
 	private MessageContentProvider messageContentProvider;
-
-	/**
-	 * Create the spring config of the eip core statistics with 2 weeks keeping
-	 * the logs.
-	 */
-	public EipStatisticsConfig() {
-	}
+	/** The number of weeks to keep the log entries in the database. */
+	private int numberOfWeeksToKeepLogs = 2;
 
 	/**
 	 * Get the {@link StatisticsChannelAdapter} bean.
@@ -100,16 +98,13 @@ public class EipStatisticsConfig {
 	}
 
 	/**
-	 * Get the {@link ContextNameProvider} bean.
+	 * Get the context name.
 	 *
-	 * @return the {@link ContextNameProvider} bean.
+	 * @return the context definition.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringStatisticsContextNameProvider")
-	public ContextNameProvider getContextNameProvider() {
-		ContextNameProvider bean = new ContextNameProvider();
-		bean.setContextName(this.contextName);
-		bean.setContextVersion(this.contextVersion);
-		return bean;
+	public String getContextDefinition() {
+		return String.format("%s:%s", this.contextNameProvider.getContextName(),
+				this.contextNameProvider.getContextVersion());
 	}
 
 	/**
@@ -147,35 +142,6 @@ public class EipStatisticsConfig {
 	}
 
 	/**
-	 * Set the context name.
-	 *
-	 * @param contextName
-	 *            the context name.
-	 */
-	public void setContextName(final String contextName) {
-		this.contextName = contextName;
-	}
-
-	/**
-	 * Get the context name.
-	 *
-	 * @return the context definition.
-	 */
-	public String getContextDefinition() {
-		return String.format("%s:%s", this.contextName, this.contextVersion);
-	}
-
-	/**
-	 * Set the context version.
-	 *
-	 * @param contextVersion
-	 *            the context version.
-	 */
-	public void setContextVersion(final String contextVersion) {
-		this.contextVersion = contextVersion;
-	}
-
-	/**
 	 * Set the number of weeks to keep the log entries in the database.
 	 *
 	 * @param numberOfWeeksToKeepLogs
@@ -184,5 +150,4 @@ public class EipStatisticsConfig {
 	public void setNumberOfWeeksToKeepLogs(final int numberOfWeeksToKeepLogs) {
 		this.numberOfWeeksToKeepLogs = numberOfWeeksToKeepLogs;
 	}
-
 }

@@ -44,9 +44,10 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 	public ComplexMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName, final ComplexType complexType,
-			final ComplexContentList complexContentList, final Log log) {
+			final ComplexContentList complexContentList,
+			final String eipVersion, final Log log) {
 		super(config, basicFlowPackageName, complexType, complexContentList,
-				log);
+				eipVersion, log);
 	}
 
 	String generateImpl() {
@@ -106,7 +107,8 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
-		sb.append(" * @author bhausen\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				this.eipVersion));
 		sb.append(" */\n");
 		sb.append("@Component\n");
 		sb.append("public class ");

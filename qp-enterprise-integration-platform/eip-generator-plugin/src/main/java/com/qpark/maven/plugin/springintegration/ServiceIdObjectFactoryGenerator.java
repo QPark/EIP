@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.springintegration;
@@ -24,6 +22,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
  * Generates a ServiceObjectFactory out of the XSDs containing elements.
+ * 
  * @author bhausen
  */
 public class ServiceIdObjectFactoryGenerator {
@@ -36,16 +35,19 @@ public class ServiceIdObjectFactoryGenerator {
 	/** The output directory. */
 	private final File outputDirectory;
 	private final String serviceId;
+	private final String eipVersion;
 
 	/**
 	 * @param config
 	 * @param complexTypes
 	 */
 	public ServiceIdObjectFactoryGenerator(final XsdsUtil xsds,
-			final String serviceId, final File outputDirectory, final Log log) {
+			final String serviceId, final File outputDirectory,
+			final String eipVersion, final Log log) {
 		this.xsds = xsds;
 		this.serviceId = serviceId;
 		this.outputDirectory = outputDirectory;
+		this.eipVersion = eipVersion;
 		this.log = log;
 		this.elementTypes = xsds.getElementTypes();
 	}
@@ -237,10 +239,8 @@ public class ServiceIdObjectFactoryGenerator {
 						"} contains the creation of the objects defined\n * in the target name space <i>");
 				sb.append(entry.getTargetNamespace());
 				sb.append("</i>\n * and imported xsds.\n");
-				sb.append(" * <pre>");
-				sb.append(Util.getGeneratedAt());
-				sb.append("</pre>\n");
-				sb.append(" * @author bhausen\n");
+				sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+						this.eipVersion));
 				sb.append(" */\n");
 				sb.append("public class ");
 				sb.append(className);

@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.servletconfig;
@@ -119,10 +117,14 @@ public class GeneratorMojo extends AbstractMojo {
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		String eipVersion = null;
+		if (this.project.getArtifact() != null) {
+			eipVersion = this.project.getArtifact().getVersion();
+		}
 
 		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId,
 				this.serviceVersion, this.revisionNumber, this.warName,
-				this.additionalWebappFilter, this.outputDirectory,
+				this.additionalWebappFilter, this.outputDirectory, eipVersion,
 				this.getLog());
 		wx.generate();
 
@@ -131,7 +133,7 @@ public class GeneratorMojo extends AbstractMojo {
 				this.disableWebservicePayloadValidation,
 				this.webservicePayloadLoggerImplementation,
 				this.additionalWebservicePayloadInterceptors,
-				this.outputDirectory, this.project, this.getLog());
+				this.outputDirectory, this.project, eipVersion, this.getLog());
 		wsx.generate();
 
 		this.getLog().debug("-execute");

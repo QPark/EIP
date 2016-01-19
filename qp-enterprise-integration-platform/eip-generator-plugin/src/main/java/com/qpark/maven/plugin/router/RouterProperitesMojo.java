@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.router;
@@ -14,9 +12,11 @@ import java.util.Collection;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import com.qpark.maven.Util;
@@ -111,9 +111,8 @@ public class RouterProperitesMojo extends AbstractMojo {
 				sb.append(".");
 				sb.append(element.getOperationName());
 				sb.append("\n");
-				sb.append("# ");
-				sb.append(Util.getGeneratedAt());
-				sb.append("\n");
+				sb.append(Util.getGeneratedAtPropertiesComment(this.getClass(),
+						this.eipVersion));
 				sb.append(ROUTER_SERVICE_ID);
 				sb.append("=");
 				sb.append(element.getServiceId());
@@ -239,6 +238,10 @@ public class RouterProperitesMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
+	@Component
+	private MavenProject project;
+	private String eipVersion;
+
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
 	 */
@@ -250,6 +253,11 @@ public class RouterProperitesMojo extends AbstractMojo {
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
+
+		if (this.project.getArtifact() != null) {
+			this.eipVersion = this.project.getArtifact().getVersion();
+		}
+
 		String fileName;
 		File f;
 		Collection<String> serviceIds = ServiceIdRegistry

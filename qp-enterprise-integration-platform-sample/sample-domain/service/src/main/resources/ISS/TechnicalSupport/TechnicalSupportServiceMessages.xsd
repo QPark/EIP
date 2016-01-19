@@ -34,18 +34,10 @@
 				<jaxb:package name="com.samples.platform.service.iss.tech.support.msg" />
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation>Message definitions of the common web service.</documentation>
+		<documentation>Message definitions of the tech support web service.</documentation>
 	</annotation>
 
 	<complexType name="GetAggregatedReferenceDataRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer tbd
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription Example of the an aggregated GetReferenceData call.
-			</documentation>
-		</annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
 				<sequence>
@@ -63,18 +55,14 @@
 				</extension>
 		</complexContent>
 	</complexType>
-	<element name="GetAggregatedReferenceDataRequest" type="ISSTechSupportm:GetAggregatedReferenceDataRequestType" />
+	<element name="GetAggregatedReferenceDataRequest" type="ISSTechSupportm:GetAggregatedReferenceDataRequestType" >
+		<annotation>
+			<documentation>Example of the an aggregated GetReferenceData call.</documentation>
+		</annotation>
+	</element>
 	<element name="GetAggregatedReferenceDataResponse" type="ISSTechSupportm:GetAggregatedReferenceDataResponseType" />
 
 	<complexType name="GetForwardedReferenceDataRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer tbd
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription Example of the an Forwarded GetReferenceData call.
-			</documentation>
-		</annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
 				<sequence>
@@ -92,18 +80,14 @@
 				</extension>
 		</complexContent>
 	</complexType>
-	<element name="GetForwardedReferenceDataRequest" type="ISSTechSupportm:GetForwardedReferenceDataRequestType" />
+	<element name="GetForwardedReferenceDataRequest" type="ISSTechSupportm:GetForwardedReferenceDataRequestType" >
+		<annotation>
+			<documentation>Example of the an forwarded GetReferenceData call.</documentation>
+		</annotation>
+	</element>
 	<element name="GetForwardedReferenceDataResponse" type="ISSTechSupportm:GetForwardedReferenceDataResponseType" />
 
 	<complexType name="GetSystemUserReportRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer tbd
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription Get the system user log report entries.
-			</documentation>
-		</annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
 				<sequence>
@@ -121,23 +105,17 @@
 			</extension>
 		</complexContent>
 	</complexType>
-	<element name="GetSystemUserReportRequest" type="ISSTechSupportm:GetSystemUserReportRequestType" />
+	<element name="GetSystemUserReportRequest" type="ISSTechSupportm:GetSystemUserReportRequestType" >
+		<annotation>
+			<documentation>Get the system user log report entries by invoking a com.qpark.eip.inf.Flow.</documentation>
+		</annotation>
+	</element>
 	<element name="GetSystemUserReportResponse" type="ISSTechSupportm:GetSystemUserReportResponseType" />
 
 	<complexType name="GetOperationReportRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer tbd
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription Get the system user log report entries.
-			</documentation>
-		</annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
-				<sequence>
-					<element name="criteria" type="ISSTechSupport:OperationReportCriteriaType"/>
-				</sequence>
+				<sequence/>
 			</extension>
 		</complexContent>
 	</complexType>
@@ -150,18 +128,14 @@
 			</extension>
 		</complexContent>
 	</complexType>
-	<element name="GetOperationReportRequest" type="ISSTechSupportm:GetOperationReportRequestType" />
+	<element name="GetOperationReportRequest" type="ISSTechSupportm:GetOperationReportRequestType" >
+		<annotation>
+			<documentation>Get the operation log report entries.</documentation>
+		</annotation>
+	</element>
 	<element name="GetOperationReportResponse" type="ISSTechSupportm:GetOperationReportResponseType" />
 
 	<complexType name="GetFlowReportRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer tbd
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription Get the flow log messages reported.
-			</documentation>
-		</annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
 				<sequence>
@@ -179,6 +153,78 @@
 			</extension>
 		</complexContent>
 	</complexType>
-	<element name="GetFlowReportRequest" type="ISSTechSupportm:GetFlowReportRequestType" />
+	<element name="GetFlowReportRequest" type="ISSTechSupportm:GetFlowReportRequestType" >
+		<annotation>
+			<documentation>Get the flow log messages reported.</documentation>
+		</annotation>
+	</element>
 	<element name="GetFlowReportResponse" type="ISSTechSupportm:GetFlowReportResponseType" />
+
+	<complexType name="GetSoapFaultRequestType">
+		<complexContent>
+			<extension base="EIPbasem:RequestMessage">
+				<sequence/>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetSoapFaultResponseType">
+		<complexContent>
+			<extension base="EIPbasem:ResponseMessage">
+				<sequence/>
+			</extension>
+		</complexContent>
+	</complexType>
+	<element name="GetSoapFaultRequest" type="ISSTechSupportm:GetSoapFaultRequestType">
+		<annotation>
+			<documentation>The purpose of this operation is to provide a SOAPFault as an response.</documentation>
+		</annotation>
+	</element>
+	<element name="GetSoapFaultResponse" type="ISSTechSupportm:GetSoapFaultResponseType"/>
+
+	<complexType name="GetFailureMessageRequestType">
+		<complexContent>
+			<extension base="EIPbasem:RequestMessage">
+				<sequence/>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetFailureMessageResponseType">
+		<complexContent>
+			<extension base="EIPbasem:ResponseMessage">
+				<sequence/>
+			</extension>
+		</complexContent>
+	</complexType>
+	<element name="GetFailureMessageRequest" type="ISSTechSupportm:GetFailureMessageRequestType">
+		<annotation>
+			<documentation>The purpose of this operation is to provide a FailureType in the ResponseMessage.</documentation>
+		</annotation>
+	</element>
+	<element name="GetFailureMessageResponse" type="ISSTechSupportm:GetFailureMessageResponseType"/>
+
+	<complexType name="AppOperationEventRequestType">
+		<complexContent>
+			<extension base="EIPbasem:RequestMessage">
+				<sequence>
+					<element name="operationEvent" type="ISSTechSupport:OperationEventType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="AppOperationEventResponseType">
+		<complexContent>
+			<extension base="EIPbasem:ResponseMessage">
+				<sequence>
+					<element name="report" type="ISSTechSupport:OperationStateType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<element name="AppOperationEventRequest" type="ISSTechSupportm:AppOperationEventRequestType">
+		<annotation>
+			<documentation>Example to show the handling of locked operations.</documentation>
+		</annotation>
+	</element>
+	<element name="AppOperationEventResponse" type="ISSTechSupportm:AppOperationEventResponseType"/>
+
 </schema>

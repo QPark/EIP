@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	jaxb:version="2.0"
-	xmlns:DM="http://www.ses.com/Utility/DocumentationModel"
-	targetNamespace="http://www.ses.com/Utility/DocumentationModel"
+	xmlns:DM="http://www.qpark-consulting.com/EIP/Utility/DocumentationModel"
+	targetNamespace="http://www.qpark-consulting.com/EIP/Utility/DocumentationModel"
 >
 	<annotation>
 		<appinfo>

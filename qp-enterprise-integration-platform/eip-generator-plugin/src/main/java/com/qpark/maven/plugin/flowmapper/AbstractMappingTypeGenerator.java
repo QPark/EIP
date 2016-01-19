@@ -42,10 +42,12 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	protected final ComplexType complexType;
 	protected final String implName;
 	protected final String interfaceName;
+	protected final String eipVersion;
 
 	public AbstractMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName, final ComplexType complexType,
-			final ComplexContentList complexContentList, final Log log) {
+			final ComplexContentList complexContentList,
+			final String eipVersion, final Log log) {
 		super(config, complexContentList, log);
 		this.basicFlowPackageName = basicFlowPackageName;
 		this.complexType = complexType;
@@ -53,6 +55,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		this.packageNameImpl = this.getPackageNameImpl();
 		this.interfaceName = getInterfaceName(complexType);
 		this.implName = this.getImplName();
+		this.eipVersion = eipVersion;
 	}
 
 	public Entry<String, String> generateInterface(
@@ -105,10 +108,8 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append(".\n");
 		sb.append(" * <p/>\n");
 		sb.append(" * This is a ").append(this.getMappingType()).append(".\n");
-		sb.append(" * <pre>");
-		sb.append(Util.getGeneratedAt());
-		sb.append("</pre>\n");
-		sb.append(" * @author bhausen\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				this.eipVersion));
 		sb.append(" */\n");
 		sb.append("public interface ").append(this.interfaceName)
 				.append(" {\n");

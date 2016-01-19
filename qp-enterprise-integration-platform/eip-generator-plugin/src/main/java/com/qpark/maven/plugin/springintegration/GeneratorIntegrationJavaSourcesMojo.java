@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.springintegration;
@@ -80,12 +78,17 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 
 	protected void generate(final XsdsUtil xsds) {
 		IntegrationGatewayGenerator ig;
+		String eipVersion = null;
+		if (this.project.getArtifact() != null) {
+			eipVersion = this.project.getArtifact().getVersion();
+		}
+
 		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<String, List<IntegrationGatewayGenerator>>();
 		List<IntegrationGatewayGenerator> igs;
 		for (ElementType element : xsds.getElementTypes()) {
 			if (element.isRequest()) {
 				ig = new IntegrationGatewayGenerator(xsds, this.outputDirectory,
-						element, this.getLog());
+						element, eipVersion, this.getLog());
 				ig.generate();
 				if (ig.isGenerated()) {
 					igs = serviceIgMap.get(ig.getServiceId());
@@ -101,8 +104,8 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		for (Entry<String, List<IntegrationGatewayGenerator>> entry : serviceIgMap
 				.entrySet()) {
 			sopg = new ServiceOperationProviderGenerator(entry.getKey(),
-					entry.getValue(), this.basePackageName, this.getLog(),
-					this.project);
+					entry.getValue(), this.basePackageName, eipVersion,
+					this.getLog(), this.project);
 			sopg.generate();
 		}
 	}

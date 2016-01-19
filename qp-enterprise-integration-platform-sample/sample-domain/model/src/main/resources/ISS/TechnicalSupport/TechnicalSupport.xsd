@@ -47,13 +47,6 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="OperationReportCriteriaType">
-		<sequence>
-			<element name="service" type="normalizedString" minOccurs="0"/>
-			<element name="operation" type="normalizedString" minOccurs="0"/>
-			<element name="consumerName" type="normalizedString" minOccurs="0"/>
-		</sequence>
-	</complexType>
 	<complexType name="OperationReportType">
 		<sequence>
 			<element name="date" type="dateTime"/>
@@ -62,7 +55,7 @@
 			<element name="operation" type="normalizedString"/>
 			<element name="version" type="normalizedString"/>
 			<element name="consumerName" type="normalizedString"/>
-			<element name="consumerHost" type="normalizedString"/>
+			<element name="servingHost" type="normalizedString"/>
 			<element name="duration" type="normalizedString"/>
 		</sequence>
 	</complexType>
@@ -84,6 +77,23 @@
 			<element name="additionalInformation" type="string"/>
 			<element name="messageType" type="normalizedString"/>
 			<element name="data" type="string"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="OperationEventType">
+		<annotation>
+			<documentation>Contains the event to start, stop, lock or unlock of a operation.</documentation>
+		</annotation>
+		<sequence>
+			<element name="operationUUID" type="EIPcty:UUIDType" />
+			<element name="event" type="normalizedString" />
+			<element name="operationTime" type="dateTime" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	<complexType name="OperationStateType">
+		<sequence>
+			<element name="operationUUID" type="EIPcty:UUIDType" />
+			<element name="state" type="normalizedString" />
 		</sequence>
 	</complexType>
 

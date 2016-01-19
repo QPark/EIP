@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.impl;
@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.security.channel.ChannelInvocation;
@@ -64,6 +66,9 @@ public class SysUserStatisticsChannelInvocationListener
 	/** The {@link FlowLogMessageDao}. */
 	@Autowired
 	private StatisticsLoggingDao statisticsLoggingDao;
+	/** The {@link org.slf4j.Logger}. */
+	private Logger logger = LoggerFactory
+			.getLogger(SysUserStatisticsChannelInvocationListener.class);
 
 	/**
 	 * @see com.qpark.eip.core.spring.security.EipChannelInvocationListener#channelInvocation(org.springframework.integration.security.channel.ChannelInvocation,
@@ -94,6 +99,14 @@ public class SysUserStatisticsChannelInvocationListener
 					&& this.messageContainsSoapFault(channel)) {
 				log.setResponseFaults(1);
 			}
+			if (this.logger.isTraceEnabled()) {
+				this.logger.trace("{},{},{},{},{},{},{},{}", log.getContext(),
+						log.getServiceName(), log.getOperationName(),
+						log.getUserName(), log.getRequestsDenied(),
+						log.getRequestsGranted(), log.getResponseFaults(),
+						log.getLogDateItem());
+			}
+
 			this.submitSystemUserLogType(log,
 					EipRoleVoter.getResultString(result));
 		}

@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.springconfig;
@@ -39,6 +37,7 @@ public class WebServiceDispatcherXmlGenerator {
 	private final String marshallerName;
 	private final MavenProject project;
 	private String serviceId = "esb";
+	private final String eipVersion;
 
 	/**
 	 * @param config
@@ -47,11 +46,12 @@ public class WebServiceDispatcherXmlGenerator {
 	public WebServiceDispatcherXmlGenerator(final XsdsUtil config,
 			final String serviceId, final String warName,
 			final File outputDirectory, final MavenProject project,
-			final Log log) {
+			final String eipVersion, final Log log) {
 		this.config = config;
 		this.serviceId = serviceId == null ? "" : serviceId;
 		this.outputDirectory = outputDirectory;
 		this.project = project;
+		this.eipVersion = eipVersion;
 		this.log = log;
 		this.elementTypes = config.getElementTypes();
 		if (serviceId == null) {
@@ -90,9 +90,8 @@ public class WebServiceDispatcherXmlGenerator {
 		this.log.debug("+generate");
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(this.getXmlDefinition());
-		sb.append("\t<!-- ");
-		sb.append(Util.getGeneratedAt());
-		sb.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 		sb.append("\n");
 		sb.append(this.getApplicationMarshaller());
 		sb.append("\n");
@@ -114,7 +113,8 @@ public class WebServiceDispatcherXmlGenerator {
 
 		if (this.serviceId.length() > 0) {
 			Set<String> totalServiceIds = new TreeSet<String>();
-			List<String> list = ServiceIdRegistry.splitServiceIds(this.serviceId);
+			List<String> list = ServiceIdRegistry
+					.splitServiceIds(this.serviceId);
 			totalServiceIds.addAll(list);
 			for (String sid : list) {
 				totalServiceIds.addAll(ServiceIdRegistry.getServiceIdEntry(sid)
@@ -139,7 +139,8 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append(this.marshallerName);
 		sb.append("\" \n");
 		sb.append("\t\tcontext-path=\"");
-		sb.append(ServiceIdRegistry.getCombinedMarshallerContextPath(this.serviceId));
+		sb.append(ServiceIdRegistry
+				.getCombinedMarshallerContextPath(this.serviceId));
 		sb.append("\"\n\t/>\n");
 		return sb.toString();
 	}
@@ -263,7 +264,7 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append("\"\n");
 		sb.append("\t\tcreateSoap11Binding=\"false\"\n");
 		sb.append("\t\tcreateSoap12Binding=\"true\">\n");
-		sb.append("\t\t<sws:xsd location=\"/WEB-INF/classes");
+		sb.append("\t\t<sws:xsd location=\"");
 		sb.append(Util.getRelativePathTranslated(this.config.getBaseDirectory(),
 				xc.getFile()));
 		sb.append("\" />\n");

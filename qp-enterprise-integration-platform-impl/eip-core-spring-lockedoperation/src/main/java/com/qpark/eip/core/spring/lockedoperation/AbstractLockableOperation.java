@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ * 
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0. 
+ * The Eclipse Public License is available at 
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.eip.core.spring.lockedoperation;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +158,7 @@ public abstract class AbstractLockableOperation implements LockableOperation {
 	public OperationStateEnumType runOperation(final String operationUuid,
 			final OperationEventEnumType event,
 			final LockableOperationContext context) {
-		OperationStateEnumType state = OperationStateEnumType.IDLE;
+		OperationStateEnumType state = null;
 		if (this.isRequestedOperation(operationUuid)) {
 			/*
 			 * Request contains an operation definition to start and the

@@ -61,6 +61,7 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 	private String springJpaVendorAdapter;
 	@Component
 	private MavenProject project;
+	private String eipVersion;
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -83,6 +84,10 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 				|| this.springJpaVendorAdapter.trim().length() == 0) {
 			throw new MojoExecutionException(
 					"No spring JPA vendor adapter supplied. Please use property springJpaVendorAdapter which defaults to org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter.");
+		}
+		this.eipVersion = null;
+		if (this.project.getArtifact() != null) {
+			this.eipVersion = this.project.getArtifact().getVersion();
 		}
 
 		File f;
@@ -136,7 +141,6 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 	private String getSpringDataSourceJavaConfig()
 			throws MojoExecutionException {
 
-		String prefix = Util.capitalizePackageName(this.basePackageName);
 		StringBuffer sb = new StringBuffer(1024);
 
 		sb.append("package ");
@@ -157,7 +161,8 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append(
 				" * Provides the {@link DataSource} out of the JNDI context.\n");
 		sb.append(" *\n");
-		sb.append(" * @author bhausen\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				this.eipVersion));
 		sb.append(" */\n");
 		sb.append("@Configuration\n");
 		sb.append("public class JndiDataSourceConfig {\n");
@@ -234,10 +239,8 @@ public class SpringPersistenceConfigMojo extends AbstractMojo {
 		sb.append(this.persistenceUnitName);
 		sb.append("</i>.\n");
 		sb.append(" *\n");
-		sb.append(" * <pre>");
-		sb.append(Util.getGeneratedAt());
-		sb.append("</pre>\n");
-		sb.append(" * @author bhausen\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				this.eipVersion));
 		sb.append(" */\n");
 		sb.append("@Configuration\n");
 		sb.append("@EnableTransactionManagement\n");

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.dao;
@@ -37,7 +37,8 @@ public class StatisticsEraser {
 		gc.set(Calendar.MINUTE, 0);
 		gc.set(Calendar.SECOND, 0);
 		gc.set(Calendar.MILLISECOND, 0);
-		gc.add(Calendar.WEEK_OF_YEAR, -1 * Math.abs(this.numberOfWeeksToKeepLogs));
+		gc.add(Calendar.WEEK_OF_YEAR,
+				-1 * Math.abs(this.numberOfWeeksToKeepLogs));
 		this.dao.eraseSystemUserLog(gc.getTime());
 		this.dao.eraseApplicationUserLog(gc.getTime());
 		this.dao.eraseFlowLogMessage(gc.getTime());

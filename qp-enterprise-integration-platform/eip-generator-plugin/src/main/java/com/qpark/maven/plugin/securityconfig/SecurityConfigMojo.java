@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.securityconfig;
@@ -142,6 +140,7 @@ public class SecurityConfigMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "userProviderBeanName", defaultValue = "")
 	private String userProviderBeanName;
+	private String eipVersion;
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -154,6 +153,9 @@ public class SecurityConfigMojo extends AbstractMojo {
 		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
 				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
 				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		if (this.project.getArtifact() != null) {
+			this.eipVersion = this.project.getArtifact().getVersion();
+		}
 
 		File f = Util.getFile(this.outputDirectory,
 				"security-spring-config.xml");
@@ -259,8 +261,9 @@ public class SecurityConfigMojo extends AbstractMojo {
 	// ACHTUNG: For users UUID use the java.security.Principal class.
 	private String getAvailableRoles(final XsdsUtil xsds) {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append(
-				"<com:GetReferenceDataResponse xmlns:com=\"http://www.ses.com/CommonServiceMessages-1.0\">\n");
+		sb.append("<com:GetReferenceDataResponse>\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 		for (String role : this.roleList) {
 			sb.append("\t<com:referenceData>\n");
 			sb.append("\t\t<UUID>");
@@ -316,9 +319,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		}
 		sb.append(".xsd\n");
 		sb.append("\">\n");
-		sb.append("\t<!-- ");
-		sb.append(Util.getGeneratedAt());
-		sb.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 		sb.append(
 				"\t<!-- Authentication manager using the eipDaoAuthenticationProvider. -->\n");
 		sb.append(
@@ -382,9 +384,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append(
 				"\t\thttp://www.springframework.org/schema/integration/security http://www.springframework.org/schema/integration/security/spring-integration-security.xsd\n");
 		sb.append("\">\n");
-		sb.append("\t<!-- ");
-		sb.append(Util.getGeneratedAt());
-		sb.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 		sb.append("\n");
 		sb.append("\t<!-- Authorization -->\n");
 		sb.append("\t<!-- Role voter. -->\n");
@@ -528,9 +529,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(
 				"<xwss:SecurityConfiguration dumpMessages=\"true\" xmlns:xwss=\"http://java.sun.com/xml/ns/xwss/config\">\n");
-		sb.append("\t<!-- ");
-		sb.append(Util.getGeneratedAt());
-		sb.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 		sb.append(
 				"\t<!-- Used in the ws-servlet.xml by the org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor. -->\n");
 		sb.append(
@@ -589,9 +589,8 @@ public class SecurityConfigMojo extends AbstractMojo {
 		sb.append(".xsd\n");
 		sb.append("\">\n");
 		sb.append("\n");
-		sb.append("\t<!-- ");
-		sb.append(Util.getGeneratedAt());
-		sb.append(" -->\n");
+		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
+				this.eipVersion));
 		sb.append("\t<!-- The properties -->\n");
 		sb.append("\t<import resource=\"classpath:/");
 		sb.append(this.basePackageName);

@@ -31,10 +31,13 @@ public class TestClientGenerator {
 	private String responseType;
 	private final String serviceId;
 	private final boolean useInsightAnnotation;
+	private final String eipVersion;
 
 	public TestClientGenerator(final XsdsUtil config, final ElementType element,
-			final boolean useInsightAnnotation, final Log log) {
+			final boolean useInsightAnnotation, final String eipVersion,
+			final Log log) {
 		this.config = config;
+		this.eipVersion = eipVersion;
 		this.log = log;
 		this.elementRequest = element;
 		this.serviceId = element.getServiceId();
