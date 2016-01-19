@@ -13,14 +13,14 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+		<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 		<relativePath/>
 	</parent>
 
 
 	<groupId>com.samples.platform</groupId>
 	<artifactId>platform-base</artifactId>
-	<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+	<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 	<packaging>pom</packaging>
 	<name>platform-base</name>
 	<description>
@@ -91,9 +91,8 @@
 		<bus.war.prefix></bus.war.prefix>
 
 		<domain.groupId>com.samples.domain</domain.groupId>
-		<domain.version>2.1.0</domain.version>
-  <!-- should be qp-eip-platform-bom-version-->
-		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
+		<domain.version>${project.version}</domain.version>
+  	<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
 
 		<persistence.unit.name>${project.groupId}.domain</persistence.unit.name>
 		<persistence.jndi.datasource.name>PlatformDB</persistence.jndi.datasource.name>

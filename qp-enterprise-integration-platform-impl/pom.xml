@@ -13,24 +13,24 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+		<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 		<relativePath/>
 	</parent>
 
 
 	<groupId>com.qpark.eip.core</groupId>
 	<artifactId>eip-base</artifactId>
-	<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+	<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 	<packaging>pom</packaging>
 	<name>eip-base</name>
 
 	<modules>
 		<module>eip-core</module>
-		<module>eip-core-persistence</module>
 		<module>eip-core-failurehandler-model</module>
 		<module>eip-core-failurehandler</module>
 		<module>eip-core-logback</module>
 		<module>eip-core-spring</module>
+		<module>eip-core-persistence</module>
 		<module>eip-core-spring-auth</module>
 		<module>eip-core-spring-statistics</module>
 		<module>eip-core-spring-lockedoperation</module>

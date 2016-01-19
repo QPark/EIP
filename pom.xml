@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-base</artifactId>
-	<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+	<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 	<packaging>pom</packaging>
 	<description>
 		<![CDATA[pom to build eip.]]>

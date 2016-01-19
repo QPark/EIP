@@ -13,14 +13,14 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+		<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 		<relativePath/>
 	</parent>
 
 
 	<groupId>com.samples.platform.client</groupId>
 	<artifactId>platform-client</artifactId>
-	<version>2.1.0</version><!--qp-eip-platform-bom-version-->
+	<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 	<packaging>jar</packaging>
 	<name>platform-client</name>
 	<description>Platform web service client.</description>
@@ -35,7 +35,7 @@
 		<model.dir>${project.build.directory}/model</model.dir>
 
 		<domain.groupId>com.samples.domain</domain.groupId>
-		<domain.version>2.0.0</domain.version>
+		<domain.version>${project.version}</domain.version>
 		<domain.schema.location.prefix>http://www.qpark.com/model, http://www.samples.com/model</domain.schema.location.prefix>
 
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>

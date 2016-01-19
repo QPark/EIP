@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom</artifactId>
-	<version>2.1.0</version>
+	<version>2.2.0</version><!--qp-eip-platform-bom-version-->
 	<packaging>pom</packaging>
 	<name>eip-platform-bom</name>
 	<description>EIP IO Platform bill of materials</description>
@@ -46,7 +46,7 @@
 
 		<com.qpark.eip.platform.version>3.1.0</com.qpark.eip.platform.version>
 		<com.qpark.maven.hyperjaxb3-naming.version>1.0.0</com.qpark.maven.hyperjaxb3-naming.version>
-		<com.qpark.eip.platform.impl.version>2.1.0</com.qpark.eip.platform.impl.version>
+		<com.qpark.eip.platform.impl.version>${project.version}</com.qpark.eip.platform.impl.version>
 		<io.spring.platform.version>1.1.4.RELEASE</io.spring.platform.version>
 
 		<javax.javaee-api>7.0</javax.javaee-api>
