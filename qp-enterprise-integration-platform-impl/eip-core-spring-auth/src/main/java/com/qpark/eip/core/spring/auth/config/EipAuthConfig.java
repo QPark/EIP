@@ -1,21 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.auth.config;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
@@ -39,41 +32,10 @@ public class EipAuthConfig {
 	/** The version of the context. */
 	private String contextVersion;
 
-	/** The {@link EipPersistenceConfig}. */
-	@Autowired
-	private EipPersistenceConfig eipPersistenceConfig;
-
-	/**
-	 * The jpa Vendor adapter class name to be set in the
-	 * {@link LocalContainerEntityManagerFactoryBean}.
-	 */
-	private String jpaVendorAdapterClassName = EipPersistenceConfig.DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME;
-
-	/**
-	 * The database platform to be set into the {@link AbstractJpaVendorAdapter}
-	 * .
-	 */
-	private String jpaVendorAdpaterDatabasePlatform = EipPersistenceConfig.DEFAULT_JPA_VENDOR_ADPATER_DATABASEPLATFORM;
-
 	/**
 	 * Create the spring config of the eip core authority.
-	 *
-	 * @param contextName
-	 *            the context name.
-	 * @param contextVersion
-	 *            the context version.
-	 * @param jpaVendorAdapterClassName
-	 *            the jpa Vendor adapter class name to be set in the
-	 *            {@link LocalContainerEntityManagerFactoryBean}.
-	 * @param jpaVendorAdpaterDatabasePlatform
-	 *            the database platform to be set into the
-	 *            {@link AbstractJpaVendorAdapter}.
 	 */
-	public EipAuthConfig(final String contextName, final String contextVersion,
-			final String jpaVendorAdapterClassName,
-			final String jpaVendorAdpaterDatabasePlatform) {
-		this.contextName = contextName;
-		this.contextVersion = contextVersion;
+	public EipAuthConfig() {
 	}
 
 	/**
@@ -85,6 +47,15 @@ public class EipAuthConfig {
 	public AuthorityDao getAuthorityDao() {
 		AuthorityDao bean = new AuthorityDao();
 		return bean;
+	}
+
+	/**
+	 * Get the context name.
+	 *
+	 * @return the context definition.
+	 */
+	public String getContextDefinition() {
+		return String.format("%s:%s", this.contextName, this.contextVersion);
 	}
 
 	/**
@@ -112,16 +83,6 @@ public class EipAuthConfig {
 	}
 
 	/**
-	 * The {@link EipAuthConfig} itself.
-	 *
-	 * @return the {@link EipAuthConfig}.
-	 */
-	@Bean(name = "ComQparkEipCoreSpringAuthEipSecurityConfig")
-	public EipAuthConfig getEipSecurityConfig() {
-		return this;
-	}
-
-	/**
 	 * Get the {@link LimitedAccessDataProvider} bean.
 	 *
 	 * @return the {@link LimitedAccessDataProvider} bean.
@@ -130,17 +91,6 @@ public class EipAuthConfig {
 	public LimitedAccessDataProvider getLimitedAccessDataProvider() {
 		LimitedAccessDataProvider bean = new LimitedAccessDataProvider();
 		return bean;
-	}
-
-	/**
-	 * Set the JPA vendor adapter settings for {@link EipPersistenceConfig}.
-	 */
-	@PostConstruct
-	private void init() {
-		this.eipPersistenceConfig
-				.setJpaVendorAdapterClassName(this.jpaVendorAdapterClassName);
-		this.eipPersistenceConfig.setJpaVendorAdpaterDatabasePlatform(
-				this.jpaVendorAdpaterDatabasePlatform);
 	}
 
 	/**
@@ -161,31 +111,5 @@ public class EipAuthConfig {
 	 */
 	public void setContextVersion(final String contextVersion) {
 		this.contextVersion = contextVersion;
-	}
-
-	/**
-	 * Set the jpa Vendor adapter class name to be set in the
-	 * {@link LocalContainerEntityManagerFactoryBean}.
-	 *
-	 * @param jpaVendorAdapterClassName
-	 *            the jpa Vendor adapter class name to be set in the
-	 *            {@link LocalContainerEntityManagerFactoryBean}.
-	 */
-	public void setJpaVendorAdapterClassName(
-			final String jpaVendorAdapterClassName) {
-		this.jpaVendorAdapterClassName = jpaVendorAdapterClassName;
-	}
-
-	/**
-	 * Set the database platform to be set into the
-	 * {@link AbstractJpaVendorAdapter}.
-	 *
-	 * @param jpaVendorAdpaterDatabasePlatform
-	 *            the database platform to be set into the
-	 *            {@link AbstractJpaVendorAdapter}.
-	 */
-	public void setJpaVendorAdpaterDatabasePlatform(
-			final String jpaVendorAdpaterDatabasePlatform) {
-		this.jpaVendorAdpaterDatabasePlatform = jpaVendorAdpaterDatabasePlatform;
 	}
 }

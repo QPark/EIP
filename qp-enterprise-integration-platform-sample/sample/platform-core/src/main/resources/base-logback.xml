@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration >
+<configuration scan="true" scanPeriod="60 seconds">
 <!--
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
  *
@@ -8,146 +8,14 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-	<!-- Properties -->
-	<property name="logfile.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}[%-5level][%c] %msg%n%ex" />
-	<property name="logfile.console.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%-5level][%c] %msg%n%ex" />
-	<property name="logfile.destination" value="${catalina.base}/logs/platform" />
-
 	<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
-
-	<!-- Appenders -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-	<!--
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>INFO</level>
-		</filter>
-	-->
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%-5level][%c] %msg%n%ex</pattern>
+			<pattern>%d{yyyyMMdd-HHmmss.SSS}[%contextName][%-5level][%c] %msg%n%ex</pattern>
 		</encoder>
 	</appender>
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/${CONTEXT_NAME}.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/${CONTEXT_NAME}.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>5</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>20MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>${logfile.pattern}</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/${CONTEXT_NAME}.trace.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/${CONTEXT_NAME}.trace.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>5</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>${logfile.pattern}</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_SB_INCOMING_MESSAGES" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/bus.messages.incoming.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/bus.messages.incoming.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>15</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%c] %msg%n%ex</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_SB_OUTGOING_MESSAGES" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/bus.messages.outgoing.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/bus.messages.outgoing.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>15</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%c] %msg%n%ex</pattern>
-		</encoder>
-	</appender>
-	<appender name="FILE_CLBT_TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logfile.destination}/bus.messages.clbt.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<fileNamePattern>${logfile.destination}/bus.messages.clbt.%i.zip</fileNamePattern>
-			<minIndex>1</minIndex>
-			<maxIndex>10</maxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%c] %msg%n</pattern>
-		</encoder>
-	</appender>
-
-	<!-- service bus -->
-	<logger name="com.samples.platform" level="DEBUG" />
-	<logger name="com.samples.platform.messages.servicebus" level="DEBUG" additivity="true">
-		<appender-ref ref="FILE_SB_INCOMING_MESSAGES" />
-	</logger>
-	<logger name="com.samples.platform.messages.servicebus.internal" level="DEBUG" additivity="false" >
-		<appender-ref ref="FILE_SB_OUTGOING_MESSAGES" />
-	</logger>
-	<logger name="com.samples.platform.messages.sap" level="DEBUG" additivity="false" >
-		<appender-ref ref="FILE_SB_OUTGOING_MESSAGES" />
-	</logger>
-	<logger name="com.samples.platform.messages.osp.core" level="DEBUG" additivity="false" >
-		<appender-ref ref="FILE_SB_OUTGOING_MESSAGES" />
-	</logger>
-	<logger name="com.samples.platform.messages.sbp.delta" level="DEBUG" additivity="false" >
-		<appender-ref ref="FILE_SB_OUTGOING_MESSAGES" />
-	</logger>
-	<!-- CLBT logger has to set up to TRACE to get the messages logged. -->
-	<logger name="com.samples.platform.serviceprovider.linkbudget.api.clbt" level="TRACE" additivity="false">
-		 <appender-ref ref="FILE_CLBT_TRACE" />
-	</logger>
-
-	<logger name="com.qpark.eip.core.spring.PayloadLogger" level="DEBUG"/>
-
-	<!-- spring -->
-	<logger name="org.springframework.web.context.ContextLoader" level="INFO" />
-	<logger name="org.springframework" level="WARN" />
-
-	<logger name="org.springframework.transaction" level="WARN" />
-	<logger name="org.springframework.jdbc" level="WARN" />
-	<logger name="org.springframework.orm.jpa" level="WARN" />
-
-	<!--
-	<logger name="org.springframework.ws.server.endpoint.interceptor.AbstractValidatingInterceptor" level="DEBUG" />
-	<logger name="org.springframework.security" level="DEBUG" />
-	<logger name="org.springframework.ldap" level="DEBUG" />
-	<logger name="org.springframework.integration" level="DEBUG" />
-	-->
-
-	<!-- TRACE: SQL logs statements, BasicBinder logs parameters, BasicExtractor logs results -->
-	<!--
-	<logger name="org.hibernate" level="DEBUG" />
-	<logger name="org.hibernate.SQL" level="DEBUG" />
-	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
-	<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE" />
-	-->
-
 	<root>
 		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-		<appender-ref ref="FILE_TRACE" />
 	</root>
 </configuration>

@@ -21,23 +21,4 @@
 
 	<bean id="ComSamplesPlatformUserProvider" class="com.samples.platform.core.security.UserProvider" init-method="createUsers"/>
 
-	<bean class="com.qpark.eip.core.logback.LoggingInitializer" />
-	<bean class="com.samples.platform.core.WebAppInitialiser" />
-
-	<!-- SOAP 1.2 message factory -->
-	<bean id="soap12MessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
-		<description>A message factory to support SOAP 1.2</description>
-		<property name="soapVersion">
-			<util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_12" />
-		</property>
-	</bean>
-
-	<!-- SOAP 1.1 message factory
-	<bean id="soap11MessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
-		<description>A message factory to support SOAP 1.1</description>
-		<property name="soapVersion">
-			<util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_11" />
-		</property>
-	</bean>
-	-->
 </beans>

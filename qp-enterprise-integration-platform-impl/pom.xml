@@ -33,6 +33,7 @@
 		<module>eip-core-spring</module>
 		<module>eip-core-spring-auth</module>
 		<module>eip-core-spring-statistics</module>
+		<module>eip-core-spring-lockedoperation</module>
 		<module>eip-core-model-analysis</module>
 	</modules>
 

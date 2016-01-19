@@ -144,6 +144,16 @@
 				<artifactId>eip-core-spring-statistics</artifactId>
 				<version>${com.qpark.eip.platform.impl.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-model-analysis</artifactId>
+				<version>${com.qpark.eip.platform.impl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring-lockedoperation</artifactId>
+				<version>${com.qpark.eip.platform.impl.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>javax</groupId>

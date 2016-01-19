@@ -48,6 +48,14 @@
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core-spring-statistics</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-spring-auth</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-spring-lockedoperation</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hsqldb</groupId>

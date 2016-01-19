@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven;
@@ -166,7 +164,7 @@ public class Util {
 	 * Get a {@link UUID} name for the given {@link Class} and name. To get an
 	 * {@link UUID} object out of the returned string use
 	 * {@link UUID#fromString(String)}.
-	 * 
+	 *
 	 * @param type
 	 *            the {@link Class} of the Object e.g.
 	 *            com.a.b.bus.domain.c.AbcType.
@@ -257,6 +255,27 @@ public class Util {
 			s = s.substring(base.length());
 		}
 		return s;
+	}
+
+	public static String getAttributeValue(final String xml,
+			final String attributeName, final int tagStartIndex,
+			final int tagEndIndex) {
+		String value = null;
+		if (xml.length() >= tagEndIndex && tagStartIndex > 0
+				&& tagEndIndex > 0) {
+			String attr = new StringBuffer(attributeName).append("=\"")
+					.toString();
+			int attrNameStartIndex = xml.indexOf(attr, tagStartIndex);
+			if (attrNameStartIndex > 0 && attrNameStartIndex < tagEndIndex) {
+				int attrValueStartIndex = attrNameStartIndex + attr.length();
+				int attrValueEndIndex = xml.indexOf('"', attrValueStartIndex);
+				if (attrValueEndIndex > 0 && attrValueEndIndex < tagEndIndex) {
+					value = xml.substring(attrValueStartIndex,
+							attrValueEndIndex);
+				}
+			}
+		}
+		return value;
 	}
 
 	public static String getRelativePathTranslated(final File baseDirectory,

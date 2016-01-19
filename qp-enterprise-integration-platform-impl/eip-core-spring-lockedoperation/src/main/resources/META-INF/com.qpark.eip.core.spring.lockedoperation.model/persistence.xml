@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence version="2.1" 
+	xsi:schemaLocation="
+		http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd
+		http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" 
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+	xmlns:orm="http://xmlns.jcp.org/xml/ns/persistence/orm" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+    <persistence-unit name="com.qpark.eip.core.spring.lockedoperation.model" transaction-type="RESOURCE_LOCAL">
+        <class>com.qpark.eip.core.spring.lockedoperation.model.OperationEventType</class>
+        <class>com.qpark.eip.core.spring.lockedoperation.model.OperationLockControllType</class>
+        <class>com.qpark.eip.core.spring.lockedoperation.model.OperationStateType</class>
+    </persistence-unit>
+</persistence>

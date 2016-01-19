@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.dao;
@@ -39,6 +37,7 @@ import com.qpark.eip.core.domain.persistencedefinition.FlowLogMessageType_;
 import com.qpark.eip.core.domain.persistencedefinition.SystemUserLogType;
 import com.qpark.eip.core.domain.persistencedefinition.SystemUserLogType_;
 import com.qpark.eip.core.persistence.AbstractEipDao;
+import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ContextNameProvider;
 
 /**
@@ -86,12 +85,10 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	@Autowired
 	@Qualifier("ComQparkEipCoreSpringStatisticsContextNameProvider")
 	private ContextNameProvider contextNameProvider;
-
 	/** The {@link EntityManager}. */
-	@PersistenceContext(unitName = "com.qpark.eip.core.persistence",
-			name = "ComQparkEipCoreEntityManagerFactory")
+	@PersistenceContext(unitName = EipPersistenceConfig.PERSISTENCE_UNIT_NAME,
+			name = EipPersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
 	private EntityManager em;
-
 	/** The {@link org.slf4j.Logger}. */
 	private final Logger logger = LoggerFactory
 			.getLogger(StatisticsLoggingDao.class);
@@ -245,7 +242,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 *      java.lang.Object)
 	 */
 	@Override
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void doAsyncDatabaseOperation(final String userName,
 			final Object obj) {
@@ -265,7 +262,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 * @param toDate
 	 *            the date.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void eraseApplicationUserLog(final Date toDate) {
 		CriteriaBuilder cb = this.em.getCriteriaBuilder();
@@ -298,7 +295,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 * @param toDate
 	 *            the date.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void eraseFlowLogMessage(final Date toDate) {
 		CriteriaBuilder cb = this.em.getCriteriaBuilder();
@@ -329,7 +326,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 * @param toDate
 	 *            the date.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void eraseSystemUserLog(final Date toDate) {
 		CriteriaBuilder cb = this.em.getCriteriaBuilder();
@@ -386,7 +383,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 *            the date the calls are recorded.
 	 * @return the list of {@link SystemUserLogType}s.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<SystemUserLogType> getSystemUserLogType(final Date date) {
 		CriteriaBuilder cb = this.em.getCriteriaBuilder();

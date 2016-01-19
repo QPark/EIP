@@ -30,7 +30,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core</artifactId>
+			<artifactId>eip-core-spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

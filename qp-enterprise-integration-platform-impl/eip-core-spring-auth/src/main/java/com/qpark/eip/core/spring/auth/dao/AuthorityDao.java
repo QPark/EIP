@@ -1,9 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.auth.dao;
@@ -30,6 +28,7 @@ import com.qpark.eip.core.domain.persistencedefinition.GrantedAuthorityType;
 import com.qpark.eip.core.domain.persistencedefinition.SystemUserLogType;
 import com.qpark.eip.core.domain.persistencedefinition.SystemUserLogType_;
 import com.qpark.eip.core.persistence.AbstractEipDao;
+import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ContextNameProvider;
 
 /**
@@ -39,7 +38,8 @@ import com.qpark.eip.core.spring.ContextNameProvider;
  */
 public class AuthorityDao extends AbstractEipDao {
 	/** The {@link EntityManager}. */
-	@PersistenceContext(unitName = "com.qpark.eip.core.persistence")
+	@PersistenceContext(unitName = EipPersistenceConfig.PERSISTENCE_UNIT_NAME,
+			name = EipPersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
 	private EntityManager em;
 
 	@Override
@@ -60,7 +60,7 @@ public class AuthorityDao extends AbstractEipDao {
 	 *            enabled {@link AuthenticationType}s are replied.
 	 * @return the list of {@link AuthenticationType}s.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<AuthenticationType> getAuthenticationTypes(
 			final Boolean enabled) {
@@ -103,7 +103,7 @@ public class AuthorityDao extends AbstractEipDao {
 	 *            the operation name.
 	 * @return the number of calls.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public int getGrantedRequestNumber(final String userName,
 			final String serviceName, final String operationName) {
@@ -162,7 +162,7 @@ public class AuthorityDao extends AbstractEipDao {
 	 *            the date the calls are recorded.
 	 * @return the number of calls.
 	 */
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public int getCurrentRequestNumber(final String userName,
 			final String serviceName, final String operationName,
@@ -212,7 +212,7 @@ public class AuthorityDao extends AbstractEipDao {
 	 *      java.lang.Object)
 	 */
 	@Override
-	@Transactional(value = "ComQparkEipCoreTransactionManager",
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void doAsyncDatabaseOperation(final String userName,
 			final Object obj) {

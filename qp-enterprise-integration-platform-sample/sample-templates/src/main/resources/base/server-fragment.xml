@@ -2,7 +2,7 @@
 <Server>
 	<GlobalNamingResources>
 			<add:Resource name="jdbc/PlatformDB" auth="Container" 
-				username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}/platformHSQLDB.bin" 
+				username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}/issLibraryHSQLDB.bin" 
 				driverClassName="org.hsqldb.jdbc.JDBCDriver" 
 				factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" 
 				defaultTransactionIsolation="READ_COMMITTED" 

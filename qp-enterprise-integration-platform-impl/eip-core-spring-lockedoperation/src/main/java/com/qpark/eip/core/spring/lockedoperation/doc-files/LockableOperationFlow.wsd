@@ -1,0 +1,44 @@
+participant "Consumer" as consumer
+participant "LockableOperation" as operation
+participant "AsyncLockableOperation" as asyncoperation
+participant "AsyncLockableOperationRunner" as async
+participant "LockedOperationDao" as dao
+
+note over consumer
+This bean contains the list of all in the spring context
+available LockableOperations.
+end note
+
+loop for each LockableOperation
+consumer->operation: runOperation(operationUuid, event, context)
+activate consumer
+activate dao
+
+activate operation
+operation->operation: isRequestedOperation(operationUuid)
+alt if isRequestedOperation
+operation->dao: lockOperation
+operation->operation: invokeOperation(context)
+operation->dao: unlockOperation
+operation->consumer: Event IDLE.
+end alt
+
+consumer->asyncoperation: runOperation(operationUuid, event, context)
+activate asyncoperation
+
+asyncoperation->asyncoperation: isRequestedOperation(operationUuid)
+alt if isRequestedOperation
+asyncoperation->dao: lockOperation
+asyncoperation->asyncoperation: invokeOperation(context)
+asyncoperation->asyncoperation: create AsyncLockableOperationRunner
+activate async
+asyncoperation->async: setContext(context)
+asyncoperation->asyncoperation: TaskExecutor execute(async)
+asyncoperation->consumer: Event STARTED.
+end alt 
+end loop
+
+deactivate consumer
+async->asyncoperation: invokeOperationAsync(context)
+asyncoperation->dao: unlockOperation
+deactivate asyncoperation

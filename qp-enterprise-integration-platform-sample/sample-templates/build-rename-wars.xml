@@ -22,6 +22,6 @@
 		<move
 			failonerror="false"
 			file="${template.environment.dir}/webapps/platform-webapp-library-${application.version}.war"
-			tofile="${template.environment.dir}/webapps/${application.name}-library##${application.version}.war" />
+			tofile="${template.environment.dir}/webapps/${application.name}-library-${application.version}.war" />
 	</target>
 </project>

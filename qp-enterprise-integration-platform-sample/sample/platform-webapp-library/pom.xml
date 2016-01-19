@@ -171,6 +171,17 @@ WEB-INF/lib/xws-security-3.0.jar
 						</configuration>
 					</execution>
 					<execution>
+						<id>make schemalocations webapp absolute</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>webapp-schemalocation</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${project.build.directory}/${service.final.name}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>generate the servlet configuration</id>
 						<phase>prepare-package</phase>
 						<goals>

@@ -29,7 +29,7 @@ import com.samples.platform.util.SystemUserLogFlowGatewayImpl;
 @Import(value = {
 
 	com.samples.platform.serviceprovider.techsupport.flow.config.ServiceProviderConfig.class,
-	com.samples.platform.core.config.SpringConfig.class
+	com.samples.platform.core.config.CoreSpringConfig.class
 
 })
 @ComponentScan("com.samples.platform.service")
