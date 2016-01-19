@@ -19,6 +19,4 @@
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
 
-	<bean id="ComSamplesPlatformUserProvider" class="com.samples.platform.core.security.UserProvider" init-method="createUsers"/>
-
 </beans>

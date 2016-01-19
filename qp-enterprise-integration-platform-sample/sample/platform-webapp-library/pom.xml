@@ -243,6 +243,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<channelPatternsRead>${security.channel.pattern.read}</channelPatternsRead>
 							<channelPatternsUpdate>${security.channel.pattern.update}</channelPatternsUpdate>
 							<channelPatternsDelete>${security.channel.pattern.delete}</channelPatternsDelete>
+							<userProviderBeanName>ComSamplesIssLibraryUserProvider</userProviderBeanName>
 						</configuration>
 					</execution>
 				</executions>
