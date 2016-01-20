@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qpark.eip.model.common.EntityType_;
 import com.samples.platform.model.library.BookType;
 import com.samples.platform.model.library.BookType_;
+import com.samples.platform.persistenceconfig.PersistenceConfig;
 
 /**
  * @author bhausen
@@ -33,10 +34,9 @@ public class PlatformDao {
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(PlatformDao.class);
-
 	/** The {@link EntityManager}. */
-	@PersistenceContext(unitName = "com.samples.platform.domain",
-			name = "ComSamplesPlatformEntityManagerFactory")
+	@PersistenceContext(unitName = PersistenceConfig.PERSISTENCE_UNIT_NAME,
+			name = PersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
 	private EntityManager em;
 
 	/**
@@ -44,7 +44,7 @@ public class PlatformDao {
 	 *            the {@link BookType} to create.
 	 * @return the created {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager",
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public BookType createBook(final BookType value) {
 		if (value != null) {
@@ -66,7 +66,7 @@ public class PlatformDao {
 	 * @param value
 	 *            the id of the book to delete.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager",
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void deleteBook(final BookType value) {
 		if (value != null) {
@@ -87,7 +87,7 @@ public class PlatformDao {
 	 *            the ISBN of the book to find.
 	 * @return the {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager",
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public BookType getBookByISBN(final String ISBN) {
 		BookType m = null;
@@ -117,7 +117,7 @@ public class PlatformDao {
 	 *            the id of the book to find.
 	 * @return the {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager",
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public BookType getBookById(final String uuid) {
 		BookType m = null;
@@ -147,7 +147,7 @@ public class PlatformDao {
 	 *            the {@link BookType} to save.
 	 * @return the created {@link BookType}.
 	 */
-	@Transactional(value = "ComSamplesPlatformTransactionManager",
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public BookType saveBook(final BookType value) {
 		if (value != null) {

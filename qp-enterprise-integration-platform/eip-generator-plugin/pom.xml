@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.maven</groupId>
 	<artifactId>eip-generator-plugin</artifactId>
-	<version>3.1.0</version><!--qp-eip-gen-project-version -->
+	<version>3.2.0</version><!--qpark-eip-version-->
 	<packaging>maven-plugin</packaging>
 	<name>eip-generator-plugin</name>
 	<description>Generate the classes and configurations needed by the bus.</description>

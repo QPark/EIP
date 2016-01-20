@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.maven</groupId>
 	<artifactId>eip-plugin-xml</artifactId>
-	<version>3.1.0</version><!--qp-eip-gen-project-version -->
+	<version>3.2.0</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<name>eip-plugin-xml</name>
 	<description>XML stuff used by the qpark maven plugins.</description>

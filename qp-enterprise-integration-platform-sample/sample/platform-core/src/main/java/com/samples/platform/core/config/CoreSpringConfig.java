@@ -38,6 +38,7 @@ import com.qpark.eip.core.logback.LoggingInitializer;
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.qpark.eip.core.spring.ContextNameProvider;
+import com.qpark.eip.core.spring.EipSoapActionWebServiceMessageCallback;
 import com.qpark.eip.core.spring.auth.DatabaseUserProvider;
 import com.qpark.eip.core.spring.auth.config.EipAuthConfig;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
@@ -114,17 +115,6 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	}
 
 	/**
-	 * Get the {@link DatabaseUserProvider} of {@link EipAuthConfig}.
-	 *
-	 * @return the {@link DatabaseUserProvider} of {@link EipAuthConfig}.
-	 */
-	@Bean(name = "ComSamplesIssLibraryUserProvider")
-	public DatabaseUserProvider getDatabaseUserProvider() {
-		DatabaseUserProvider bean = new DatabaseUserProvider();
-		return bean;
-	}
-
-	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 *
 	 * @return the {@link ContextNameProvider} of the {@link EipAuthConfig}.
@@ -132,6 +122,17 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	@Bean(name = EipAuthConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
 	public ContextNameProvider getEipAuthContextNameProvider() {
 		ContextNameProvider bean = new ContextNameProvider();
+		return bean;
+	}
+
+	/**
+	 * Get the {@link DatabaseUserProvider} of {@link EipAuthConfig}.
+	 *
+	 * @return the {@link DatabaseUserProvider} of {@link EipAuthConfig}.
+	 */
+	@Bean(name = "ComSamplesIssLibraryUserProvider")
+	public DatabaseUserProvider getEipAuthDatabaseUserProvider() {
+		DatabaseUserProvider bean = new DatabaseUserProvider();
 		return bean;
 	}
 
@@ -198,6 +199,17 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	}
 
 	/**
+	 * Get the {@link EipSoapActionWebServiceMessageCallback}.
+	 *
+	 * @return the {@link EipSoapActionWebServiceMessageCallback}.
+	 */
+	@Bean
+	public EipSoapActionWebServiceMessageCallback getEipSoapActionWebServiceMessageCallback() {
+		EipSoapActionWebServiceMessageCallback bean = new EipSoapActionWebServiceMessageCallback();
+		return bean;
+	}
+
+	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipStatisticsConfig}.
 	 *
 	 * @return the {@link ContextNameProvider} of the
@@ -206,6 +218,18 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	@Bean(name = EipStatisticsConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
 	public ContextNameProvider getEipStatisticsContextNameProvider() {
 		ContextNameProvider bean = new ContextNameProvider();
+		return bean;
+	}
+
+	/**
+	 * Get the {@link MessageContentProvider} of {@link EipStatisticsConfig}.
+	 *
+	 * @return the {@link MessageContentProvider} of {@link EipStatisticsConfig}
+	 *         .
+	 */
+	@Bean(name = EipStatisticsConfig.STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME)
+	public MessageContentProvider getEipStatisticsMessageContentProvider() {
+		MessageContentProvider bean = new SamplesMessageContentProvider();
 		return bean;
 	}
 
@@ -234,17 +258,6 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	}
 
 	/**
-	 * Get the {@link MessageContentProvider} of the eip statistics.
-	 *
-	 * @return the {@link MessageContentProvider} of the eip statistics.
-	 */
-	@Bean(name = EipStatisticsConfig.STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME)
-	public MessageContentProvider getStatisticsMessageContentProvider() {
-		MessageContentProvider bean = new SamplesMessageContentProvider();
-		return bean;
-	}
-
-	/**
 	 * Get the {@link SystemUserInitDao}.
 	 *
 	 * @return the {@link SystemUserInitDao}.
@@ -256,11 +269,10 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	}
 
 	/**
-	 * Set the {@link EipJpaVendorAdapterConfiguration} of
-	 * {@link EipPersistenceConfig}.
+	 * Set the {@link EipJpaVendorAdapterConfiguration} of the web application.
 	 *
-	 * @return the {@link EipJpaVendorAdapterConfiguration} of
-	 *         {@link EipPersistenceConfig}.
+	 * @return the {@link EipJpaVendorAdapterConfiguration} of the web
+	 *         application.
 	 */
 	@Bean(name = PersistenceConfig.JPA_VENDOR_ADAPTER_CONFIGURATION_BEAN_NAME)
 	public EipJpaVendorAdapterConfiguration getWebAppPersistenceJpaVendorConfiguration() {

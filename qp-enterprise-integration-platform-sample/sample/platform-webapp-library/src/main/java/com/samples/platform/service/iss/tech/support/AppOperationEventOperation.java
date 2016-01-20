@@ -42,7 +42,7 @@ public class AppOperationEventOperation {
 	private final ObjectFactory of = new ObjectFactory();
 	/** The list of all available {@link AppOperationEventListener}s. */
 	@Autowired(required = false)
-	private List<LockableOperation> lockedOperations;
+	private List<LockableOperation> lockableOperations;
 
 	/**
 	 * @param message
@@ -60,7 +60,7 @@ public class AppOperationEventOperation {
 				.createAppOperationEventResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			if (this.lockedOperations != null
+			if (this.lockableOperations != null
 					&& message.getValue().getOperationEvent() != null) {
 				LockableOperationContext context = new LockableOperationContext();
 				context.put("key", "what ever value");
@@ -74,19 +74,19 @@ public class AppOperationEventOperation {
 				/*
 				 * For each AppOperationEventListener out of the spring context.
 				 */
-				OperationStateEnumType status;
-				for (LockableOperation operation : this.lockedOperations) {
+				OperationStateEnumType state;
+				for (LockableOperation operation : this.lockableOperations) {
 					/* Send the event to the operation. */
-					status = operation
+					state = operation
 							.runOperation(
 									message.getValue().getOperationEvent()
 											.getOperationUUID(),
 									event, context);
-					if (status != null) {
+					if (state != null) {
 						response.setReport(new OperationStateType());
 						response.getReport()
 								.setOperationUUID(operation.getUUID());
-						response.getReport().setState(status.value());
+						response.getReport().setState(state.value());
 					}
 				}
 			}
