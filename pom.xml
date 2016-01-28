@@ -28,8 +28,9 @@
 		<profile>
 			<id>platform</id>
 			<modules>
-				<module>qp-enterprise-integration-platform/eip-generator-plugin</module>
+				<module>qp-enterprise-integration-platform/eip-model-analysis</module>
 				<module>qp-enterprise-integration-platform/eip-plugin-xml</module>
+				<module>qp-enterprise-integration-platform/eip-generator-plugin</module>
 				<module>qp-enterprise-integration-platform/eip-hyperjaxb3-naming</module>
 			</modules>
 		</profile>

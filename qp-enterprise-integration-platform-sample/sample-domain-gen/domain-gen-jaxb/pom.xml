@@ -78,6 +78,19 @@ Additionally to that a human readable version of the xsds is generated.
 						</configuration>
 					</execution>
 					<execution>
+						<id>generate model analysis</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>generate-model-analysis</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+							<outputDirectory>${java.gen.dir}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 <!--
 XJC can only handle one schemalocation per target namespace. It is not possilbe to 
 execute XJC with 

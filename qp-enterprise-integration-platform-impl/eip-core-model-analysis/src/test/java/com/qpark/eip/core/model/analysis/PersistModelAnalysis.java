@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class PersistModelAnalysis {
 	@Autowired
-	private ModelAnalysisDao modelAnalysisDao;
+	private AnalysisDao modelAnalysisDao;
 	/** The enterprise name of the model. */
 	@Value("${model.enterpriseName}")
 	private String enterpriseName;

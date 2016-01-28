@@ -72,8 +72,16 @@ public class WebServiceDispatcherXmlGenerator {
 	}
 
 	private void createWebServiceDynamicWsdlConfig(final String sid) {
-		String fileName = new StringBuffer(128)
-				.append(Util.capitalizePackageName(sid))
+		String sids = Util.capitalizePackageName(sid);
+		if (sids.length() > 32) {
+			sids = new StringBuffer(48).append(sids.substring(0, 32))
+					.append(System.currentTimeMillis()).toString();
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+			}
+		}
+		String fileName = new StringBuffer(128).append(sids)
 				.append("DynamicWsdlConfig.xml").toString();
 		File f = Util.getFile(this.outputDirectory, "dispatcher", fileName);
 		this.log.info(new StringBuffer().append("Write ")

@@ -15,6 +15,9 @@
 	<complexType name="EnterpriseType">
 		<sequence>
 			<element name="name" type="string"/>
+			<element name="modelVersion" type="normalizedString">
+				<annotation><documentation>Version of the model.</documentation></annotation>
+			</element>
 			<element name="domains" type="DM:DomainType" maxOccurs="unbounded" minOccurs="0"/>
 			<element name="flows" type="DM:FlowType" maxOccurs="unbounded" minOccurs="0"/>
 			<element name="basicDataTypes" type="DM:DataType" minOccurs="0" maxOccurs="unbounded">
@@ -29,6 +32,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>UUID of the domain object.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -55,6 +59,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>UUID of the cluster.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -105,6 +110,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -151,6 +157,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent cluster UUID or empty.</documentation></annotation>
 			</element>
@@ -276,6 +283,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -314,6 +322,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -339,6 +348,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -363,6 +373,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -391,6 +402,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -414,6 +426,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -437,6 +450,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -457,6 +471,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>
@@ -477,6 +492,7 @@
 			<element name="id" type="normalizedString">
 				<annotation><documentation>The UUID.</documentation></annotation>
 			</element>
+			<element name="modelVersion" type="normalizedString"/>
 			<element name="parentId" type="normalizedString" minOccurs="0">
 				<annotation><documentation>The parent UUID.</documentation></annotation>
 			</element>

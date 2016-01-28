@@ -26,12 +26,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import com.qpark.eip.core.model.analysis.ModelAnalysisDao;
+import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.core.model.analysis.PersistModelAnalysis;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Import(value = { PersistenceConfig.class })
+@Import(value = { EipModelAnalysisPersistenceConfig.class })
 @ConfigurationProperties
 public class ModelAnalysisPersistence implements InitializingBean {
 	/** The {@link org.slf4j.Logger}. */
@@ -85,13 +85,13 @@ public class ModelAnalysisPersistence implements InitializingBean {
 	}
 
 	/**
-	 * Get the {@link ModelAnalysisDao}.
+	 * Get the {@link AnalysisDao}.
 	 *
-	 * @return the {@link ModelAnalysisDao}.
+	 * @return the {@link AnalysisDao}.
 	 */
 	@Bean
-	public ModelAnalysisDao getModelAnalysisDao() {
-		ModelAnalysisDao bean = new ModelAnalysisDao();
+	public AnalysisDao getModelAnalysisDao() {
+		AnalysisDao bean = new AnalysisDao();
 		return bean;
 	}
 
@@ -100,7 +100,7 @@ public class ModelAnalysisPersistence implements InitializingBean {
 	 *
 	 * @return The {@link DataSource}
 	 */
-	@Bean(name = PersistenceConfig.DATASOURCE_BEAN_NAME)
+	@Bean(name = EipModelAnalysisPersistenceConfig.DATASOURCE_BEAN_NAME)
 	public DataSource getDataSource() {
 		DriverManagerDataSource bean = new DriverManagerDataSource();
 		bean.setDriverClassName(this.jdbcDriver);

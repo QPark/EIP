@@ -34,6 +34,10 @@ import com.qpark.eip.core.spring.auth.dao.AuthorityDao;
 public class EipAuthConfig {
 	/** The bean name of the {@link ContextNameProvider}. */
 	public static final String CONTEXTNAME_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringAuthContextNameProvider";
+	/** The bean name of the {@link DatabaseUserProvider}. */
+	public static final String DATABASE_USER_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringAuthDatabaseUserProvider";
+	/** The bean name of the {@link LimitedAccessDataProvider}. */
+	public static final String LIMITED_ACCESS_DATA_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringAuthLimitedAccessDataProvider";
 	/** The {@link ContextNameProvider}. */
 	@Autowired
 	@Qualifier(CONTEXTNAME_PROVIDER_BEAN_NAME)
@@ -71,7 +75,7 @@ public class EipAuthConfig {
 	 *
 	 * @return the {@link DatabaseUserProvider} bean.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringAuthDatabaseUserProvider")
+	@Bean(name = DATABASE_USER_PROVIDER_BEAN_NAME)
 	public DatabaseUserProvider getDatabaseUserProvider() {
 		DatabaseUserProvider bean = new DatabaseUserProvider();
 		return bean;
@@ -82,7 +86,7 @@ public class EipAuthConfig {
 	 *
 	 * @return the {@link LimitedAccessDataProvider} bean.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringAuthLimitedAccessDataProvider")
+	@Bean(name = LIMITED_ACCESS_DATA_PROVIDER_BEAN_NAME)
 	public LimitedAccessDataProvider getLimitedAccessDataProvider() {
 		LimitedAccessDataProvider bean = new LimitedAccessDataProvider();
 		return bean;

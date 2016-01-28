@@ -22,6 +22,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
+import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ElementType;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -83,6 +84,7 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 			eipVersion = this.project.getArtifact().getVersion();
 		}
 
+		this.generateBasicIntegrationGatewayInterface(eipVersion);
 		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<String, List<IntegrationGatewayGenerator>>();
 		List<IntegrationGatewayGenerator> igs;
 		for (ElementType element : xsds.getElementTypes()) {
@@ -107,6 +109,38 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 					entry.getValue(), this.basePackageName, eipVersion,
 					this.getLog(), this.project);
 			sopg.generate();
+		}
+	}
+
+	private void generateBasicIntegrationGatewayInterface(
+			final String eipVersion) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("package com.qpark.eip;\n");
+		sb.append("\n");
+		sb.append("/**\n");
+		sb.append(" * Basic spring integration interface.\n");
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
+				eipVersion));
+		sb.append(" */\n");
+		sb.append(
+				"public interface IntegrationGateway<JaxbRequest, JaxbResponse> {\n");
+		sb.append("\t/**\n");
+		sb.append("\t * Invoke the spring integration gateway.\n");
+		sb.append("\t * @param request the {@link JaxbRequest}\n");
+		sb.append("\t * @return the {@link JaxbResponse}\n");
+		sb.append("\t */\n");
+		sb.append("\tJaxbResponse invoke(JaxbRequest request);\n");
+		sb.append("}\n");
+		sb.append("\n");
+		File f = Util.getFile(this.outputDirectory, "com.qpark.eip",
+				"IntegrationGateway.java");
+		this.getLog().info(new StringBuffer().append("Write ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, sb.toString());
+		} catch (Exception e) {
+			this.getLog().error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

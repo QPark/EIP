@@ -25,7 +25,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.ws.soap.SoapVersion;
@@ -66,6 +68,12 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 		com.samples.platform.persistenceconfig.JndiDataSourceConfig.class
 
 })
+@ImportResource(value = {
+
+		/* This is needed to have a setup ApplicationPlaceholderConfigurer. */
+		"classpath:com.samples.platform.properties-config.xml",
+
+})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 		ApplicationContextAware, InitializingBean {
@@ -95,6 +103,7 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	 * properties.
 	 */
 	@Autowired
+	@Qualifier("ComSamplesPlatformProperties")
 	private ApplicationPlaceholderConfigurer properties;
 
 	/** The {@link ServletContext}. */
@@ -307,6 +316,14 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 			for (Resource resource : resources) {
 				BaseFailureHandler
 						.addFailureMessages(resource.getInputStream());
+			}
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			Resource[] xsds = resolver.getResources("classpath*:**/*.xsd");
+			for (Resource xsd : xsds) {
+				if (!String.valueOf(xsd.getURL()).startsWith("jar")) {
+					this.logger.debug("contained xsds: {}",
+							xsd.getFile().getAbsolutePath());
+				}
 			}
 		} catch (IOException e) {
 			this.logger.error(e.getMessage(), e);

@@ -81,6 +81,7 @@ public class IntegrationGatewayGenerator {
 			sb.append("\n");
 			sb.append("import javax.xml.bind.JAXBElement;\n");
 			sb.append("\n");
+			sb.append("import com.qpark.eip.IntegrationGateway;\n");
 			sb.append("import ");
 			sb.append(this.fqRequestType);
 			sb.append(";\n");
@@ -98,24 +99,29 @@ public class IntegrationGatewayGenerator {
 			sb.append(" */\n");
 			sb.append("public interface ");
 			sb.append(this.className);
-			sb.append(" {\n");
-
-			sb.append("\t/**\n");
-			sb.append(
-					"\t * @param message the {@link JAXBElement} containing a {@link ");
+			sb.append(" extends IntegrationGateway<JAXBElement<");
 			sb.append(this.requestType);
-			sb.append("}\n");
-			sb.append("\t * @return the {@link JAXBElement} with a {@link ");
+			sb.append(">, JAXBElement<");
 			sb.append(this.responseType);
-			sb.append("}\n");
-			sb.append("\t */\n");
+			sb.append(">> {\n");
 
-			sb.append("\tJAXBElement<");
-			sb.append(this.responseType);
-			sb.append("> invoke(\n");
-			sb.append("			JAXBElement<");
-			sb.append(this.requestType);
-			sb.append("> message);\n");
+			// sb.append("\t/**\n");
+			// sb.append(
+			// "\t * @param message the {@link JAXBElement} containing a {@link
+			// ");
+			// sb.append(this.requestType);
+			// sb.append("}\n");
+			// sb.append("\t * @return the {@link JAXBElement} with a {@link ");
+			// sb.append(this.responseType);
+			// sb.append("}\n");
+			// sb.append("\t */\n");
+			//
+			// sb.append("\tJAXBElement<");
+			// sb.append(this.responseType);
+			// sb.append("> invoke(\n");
+			// sb.append(" JAXBElement<");
+			// sb.append(this.requestType);
+			// sb.append("> message);\n");
 			sb.append("}\n");
 			sb.append("\n");
 			File f = Util.getFile(this.outputDirectory, this.packageName,
