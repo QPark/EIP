@@ -10,7 +10,8 @@ package com.qpark.eip.core.spring.lockedoperation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDao;
+import com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao;
+import com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDaoImpl;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationEventEnumType;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationStateEnumType;
 import com.springsource.insight.annotation.InsightOperation;
@@ -21,9 +22,9 @@ import com.springsource.insight.annotation.InsightOperation;
  * @author bhausen
  */
 public abstract class AbstractLockableOperation implements LockableOperation {
-	/** The {@link LockedOperationDao} to lock and unlock the operation. */
+	/** The {@link LockedOperationDaoImpl} to lock and unlock the operation. */
 	@Autowired
-	private LockedOperationDao lockedOperationDao;
+	private LockableOperationDao lockedOperationDao;
 
 	/**
 	 * Try to check the state of the operation.

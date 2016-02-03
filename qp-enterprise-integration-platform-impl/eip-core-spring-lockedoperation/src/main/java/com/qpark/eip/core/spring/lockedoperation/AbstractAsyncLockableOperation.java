@@ -16,7 +16,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
-import com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDao;
+import com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao;
+import com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDaoImpl;
 import com.springsource.insight.annotation.InsightOperation;
 
 /**
@@ -35,9 +36,9 @@ public abstract class AbstractAsyncLockableOperation
 	static class AsyncLockableOperationRunner implements Callable<Void> {
 		/** The {@link LockableOperationContext}. */
 		private LockableOperationContext context;
-		/** The {@link LockedOperationDao} to lock and unlock the operation. */
+		/** The {@link LockedOperationDaoImpl} to lock and unlock the operation. */
 		@Autowired
-		private LockedOperationDao lockedOperationDao;
+		private LockableOperationDao lockedOperationDao;
 		/** The operation to start. */
 		private AbstractAsyncLockableOperation operation;
 

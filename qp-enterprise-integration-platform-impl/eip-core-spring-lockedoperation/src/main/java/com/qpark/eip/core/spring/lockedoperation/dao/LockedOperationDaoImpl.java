@@ -31,7 +31,7 @@ import com.qpark.eip.core.spring.lockedoperation.LockableOperation;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationLockControllType;
 
-public class LockedOperationDao implements InitializingBean {
+public class LockedOperationDaoImpl implements InitializingBean, LockableOperationDao {
 	/**
 	 * @param operation
 	 * @return a unique lock string.
@@ -55,18 +55,20 @@ public class LockedOperationDao implements InitializingBean {
 	private String hostName;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
-			.getLogger(LockedOperationDao.class);
+			.getLogger(LockedOperationDaoImpl.class);
 
 	/**
-	 * @return the hostAddress
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#getHostAddress()
 	 */
+	@Override
 	public String getHostAddress() {
 		return this.hostAddress;
 	}
 
 	/**
-	 * @return the hostName
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#getHostName()
 	 */
+	@Override
 	public String getHostName() {
 		return this.hostName;
 	}
@@ -92,13 +94,9 @@ public class LockedOperationDao implements InitializingBean {
 	}
 
 	/**
-	 * Checks if the {@link LockableOperation} is locked by this server.
-	 *
-	 * @param operation
-	 *            the {@link LockableOperation}.
-	 * @return <code>true</code>, if locked and the lock was set by the server
-	 *         with the same {@link #hostAddress}.
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#isLockedByThisServer(com.qpark.eip.core.spring.lockedoperation.LockableOperation)
 	 */
+	@Override
 	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public synchronized boolean isLockedByThisServer(
@@ -135,13 +133,9 @@ public class LockedOperationDao implements InitializingBean {
 	}
 
 	/**
-	 * Get the locking status of the operation.
-	 *
-	 * @param operationName
-	 *            the name of the operation to create a lock for.
-	 * @return <code>true</code> if operation is now locked for the caller, else
-	 *         <code>false</code>.
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#isLockedOperation(com.qpark.eip.core.spring.lockedoperation.LockableOperation)
 	 */
+	@Override
 	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public synchronized boolean isLockedOperation(
@@ -185,13 +179,9 @@ public class LockedOperationDao implements InitializingBean {
 	}
 
 	/**
-	 * Tries to lock the operation.
-	 *
-	 * @param operationName
-	 *            the name of the operation to create a lock for.
-	 * @return <code>true</code> if operation is now locked for the caller, else
-	 *         <code>false</code>.
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#lockOperation(com.qpark.eip.core.spring.lockedoperation.LockableOperation)
 	 */
+	@Override
 	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public synchronized boolean lockOperation(
@@ -259,13 +249,9 @@ public class LockedOperationDao implements InitializingBean {
 	}
 
 	/**
-	 * Tries to unlocks the operation.
-	 *
-	 * @param operationName
-	 *            the name of the operation.
-	 * @return <code>true</code> if the operation is now unlocked, else
-	 *         <code>false</code>.
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#unlockOperation(com.qpark.eip.core.spring.lockedoperation.LockableOperation)
 	 */
+	@Override
 	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public boolean unlockOperation(final LockableOperation operation) {
@@ -299,9 +285,9 @@ public class LockedOperationDao implements InitializingBean {
 	}
 
 	/**
-	 * On startup unlock all operations that may be locked from a previous run
-	 * by this host.
+	 * @see com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao#unlockOperationOnServerStart()
 	 */
+	@Override
 	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void unlockOperationOnServerStart() {

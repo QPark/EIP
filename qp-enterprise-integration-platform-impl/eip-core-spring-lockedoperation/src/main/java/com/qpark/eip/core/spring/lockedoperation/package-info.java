@@ -16,14 +16,14 @@
  * , the
  * {@link com.qpark.eip.core.spring.lockedoperation.AbstractLockableOperation}
  * enters a lock via the
- * {@link com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDao}, and
+ * {@link com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDaoImpl}, and
  * runs
  * {@link com.qpark.eip.core.spring.lockedoperation.AbstractLockableOperation#invokeOperation(LockableOperationContext)}
  * or - if asynchronous
  * {@link com.qpark.eip.core.spring.lockedoperation.AbstractAsyncLockableOperation#invokeOperationAsync(LockableOperationContext)}
  * which contains the code of the process to be executed. After finishing the
  * work, the lock is removed via the
- * {@link com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDao} again.
+ * {@link com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDaoImpl} again.
  * <p/>
  * The following image shows the flow of the process:
  * <p/>
