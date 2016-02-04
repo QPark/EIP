@@ -212,7 +212,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * The returned {@link ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append("} is defined as \n");
 		sb.append(" * <i>");
 		sb.append(this.complexType.getType().getName().getLocalPart());
@@ -245,7 +245,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("\n");
 		sb.append("\t/**\n");
 		sb.append("\t * Creates the {@link ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append("} defined as \n");
 		sb.append("\t * <i>");
 		sb.append(this.complexType.getType().getName().getLocalPart());
@@ -263,7 +263,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("\t */\n");
 
 		sb.append("\tpublic ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append(" ");
 		sb.append(this.getMethodName());
 
@@ -277,7 +277,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(") {\n");
 
 		sb.append("\t\t");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append(" mappingType = of.create");
 		sb.append(this.complexType.getClassName());
 		sb.append("();\n");
@@ -291,7 +291,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		boolean lastCascadedIsList = false;
 		for (int i = 0; i < propertyNames.length; i++) {
 			ctc = ctc.getComplexType().getChild(propertyNames[i]);
-			lastCascadedClassDefinition = ctc.getComplexType().getClassName();
+			lastCascadedClassDefinition = ctc.getComplexType().getClassNameFullQualified();
 			lastCascadedIsList = ctc.isList();
 			sb.append("\t\t");
 			sb.append(ctc.getJavaVarDefinition());

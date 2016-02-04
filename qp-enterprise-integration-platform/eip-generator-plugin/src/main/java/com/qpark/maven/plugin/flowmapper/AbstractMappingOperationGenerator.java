@@ -92,18 +92,18 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append(".\n");
 		sb.append(" * <p/>\n");
 		sb.append(" * Mapping a {@link ");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append("}\n * into a {@link ");
-		sb.append(this.response.getClassName());
+		sb.append(this.response.getClassNameFullQualified());
 		sb.append("}.\n");
 		sb.append(" * <p/>\n");
 		sb.append(" * The request {@link ");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append("}\n * is defined as <code>");
 		sb.append(this.request.getType().getName());
 		sb.append("</code>.\n");
 		sb.append(" * The response {@link ");
-		sb.append(this.response.getClassName());
+		sb.append(this.response.getClassNameFullQualified());
 		sb.append("}\n * is defined as <code>");
 		sb.append(this.response.getType().getName());
 		sb.append("</code>.\n");
@@ -122,21 +122,21 @@ public abstract class AbstractMappingOperationGenerator
 		}
 		sb.append("\t * @param request");
 		sb.append(" the {@link ");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append("}.\n");
 		sb.append("\t * @param flowContext the {@link FlowContext}.\n");
 		sb.append("\t * @return the {@link ");
-		sb.append(this.response.getClassName());
+		sb.append(this.response.getClassNameFullQualified());
 		sb.append("}.\n");
 		sb.append("\t */\n");
 
 		sb.append("\t@InsightOperation\n");
 
-		sb.append("\t").append(this.response.getClassName());
+		sb.append("\t").append(this.response.getClassNameFullQualified());
 		sb.append(" ");
 		sb.append(this.getMethodName());
 		sb.append("(");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append(" request, FlowContext flowContext);\n");
 		sb.append("}\n");
 		File f = Util.getFile(outputInterfacesDirectory, this.packageName,

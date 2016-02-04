@@ -1,16 +1,16 @@
 //
-// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
-// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.01.28 um 05:38:13 AM CET 
+// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert
+// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
+// Generiert: 2016.01.28 um 05:38:13 AM CET
 //
-
 
 package com.qpark.eip.model.docmodel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.jvnet.jaxb2_commons.lang.Equals;
 import org.jvnet.jaxb2_commons.lang.EqualsStrategy;
 import org.jvnet.jaxb2_commons.lang.HashCode;
@@ -42,14 +43,14 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
-
 /**
  * This is the flow executeRequest or processResponse.
- * 
- * <p>Java-Klasse für FlowProcessType complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * <p>
+ * Java-Klasse für FlowProcessType complex type.
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType name="FlowProcessType"&gt;
  *   &lt;complexContent&gt;
@@ -69,565 +70,561 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FlowProcessType", propOrder = {
-    "id",
-    "modelVersion",
-    "parentId",
-    "name",
-    "namespace",
-    "requestResponse",
-    "subRequest",
-    "filter",
-    "mapInOut"
-})
+@XmlType(name = "FlowProcessType",
+		propOrder = { "id", "modelVersion", "parentId", "name", "namespace",
+				"requestResponse", "subRequest", "filter", "mapInOut" })
 @Entity(name = "FlowProcessType")
 @Table(name = "FLOWPROCESSTYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class FlowProcessType
-    implements Serializable, Equals, HashCode
-{
+public class FlowProcessType implements Serializable, Equals, HashCode {
 
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String id;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String modelVersion;
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String parentId;
-    @XmlElement(required = true)
-    protected String name;
-    protected String namespace;
-    @XmlElement(required = true)
-    protected RequestResponseDataType requestResponse;
-    protected List<FlowSubRequestType> subRequest;
-    protected List<FlowFilterType> filter;
-    protected List<FlowMapInOutType> mapInOut;
-    @XmlTransient
-    protected Long hjid;
+	@XmlElement(required = true)
+	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+	@XmlSchemaType(name = "normalizedString")
+	protected String id;
+	@XmlElement(required = true)
+	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+	@XmlSchemaType(name = "normalizedString")
+	protected String modelVersion;
+	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+	@XmlSchemaType(name = "normalizedString")
+	protected String parentId;
+	@XmlElement(required = true)
+	protected String name;
+	protected String namespace;
+	@XmlElement(required = true)
+	protected RequestResponseDataType requestResponse;
+	protected List<FlowSubRequestType> subRequest;
+	protected List<FlowFilterType> filter;
+	protected List<FlowMapInOutType> mapInOut;
+	@XmlTransient
+	protected Long hjid;
 
-    /**
-     * Ruft den Wert der id-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "ID", length = 255)
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Ruft den Wert der id-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	@Basic
+	@Column(name = "ID", length = 36)
+	public String getId() {
+		return this.id;
+	}
 
-    /**
-     * Legt den Wert der id-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
-    }
+	/**
+	 * Legt den Wert der id-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 */
+	public void setId(final String value) {
+		this.id = value;
+	}
 
-    @Transient
-    public boolean isSetId() {
-        return (this.id!= null);
-    }
+	@Transient
+	public boolean isSetId() {
+		return (this.id != null);
+	}
 
-    /**
-     * Ruft den Wert der modelVersion-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "MODELVERSION", length = 255)
-    public String getModelVersion() {
-        return modelVersion;
-    }
+	/**
+	 * Ruft den Wert der modelVersion-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	@Basic
+	@Column(name = "MODELVERSION", length = 64)
+	public String getModelVersion() {
+		return this.modelVersion;
+	}
 
-    /**
-     * Legt den Wert der modelVersion-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setModelVersion(String value) {
-        this.modelVersion = value;
-    }
+	/**
+	 * Legt den Wert der modelVersion-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 */
+	public void setModelVersion(final String value) {
+		this.modelVersion = value;
+	}
 
-    @Transient
-    public boolean isSetModelVersion() {
-        return (this.modelVersion!= null);
-    }
+	@Transient
+	public boolean isSetModelVersion() {
+		return (this.modelVersion != null);
+	}
 
-    /**
-     * Ruft den Wert der parentId-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "PARENTID", length = 255)
-    public String getParentId() {
-        return parentId;
-    }
+	/**
+	 * Ruft den Wert der parentId-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	@Basic
+	@Column(name = "PARENTID", length = 36)
+	public String getParentId() {
+		return this.parentId;
+	}
 
-    /**
-     * Legt den Wert der parentId-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setParentId(String value) {
-        this.parentId = value;
-    }
+	/**
+	 * Legt den Wert der parentId-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 */
+	public void setParentId(final String value) {
+		this.parentId = value;
+	}
 
-    @Transient
-    public boolean isSetParentId() {
-        return (this.parentId!= null);
-    }
+	@Transient
+	public boolean isSetParentId() {
+		return (this.parentId != null);
+	}
 
-    /**
-     * Ruft den Wert der name-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "NAME_", length = 255)
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Ruft den Wert der name-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	@Basic
+	@Column(name = "NAME_", length = 512)
+	public String getName() {
+		return this.name;
+	}
 
-    /**
-     * Legt den Wert der name-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Legt den Wert der name-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 */
+	public void setName(final String value) {
+		this.name = value;
+	}
 
-    @Transient
-    public boolean isSetName() {
-        return (this.name!= null);
-    }
+	@Transient
+	public boolean isSetName() {
+		return (this.name != null);
+	}
 
-    /**
-     * Ruft den Wert der namespace-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "NAMESPACE", length = 255)
-    public String getNamespace() {
-        return namespace;
-    }
+	/**
+	 * Ruft den Wert der namespace-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	@Basic
+	@Column(name = "NAMESPACE", length = 512)
+	public String getNamespace() {
+		return this.namespace;
+	}
 
-    /**
-     * Legt den Wert der namespace-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNamespace(String value) {
-        this.namespace = value;
-    }
+	/**
+	 * Legt den Wert der namespace-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 */
+	public void setNamespace(final String value) {
+		this.namespace = value;
+	}
 
-    @Transient
-    public boolean isSetNamespace() {
-        return (this.namespace!= null);
-    }
+	@Transient
+	public boolean isSetNamespace() {
+		return (this.namespace != null);
+	}
 
-    /**
-     * Ruft den Wert der requestResponse-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RequestResponseDataType }
-     *     
-     */
-    @ManyToOne(targetEntity = RequestResponseDataType.class, cascade = {
-        CascadeType.ALL
-    })
-    @JoinColumn(name = "REQUESTRESPONSE_FLOWPROCESST_0")
-    public RequestResponseDataType getRequestResponse() {
-        return requestResponse;
-    }
+	/**
+	 * Ruft den Wert der requestResponse-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link RequestResponseDataType }
+	 */
+	@ManyToOne(targetEntity = RequestResponseDataType.class,
+			cascade = { CascadeType.ALL })
+	@JoinColumn(name = "REQUESTRESPONSE_FLOWPROCESST_0")
+	public RequestResponseDataType getRequestResponse() {
+		return this.requestResponse;
+	}
 
-    /**
-     * Legt den Wert der requestResponse-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RequestResponseDataType }
-     *     
-     */
-    public void setRequestResponse(RequestResponseDataType value) {
-        this.requestResponse = value;
-    }
+	/**
+	 * Legt den Wert der requestResponse-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link RequestResponseDataType }
+	 */
+	public void setRequestResponse(final RequestResponseDataType value) {
+		this.requestResponse = value;
+	}
 
-    @Transient
-    public boolean isSetRequestResponse() {
-        return (this.requestResponse!= null);
-    }
+	@Transient
+	public boolean isSetRequestResponse() {
+		return (this.requestResponse != null);
+	}
 
-    /**
-     * Gets the value of the subRequest property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the subRequest property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSubRequest().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FlowSubRequestType }
-     * 
-     * 
-     */
-    @OneToMany(targetEntity = FlowSubRequestType.class, cascade = {
-        CascadeType.ALL
-    })
-    @JoinColumn(name = "SUBREQUEST_FLOWPROCESSTYPE_H_0")
-    public List<FlowSubRequestType> getSubRequest() {
-        if (subRequest == null) {
-            subRequest = new ArrayList<FlowSubRequestType>();
-        }
-        return this.subRequest;
-    }
+	/**
+	 * Gets the value of the subRequest property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a
+	 * snapshot. Therefore any modification you make to the returned list will
+	 * be present inside the JAXB object. This is why there is not a
+	 * <CODE>set</CODE> method for the subRequest property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getSubRequest().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FlowSubRequestType }
+	 */
+	@OneToMany(targetEntity = FlowSubRequestType.class,
+			cascade = { CascadeType.ALL })
+	@JoinColumn(name = "SUBREQUEST_FLOWPROCESSTYPE_H_0")
+	public List<FlowSubRequestType> getSubRequest() {
+		if (this.subRequest == null) {
+			this.subRequest = new ArrayList<FlowSubRequestType>();
+		}
+		return this.subRequest;
+	}
 
-    /**
-     * 
-     * 
-     */
-    public void setSubRequest(List<FlowSubRequestType> subRequest) {
-        this.subRequest = subRequest;
-    }
+	/**
+	 * 
+	 * 
+	 */
+	public void setSubRequest(final List<FlowSubRequestType> subRequest) {
+		this.subRequest = subRequest;
+	}
 
-    @Transient
-    public boolean isSetSubRequest() {
-        return ((this.subRequest!= null)&&(!this.subRequest.isEmpty()));
-    }
+	@Transient
+	public boolean isSetSubRequest() {
+		return ((this.subRequest != null) && (!this.subRequest.isEmpty()));
+	}
 
-    public void unsetSubRequest() {
-        this.subRequest = null;
-    }
+	public void unsetSubRequest() {
+		this.subRequest = null;
+	}
 
-    /**
-     * Gets the value of the filter property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the filter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFilter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FlowFilterType }
-     * 
-     * 
-     */
-    @OneToMany(targetEntity = FlowFilterType.class, cascade = {
-        CascadeType.ALL
-    })
-    @JoinColumn(name = "FILTER_FLOWPROCESSTYPE_HJID")
-    public List<FlowFilterType> getFilter() {
-        if (filter == null) {
-            filter = new ArrayList<FlowFilterType>();
-        }
-        return this.filter;
-    }
+	/**
+	 * Gets the value of the filter property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a
+	 * snapshot. Therefore any modification you make to the returned list will
+	 * be present inside the JAXB object. This is why there is not a
+	 * <CODE>set</CODE> method for the filter property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getFilter().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FlowFilterType }
+	 */
+	@OneToMany(targetEntity = FlowFilterType.class,
+			cascade = { CascadeType.ALL })
+	@JoinColumn(name = "FILTER_FLOWPROCESSTYPE_HJID")
+	public List<FlowFilterType> getFilter() {
+		if (this.filter == null) {
+			this.filter = new ArrayList<FlowFilterType>();
+		}
+		return this.filter;
+	}
 
-    /**
-     * 
-     * 
-     */
-    public void setFilter(List<FlowFilterType> filter) {
-        this.filter = filter;
-    }
+	/**
+	 * 
+	 * 
+	 */
+	public void setFilter(final List<FlowFilterType> filter) {
+		this.filter = filter;
+	}
 
-    @Transient
-    public boolean isSetFilter() {
-        return ((this.filter!= null)&&(!this.filter.isEmpty()));
-    }
+	@Transient
+	public boolean isSetFilter() {
+		return ((this.filter != null) && (!this.filter.isEmpty()));
+	}
 
-    public void unsetFilter() {
-        this.filter = null;
-    }
+	public void unsetFilter() {
+		this.filter = null;
+	}
 
-    /**
-     * Gets the value of the mapInOut property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mapInOut property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMapInOut().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FlowMapInOutType }
-     * 
-     * 
-     */
-    @OneToMany(targetEntity = FlowMapInOutType.class, cascade = {
-        CascadeType.ALL
-    })
-    @JoinColumn(name = "MAPINOUT_FLOWPROCESSTYPE_HJID")
-    public List<FlowMapInOutType> getMapInOut() {
-        if (mapInOut == null) {
-            mapInOut = new ArrayList<FlowMapInOutType>();
-        }
-        return this.mapInOut;
-    }
+	/**
+	 * Gets the value of the mapInOut property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a
+	 * snapshot. Therefore any modification you make to the returned list will
+	 * be present inside the JAXB object. This is why there is not a
+	 * <CODE>set</CODE> method for the mapInOut property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getMapInOut().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FlowMapInOutType }
+	 */
+	@OneToMany(targetEntity = FlowMapInOutType.class,
+			cascade = { CascadeType.ALL })
+	@JoinColumn(name = "MAPINOUT_FLOWPROCESSTYPE_HJID")
+	public List<FlowMapInOutType> getMapInOut() {
+		if (this.mapInOut == null) {
+			this.mapInOut = new ArrayList<FlowMapInOutType>();
+		}
+		return this.mapInOut;
+	}
 
-    /**
-     * 
-     * 
-     */
-    public void setMapInOut(List<FlowMapInOutType> mapInOut) {
-        this.mapInOut = mapInOut;
-    }
+	/**
+	 * 
+	 * 
+	 */
+	public void setMapInOut(final List<FlowMapInOutType> mapInOut) {
+		this.mapInOut = mapInOut;
+	}
 
-    @Transient
-    public boolean isSetMapInOut() {
-        return ((this.mapInOut!= null)&&(!this.mapInOut.isEmpty()));
-    }
+	@Transient
+	public boolean isSetMapInOut() {
+		return ((this.mapInOut != null) && (!this.mapInOut.isEmpty()));
+	}
 
-    public void unsetMapInOut() {
-        this.mapInOut = null;
-    }
+	public void unsetMapInOut() {
+		this.mapInOut = null;
+	}
 
-    /**
-     * 
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    @Id
-    @Column(name = "HJID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getHjid() {
-        return hjid;
-    }
+	/**
+	 * @return possible object is {@link Long }
+	 */
+	@Id
+	@Column(name = "HJID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public Long getHjid() {
+		return this.hjid;
+	}
 
-    /**
-     * 
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setHjid(Long value) {
-        this.hjid = value;
-    }
+	/**
+	 * @param value
+	 *            allowed object is {@link Long }
+	 */
+	public void setHjid(final Long value) {
+		this.hjid = value;
+	}
 
-    public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
-        if ((object == null)||(this.getClass()!= object.getClass())) {
-            return false;
-        }
-        if (this == object) {
-            return true;
-        }
-        final FlowProcessType that = ((FlowProcessType) object);
-        {
-            String lhsId;
-            lhsId = this.getId();
-            String rhsId;
-            rhsId = that.getId();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "id", lhsId), LocatorUtils.property(thatLocator, "id", rhsId), lhsId, rhsId)) {
-                return false;
-            }
-        }
-        {
-            String lhsModelVersion;
-            lhsModelVersion = this.getModelVersion();
-            String rhsModelVersion;
-            rhsModelVersion = that.getModelVersion();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "modelVersion", lhsModelVersion), LocatorUtils.property(thatLocator, "modelVersion", rhsModelVersion), lhsModelVersion, rhsModelVersion)) {
-                return false;
-            }
-        }
-        {
-            String lhsParentId;
-            lhsParentId = this.getParentId();
-            String rhsParentId;
-            rhsParentId = that.getParentId();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "parentId", lhsParentId), LocatorUtils.property(thatLocator, "parentId", rhsParentId), lhsParentId, rhsParentId)) {
-                return false;
-            }
-        }
-        {
-            String lhsName;
-            lhsName = this.getName();
-            String rhsName;
-            rhsName = that.getName();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "name", lhsName), LocatorUtils.property(thatLocator, "name", rhsName), lhsName, rhsName)) {
-                return false;
-            }
-        }
-        {
-            String lhsNamespace;
-            lhsNamespace = this.getNamespace();
-            String rhsNamespace;
-            rhsNamespace = that.getNamespace();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "namespace", lhsNamespace), LocatorUtils.property(thatLocator, "namespace", rhsNamespace), lhsNamespace, rhsNamespace)) {
-                return false;
-            }
-        }
-        {
-            RequestResponseDataType lhsRequestResponse;
-            lhsRequestResponse = this.getRequestResponse();
-            RequestResponseDataType rhsRequestResponse;
-            rhsRequestResponse = that.getRequestResponse();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "requestResponse", lhsRequestResponse), LocatorUtils.property(thatLocator, "requestResponse", rhsRequestResponse), lhsRequestResponse, rhsRequestResponse)) {
-                return false;
-            }
-        }
-        {
-            List<FlowSubRequestType> lhsSubRequest;
-            lhsSubRequest = (this.isSetSubRequest()?this.getSubRequest():null);
-            List<FlowSubRequestType> rhsSubRequest;
-            rhsSubRequest = (that.isSetSubRequest()?that.getSubRequest():null);
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "subRequest", lhsSubRequest), LocatorUtils.property(thatLocator, "subRequest", rhsSubRequest), lhsSubRequest, rhsSubRequest)) {
-                return false;
-            }
-        }
-        {
-            List<FlowFilterType> lhsFilter;
-            lhsFilter = (this.isSetFilter()?this.getFilter():null);
-            List<FlowFilterType> rhsFilter;
-            rhsFilter = (that.isSetFilter()?that.getFilter():null);
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "filter", lhsFilter), LocatorUtils.property(thatLocator, "filter", rhsFilter), lhsFilter, rhsFilter)) {
-                return false;
-            }
-        }
-        {
-            List<FlowMapInOutType> lhsMapInOut;
-            lhsMapInOut = (this.isSetMapInOut()?this.getMapInOut():null);
-            List<FlowMapInOutType> rhsMapInOut;
-            rhsMapInOut = (that.isSetMapInOut()?that.getMapInOut():null);
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "mapInOut", lhsMapInOut), LocatorUtils.property(thatLocator, "mapInOut", rhsMapInOut), lhsMapInOut, rhsMapInOut)) {
-                return false;
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean equals(final ObjectLocator thisLocator,
+			final ObjectLocator thatLocator, final Object object,
+			final EqualsStrategy strategy) {
+		if ((object == null) || (this.getClass() != object.getClass())) {
+			return false;
+		}
+		if (this == object) {
+			return true;
+		}
+		final FlowProcessType that = ((FlowProcessType) object);
+		{
+			String lhsId;
+			lhsId = this.getId();
+			String rhsId;
+			rhsId = that.getId();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "id", lhsId),
+					LocatorUtils.property(thatLocator, "id", rhsId), lhsId,
+					rhsId)) {
+				return false;
+			}
+		}
+		{
+			String lhsModelVersion;
+			lhsModelVersion = this.getModelVersion();
+			String rhsModelVersion;
+			rhsModelVersion = that.getModelVersion();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "modelVersion",
+							lhsModelVersion),
+					LocatorUtils.property(thatLocator, "modelVersion",
+							rhsModelVersion),
+					lhsModelVersion, rhsModelVersion)) {
+				return false;
+			}
+		}
+		{
+			String lhsParentId;
+			lhsParentId = this.getParentId();
+			String rhsParentId;
+			rhsParentId = that.getParentId();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "parentId", lhsParentId),
+					LocatorUtils.property(thatLocator, "parentId", rhsParentId),
+					lhsParentId, rhsParentId)) {
+				return false;
+			}
+		}
+		{
+			String lhsName;
+			lhsName = this.getName();
+			String rhsName;
+			rhsName = that.getName();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "name", lhsName),
+					LocatorUtils.property(thatLocator, "name", rhsName),
+					lhsName, rhsName)) {
+				return false;
+			}
+		}
+		{
+			String lhsNamespace;
+			lhsNamespace = this.getNamespace();
+			String rhsNamespace;
+			rhsNamespace = that.getNamespace();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "namespace",
+							lhsNamespace),
+					LocatorUtils.property(thatLocator, "namespace",
+							rhsNamespace),
+					lhsNamespace, rhsNamespace)) {
+				return false;
+			}
+		}
+		{
+			RequestResponseDataType lhsRequestResponse;
+			lhsRequestResponse = this.getRequestResponse();
+			RequestResponseDataType rhsRequestResponse;
+			rhsRequestResponse = that.getRequestResponse();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "requestResponse",
+							lhsRequestResponse),
+					LocatorUtils.property(thatLocator, "requestResponse",
+							rhsRequestResponse),
+					lhsRequestResponse, rhsRequestResponse)) {
+				return false;
+			}
+		}
+		{
+			List<FlowSubRequestType> lhsSubRequest;
+			lhsSubRequest = (this.isSetSubRequest() ? this.getSubRequest()
+					: null);
+			List<FlowSubRequestType> rhsSubRequest;
+			rhsSubRequest = (that.isSetSubRequest() ? that.getSubRequest()
+					: null);
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "subRequest",
+							lhsSubRequest),
+					LocatorUtils.property(thatLocator, "subRequest",
+							rhsSubRequest),
+					lhsSubRequest, rhsSubRequest)) {
+				return false;
+			}
+		}
+		{
+			List<FlowFilterType> lhsFilter;
+			lhsFilter = (this.isSetFilter() ? this.getFilter() : null);
+			List<FlowFilterType> rhsFilter;
+			rhsFilter = (that.isSetFilter() ? that.getFilter() : null);
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "filter", lhsFilter),
+					LocatorUtils.property(thatLocator, "filter", rhsFilter),
+					lhsFilter, rhsFilter)) {
+				return false;
+			}
+		}
+		{
+			List<FlowMapInOutType> lhsMapInOut;
+			lhsMapInOut = (this.isSetMapInOut() ? this.getMapInOut() : null);
+			List<FlowMapInOutType> rhsMapInOut;
+			rhsMapInOut = (that.isSetMapInOut() ? that.getMapInOut() : null);
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "mapInOut", lhsMapInOut),
+					LocatorUtils.property(thatLocator, "mapInOut", rhsMapInOut),
+					lhsMapInOut, rhsMapInOut)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public boolean equals(Object object) {
-        final EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
-        return equals(null, null, object, strategy);
-    }
+	@Override
+	public boolean equals(final Object object) {
+		final EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
+		return this.equals(null, null, object, strategy);
+	}
 
-    public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
-        int currentHashCode = 1;
-        {
-            String theId;
-            theId = this.getId();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "id", theId), currentHashCode, theId);
-        }
-        {
-            String theModelVersion;
-            theModelVersion = this.getModelVersion();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "modelVersion", theModelVersion), currentHashCode, theModelVersion);
-        }
-        {
-            String theParentId;
-            theParentId = this.getParentId();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "parentId", theParentId), currentHashCode, theParentId);
-        }
-        {
-            String theName;
-            theName = this.getName();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "name", theName), currentHashCode, theName);
-        }
-        {
-            String theNamespace;
-            theNamespace = this.getNamespace();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "namespace", theNamespace), currentHashCode, theNamespace);
-        }
-        {
-            RequestResponseDataType theRequestResponse;
-            theRequestResponse = this.getRequestResponse();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestResponse", theRequestResponse), currentHashCode, theRequestResponse);
-        }
-        {
-            List<FlowSubRequestType> theSubRequest;
-            theSubRequest = (this.isSetSubRequest()?this.getSubRequest():null);
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "subRequest", theSubRequest), currentHashCode, theSubRequest);
-        }
-        {
-            List<FlowFilterType> theFilter;
-            theFilter = (this.isSetFilter()?this.getFilter():null);
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "filter", theFilter), currentHashCode, theFilter);
-        }
-        {
-            List<FlowMapInOutType> theMapInOut;
-            theMapInOut = (this.isSetMapInOut()?this.getMapInOut():null);
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "mapInOut", theMapInOut), currentHashCode, theMapInOut);
-        }
-        return currentHashCode;
-    }
+	@Override
+	public int hashCode(final ObjectLocator locator,
+			final HashCodeStrategy strategy) {
+		int currentHashCode = 1;
+		{
+			String theId;
+			theId = this.getId();
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "id", theId),
+					currentHashCode, theId);
+		}
+		{
+			String theModelVersion;
+			theModelVersion = this.getModelVersion();
+			currentHashCode = strategy
+					.hashCode(
+							LocatorUtils.property(locator, "modelVersion",
+									theModelVersion),
+							currentHashCode, theModelVersion);
+		}
+		{
+			String theParentId;
+			theParentId = this.getParentId();
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "parentId", theParentId),
+					currentHashCode, theParentId);
+		}
+		{
+			String theName;
+			theName = this.getName();
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "name", theName),
+					currentHashCode, theName);
+		}
+		{
+			String theNamespace;
+			theNamespace = this.getNamespace();
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "namespace", theNamespace),
+					currentHashCode, theNamespace);
+		}
+		{
+			RequestResponseDataType theRequestResponse;
+			theRequestResponse = this.getRequestResponse();
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "requestResponse",
+							theRequestResponse),
+					currentHashCode, theRequestResponse);
+		}
+		{
+			List<FlowSubRequestType> theSubRequest;
+			theSubRequest = (this.isSetSubRequest() ? this.getSubRequest()
+					: null);
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "subRequest", theSubRequest),
+					currentHashCode, theSubRequest);
+		}
+		{
+			List<FlowFilterType> theFilter;
+			theFilter = (this.isSetFilter() ? this.getFilter() : null);
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "filter", theFilter),
+					currentHashCode, theFilter);
+		}
+		{
+			List<FlowMapInOutType> theMapInOut;
+			theMapInOut = (this.isSetMapInOut() ? this.getMapInOut() : null);
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "mapInOut", theMapInOut),
+					currentHashCode, theMapInOut);
+		}
+		return currentHashCode;
+	}
 
-    public int hashCode() {
-        final HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
-        return this.hashCode(null, strategy);
-    }
+	@Override
+	public int hashCode() {
+		final HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
+		return this.hashCode(null, strategy);
+	}
 
 }

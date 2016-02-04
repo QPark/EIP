@@ -125,14 +125,14 @@ public class FlowInterfaceGenerator {
 					sb.append(",\n\t *");
 				}
 				sb.append(" {@link ");
-				sb.append(
-						smd.getInput().get(i).getComplexType().getClassName());
+				sb.append(smd.getInput().get(i).getComplexType()
+						.getClassNameFullQualified());
 				sb.append("}");
 			}
 		}
 		if (smd.getOut() != null) {
 			sb.append("\n\t * to a {@link ");
-			sb.append(smd.getOut().getClassName());
+			sb.append(smd.getOut().getClassNameFullQualified());
 			sb.append("}");
 		}
 		sb.append(".\n");
@@ -145,7 +145,7 @@ public class FlowInterfaceGenerator {
 		sb.append("\t * Do a sub request to get ");
 		if (smd.getOut() != null) {
 			sb.append("\n\t * a {@link ");
-			sb.append(smd.getOut().getClassName());
+			sb.append(smd.getOut().getClassNameFullQualified());
 			sb.append("}");
 		}
 		if (smd.getInput().size() > 0) {
@@ -155,8 +155,8 @@ public class FlowInterfaceGenerator {
 					sb.append(",\n\t *");
 				}
 				sb.append(" {@link ");
-				sb.append(
-						smd.getInput().get(i).getComplexType().getClassName());
+				sb.append(smd.getInput().get(i).getComplexType()
+						.getClassNameFullQualified());
 				sb.append("}");
 			}
 		}
@@ -178,13 +178,13 @@ public class FlowInterfaceGenerator {
 				sb.append("\t * @param ");
 				sb.append(ctc.getChildName());
 				sb.append(" the {@link ");
-				sb.append(ctc.getComplexType().getClassName());
+				sb.append(ctc.getComplexType().getClassNameFullQualified());
 				sb.append("}\n");
 			}
 			sb.append("\t * @param flowContext the {@link FlowContext}\n");
 			if (smd.getOut() != null) {
 				sb.append("\t * @return the {@link ");
-				sb.append(smd.getOut().getClassName());
+				sb.append(smd.getOut().getClassNameFullQualified());
 				sb.append("}\n");
 			}
 			sb.append("\t */\n");
@@ -193,7 +193,7 @@ public class FlowInterfaceGenerator {
 
 			sb.append("\t");
 			if (smd.getOut() != null) {
-				sb.append(smd.getOut().getClassName());
+				sb.append(smd.getOut().getClassNameFullQualified());
 			} else {
 				sb.append("void");
 			}
@@ -218,7 +218,7 @@ public class FlowInterfaceGenerator {
 						sb.append(", ");
 					}
 					sb.append(smd.getInput().get(i).getComplexType()
-							.getClassName());
+							.getClassNameFullQualified());
 					sb.append(" ");
 					sb.append(smd.getInput().get(i).getChildName());
 					addedParameter = true;
@@ -257,7 +257,7 @@ public class FlowInterfaceGenerator {
 				if (i > 0) {
 					sb.append(", ");
 				}
-				sb.append(ctc.getComplexType().getClassName());
+				sb.append(ctc.getComplexType().getClassNameFullQualified());
 			}
 			sb.append(")}");
 		}
@@ -314,6 +314,7 @@ public class FlowInterfaceGenerator {
 		}
 		return suffix;
 	}
+
 	private final XsdsUtil config;
 
 	private final List<SimpleMethodDefinition> filters = new ArrayList<SimpleMethodDefinition>();
@@ -502,13 +503,13 @@ public class FlowInterfaceGenerator {
 		sb.append("\t\textends Flow<");
 		if (this.flow.getInput().size() > 0) {
 			sb.append(this.flow.getInput().get(0).getComplexType()
-					.getClassName());
+					.getClassNameFullQualified());
 		} else {
 			sb.append("Void");
 		}
 		sb.append(", ");
 		if (this.flow.getOut() != null) {
-			sb.append(this.flow.getOut().getClassName());
+			sb.append(this.flow.getOut().getClassNameFullQualified());
 		} else {
 			sb.append("Void");
 		}

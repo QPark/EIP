@@ -11,7 +11,7 @@
 	jaxb:version="2.0"
 
 	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
-	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportTypes"
+	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportInterfaceTypes"
 
 	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
 
@@ -20,7 +20,7 @@
 >
 
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportExternalDefinedTypes.xsd"/>
-	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportTypes.xsd"/>
+	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportInterfaceTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportInterfaceTypes.xsd"/>
 
 	<import namespace="http://www.qpark.com/Common/BaseMessages" schemaLocation="../../../EIP/Common/BaseMessage.xsd"/>
 

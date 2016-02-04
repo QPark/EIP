@@ -28,8 +28,8 @@ public class PersistModelAnalysis {
 	private String modelPath;
 
 	public void persist() {
-		Analysis a = new AnalysisProvider().createEnterprise(
-				this.enterpriseName, this.basePackageName, this.modelPath);
-		this.modelAnalysisDao.saveEnterprise(a.getEnterprise());
+		// Analysis a = new AnalysisProvider().createEnterprise(
+		// this.enterpriseName, this.basePackageName, this.modelPath);
+		// this.modelAnalysisDao.saveEnterprise(a.getEnterprise());
 	}
 }

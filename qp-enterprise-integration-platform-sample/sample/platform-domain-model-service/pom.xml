@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.3.0</version><!--qpark-eip-version-->
+		<version>3.3.1</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -45,26 +45,26 @@
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>model</artifactId>
-									<version>3.3.0</version><!--qpark-eip-version-->
+									<version>3.3.1</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>service</artifactId>
-									<version>3.3.0</version><!--qpark-eip-version-->
+									<version>3.3.1</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-jaxb</artifactId>
-									<version>3.3.0</version><!--qpark-eip-version-->
+									<version>3.3.1</version><!--qpark-eip-version-->
 									<classifier>generated-java-sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-flow</artifactId>
-									<version>3.3.0</version><!--qpark-eip-version-->
+									<version>3.3.1</version><!--qpark-eip-version-->
 									<classifier>sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>

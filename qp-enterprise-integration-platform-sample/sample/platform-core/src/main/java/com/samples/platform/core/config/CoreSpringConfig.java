@@ -201,9 +201,10 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 		EipJpaVendorAdapterConfiguration bean = new EipJpaVendorAdapterConfiguration();
 		bean.setJpaVendorAdapterClassName(
 				"org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter");
-		bean.setJpaVendorAdapterGenerateDdl(true);
 		bean.setJpaVendorAdpaterDatabasePlatform(
 				"org.hibernate.dialect.HSQLDialect");
+
+		bean.setJpaVendorAdapterGenerateDdl(true);
 		return bean;
 	}
 

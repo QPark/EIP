@@ -58,9 +58,9 @@ public class MappingOperationGenerator
 		sb.append("} implementation.\n");
 		sb.append(" * <p/>\n");
 		sb.append(" * Mapping a {@link ");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append("}\n * into a {@link ");
-		sb.append(this.response.getClassName());
+		sb.append(this.response.getClassNameFullQualified());
 		sb.append("}.\n");
 		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
 				this.eipVersion));
@@ -83,19 +83,19 @@ public class MappingOperationGenerator
 		sb.append("\n");
 		sb.append("\t/**\n");
 		sb.append("\t * Maps the {@link ");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append("} into a {@link ");
-		sb.append(this.response.getClassName());
+		sb.append(this.response.getClassNameFullQualified());
 		sb.append("}.\n");
 		sb.append(this.getSeeInterfaceJavaDoc());
 		sb.append("\t */\n");
 
 		sb.append("\tpublic ");
-		sb.append(this.response.getClassName());
+		sb.append(this.response.getClassNameFullQualified());
 		sb.append(" ");
 		sb.append(this.getMethodName());
 		sb.append("(");
-		sb.append(this.request.getClassName());
+		sb.append(this.request.getClassNameFullQualified());
 		sb.append(" request, FlowContext flowContext) {\n");
 		sb.append("\t\t");
 		sb.append(this.response.getClassName());
@@ -113,7 +113,8 @@ public class MappingOperationGenerator
 				if (requestChild.isList()) {
 					sb.append("List<");
 				}
-				sb.append(requestChild.getComplexType().getClassName());
+				sb.append(requestChild.getComplexType()
+						.getClassNameFullQualified());
 				if (requestChild.isList()) {
 					sb.append(">");
 				}

@@ -233,7 +233,7 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(") {\n");
 
 		sb.append("\t\t");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append(" mappingType = of.create");
 		sb.append(this.complexType.getClassName());
 		sb.append("();\n");

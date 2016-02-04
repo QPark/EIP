@@ -101,7 +101,7 @@ public class EnterpriseType
      *     
      */
     @Basic
-    @Column(name = "NAME_", length = 255)
+    @Column(name = "NAME_", length = 512)
     public String getName() {
         return name;
     }
@@ -132,7 +132,7 @@ public class EnterpriseType
      *     
      */
     @Basic
-    @Column(name = "MODELVERSION", length = 255)
+    @Column(name = "MODELVERSION", length = 64)
     public String getModelVersion() {
         return modelVersion;
     }

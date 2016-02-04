@@ -1,14 +1,14 @@
 //
-// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
-// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.01.28 um 05:38:13 AM CET 
+// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert
+// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
+// Generiert: 2016.01.28 um 05:38:13 AM CET
 //
-
 
 package com.qpark.eip.model.docmodel;
 
 import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.jvnet.jaxb2_commons.lang.Equals;
 import org.jvnet.jaxb2_commons.lang.EqualsStrategy;
 import org.jvnet.jaxb2_commons.lang.HashCode;
@@ -30,14 +31,15 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
-
 /**
- * This is the direct mapping type. It descends from DirectMappingType of name space is http://www.qpark.com/Interfaces/MappingTypes.
- * 
- * <p>Java-Klasse für DirectMappingType complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * This is the direct mapping type. It descends from DirectMappingType of name
+ * space is http://www.qpark.com/Interfaces/MappingTypes.
+ * <p>
+ * Java-Klasse für DirectMappingType complex type.
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType name="DirectMappingType"&gt;
  *   &lt;complexContent&gt;
@@ -49,97 +51,98 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DirectMappingType", propOrder = {
-    "accessor"
-})
+@XmlType(name = "DirectMappingType", propOrder = { "accessor" })
 @Entity(name = "DirectMappingType")
 @Table(name = "DIRECTMAPPINGTYPE")
-public class DirectMappingType
-    extends FieldMappingType
-    implements Serializable, Equals, HashCode
-{
+public class DirectMappingType extends FieldMappingType
+		implements Serializable, Equals, HashCode {
 
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String accessor;
+	@XmlElement(required = true)
+	@XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+	@XmlSchemaType(name = "normalizedString")
+	protected String accessor;
 
-    /**
-     * Ruft den Wert der accessor-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "ACCESSOR", length = 255)
-    public String getAccessor() {
-        return accessor;
-    }
+	/**
+	 * Ruft den Wert der accessor-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	@Basic
+	@Column(name = "ACCESSOR", length = 512)
+	public String getAccessor() {
+		return this.accessor;
+	}
 
-    /**
-     * Legt den Wert der accessor-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setAccessor(String value) {
-        this.accessor = value;
-    }
+	/**
+	 * Legt den Wert der accessor-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 */
+	public void setAccessor(final String value) {
+		this.accessor = value;
+	}
 
-    @Transient
-    public boolean isSetAccessor() {
-        return (this.accessor!= null);
-    }
+	@Transient
+	public boolean isSetAccessor() {
+		return (this.accessor != null);
+	}
 
-    public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
-        if ((object == null)||(this.getClass()!= object.getClass())) {
-            return false;
-        }
-        if (this == object) {
-            return true;
-        }
-        if (!super.equals(thisLocator, thatLocator, object, strategy)) {
-            return false;
-        }
-        final DirectMappingType that = ((DirectMappingType) object);
-        {
-            String lhsAccessor;
-            lhsAccessor = this.getAccessor();
-            String rhsAccessor;
-            rhsAccessor = that.getAccessor();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "accessor", lhsAccessor), LocatorUtils.property(thatLocator, "accessor", rhsAccessor), lhsAccessor, rhsAccessor)) {
-                return false;
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean equals(final ObjectLocator thisLocator,
+			final ObjectLocator thatLocator, final Object object,
+			final EqualsStrategy strategy) {
+		if ((object == null) || (this.getClass() != object.getClass())) {
+			return false;
+		}
+		if (this == object) {
+			return true;
+		}
+		if (!super.equals(thisLocator, thatLocator, object, strategy)) {
+			return false;
+		}
+		final DirectMappingType that = ((DirectMappingType) object);
+		{
+			String lhsAccessor;
+			lhsAccessor = this.getAccessor();
+			String rhsAccessor;
+			rhsAccessor = that.getAccessor();
+			if (!strategy.equals(
+					LocatorUtils.property(thisLocator, "accessor", lhsAccessor),
+					LocatorUtils.property(thatLocator, "accessor", rhsAccessor),
+					lhsAccessor, rhsAccessor)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public boolean equals(Object object) {
-        final EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
-        return equals(null, null, object, strategy);
-    }
+	@Override
+	public boolean equals(final Object object) {
+		final EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
+		return this.equals(null, null, object, strategy);
+	}
 
-    public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
-        int currentHashCode = super.hashCode(locator, strategy);
-        {
-            String theAccessor;
-            theAccessor = this.getAccessor();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "accessor", theAccessor), currentHashCode, theAccessor);
-        }
-        return currentHashCode;
-    }
+	@Override
+	public int hashCode(final ObjectLocator locator,
+			final HashCodeStrategy strategy) {
+		int currentHashCode = super.hashCode(locator, strategy);
+		{
+			String theAccessor;
+			theAccessor = this.getAccessor();
+			currentHashCode = strategy.hashCode(
+					LocatorUtils.property(locator, "accessor", theAccessor),
+					currentHashCode, theAccessor);
+		}
+		return currentHashCode;
+	}
 
-    public int hashCode() {
-        final HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
-        return this.hashCode(null, strategy);
-    }
+	@Override
+	public int hashCode() {
+		final HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
+		return this.hashCode(null, strategy);
+	}
 
 }

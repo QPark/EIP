@@ -124,7 +124,7 @@ public class DomainType
      *     
      */
     @Basic
-    @Column(name = "ID", length = 255)
+    @Column(name = "ID", length = 36)
     public String getId() {
         return id;
     }
@@ -155,7 +155,7 @@ public class DomainType
      *     
      */
     @Basic
-    @Column(name = "MODELVERSION", length = 255)
+    @Column(name = "MODELVERSION", length = 64)
     public String getModelVersion() {
         return modelVersion;
     }
@@ -186,7 +186,7 @@ public class DomainType
      *     
      */
     @Basic
-    @Column(name = "PARENTID", length = 255)
+    @Column(name = "PARENTID", length = 36)
     public String getParentId() {
         return parentId;
     }
@@ -217,7 +217,7 @@ public class DomainType
      *     
      */
     @Basic
-    @Column(name = "NAME_", length = 255)
+    @Column(name = "NAME_", length = 512)
     public String getName() {
         return name;
     }
@@ -441,7 +441,7 @@ public class DomainType
      *     
      */
     @Basic
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "DESCRIPTION", length = 2048)
     public String getDescription() {
         return description;
     }

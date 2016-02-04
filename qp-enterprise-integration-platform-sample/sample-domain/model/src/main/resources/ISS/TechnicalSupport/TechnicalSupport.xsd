@@ -96,5 +96,10 @@
 			<element name="state" type="normalizedString" />
 		</sequence>
 	</complexType>
+	<complexType name="BookType">
+		<sequence>
+			<element name="JustAnotherBookType" type="string"></element>
+		</sequence>
+	</complexType>
 
 </schema>

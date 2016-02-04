@@ -125,7 +125,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("\n");
 		sb.append("\t/**\n");
 		sb.append("\t * Creates the {@link ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append("} defined as \n");
 		sb.append("\t * <i>");
 		sb.append(this.complexType.getType().getName().getLocalPart());
@@ -142,7 +142,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("\t */\n");
 
 		sb.append("\tpublic ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append(" ");
 		sb.append(this.getMethodName());
 
@@ -155,7 +155,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append("FlowContext flowContext");
 		sb.append(") {\n");
 		sb.append("\t\t");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append(" mappingType = of.create");
 		sb.append(this.complexType.getClassName());
 		sb.append("();\n");

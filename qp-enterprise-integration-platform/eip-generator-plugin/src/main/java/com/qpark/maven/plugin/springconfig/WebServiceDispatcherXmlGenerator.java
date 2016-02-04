@@ -107,7 +107,7 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append("</beans>\n");
 
 		String fileName = new StringBuffer(64)
-				.append(this.combinedServiceIdName)
+				// .append(this.combinedServiceIdName)
 				.append("SpringIntegrationDispatcherConfig.xml").toString();
 		File f = Util.getFile(this.outputDirectory, "dispatcher", fileName);
 		this.log.info(new StringBuffer().append("Write ")

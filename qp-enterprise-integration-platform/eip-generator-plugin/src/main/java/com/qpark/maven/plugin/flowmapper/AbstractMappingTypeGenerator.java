@@ -93,7 +93,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		}
 		sb.append(" * <p/>\n");
 		sb.append(" * The returned {@link ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append("} is defined as \n");
 		sb.append(" * <i>");
 		sb.append(this.complexType.getType().getName().getLocalPart());
@@ -118,24 +118,24 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 
 		sb.append("\t/**\n");
 		sb.append("\t * Create a {@link ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append("}.\n");
 		for (ComplexTypeChild child : children) {
 			sb.append("\t * @param ");
 			sb.append(child.getChildName());
 			sb.append(" the {@link ");
-			sb.append(child.getComplexType().getClassName());
+			sb.append(child.getComplexType().getClassNameFullQualified());
 			sb.append("}.\n");
 		}
 		sb.append("\t * @param flowContext the {@link FlowContext}.\n");
 		sb.append("\t * @return the {@link ");
-		sb.append(this.complexType.getClassName());
+		sb.append(this.complexType.getClassNameFullQualified());
 		sb.append("}.\n");
 		sb.append("\t */\n");
 
 		sb.append("\t@InsightOperation\n");
 
-		sb.append("\t").append(this.complexType.getClassName());
+		sb.append("\t").append(this.complexType.getClassNameFullQualified());
 		sb.append(" ");
 		sb.append(this.getMethodName());
 		sb.append("(");
@@ -293,7 +293,8 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		String returnValueClassName = null;
 		for (ComplexTypeChild child : this.complexType.getChildren()) {
 			if (child.getChildName().equals("return")) {
-				returnValueClassName = child.getComplexType().getClassName();
+				returnValueClassName = child.getComplexType()
+						.getClassNameFullQualified();
 				break;
 			}
 		}

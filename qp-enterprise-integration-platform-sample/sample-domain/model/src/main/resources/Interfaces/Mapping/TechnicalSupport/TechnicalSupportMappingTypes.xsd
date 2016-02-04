@@ -12,6 +12,7 @@
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
+	xmlns:ISSLib="http://www.samples.com/Library/LibraryTypes"
 
 	xmlns:MPmp="http://www.qpark.com/Interfaces/MappingTypes"
 	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
@@ -25,6 +26,7 @@
 
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="TechnicalSupportExternalDefinedTypes.xsd"/>
 	<import namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" schemaLocation="../../../ISS/TechnicalSupport/TechnicalSupport.xsd"/>
+	<import namespace="http://www.samples.com/Library/LibraryTypes" schemaLocation="../../../ISS/Library/Library.xsd"/>
 
 	<annotation>
 		<appinfo>
@@ -245,6 +247,18 @@ The ComplexMappingTypes could be done as a DirectMappingType too. Here it is don
 			<extension base="MPmp:DirectMappingType">
 				<sequence>
 					<element name="applicationUserLog" type="MPTechSupportExtModel:ExtApplicationUserLogType"/>
+					<element name="return" type="dateTime" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="BookType.titleConcatenationType">
+		<complexContent>
+			<extension base="MPmp:ComplexMappingType">
+				<sequence>
+					<element name="techSupportBook" type="ISSTechSupport:BookType"/>
+					<element name="issBook" type="ISSLib:BookType"/>
 					<element name="return" type="dateTime" />
 				</sequence>
 			</extension>

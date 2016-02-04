@@ -128,6 +128,21 @@ public class ComplexTypeChild {
 		return sb.toString();
 	}
 
+	public String getJavaVarDefinitionFullQualified() {
+		StringBuffer sb = new StringBuffer(32);
+		if (this.isList()) {
+			sb.append("List<");
+		}
+		sb.append(this.getComplexType().getClassNameFullQualified());
+		if (this.isList()) {
+			sb.append(">");
+		}
+
+		sb.append(" ");
+		sb.append(this.javaChildName);
+		return sb.toString();
+	}
+
 	/**
 	 * Get cardinality string e.g. <i>[0..*]</i> or <i>[1..1]</i>.
 	 *
