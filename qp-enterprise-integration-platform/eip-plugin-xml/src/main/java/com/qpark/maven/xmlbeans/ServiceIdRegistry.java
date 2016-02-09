@@ -231,38 +231,6 @@ public class ServiceIdRegistry {
 		return s;
 	}
 
-	public static void main(final String[] args) {
-		System.out.println(splitByCommaAndSpace(
-				"appcontrolling, monitoring, busappmonics"));
-		System.out.println(
-				getServiceId("com.ses.osp.bus.service.directory.v20.delta.msg",
-						"httpx", "msg", "delta"));
-		System.out.println(
-				getServiceId("com.ses.osp.bus.service.directory.v20.msg",
-						"httpx", "msg", "delta"));
-		for (String s : splitServiceIds("abc.cde")) {
-			System.out.println(s);
-		}
-		System.out.println("#########");
-		for (String s : splitServiceIds("abc.cde, efg.hij")) {
-			System.out.println(s);
-		}
-		System.out.println("#########");
-		System.out.println(getCombinedServiceIdName("abc.cde"));
-		System.out
-				.println(getCombinedServiceIdCapitalizedPackageName("abc.cde"));
-		System.out.println("#########");
-		System.out.println(getCombinedServiceIdName("abc.cde, efg.hij"));
-		System.out.println(
-				getCombinedServiceIdCapitalizedPackageName("abc.cde, efg.hij"));
-
-		System.out.println(isValidServiceId("directory.v20", "directory.v20"));
-		System.out.println(
-				getCombinedServiceIdName("iss.common,  commmon,     libRary"));
-		System.out.println(getCombinedServiceIdCapitalizedPackageName(
-				"iss.common,  commmon,     libRary"));
-	}
-
 	/** The {@link org.slf4j.Logger}. */
 	private static Logger logger = LoggerFactory
 			.getLogger(ServiceIdRegistry.class);

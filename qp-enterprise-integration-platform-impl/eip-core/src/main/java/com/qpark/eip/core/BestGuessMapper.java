@@ -48,7 +48,7 @@ public class BestGuessMapper extends PropertyDescriptorUtil {
 						aObject = aOp.read.invoke(a,
 								PropertyDescriptorUtil.EMPTY);
 						if (aObject != null && aOp.type.getPackage().getName()
-								.startsWith("com.ses.")) {
+								.startsWith("com.qpark.")) {
 							bObject = bOp.read.invoke(b,
 									PropertyDescriptorUtil.EMPTY);
 							if (bObject == null) {

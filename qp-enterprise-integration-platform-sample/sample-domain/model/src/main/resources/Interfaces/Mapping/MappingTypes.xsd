@@ -122,14 +122,17 @@
 		</complexContent>
 	</complexType>
 	<complexType name="NoMappingType">
+		<annotation><documentation>This field will not be mapped.</documentation></annotation>
 		<complexContent>
-			<extension base="MPmp:MappingType"/>
+			<extension base="MPmp:DirectMappingType"/>
 		</complexContent>
 	</complexType>
 	<complexType name="OpenMappingType">
+		<annotation><documentation>The mapping of this field is not defined jet.</documentation></annotation>
 		<complexContent>
-			<extension base="MPmp:MappingType"/>
-		</complexContent>	</complexType>
+			<extension base="MPmp:DirectMappingType"/>
+		</complexContent>
+	</complexType>
 	<complexType name="UnmodifiedMappingType">
 		<complexContent>
 			<extension base="MPmp:MappingType"/>

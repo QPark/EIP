@@ -218,7 +218,7 @@ public abstract class PropertyDescriptorUtil {
 				break;
 			}
 		}
-		if (f == null && cl.getSuperclass().getPackage().getName().startsWith("com.ses.")) {
+		if (f == null && cl.getSuperclass().getPackage().getName().startsWith("com.qpark.")) {
 			f = getField(cl.getSuperclass(), pd);
 		}
 		return f;

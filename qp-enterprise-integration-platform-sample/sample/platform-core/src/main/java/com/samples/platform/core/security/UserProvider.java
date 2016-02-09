@@ -30,7 +30,7 @@ import com.qpark.eip.core.spring.security.EipUserProvider;
 /**
  * The {@link UserProvider} read the user name and roles assignments out of the
  * applications properties. These are normally stored in the templates
- * <i>com.ses.osp.bus.app.xxx-user.properties</i> file and loaded into the
+ * <i>bus.app.xxx-user.properties</i> file and loaded into the
  * {@link ApplicationPlaceholderConfigurer}.
  * <p/>
  * Properties starting with <i>bus.user.definition.xxx</i> defining the user

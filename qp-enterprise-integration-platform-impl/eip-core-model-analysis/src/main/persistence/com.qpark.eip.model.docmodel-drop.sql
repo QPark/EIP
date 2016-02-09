@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
--- Drop script of persistence unit com.qpark.eip.model.docmodel.
--- Generated at 20160115-145814.754.
+-- Drop script of persistence unit com.qpark.eip.core.persistence.ddl.
+-- Generated at 20160208-155720.560.
 -----------------------------------------------------------------------------
 -- Verify sequence handling at the end of the script
 

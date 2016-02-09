@@ -8,8 +8,11 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
+import com.qpark.eip.model.docmodel.EnterpriseType;
 
 /**
  * @author bhausen
@@ -17,17 +20,18 @@ import org.springframework.beans.factory.annotation.Value;
 public class PersistModelAnalysis {
 	@Autowired
 	private AnalysisDao modelAnalysisDao;
-	/** The enterprise name of the model. */
-	@Value("${model.enterpriseName}")
-	private String enterpriseName;
-	/** The base package name of the model. */
-	@Value("${model.basePackageName}")
-	private String basePackageName;
-	/** The path to the enterprise model. */
-	@Value("${model.path}")
-	private String modelPath;
 
-	public void persist() {
+	public void test() {
+		List<EnterpriseType> enterprises = this.modelAnalysisDao
+				.getEnterprises();
+		for (EnterpriseType enterprise : enterprises) {
+			System.out.println(enterprise.getName());
+			System.out.println(enterprise.getModelVersion());
+			System.out.println(this.modelAnalysisDao.existsEnterprise(
+					enterprise.getName(), enterprise.getModelVersion() + "x"));
+			System.out.println(this.modelAnalysisDao.existsEnterprise(
+					enterprise.getName(), enterprise.getModelVersion()));
+		}
 		// Analysis a = new AnalysisProvider().createEnterprise(
 		// this.enterpriseName, this.basePackageName, this.modelPath);
 		// this.modelAnalysisDao.saveEnterprise(a.getEnterprise());

@@ -12,7 +12,7 @@
 			<pattern>%d{yyyyMMdd-HHmmss.SSS}[%-5level][%logger] %msg%n</pattern>
 		</encoder>
 	</appender>
-	<logger name="com.ses.osp.bus.client" level="INFO" />
+	<logger name="com.samples.platform.client" level="INFO" />
 	
 	<!-- spring -->
 	<logger name="org.springframework" level="WARN" />

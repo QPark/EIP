@@ -44,33 +44,6 @@ public class ToWebappSchemaLocationMojo extends AbstractMojo {
 			defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
 
-	public static void main(final String[] args) {
-		String xsdPath;
-		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain\\mapping\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\38\\com.ses.domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
-		// xsdPath =
-		// "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
-		// xsdPath =
-		// "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
-
-		String basePackageName = "com.ses.osp.bus";
-
-		ToWebappSchemaLocationMojo a = new ToWebappSchemaLocationMojo();
-		a.baseDirectory = new File(xsdPath);
-
-		Map<String, XsdContainer> map = XsdsUtil
-				.getXsdContainers(a.baseDirectory);
-
-		try {
-			for (XsdContainer xc : map.values()) {
-				a.changeSchemaLocation(xc, map);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	private String changeSchemaLocation(final XsdContainer xc,
 			final Map<String, XsdContainer> map) throws IOException {

@@ -380,7 +380,7 @@ public class ToString {
 	return getStackTrace(t, false);
     }
 
-    public static final String CLASSNAME = "com.ses.osp";
+    public static final String CLASSNAME = "com.qpark.eip";
 
     private static String getStackTrace(final Throwable t, final boolean isCause) {
 	StringBuffer sb = new StringBuffer(1024);

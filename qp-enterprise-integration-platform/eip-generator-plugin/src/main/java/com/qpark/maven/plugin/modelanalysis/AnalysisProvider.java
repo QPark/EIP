@@ -66,19 +66,14 @@ public class AnalysisProvider {
 	public static void main(final String[] args) {
 
 		String xsdPath;
-		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain\\mapping\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\38\\com.ses.domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
-		// xsdPath =
-		// "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
-		// xsdPath =
-		// "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
+		xsdPath =
+		 "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 
-		String basePackageName = "com.ses.osp.bus";
+		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";
 		Analysis a = new AnalysisProvider().createEnterprise(basePackageName,
 				modelVersion, basePackageName, xsdPath);
-
+		System.exit(0);
 		try {
 			ObjectFactory of = new ObjectFactory();
 			JAXBElement<EnterpriseType> enterprise = of
@@ -271,26 +266,30 @@ public class AnalysisProvider {
 		} else if (ct.isDefaultMappingType()) {
 			DefaultMappingType x = this.of.createDefaultMappingType();
 			x.setParentId(cluster.getId());
+			x.setMappingType("default");
 			this.setDataType(cluster.getModelVersion(), ct, x);
-			x.setDefaultValue(ct.getDefaultValue());
+			this.setDefaultType(cluster.getModelVersion(), ct, x);
 			cluster.getDefaultMappingType().add(x);
 			value = x;
 		} else if (ct.isDirectMappingType()) {
 			DirectMappingType x = this.of.createDirectMappingType();
 			x.setParentId(cluster.getId());
+			x.setMappingType("direct");
 			this.setDataType(cluster.getModelVersion(), ct, x);
-			x.setAccessor("Accessor-TBD");
+			this.setDirectType(cluster.getModelVersion(), ct, x);
 			cluster.getDirectMappingType().add(x);
 			value = x;
 		} else if (ct.isComplexMappingType()) {
 			ComplexMappingType x = this.of.createComplexMappingType();
 			x.setParentId(cluster.getId());
+			x.setMappingType("complex");
 			this.setDataType(cluster.getModelVersion(), ct, x);
 			cluster.getComplexMappingType().add(x);
 			value = x;
 		} else if (ct.isComplexUUIDMappingType()) {
 			ComplexUUIDMappingType x = this.of.createComplexUUIDMappingType();
 			x.setParentId(cluster.getId());
+			x.setMappingType("complexUUID");
 			this.setDataType(cluster.getModelVersion(), ct, x);
 			cluster.getComplexUUIDMappingType().add(x);
 			value = x;
@@ -569,6 +568,8 @@ public class AnalysisProvider {
 				ctRequest.getJavaClassName().lastIndexOf("RequestType")));
 		value.setNamespace(ctRequest.getNamespace());
 		value.setDescription(ctRequest.getDescription());
+		value.setShortName(value.getName()
+				.substring(value.getName().lastIndexOf('.') + 1));
 
 		this.uuidProvider.setUUID(value);
 
@@ -623,10 +624,12 @@ public class AnalysisProvider {
 			service.setModelVersion(cluster.getModelVersion());
 			this.uuidProvider.setUUID(service);
 			service.setClusterId(cluster.getId());
-			service.setDescription("");
+			service.setDescription(cluster.getDescription());
 			service.setNamespace(cluster.getName());
 			service.setPackageName(cluster.getPackageName());
 			service.setServiceId(serviceId);
+			service.setSecurityRoleName(
+					String.format("ROLE_%s", serviceId.toUpperCase()));
 
 			domain.getService().add(service);
 		}
@@ -647,6 +650,9 @@ public class AnalysisProvider {
 		value.setNamespace(cluster.getName());
 		value.setModelVersion(cluster.getModelVersion());
 		value.setParentId(service.getId());
+		value.setSecurityRoleName(String.format("%s_%s",
+				service.getSecurityRoleName(), operationName.toUpperCase()));
+		value.setShortName(operationName);
 		value.setRequest(request);
 		value.setResponse(response);
 
@@ -664,7 +670,40 @@ public class AnalysisProvider {
 		value.setNamespace(element.getTargetNamespace());
 		value.setJavaClassName(element.getClassNameFullQualified());
 		value.setJavaPackageName(element.getPackageName());
+		value.setShortName(element.getClassName());
 		this.uuidProvider.setUUID(value);
+	}
+
+	private void setDirectType(final String modelVersion,
+			final com.qpark.maven.xmlbeans.ComplexType element,
+			final DirectMappingType value) {
+		value.setAccessor(element.getType().getName().getLocalPart()
+				.replace("MappingType", ""));
+		String[] strs = value.getAccessor().split("\\.");
+		if (value.getDescription() == null
+				|| value.getDescription().trim().length() == 0
+						&& strs.length > 0) {
+			StringBuffer sb = new StringBuffer(64);
+			sb.append("Get ");
+			for (int i = strs.length - 1; i > 0; i--) {
+				sb.append(strs[i]).append(" of ");
+			}
+			sb.append(strs[0]).append("Type.");
+			value.setDescription(sb.toString());
+		}
+	}
+
+	private void setDefaultType(final String modelVersion,
+			final com.qpark.maven.xmlbeans.ComplexType element,
+			final DefaultMappingType value) {
+		value.setDefaultValue(element.getDefaultValue());
+		if (value.getDescription() == null
+				|| value.getDescription().trim().length() == 0) {
+			StringBuffer sb = new StringBuffer(64);
+			sb.append("Default value: ");
+			sb.append(element.getDefaultValue());
+			value.setDescription(sb.toString());
+		}
 	}
 
 	private void setFieldMappingType(final FieldMappingType type,

@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import com.qpark.eip.core.EipJpaVendorAdapterConfiguration;
 import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.core.model.analysis.PersistModelAnalysis;
 
@@ -37,18 +37,6 @@ public class ModelAnalysisPersistence implements InitializingBean {
 	/** The {@link org.slf4j.Logger}. */
 	private Logger logger = LoggerFactory
 			.getLogger(ModelAnalysisPersistence.class);
-	/** The JDBC driver of the database {@link DataSource}. */
-	@Value("${database.jdbc.driver}")
-	private String jdbcDriver;
-	/** The JDBC URL of the database {@link DataSource}. */
-	@Value("${database.jdbc.url}")
-	private String jdbcUrl;
-	/** The JDBC user name of the database {@link DataSource}. */
-	@Value("${database.jdbc.userName}")
-	private String jdbcUserName;
-	/** The JDBC password of the database {@link DataSource}. */
-	@Value("${database.jdbc.password}")
-	private String jdbcPassword;
 
 	/**
 	 * The <b>static</b> {@link PropertySourcesPlaceholderConfigurer} to get the
@@ -96,17 +84,37 @@ public class ModelAnalysisPersistence implements InitializingBean {
 	}
 
 	/**
-	 * Get the {@link DataSource} auto wired in the {@link PersistenceConfig}.
+	 * Get the {@link DataSource} auto wired in the
+	 * {@link EipModelAnalysisPersistenceConfig}.
 	 *
 	 * @return The {@link DataSource}
 	 */
 	@Bean(name = EipModelAnalysisPersistenceConfig.DATASOURCE_BEAN_NAME)
 	public DataSource getDataSource() {
 		DriverManagerDataSource bean = new DriverManagerDataSource();
-		bean.setDriverClassName(this.jdbcDriver);
-		bean.setUrl(this.jdbcUrl);
-		bean.setUsername(this.jdbcUserName);
-		bean.setPassword(this.jdbcPassword);
+		bean.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
+		bean.setUrl("jdbc:hsqldb:file:src/test/hsqldb/domainDocHSQLDB.bin");
+		bean.setUsername("platformUser");
+		bean.setPassword("platformUserPwd");
+		return bean;
+	}
+
+	/**
+	 * Set the {@link EipJpaVendorAdapterConfiguration} of
+	 * {@link EipModelAnalysisPersistenceConfig}.
+	 *
+	 * @return the {@link EipJpaVendorAdapterConfiguration} of
+	 *         {@link EipModelAnalysisPersistenceConfig}.
+	 */
+	@Bean(name = EipModelAnalysisPersistenceConfig.JPA_VENDOR_ADAPTER_CONFIGURATION_BEAN_NAME)
+	public EipJpaVendorAdapterConfiguration getEipModelAnalysisJpaVendorConfiguration() {
+		EipJpaVendorAdapterConfiguration bean = new EipJpaVendorAdapterConfiguration();
+		bean.setJpaVendorAdapterClassName(
+				"org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter");
+		bean.setJpaVendorAdpaterDatabasePlatform(
+				"org.hibernate.dialect.HSQLDialect");
+
+		bean.setJpaVendorAdapterGenerateDdl(true);
 		return bean;
 	}
 
@@ -116,7 +124,7 @@ public class ModelAnalysisPersistence implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.logger.info("+afterPropertiesSet ");
-		this.persistModelAnalysis.persist();
+		this.persistModelAnalysis.test();
 		this.logger.info("-afterPropertiesSet");
 	}
 }

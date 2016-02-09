@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.qpark.eip.core</groupId>
 		<artifactId>eip-base</artifactId>
-		<version>3.3.1</version><!--qpark-eip-version-->
+		<version>3.3.2</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -72,6 +72,16 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
+      <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+      <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
       <scope>test</scope>
 		</dependency>
 		<!-- 

@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.3.1</version><!--qpark-eip-version-->
+		<version>3.3.2</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -45,26 +45,26 @@
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>model</artifactId>
-									<version>3.3.1</version><!--qpark-eip-version-->
+									<version>3.3.2</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>service</artifactId>
-									<version>3.3.1</version><!--qpark-eip-version-->
+									<version>3.3.2</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-jaxb</artifactId>
-									<version>3.3.1</version><!--qpark-eip-version-->
+									<version>3.3.2</version><!--qpark-eip-version-->
 									<classifier>generated-java-sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-flow</artifactId>
-									<version>3.3.1</version><!--qpark-eip-version-->
+									<version>3.3.2</version><!--qpark-eip-version-->
 									<classifier>sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
@@ -203,6 +203,22 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
