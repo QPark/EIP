@@ -13,11 +13,16 @@ import java.util.Scanner;
 
 import javax.persistence.Persistence;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DDLGenerator {
-	private static final String PERSISTENCE_UNIT_NAME = "com.qpark.eip.core.persistence.ddl";
+	private static final String DEFAULT_PERSISTENCE_UNIT_NAME = "com.qpark.eip.core.persistence.ddl";
 
 	private static void fixGeneratedScriptProblems(final String fileName,
-			final String persistenceUnitName, final String scriptType,
+			final String persistenceUnitName, final String databaseProcuctName,
+			final String databaseMajorVersion,
+			final String databaseMinorVersion, final String scriptType,
 			final String generateDate) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(
@@ -27,6 +32,12 @@ public class DDLGenerator {
 		sb.append(" script of persistence unit ");
 		sb.append(persistenceUnitName);
 		sb.append(".");
+		sb.append("\n-- Target database type: ");
+		sb.append(databaseProcuctName);
+		sb.append(" ");
+		sb.append(databaseMajorVersion);
+		sb.append(".");
+		sb.append(databaseMinorVersion);
 		sb.append("\n-- Generated at ");
 		sb.append(generateDate);
 		sb.append(".");
@@ -80,7 +91,8 @@ public class DDLGenerator {
 		}
 	}
 
-	private static String getPersistenceXmlBegin() {
+	private static String getPersistenceXmlBegin(
+			final String resultingPersistenceUnitName) {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
@@ -97,28 +109,9 @@ public class DDLGenerator {
 		sb.append("\t\" \n");
 		sb.append(">\n");
 		sb.append("\t<persistence-unit name=\"");
-		sb.append(PERSISTENCE_UNIT_NAME);
+		sb.append(resultingPersistenceUnitName);
 		sb.append("\" transaction-type=\"RESOURCE_LOCAL\">\n");
 		return sb.toString();
-	}
-
-	public static String[] getWhiteListedClassNames() {
-		String[] whiteListedClassNames = null;
-		try (Scanner scanner = new Scanner(
-				DDLGenerator.class.getResourceAsStream(
-						"/DDLGeneratorWhiteListedClassNames.txt"));) {
-			List<String> whiteList = new ArrayList<String>();
-			while (scanner.hasNextLine()) {
-				String content = scanner.nextLine();
-				if (content != null && content.trim().length() > 0) {
-					whiteList.add(content.trim());
-				}
-			}
-			whiteListedClassNames = whiteList.toArray(new String[0]);
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-		return whiteListedClassNames;
 	}
 
 	private static String getPersistenceXmlClasses(final InputStream is,
@@ -155,6 +148,25 @@ public class DDLGenerator {
 		sb.append("\t</persistence-unit>\n");
 		sb.append("</persistence>\n");
 		return sb.toString();
+	}
+
+	public static String[] getWhiteListedClassNames() {
+		String[] whiteListedClassNames = null;
+		try (Scanner scanner = new Scanner(
+				DDLGenerator.class.getResourceAsStream(
+						"/DDLGeneratorWhiteListedClassNames.txt"));) {
+			List<String> whiteList = new ArrayList<String>();
+			while (scanner.hasNextLine()) {
+				String content = scanner.nextLine();
+				if (content != null && content.trim().length() > 0) {
+					whiteList.add(content.trim());
+				}
+			}
+			whiteListedClassNames = whiteList.toArray(new String[0]);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		return whiteListedClassNames;
 	}
 
 	public static void main(final String[] args) {
@@ -196,6 +208,17 @@ public class DDLGenerator {
 		return s;
 	}
 
+	private String databaseMajorVersion = "10";
+
+	private String databaseMinorVersion = "1";
+
+	private String databaseProcuctName = "Oracle";
+
+	/** The {@link org.slf4j.Logger}. */
+	private Logger logger = LoggerFactory.getLogger(DDLGenerator.class);
+
+	private String resultingPersistenceUnitName = DEFAULT_PERSISTENCE_UNIT_NAME;
+
 	/** A list of classes, which should occur in the generated DDL. */
 	private final List<String> whiteList = new ArrayList<String>();
 
@@ -221,18 +244,22 @@ public class DDLGenerator {
 			String classes;
 			for (String persistenceXmlLocation : persistenceUnitNames) {
 				location = toPersistenceXmlLocation(persistenceXmlLocation);
+				this.logger.info("Search for {} (mapped from {})", location,
+						persistenceXmlLocation);
 				try {
 					is = this.getClass().getResourceAsStream(location);
 					classes = DDLGenerator.getPersistenceXmlClasses(is,
 							this.whiteList);
 					sb.append(classes);
 				} catch (Exception e) {
-					System.err.println(String.format("[%s] %s: %s", location,
-							e.getClass().getName(), e.getMessage()));
+					this.logger.error("Searched for {}: ", location,
+							persistenceXmlLocation);
+					e.printStackTrace();
 				}
 			}
 			if (sb.length() > 0) {
-				sb.insert(0, DDLGenerator.getPersistenceXmlBegin());
+				sb.insert(0, DDLGenerator.getPersistenceXmlBegin(
+						this.resultingPersistenceUnitName));
 				sb.append(DDLGenerator.getPersistenceXmlEnd());
 			}
 		}
@@ -243,16 +270,19 @@ public class DDLGenerator {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS");
 		String generateDate = sdf.format(new Date());
 		String createFileName = new StringBuffer(64)
-				.append(PERSISTENCE_UNIT_NAME).append("-create.sql").toString();
-		String dropFileName = new StringBuffer(64).append(PERSISTENCE_UNIT_NAME)
-				.append("-drop.sql").toString();
+				.append(this.resultingPersistenceUnitName).append("-create.sql")
+				.toString();
+		String dropFileName = new StringBuffer(64)
+				.append(this.resultingPersistenceUnitName).append("-drop.sql")
+				.toString();
 
 		Properties properties = new Properties();
 		properties.setProperty("javax.persistence.database-product-name",
-				"Oracle");
+				this.databaseProcuctName);
 		properties.setProperty("javax.persistence.database-major-version",
-				"10");
-		properties.setProperty("javax.persistence.database-minor-version", "1");
+				this.databaseMajorVersion);
+		properties.setProperty("javax.persistence.database-minor-version",
+				this.databaseMinorVersion);
 		properties.setProperty(
 				"javax.persistence.schema-generation.scripts.action",
 				"drop-and-create");
@@ -266,11 +296,45 @@ public class DDLGenerator {
 		// org.eclipse.persistence.config.PersistenceUnitProperties pup;
 		properties.put("eclipselink.ddl-generation.index-foreign-keys", "true");
 
-		Persistence.generateSchema(PERSISTENCE_UNIT_NAME, properties);
+		Persistence.generateSchema(this.resultingPersistenceUnitName,
+				properties);
 
-		fixGeneratedScriptProblems(createFileName, PERSISTENCE_UNIT_NAME,
-				"Create", generateDate);
-		fixGeneratedScriptProblems(dropFileName, PERSISTENCE_UNIT_NAME, "Drop",
+		fixGeneratedScriptProblems(createFileName,
+				this.resultingPersistenceUnitName, this.databaseProcuctName,
+				this.databaseMajorVersion, this.databaseMinorVersion, "Create",
 				generateDate);
+		fixGeneratedScriptProblems(dropFileName,
+				this.resultingPersistenceUnitName, this.databaseProcuctName,
+				this.databaseMajorVersion, this.databaseMinorVersion, "Drop",
+				generateDate);
+	}
+
+	/**
+	 * Set the resulting database product. Alternative value would be
+	 * <i>PostgreSQL</i>, <i>9</i>, <i>4</i> or <i>Microsoft SQL Server</i>,
+	 * <i>9</i>, <i>0</i>
+	 *
+	 * @param databaseProcuctName
+	 *            the name of the database. Defaults to <i>Oracle</i>
+	 * @param databaseMajorVersion
+	 *            the major version of the database. Defaults to <i>10</i>
+	 * @param databaseMinorVersion
+	 *            the minor version of the database. Defaults to <i>1</i>
+	 */
+	public void setDatabaseProcuct(final String databaseProcuctName,
+			final String databaseMajorVersion,
+			final String databaseMinorVersion) {
+		this.databaseProcuctName = databaseProcuctName;
+		this.databaseMajorVersion = databaseMajorVersion;
+		this.databaseMinorVersion = databaseMinorVersion;
+	}
+
+	/**
+	 * @param resultingPersistenceUnitName
+	 *            the resultingPersistenceUnitName to set
+	 */
+	public void setResultingPersistenceUnitName(
+			final String resultingPersistenceUnitName) {
+		this.resultingPersistenceUnitName = resultingPersistenceUnitName;
 	}
 }

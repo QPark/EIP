@@ -46,7 +46,7 @@
 									<artifactId>model</artifactId>
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
-									<excludes>Interfaces/**/*,**/maven-4.0.0.xsd</excludes>
+									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd</includes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -124,31 +124,30 @@
 						<configuration>
 							<target>
 								<delete file="${project.build.directory}/generated-sources/RoundtripTest.java" />
-								<property name="meta.inf" value="${project.build.directory}/generated-sources/META-INF" />
-								<replace file="${meta.inf}/persistence.xml">
+								<property name="gen.source.meta.inf" value="${project.build.directory}/generated-sources/META-INF" />
+								<property name="classes.meta.inf" value="${project.build.directory}/classes/META-INF" />
+								<replace file="${gen.source.meta.inf}/persistence.xml">
 									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence/orm]]></replacetoken>
 									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence/orm]]></replacevalue>
 								</replace>
-								<replace file="${meta.inf}/persistence.xml">
+								<replace file="${gen.source.meta.inf}/persistence.xml">
 									<replacetoken><![CDATA[orm_2_0.xsd]]></replacetoken>
 									<replacevalue><![CDATA[orm_2_1.xsd]]></replacevalue>
 								</replace>
-								<replace file="${meta.inf}/persistence.xml">
+								<replace file="${gen.source.meta.inf}/persistence.xml">
 									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence]]></replacetoken>
 									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence]]></replacevalue>
 								</replace>
-								<replace file="${meta.inf}/persistence.xml">
+								<replace file="${gen.source.meta.inf}/persistence.xml">
 									<replacetoken><![CDATA[persistence_2_0.xsd]]></replacetoken>
 									<replacevalue><![CDATA[persistence_2_1.xsd]]></replacevalue>
 								</replace>
-								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${meta.inf}/${persistence.unit.name}" />
-								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${meta.inf}/${persistence.unit.name}" failonerror="false" />
-<!--
-								<property name="classes.meta.inf" value="${project.build.directory}/classes/META-INF" />
+								<mkdir dir="${gen.source.meta.inf}/${persistence.unit.name}" />
 								<mkdir dir="${classes.meta.inf}/${persistence.unit.name}" />
-								<copy overwrite="true" file="${meta.inf}/persistence.xml" todir="${classes.meta.inf}/${persistence.unit.name}" />
-								<move overwrite="true" file="${meta.inf}/sun-jaxb.episode" todir="${classes.meta.inf}/${persistence.unit.name}" failonerror="false" />
--->
+								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml" todir="${gen.source.meta.inf}/${persistence.unit.name}" />
+								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode" todir="${gen.source.meta.inf}/${persistence.unit.name}" failonerror="false" />
+								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml" todir="${classes.meta.inf}/${persistence.unit.name}" />
+								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode" todir="${classes.meta.inf}/${persistence.unit.name}" failonerror="false" />
 							</target>
 						</configuration>
 					</execution>
@@ -165,20 +164,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>assembly-0</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>assembly-persistence-generated-java-sources.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -210,11 +195,6 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jvnet.hyperjaxb3</groupId>
 			<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
 			<scope>provided</scope>
@@ -233,6 +213,10 @@
 			<artifactId>hibernate-jpamodelgen</artifactId>
 			<scope>provided</scope>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 	</dependencies>
 </project>

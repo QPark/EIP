@@ -20,7 +20,7 @@
 	<artifactId>platform-domain-model-service</artifactId>
 	<packaging>jar</packaging>
 	<name>platform-domain-model-service</name>
-	<description>Generates the java code out of the message definitions via xjc.</description>
+	<description>Overwrites jaxb generated classes with persistence classes, generates persistence.xml and DDL as well as operation provider classes.</description>
 
 	<properties>
 		<model.dir>${project.build.directory}/model</model.dir>
@@ -54,6 +54,24 @@
 									<version>3.3.2</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
+						<id>unpack-classes</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${domain.groupId}.gen</groupId>
+									<artifactId>domain-gen-jaxb</artifactId>
+									<version>3.3.2</version><!--qpark-eip-version-->
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+								<!-- The following to have the sources of the jaxb classes visible with this artefact -->
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-jaxb</artifactId>
@@ -62,17 +80,17 @@
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>${domain.groupId}.gen</groupId>
-									<artifactId>domain-gen-flow</artifactId>
-									<version>3.3.2</version><!--qpark-eip-version-->
-									<classifier>sources</classifier>
-									<outputDirectory>${java.gen.dir}</outputDirectory>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>platform-domain-model-persistence</artifactId>
+									<version>${platform.version}</version>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
 								</artifactItem>
+								<!-- The following to have the sources of the jaxb classes visible with this artefact -->
 								<artifactItem>
 									<groupId>${project.groupId}</groupId>
 									<artifactId>platform-domain-model-persistence</artifactId>
 									<version>${platform.version}</version>
-									<classifier>generated-java-sources</classifier>
+									<classifier>sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
@@ -173,7 +191,13 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>platform-domain-model-persistence</artifactId>
-			<version>${project.version}</version>
+			<version>3.3.2</version><!--qpark-eip-version-->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${domain.groupId}.gen</groupId>
+			<artifactId>domain-gen-jaxb</artifactId>
+			<version>3.3.2</version><!--qpark-eip-version-->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -201,10 +225,6 @@
 			<artifactId>javax.persistence</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
@@ -218,6 +238,16 @@
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
