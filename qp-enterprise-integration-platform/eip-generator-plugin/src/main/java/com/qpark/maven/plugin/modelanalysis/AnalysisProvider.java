@@ -66,8 +66,7 @@ public class AnalysisProvider {
 	public static void main(final String[] args) {
 
 		String xsdPath;
-		xsdPath =
-		 "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 
 		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";
@@ -351,6 +350,15 @@ public class AnalysisProvider {
 		value.setNamespace(element.getTargetNamespace());
 		value.setModelVersion(cluster.getModelVersion());
 		value.setParentId(cluster.getId());
+		if (element.getElement().getType() != null) {
+			String elemId = this.uuidProvider.getDataTypeUUID(
+					String.valueOf(element.getElement().getType().getName()),
+					cluster.getModelVersion());
+			DataType dt = (DataType) this.analysis.get(elemId);
+			if (dt != null) {
+				value.setComplexTypeId(dt.getId());
+			}
+		}
 		this.uuidProvider.setUUID(value);
 		cluster.getElementType().add(value);
 		return value;
