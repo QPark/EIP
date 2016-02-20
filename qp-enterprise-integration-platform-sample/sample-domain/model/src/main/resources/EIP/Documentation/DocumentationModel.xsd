@@ -303,6 +303,9 @@
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation>
 			</element>
+			<element name="sequenceNumber" type="int">
+				<annotation><documentation>The number of the filed inside the sequence tag.</documentation></annotation>
+			</element>
 			<element name="fieldTypeDefinitionId" type="DM:UUIDType">
 				<annotation><documentation>The id of the dataType assigned to the field.</documentation></annotation>
 			</element>
@@ -348,10 +351,14 @@
 			<element name="securityRoleName" type="DM:nameType">
 				<annotation><documentation>The role name used in the WEBAPP spring security.</documentation></annotation>
 			</element>
-			<element name="request" type="DM:ElementType"/>
-			<element name="response" type="DM:ElementType"/>
-			<element name="invokes" type="DM:FlowType" minOccurs="0" maxOccurs="unbounded">
-				<annotation><documentation>This is _NOT_ parsed data till now.</documentation></annotation>
+			<element name="request" type="DM:UUIDType">
+				<annotation><documentation>The id of the request ElementType</documentation></annotation>
+			</element>
+			<element name="response" type="DM:UUIDType">
+				<annotation><documentation>The id of the response ElementType</documentation></annotation>
+			</element>
+			<element name="invokes" type="DM:UUIDType" minOccurs="0" maxOccurs="unbounded">
+				<annotation><documentation>The ids of the flows this operation invokes. This is _NOT_ parsed data till now.</documentation></annotation>
 			</element>
 			<element name="description" type="DM:descriptionType">
 				<annotation><documentation>Concatenation of request and response description.</documentation></annotation>

@@ -368,12 +368,14 @@ public class AnalysisProvider {
 			final com.qpark.maven.xmlbeans.ComplexType element,
 			final String parentId) {
 		List<FieldType> value = new ArrayList<FieldType>();
+		int sequenceNumber = 0;
 		for (ComplexTypeChild child : element.getChildren()) {
 			DataType dt = this.getDataType(cluster, child.getComplexType());
 			FieldType field = this.of.createFieldType();
 			field.setParentId(parentId);
 			field.setModelVersion(cluster.getModelVersion());
 			field.setName(child.getChildName());
+			field.setSequenceNumber(sequenceNumber);
 			field.setCardinality(child.getCardinality());
 			field.setCardinalityMaxOccurs(child.getMaxOccurs() == null ? null
 					: child.getMaxOccurs().intValue());
@@ -386,7 +388,7 @@ public class AnalysisProvider {
 			field.setOptionalField(child.isOptional());
 			this.uuidProvider.setUUID(field);
 			value.add(field);
-
+			sequenceNumber++;
 		}
 		return value;
 	}
@@ -661,8 +663,8 @@ public class AnalysisProvider {
 		value.setSecurityRoleName(String.format("%s_%s",
 				service.getSecurityRoleName(), operationName.toUpperCase()));
 		value.setShortName(operationName);
-		value.setRequest(request);
-		value.setResponse(response);
+		value.setRequest(request.getId());
+		value.setResponse(response.getId());
 
 		this.uuidProvider.setUUID(value);
 		service.getOperation().add(value);
