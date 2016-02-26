@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.lockedoperation.dao;
@@ -23,6 +23,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +33,8 @@ import com.qpark.eip.core.spring.lockedoperation.LockableOperation;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationLockControllType;
 
-public class LockedOperationDaoImpl implements InitializingBean, LockableOperationDao {
+public class LockedOperationDaoImpl implements InitializingBean,
+		LockableOperationDao, ApplicationListener<ContextRefreshedEvent> {
 	/**
 	 * @param operation
 	 * @return a unique lock string.
@@ -90,7 +93,26 @@ public class LockedOperationDaoImpl implements InitializingBean, LockableOperati
 		}
 		this.logger.debug("Host name    : {}", this.hostName);
 		this.logger.debug("Host address : {}", this.hostAddress);
-		this.unlockOperationOnServerStart();
+	}
+
+	private boolean onceDone = false;
+
+	/**
+	 * Remove left over locks of previously stopped processes.
+	 *
+	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	 */
+	@Override
+	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public void onApplicationEvent(final ContextRefreshedEvent event) {
+		if (!this.onceDone) {
+			this.logger.debug(
+					"onApplicationEvent unlockOperationOnServerStart {}",
+					event.getTimestamp());
+			this.onceDone = true;
+			this.unlockOperationOnServerStart();
+		}
 	}
 
 	/**

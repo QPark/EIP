@@ -3,6 +3,8 @@ package com.qpark.eip.core.spring.scheduling;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -11,10 +13,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
@@ -47,7 +51,10 @@ public class EipSchedulingConfigurer implements SchedulingConfigurer,
 	@Override
 	public void configureTasks(final ScheduledTaskRegistrar taskRegistrar) {
 		this.logger.debug("+configureTasks");
+
 		this.taskRegistrar = taskRegistrar;
+
+		taskRegistrar.setScheduler(this.taskExecutor());
 		List<ScheduledTaskDescription> scheduleTaskDescriptions = this.scheduledTaskDao
 				.getScheduleTaskDescriptions();
 		if (scheduleTaskDescriptions != null) {
@@ -126,6 +133,11 @@ public class EipSchedulingConfigurer implements SchedulingConfigurer,
 		return trigger;
 	}
 
+	@Bean(destroyMethod = "shutdown")
+	public Executor taskExecutor() {
+		return Executors.newScheduledThreadPool(10);
+	}
+
 	/**
 	 * @see com.qpark.eip.core.ReInitalizeable#reInitalize()
 	 */
@@ -133,6 +145,11 @@ public class EipSchedulingConfigurer implements SchedulingConfigurer,
 	public void reInitalize() {
 		this.logger.debug("+reInitalize");
 		this.taskRegistrar.setTriggerTasksList(new ArrayList<TriggerTask>(0));
+
+		ConcurrentTaskScheduler scheduler = (ConcurrentTaskScheduler) this.taskRegistrar
+				.getScheduler();
+		System.out.println(scheduler.getClass());
+		scheduler.getConcurrentExecutor();
 		// this.taskRegistrar.destroy();
 		Map<String, ScheduledAnnotationBeanPostProcessor> postProcessorBeanMap = this.applicationContext
 				.getBeansOfType(ScheduledAnnotationBeanPostProcessor.class);

@@ -25,10 +25,15 @@ public class EipSchedulingConfigurerTest2 {
 	@Test
 	public void x() {
 		this.logger.debug("test");
-		// this.eipSchedulingConfigurer.reInitalize();
-		// this.eipSchedulingConfigurer.reInitalize();
+		this.eipSchedulingConfigurer.reInitalize();
+		this.eipSchedulingConfigurer.reInitalize();
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+		this.eipSchedulingConfigurer.reInitalize();
+		try {
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
 	}

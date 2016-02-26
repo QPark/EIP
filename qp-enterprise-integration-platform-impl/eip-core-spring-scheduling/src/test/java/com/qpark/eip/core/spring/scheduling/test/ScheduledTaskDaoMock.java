@@ -5,11 +5,14 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.qpark.eip.core.spring.scheduling.ScheduledTaskDao;
 import com.qpark.eip.core.spring.scheduling.ScheduledTaskDescription;
 
-public class ScheduledTaskDaoMock implements ScheduledTaskDao {
+public class ScheduledTaskDaoMock implements ScheduledTaskDao,
+		ApplicationListener<ContextRefreshedEvent> {
 	private int callCount;
 	private ScheduledTaskDescription scheduledTaskDescription;
 	/** The {@link org.slf4j.Logger}. */
@@ -57,5 +60,11 @@ public class ScheduledTaskDaoMock implements ScheduledTaskDao {
 		}
 		this.callCount++;
 		return list;
+	}
+
+	@Override
+	public void onApplicationEvent(final ContextRefreshedEvent event) {
+		this.logger.info("Application Context loaded: {}",
+				event.getTimestamp());
 	}
 }
