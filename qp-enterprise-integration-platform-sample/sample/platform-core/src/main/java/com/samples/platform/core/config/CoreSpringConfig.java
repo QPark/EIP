@@ -229,18 +229,19 @@ public class CoreSpringConfig implements ServletContextAware,
 	 */
 	@Bean
 	public LoggingInitializer getLoggingInitializer(
-			final ApplicationPlaceholderConfigurer properties) {
+			final ApplicationPlaceholderConfigurer applicationProperties) {
 		LoggingInitializer bean = new LoggingInitializer();
-		bean.initialize(properties.get(EipSettings.EIP_APPLICATION_NAME),
-				properties.get(EipSettings.EIP_SERVICE_NAME),
-				properties.get(EipSettings.EIP_SERVICE_VERSION));
+		bean.initialize(
+				applicationProperties.get(EipSettings.EIP_APPLICATION_NAME),
+				applicationProperties.get(EipSettings.EIP_SERVICE_NAME),
+				applicationProperties.get(EipSettings.EIP_SERVICE_VERSION));
 		if (this.logger == null) {
 			this.logger = org.slf4j.LoggerFactory
 					.getLogger(CoreSpringConfig.class);
 		}
-		properties.put(BusSettings.BUS_TC_SERVER_INFO,
+		applicationProperties.put(BusSettings.BUS_TC_SERVER_INFO,
 				this.servletContext.getServerInfo());
-		properties.put(BusSettings.BUS_SERVLET_CONTEXT_NAME,
+		applicationProperties.put(BusSettings.BUS_SERVLET_CONTEXT_NAME,
 				this.servletContext.getServletContextName());
 		return bean;
 	}
@@ -319,7 +320,6 @@ public class CoreSpringConfig implements ServletContextAware,
 	@Override
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
 		/* Do at last. */
-		/* Insert system user credentials into database. */
 		this.initializeFailureMessages();
 
 		this.properties.put(BusSettings.BUS_TC_SERVER_INFO,
