@@ -15,19 +15,18 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.ws.soap.SoapVersion;
@@ -75,29 +74,14 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
-		ApplicationContextAware, InitializingBean {
+public class CoreSpringConfig implements ServletContextAware,
+		ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 	/** The applications context name. */
 	public static final String APPLICATION_CONTEXT_NAME = "iss-library";
-
 	/** The {@link ApplicationContext}. */
 	private ApplicationContext applicationContext;
-	/** The {@link ContextNameProvider} of {@link EipAuthConfig}. */
-	@Autowired
-	@Qualifier(EipAuthConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
-	private ContextNameProvider eipAuthContextNameProvider;
-	/** The {@link ContextNameProvider} of {@link EipStatisticsConfig}. */
-	@Autowired
-	@Qualifier(EipStatisticsConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
-	private ContextNameProvider eipStatisticsContextNameProvider;
-	/** Number of beans already initialized. */
-	private short initCount = 0;
 	/** The {@link Logger}. */
 	private Logger logger = null;
-	/** The {@link LoggingInitializer}. */
-	@Autowired
-	private LoggingInitializer loggingInitializer;
-
 	/**
 	 * The {@link ApplicationPlaceholderConfigurer} containing the configuration
 	 * properties.
@@ -105,23 +89,8 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	@Autowired
 	@Qualifier("ComSamplesPlatformProperties")
 	private ApplicationPlaceholderConfigurer properties;
-
 	/** The {@link ServletContext}. */
 	private ServletContext servletContext;
-
-	/** The {@link SystemUserInitDao}. */
-	@Autowired
-	private SystemUserInitDao systemUserInitDao;
-
-	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.initializeLogging();
-		this.initializeContextNameProviders();
-		this.initializeFailureMessages();
-	}
 
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipAuthConfig}.
@@ -129,8 +98,13 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	 * @return the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 */
 	@Bean(name = EipAuthConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
-	public ContextNameProvider getEipAuthContextNameProvider() {
+	public ContextNameProvider getEipAuthContextNameProvider(
+			final ApplicationPlaceholderConfigurer applicationProperties) {
 		ContextNameProvider bean = new ContextNameProvider();
+		String contextVersion = applicationProperties
+				.getProperty("eip.application.maven.artifact.version", "2.2.0");
+		bean.setContextName(APPLICATION_CONTEXT_NAME);
+		bean.setContextVersion(contextVersion);
 		return bean;
 	}
 
@@ -226,8 +200,13 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	 *         {@link EipStatisticsConfig}.
 	 */
 	@Bean(name = EipStatisticsConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
-	public ContextNameProvider getEipStatisticsContextNameProvider() {
+	public ContextNameProvider getEipStatisticsContextNameProvider(
+			final ApplicationPlaceholderConfigurer applicationProperties) {
 		ContextNameProvider bean = new ContextNameProvider();
+		String contextVersion = applicationProperties
+				.getProperty("eip.application.maven.artifact.version", "2.2.0");
+		bean.setContextName(APPLICATION_CONTEXT_NAME);
+		bean.setContextVersion(contextVersion);
 		return bean;
 	}
 
@@ -249,8 +228,20 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 	 * @return the {@link LoggingInitializer}.
 	 */
 	@Bean
-	public LoggingInitializer getLoggingInitializer() {
+	public LoggingInitializer getLoggingInitializer(
+			final ApplicationPlaceholderConfigurer properties) {
 		LoggingInitializer bean = new LoggingInitializer();
+		bean.initialize(properties.get(EipSettings.EIP_APPLICATION_NAME),
+				properties.get(EipSettings.EIP_SERVICE_NAME),
+				properties.get(EipSettings.EIP_SERVICE_VERSION));
+		if (this.logger == null) {
+			this.logger = org.slf4j.LoggerFactory
+					.getLogger(CoreSpringConfig.class);
+		}
+		properties.put(BusSettings.BUS_TC_SERVER_INFO,
+				this.servletContext.getServerInfo());
+		properties.put(BusSettings.BUS_SERVLET_CONTEXT_NAME,
+				this.servletContext.getServletContextName());
 		return bean;
 	}
 
@@ -295,18 +286,6 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 		return bean;
 	}
 
-	/** Initialize {@link ContextNameProvider}s. */
-	private void initializeContextNameProviders() {
-		String contextVersion = this.properties
-				.getProperty("eip.application.maven.artifact.version", "2.2.0");
-		this.eipAuthContextNameProvider
-				.setContextName(APPLICATION_CONTEXT_NAME);
-		this.eipAuthContextNameProvider.setContextVersion(contextVersion);
-		this.eipStatisticsContextNameProvider
-				.setContextName(APPLICATION_CONTEXT_NAME);
-		this.eipStatisticsContextNameProvider.setContextVersion(contextVersion);
-	}
-
 	/** Initialize failure messages. */
 	private void initializeFailureMessages() {
 		try {
@@ -318,88 +297,59 @@ public class CoreSpringConfig implements BeanPostProcessor, ServletContextAware,
 				BaseFailureHandler
 						.addFailureMessages(resource.getInputStream());
 			}
-			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-			Resource[] xsds = resolver.getResources("classpath*:**/*.xsd");
-			for (Resource xsd : xsds) {
-				if (!String.valueOf(xsd.getURL()).startsWith("jar")) {
-					this.logger.debug("contained xsds: {}",
-							xsd.getFile().getAbsolutePath());
-				}
-			}
+			// PathMatchingResourcePatternResolver resolver = new
+			// PathMatchingResourcePatternResolver();
+			// Resource[] xsds = resolver.getResources("classpath*:**/*.xsd");
+			// for (Resource xsd : xsds) {
+			// if (!String.valueOf(xsd.getURL()).startsWith("jar")) {
+			// this.logger.debug("contained xsds: {}",
+			// xsd.getFile().getAbsolutePath());
+			// }
+			// }
 		} catch (IOException e) {
 			this.logger.error(e.getMessage(), e);
 		}
 	}
 
-	/** Initialize logback logging. */
-	private void initializeLogging() {
-		this.loggingInitializer.initialize(
-				this.properties.get(EipSettings.EIP_APPLICATION_NAME),
-				this.properties.get(EipSettings.EIP_SERVICE_NAME),
-				this.properties.get(EipSettings.EIP_SERVICE_VERSION));
-		if (this.logger == null) {
-			this.logger = org.slf4j.LoggerFactory
-					.getLogger(CoreSpringConfig.class);
-		}
+	/**
+	 * After application context refresh event.
+	 *
+	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	 */
+	@Override
+	public void onApplicationEvent(final ContextRefreshedEvent event) {
+		/* Do at last. */
+		/* Insert system user credentials into database. */
+		this.initializeFailureMessages();
+
 		this.properties.put(BusSettings.BUS_TC_SERVER_INFO,
 				this.servletContext.getServerInfo());
 		this.properties.put(BusSettings.BUS_SERVLET_CONTEXT_NAME,
 				this.servletContext.getServletContextName());
-	}
 
-	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
-	 *      java.lang.String)
-	 */
-	@Override
-	public Object postProcessAfterInitialization(final Object bean,
-			final String beanName) throws BeansException {
-		this.initCount++;
-		if (this.initCount == this.applicationContext
-				.getBeanDefinitionCount()) {
-			/* Do at last. */
-			/* Insert system user credentials into database. */
-			this.systemUserInitDao.enterSystemUser(APPLICATION_CONTEXT_NAME,
-					"bus", "password", "ROLE_ALL_OPERATIONS");
-			this.systemUserInitDao.enterSystemUser(APPLICATION_CONTEXT_NAME,
-					"library", "password", "ROLE_COMMON_GETREFERENCEDATA",
-					"ROLE_LIBRARY");
-			/* Log the configuration. */
-			this.logger.info("ServletContext server info: ",
-					this.properties.get(BusSettings.BUS_TC_SERVER_INFO));
-			this.logger.info("ServletContext servlet context name: ",
-					this.properties.get(BusSettings.BUS_SERVLET_CONTEXT_NAME));
+		/* Log the configuration. */
+		this.logger.info("ServletContext server info:          {}",
+				this.servletContext.getServerInfo());
+		this.logger.info("ServletContext servlet context name: {}",
+				this.servletContext.getServletContextName());
 
-			this.logger.info("Web app service name: ",
-					this.properties.get(EipSettings.EIP_SERVICE_NAME));
-			this.logger.info("Web app service version: ",
-					this.properties.get(EipSettings.EIP_SERVICE_VERSION));
-			this.logger.info("Web app application build time: ", this.properties
-					.get(EipSettings.EIP_APPLICATION_BUILD_TIME));
-			this.logger.info("Web app application scm revision: ",
-					this.properties
-							.get(EipSettings.EIP_APPLICATION_SCM_REVISION));
-			this.logger.info("Web app end point definition: ",
-					this.properties.get(EipSettings.EIP_WEB_SERVICE_SERVER));
-
-			this.logger.info("Web app maven groupId: ", this.properties
-					.get(EipSettings.EIP_APPLICATION_ARTIFACT_GROUPID));
-			this.logger.info("Web app maven artifactId: ", this.properties
-					.get(EipSettings.EIP_APPLICATION_ARTIFACT_ARTIFACTID));
-			this.logger.info("Web app maven version: ", this.properties
-					.get(EipSettings.EIP_APPLICATION_ARTIFACT_VERSION));
-		}
-		return bean;
-	}
-
-	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object,
-	 *      java.lang.String)
-	 */
-	@Override
-	public Object postProcessBeforeInitialization(final Object bean,
-			final String beanName) throws BeansException {
-		return bean;
+		this.logger.info("Web app service name:                {}",
+				this.properties.getProperty(EipSettings.EIP_SERVICE_NAME));
+		this.logger.info("Web app application build time:      {}",
+				this.properties
+						.getProperty(EipSettings.EIP_APPLICATION_BUILD_TIME));
+		this.logger.info("Web app application scm revision:    {}",
+				this.properties
+						.getProperty(EipSettings.EIP_APPLICATION_SCM_REVISION));
+		this.logger.info("Web app maven groupId:               {}",
+				this.properties.getProperty(
+						EipSettings.EIP_APPLICATION_ARTIFACT_GROUPID));
+		this.logger.info("Web app maven artifactId:            {}",
+				this.properties.getProperty(
+						EipSettings.EIP_APPLICATION_ARTIFACT_ARTIFACTID));
+		this.logger.info("Web app maven version:               {}",
+				this.properties.getProperty(
+						EipSettings.EIP_APPLICATION_ARTIFACT_VERSION));
 	}
 
 	/**

@@ -22,8 +22,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,7 @@ import com.qpark.eip.core.spring.lockedoperation.LockableOperation;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationLockControllType;
 
-public class LockedOperationDaoImpl implements InitializingBean,
-		LockableOperationDao, ApplicationListener<ContextRefreshedEvent> {
+public class LockedOperationDaoImpl implements LockableOperationDao {
 	/**
 	 * @param operation
 	 * @return a unique lock string.
@@ -74,45 +71,6 @@ public class LockedOperationDaoImpl implements InitializingBean,
 	@Override
 	public String getHostName() {
 		return this.hostName;
-	}
-
-	/**
-	 * Set the host values and unlock operations locked by this host if needed.
-	 *
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		try {
-			InetAddress localaddr = InetAddress.getLocalHost();
-			this.hostAddress = localaddr.getHostAddress();
-			this.hostName = localaddr.getHostName();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			this.hostName = "localhost";
-		}
-		this.logger.debug("Host name    : {}", this.hostName);
-		this.logger.debug("Host address : {}", this.hostAddress);
-	}
-
-	private boolean onceDone = false;
-
-	/**
-	 * Remove left over locks of previously stopped processes.
-	 *
-	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
-	 */
-	@Override
-	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
-	public void onApplicationEvent(final ContextRefreshedEvent event) {
-		if (!this.onceDone) {
-			this.logger.debug(
-					"onApplicationEvent unlockOperationOnServerStart {}",
-					event.getTimestamp());
-			this.onceDone = true;
-			this.unlockOperationOnServerStart();
-		}
 	}
 
 	/**
@@ -255,6 +213,24 @@ public class LockedOperationDaoImpl implements InitializingBean,
 	}
 
 	/**
+	 * Remove left over locks of previously stopped processes.
+	 *
+	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	 */
+	@Override
+	@Transactional(value = EipLockedoperationConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public void onApplicationEvent(final ContextRefreshedEvent event) {
+		this.setupHostValues();
+		this.logger.debug("Host name    : {}", this.hostName);
+		this.logger.debug("Host address : {}", this.hostAddress);
+		if (this.firstRun) {
+			this.unlockOperationOnServerStart();
+			this.firstRun = false;
+		}
+	}
+
+	/**
 	 * @param hostAddress
 	 *            the hostAddress to set
 	 */
@@ -268,6 +244,19 @@ public class LockedOperationDaoImpl implements InitializingBean,
 	 */
 	public void setHostName(final String hostName) {
 		this.hostName = hostName;
+	}
+
+	private void setupHostValues() {
+		if (this.hostName == null) {
+			try {
+				InetAddress localaddr = InetAddress.getLocalHost();
+				this.hostAddress = localaddr.getHostAddress();
+				this.hostName = localaddr.getHostName();
+			} catch (UnknownHostException e) {
+				this.logger.error(e.getMessage(), e);
+				this.hostName = "localhost";
+			}
+		}
 	}
 
 	/**

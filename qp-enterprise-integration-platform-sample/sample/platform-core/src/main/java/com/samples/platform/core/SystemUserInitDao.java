@@ -17,6 +17,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +27,31 @@ import com.qpark.eip.core.domain.persistencedefinition.AuthenticationType_;
 import com.qpark.eip.core.domain.persistencedefinition.GrantedAuthorityType;
 import com.qpark.eip.core.domain.persistencedefinition.ObjectFactory;
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
+import com.samples.platform.core.config.CoreSpringConfig;
 
-public class SystemUserInitDao {
+public class SystemUserInitDao
+		implements ApplicationListener<ContextRefreshedEvent> {
 	/** The {@link EntityManager}. */
 	@PersistenceContext(unitName = EipPersistenceConfig.PERSISTENCE_UNIT_NAME,
 			name = EipPersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
 	private EntityManager em;
 	private ObjectFactory of = new ObjectFactory();
+
+	/**
+	 * After application context refresh event.
+	 *
+	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	 */
+	@Override
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public void onApplicationEvent(final ContextRefreshedEvent event) {
+		this.enterSystemUser(CoreSpringConfig.APPLICATION_CONTEXT_NAME, "bus",
+				"password", "ROLE_ALL_OPERATIONS");
+		this.enterSystemUser(CoreSpringConfig.APPLICATION_CONTEXT_NAME,
+				"library", "password", "ROLE_COMMON_GETREFERENCEDATA",
+				"ROLE_LIBRARY");
+	}
 
 	/**
 	 * Get the {@link AuthenticationType}s out of the database.
@@ -77,5 +97,4 @@ public class SystemUserInitDao {
 			this.em.persist(ac);
 		}
 	}
-
 }

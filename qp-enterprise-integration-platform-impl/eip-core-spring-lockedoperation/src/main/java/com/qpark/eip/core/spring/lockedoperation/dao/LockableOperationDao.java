@@ -1,13 +1,12 @@
 package com.qpark.eip.core.spring.lockedoperation.dao;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.qpark.eip.core.spring.lockedoperation.LockableOperation;
-import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 
-public interface LockableOperationDao {
-
+public interface LockableOperationDao
+		extends ApplicationListener<ContextRefreshedEvent> {
 	/**
 	 * @return the hostAddress
 	 */
