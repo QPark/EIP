@@ -67,6 +67,7 @@ public class AnalysisProvider {
 
 		String xsdPath;
 		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\bus-dev\\src\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
 
 		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";

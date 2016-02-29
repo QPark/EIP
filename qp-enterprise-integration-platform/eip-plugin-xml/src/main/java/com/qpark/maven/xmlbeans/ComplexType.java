@@ -80,7 +80,9 @@ public class ComplexType implements Comparable<ComplexType> {
 
 	private static boolean isInterfaceType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
-				"{http://.*?/Interfaces/MappingTypes}InterfaceType");
+				"{http://.*?/Interfaces/MappingTypes}InterfaceType")
+				|| isInstanceOf(schemaType,
+						"{http://.*?/Interfaces/MappingTypes}InterfaceReferenceType");
 	}
 
 	private static boolean isMapRequestType(final SchemaType schemaType) {
