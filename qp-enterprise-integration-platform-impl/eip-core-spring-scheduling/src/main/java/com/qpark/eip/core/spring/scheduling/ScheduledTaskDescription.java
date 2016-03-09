@@ -1,43 +1,39 @@
 package com.qpark.eip.core.spring.scheduling;
 
 public class ScheduledTaskDescription {
-	private Class<? extends AbstractScheduledTaskExecutorBean> executor;
-
-	/**
-	 * @return the executor
-	 */
-	public Class<? extends AbstractScheduledTaskExecutorBean> getExecutor() {
-		return this.executor;
-	}
-
-	/**
-	 * @param executor
-	 *            the executor to set
-	 */
-	public void setExecutor(
-			final Class<? extends AbstractScheduledTaskExecutorBean> executor) {
-		this.executor = executor;
-	}
-
+	private String beanName;
+	private String cronExpression;
+	private boolean enabled;
+	private long fixedDelay;
 	private String id;
 	private String name;
-	private boolean enabled;
-	private String cronExpression;
-	private long fixedDelay;
+
+	/**
+	 * @return the className
+	 */
+	public String getBeanName() {
+		return this.beanName;
+	}
+
+	/**
+	 * @return the cronExpression
+	 */
+	public String getCronExpression() {
+		return this.cronExpression;
+	}
+
+	/**
+	 * @return the fixedDelay
+	 */
+	public long getFixedDelaySeconds() {
+		return this.fixedDelay;
+	}
 
 	/**
 	 * @return the id
 	 */
 	public String getId() {
 		return this.id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(final String id) {
-		this.id = id;
 	}
 
 	/**
@@ -48,14 +44,6 @@ public class ScheduledTaskDescription {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	/**
 	 * @return the enabled
 	 */
 	public boolean isEnabled() {
@@ -63,18 +51,11 @@ public class ScheduledTaskDescription {
 	}
 
 	/**
-	 * @param enabled
-	 *            the enabled to set
+	 * @param className
+	 *            the className to set
 	 */
-	public void setEnabled(final boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	/**
-	 * @return the cronExpression
-	 */
-	public String getCronExpression() {
-		return this.cronExpression;
+	public void setBeanName(final String className) {
+		this.beanName = className;
 	}
 
 	/**
@@ -86,10 +67,11 @@ public class ScheduledTaskDescription {
 	}
 
 	/**
-	 * @return the fixedDelay
+	 * @param enabled
+	 *            the enabled to set
 	 */
-	public long getFixedDelaySeconds() {
-		return this.fixedDelay;
+	public void setEnabled(final boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	/**
@@ -98,5 +80,21 @@ public class ScheduledTaskDescription {
 	 */
 	public void setFixedDelay(final long fixedDelay) {
 		this.fixedDelay = fixedDelay;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(final String name) {
+		this.name = name;
 	}
 }

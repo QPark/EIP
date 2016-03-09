@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.qpark.eip.core.spring.scheduling.EipSchedulingConfigurer;
+import com.qpark.eip.core.spring.scheduling.ScheduledTaskFactory;
 
 /**
  * Provides {@link EipSchedulingConfigurer} to initialize and reinitialize the
@@ -31,6 +32,12 @@ public class EipSchedulingConfig {
 	@Bean
 	public EipSchedulingConfigurer getEipSchedulingConfigurer() {
 		EipSchedulingConfigurer bean = new EipSchedulingConfigurer();
+		return bean;
+	}
+
+	@Bean
+	public ScheduledTaskFactory getScheduledTaskFactory() {
+		ScheduledTaskFactory bean = new ScheduledTaskFactory();
 		return bean;
 	}
 }

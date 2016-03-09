@@ -14,6 +14,8 @@ import com.qpark.eip.core.spring.scheduling.config.EipSchedulingConfig;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 public class TestConfig {
+	public static final String SCHEDULED_METHOD_CONTAINER_BEAN_NAME = "SimpleSysOutScheduledMethodContainer";
+
 	/**
 	 * Get the {@link ScheduledTaskDao}.
 	 *
@@ -25,20 +27,14 @@ public class TestConfig {
 		return bean;
 	}
 
-	@Bean
-	public EipSchedulingConfigurerTest getEipSchedulingConfigurerTest() {
-		EipSchedulingConfigurerTest bean = new EipSchedulingConfigurerTest();
-		return bean;
-	}
-
 	/**
-	 * Get the {@link SimpleSysOutScheduledTaskExecutor}.
+	 * Get the {@link SimpleSysOutScheduledMethodContainer}.
 	 *
-	 * @return the {@link SimpleSysOutScheduledTaskExecutor}.
+	 * @return the {@link SimpleSysOutScheduledMethodContainer}.
 	 */
-	@Bean
-	public SimpleSysOutScheduledTaskExecutor getSimpleSysOutScheduledTaskExecutor() {
-		SimpleSysOutScheduledTaskExecutor bean = new SimpleSysOutScheduledTaskExecutor();
+	@Bean(name = SCHEDULED_METHOD_CONTAINER_BEAN_NAME)
+	public SimpleSysOutScheduledMethodContainer getSimpleSysOutScheduledTaskExecutor() {
+		SimpleSysOutScheduledMethodContainer bean = new SimpleSysOutScheduledMethodContainer();
 		return bean;
 	}
 

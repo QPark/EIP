@@ -1,10 +1,7 @@
 package com.qpark.eip.core.spring.scheduling;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -13,14 +10,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 
@@ -42,8 +36,9 @@ public class EipSchedulingConfigurer implements SchedulingConfigurer,
 	/** The {@link ScheduledTaskDao}. */
 	@Autowired
 	private ScheduledTaskDao scheduledTaskDao;
-	/** The {@link ScheduledTaskRegistrar}. */
-	private ScheduledTaskRegistrar taskRegistrar;
+	/** The factory to create {@link ScheduledTaskRunnable}s. */
+	@Autowired
+	private ScheduledTaskFactory scheduledTaskFactory;
 
 	/**
 	 * @see org.springframework.scheduling.annotation.SchedulingConfigurer#configureTasks(org.springframework.scheduling.config.ScheduledTaskRegistrar)
@@ -51,106 +46,64 @@ public class EipSchedulingConfigurer implements SchedulingConfigurer,
 	@Override
 	public void configureTasks(final ScheduledTaskRegistrar taskRegistrar) {
 		this.logger.debug("+configureTasks");
-
-		this.taskRegistrar = taskRegistrar;
-
-		taskRegistrar.setScheduler(this.taskExecutor());
-		List<ScheduledTaskDescription> scheduleTaskDescriptions = this.scheduledTaskDao
+		List<ScheduledTaskDescription> descriptions = this.scheduledTaskDao
 				.getScheduleTaskDescriptions();
-		if (scheduleTaskDescriptions != null) {
+		if (descriptions != null) {
 			this.logger.debug(" configureTasks got {} scheduled tasks",
-					scheduleTaskDescriptions.size());
-			AbstractScheduledTaskExecutorBean scheduledTaskExcutor;
+					descriptions.size());
+			List<ScheduledTaskRunnable> runners = this.scheduledTaskFactory
+					.getInstances(descriptions);
 			Trigger trigger;
-			for (ScheduledTaskDescription scheduledTaskDescription : scheduleTaskDescriptions) {
-				if (scheduledTaskDescription.isEnabled()) {
-					this.logger
-							.debug(" configureTasks ENABLED scheduled task {}({}) '{}'/'{}'",
-									scheduledTaskDescription.getId(),
-									scheduledTaskDescription.getName(),
-									scheduledTaskDescription
-											.getCronExpression(),
-							scheduledTaskDescription.getFixedDelaySeconds());
-					try {
-						scheduledTaskExcutor = this.applicationContext.getBean(
-								scheduledTaskDescription.getExecutor());
-						scheduledTaskExcutor.setScheduledTaskDescription(
-								scheduledTaskDescription);
-						trigger = this.getTrigger(scheduledTaskDescription);
-						if (trigger != null) {
-							taskRegistrar.addTriggerTask(scheduledTaskExcutor,
-									trigger);
-							this.logger.debug(" configureTasks got added");
-						} else {
-							this.logger
-									.debug(" configureTasks trigger is null!");
-						}
-					} catch (Exception e) {
-						this.logger.error(e.getMessage(), e);
-						e.printStackTrace();
+			for (ScheduledTaskRunnable runner : runners) {
+				try {
+					trigger = this.getTrigger(runner.getDescription());
+					if (trigger != null) {
+						taskRegistrar.addTriggerTask(runner, trigger);
+						this.logger.debug(" configureTasks got added");
+					} else {
+						this.logger.debug(" configureTasks trigger is null!");
 					}
-				} else {
-					this.logger
-							.debug(" configureTasks DISABLED scheduled task {}({}) '{}'/'{}'",
-									scheduledTaskDescription.getId(),
-									scheduledTaskDescription.getName(),
-									scheduledTaskDescription
-											.getCronExpression(),
-							scheduledTaskDescription.getFixedDelaySeconds());
+				} catch (Exception e) {
+					this.logger.error(e.getMessage(), e);
 				}
 			}
 		} else {
 			this.logger.debug(" configureTasks scheduled tasks not configured");
 		}
-
 		this.logger.debug("-configureTasks");
 	}
 
 	/**
 	 * Get the {@link Trigger}.
 	 *
-	 * @param scheduledTaskDescription
+	 * @param description
 	 *            the {@link ScheduledTaskDescription}.
 	 * @return the {@link Trigger}.
 	 */
-	private Trigger getTrigger(
-			final ScheduledTaskDescription scheduledTaskDescription) {
+	private Trigger getTrigger(final ScheduledTaskDescription description) {
 		Trigger trigger = null;
-		if (scheduledTaskDescription.getCronExpression() != null
-				&& scheduledTaskDescription.getCronExpression().trim()
-						.length() > 0) {
+		if (description.getCronExpression() != null
+				&& description.getCronExpression().trim().length() > 0) {
 			try {
-				trigger = new CronTrigger(
-						scheduledTaskDescription.getCronExpression());
+				trigger = new CronTrigger(description.getCronExpression());
 			} catch (IllegalArgumentException e) {
 				this.logger.error(e.getMessage(), e);
 			}
-		} else if (scheduledTaskDescription.getFixedDelaySeconds() > 0) {
-			trigger = new PeriodicTrigger(
-					scheduledTaskDescription.getFixedDelaySeconds(),
+		} else if (description.getFixedDelaySeconds() > 0) {
+			trigger = new PeriodicTrigger(description.getFixedDelaySeconds(),
 					TimeUnit.SECONDS);
 		}
 		return trigger;
 	}
 
-	@Bean(destroyMethod = "shutdown")
-	public Executor taskExecutor() {
-		return Executors.newScheduledThreadPool(10);
-	}
-
 	/**
+	 * Force the {@link ScheduledTaskRegistrar} to be configured again.
+	 *
 	 * @see com.qpark.eip.core.ReInitalizeable#reInitalize()
 	 */
 	@Override
 	public void reInitalize() {
 		this.logger.debug("+reInitalize");
-		this.taskRegistrar.setTriggerTasksList(new ArrayList<TriggerTask>(0));
-
-		ConcurrentTaskScheduler scheduler = (ConcurrentTaskScheduler) this.taskRegistrar
-				.getScheduler();
-		System.out.println(scheduler.getClass());
-		scheduler.getConcurrentExecutor();
-		// this.taskRegistrar.destroy();
 		Map<String, ScheduledAnnotationBeanPostProcessor> postProcessorBeanMap = this.applicationContext
 				.getBeansOfType(ScheduledAnnotationBeanPostProcessor.class);
 		for (ScheduledAnnotationBeanPostProcessor postProcessor : postProcessorBeanMap

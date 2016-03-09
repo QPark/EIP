@@ -14,9 +14,9 @@ import com.qpark.eip.core.spring.scheduling.ScheduledTaskDescription;
 public class ScheduledTaskDaoMock implements ScheduledTaskDao,
 		ApplicationListener<ContextRefreshedEvent> {
 	private int callCount;
-	private ScheduledTaskDescription scheduledTaskDescription;
 	/** The {@link org.slf4j.Logger}. */
 	private Logger logger = LoggerFactory.getLogger(ScheduledTaskDaoMock.class);
+	private ScheduledTaskDescription scheduledTaskDescription;
 
 	public ScheduledTaskDaoMock() {
 		this.callCount = 0;
@@ -26,7 +26,7 @@ public class ScheduledTaskDaoMock implements ScheduledTaskDao,
 		this.scheduledTaskDescription.setName("Name");
 		this.scheduledTaskDescription.setEnabled(false);
 		this.scheduledTaskDescription
-				.setExecutor(SimpleSysOutScheduledTaskExecutor.class);
+				.setBeanName(TestConfig.SCHEDULED_METHOD_CONTAINER_BEAN_NAME);
 	}
 
 	/**
