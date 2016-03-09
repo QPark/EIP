@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
@@ -21,16 +21,22 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public class ComplexContentList {
-
 	public static boolean isComplexMappingType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/MappingTypes}ComplexMappingType");
 	}
+
+	public static boolean isMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}MappingType");
+	}
+
 	public static boolean isComplexUUIDMappingType(
 			final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/MappingTypes}ComplexUUIDMappingType");
 	}
+
 	public static boolean isDefaultMappingType(final SchemaType schemaType) {
 		boolean validType = false;
 		if (schemaType != null && schemaType.getName() != null
@@ -52,10 +58,12 @@ public class ComplexContentList {
 		}
 		return validType;
 	}
+
 	public static boolean isDirectMappingType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/MappingTypes}DirectMappingType");
 	}
+
 	private static boolean isInstanceOf(final SchemaType schemaType,
 			final String qName) {
 		boolean validType = false;
@@ -69,6 +77,7 @@ public class ComplexContentList {
 		}
 		return validType;
 	}
+
 	public static boolean isInterfaceType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/MappingTypes}InterfaceType");
@@ -167,6 +176,10 @@ public class ComplexContentList {
 			} else if (isDefaultMappingType(complexType.getType())) {
 				this.defaultMappings.add(new ComplexContent(complexType, false,
 						false, false, true));
+			} else if (isMappingType(complexType.getType())) {
+				/* Add all remaining mapping types as complex mapping types. */
+				this.complexMappings.add(new ComplexContent(complexType, false,
+						false, true, false));
 			}
 		}
 	}

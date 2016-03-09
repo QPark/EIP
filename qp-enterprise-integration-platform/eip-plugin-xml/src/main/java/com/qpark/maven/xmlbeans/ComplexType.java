@@ -85,6 +85,11 @@ public class ComplexType implements Comparable<ComplexType> {
 						"{http://.*?/Interfaces/MappingTypes}InterfaceReferenceType");
 	}
 
+	private static boolean isMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}MappingType");
+	}
+
 	private static boolean isMapRequestType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/Mapping}MappingInputType");
@@ -282,9 +287,16 @@ public class ComplexType implements Comparable<ComplexType> {
 		}
 		this.directMappingType = isDirectMappingType(type);
 		this.defaultMappingType = isDefaultMappingType(type);
-		this.complexMappingType = isComplexMappingType(type);
 		this.complexUUIDMappingType = isComplexUUIDMappingType(type);
+		if (!this.directMappingType && !this.defaultMappingType
+				&& !this.complexUUIDMappingType
+				&& (isComplexMappingType(type) || isMappingType(type))) {
+			this.complexMappingType = true;
+		} else {
+			this.complexMappingType = false;
+		}
 		this.interfaceMappingType = isInterfaceType(type);
+
 		this.mapRequestType = isMapRequestType(type);
 		this.mapResponseType = isMapResponseType(type);
 	}
