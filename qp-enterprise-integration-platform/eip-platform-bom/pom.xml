@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom</artifactId>
-	<version>3.3.4</version><!--qpark-eip-version-->
+	<version>3.3.5</version><!--qpark-eip-version-->
 	<packaging>pom</packaging>
 	<name>eip-platform-bom</name>
 	<description>EIP IO Platform bill of materials</description>
@@ -93,68 +93,68 @@
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-plugin-xml</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-model-analysis</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-hyperjaxb3-naming</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-failurehandler</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-logback</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-persistence</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-auth</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-statistics</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-model-analysis</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-lockedoperation</artifactId>
-				<version>3.3.4</version><!--qpark-eip-version-->
+				<version>3.3.5</version><!--qpark-eip-version-->
 			</dependency>
 
 			<dependency>
@@ -244,12 +244,12 @@
 				<plugin>
 					<groupId>com.qpark.maven</groupId>
 					<artifactId>eip-generator-plugin</artifactId>
-					<version>3.3.4</version><!--qpark-eip-version-->
+					<version>3.3.5</version><!--qpark-eip-version-->
 					<dependencies>
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-plugin-xml</artifactId>
-							<version>3.3.4</version><!--qpark-eip-version-->
+							<version>3.3.5</version><!--qpark-eip-version-->
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -262,7 +262,7 @@
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-hyperjaxb3-naming</artifactId>
-							<version>3.3.4</version><!--qpark-eip-version-->
+							<version>3.3.5</version><!--qpark-eip-version-->
 						</dependency>
 					</dependencies>
 				</plugin>
