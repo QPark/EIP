@@ -105,4 +105,32 @@
 			</extension>
 		</complexContent>
 	</complexType>
+		
+	<complexType name="TestListReturnFlowRequestType">
+		<annotation><documentation>Test of List input and output parameters.</documentation></annotation>
+		<complexContent>
+			<extension base="FLOW:FlowInputType">
+				<sequence>
+					<element name="in" type="ISSTechSupportm:GetSystemUserReportRequestType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="mapIn" type="MPTechSupportMapp:SystemUserLogCriteriaTypeMapRequestType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="mapOut" type="MPTechSupportMapp:SystemUserLogCriteriaTypeMapResponseType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="out" type="MPTechSupportmsg:SystemUserLogRequestType" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="TestListReturnFlowResponseType">
+		<annotation><documentation>Test of List input and output parameters.</documentation></annotation>
+		<complexContent>
+			<extension base="FLOW:FlowOutputType">
+				<sequence>
+					<element name="in" type="MPTechSupportmsg:SystemUserLogResponseType" minOccurs="0" maxOccurs="unbounded" />
+					<element name="mapIn" type="MPTechSupportMapp:SystemUserReportTypeMapRequestType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="mapOut" type="MPTechSupportMapp:SystemUserReportTypeMapResponseType" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="out" type="ISSTechSupportm:GetSystemUserReportResponseType" minOccurs="0" maxOccurs="unbounded" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+		
 </schema>

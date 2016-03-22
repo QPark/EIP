@@ -193,7 +193,13 @@ public class FlowInterfaceGenerator {
 
 			sb.append("\t");
 			if (smd.getOut() != null) {
-				sb.append(smd.getOut().getClassNameFullQualified());
+				if (smd.isOutList()) {
+					sb.append("List<");
+					sb.append(smd.getOut().getClassNameFullQualified());
+					sb.append(">");
+				} else {
+					sb.append(smd.getOut().getClassNameFullQualified());
+				}
 			} else {
 				sb.append("void");
 			}
@@ -217,8 +223,15 @@ public class FlowInterfaceGenerator {
 					if (i > 0) {
 						sb.append(", ");
 					}
-					sb.append(smd.getInput().get(i).getComplexType()
-							.getClassNameFullQualified());
+					if (smd.getInput().get(i).isList()) {
+						sb.append("List<");
+						sb.append(smd.getInput().get(i).getComplexType()
+								.getClassNameFullQualified());
+						sb.append(">");
+					} else {
+						sb.append(smd.getInput().get(i).getComplexType()
+								.getClassNameFullQualified());
+					}
 					sb.append(" ");
 					sb.append(smd.getInput().get(i).getChildName());
 					addedParameter = true;
@@ -274,6 +287,7 @@ public class FlowInterfaceGenerator {
 			if (childOut.getChildName().startsWith(prefixOut)) {
 				def = new SimpleMethodDefinition(childOut.getComplexType(),
 						request);
+				def.setOutList(childOut.isList());
 				simpleMethods.add(def);
 				def.setSuffix(getSuffix(childOut, prefixOut));
 				for (ComplexTypeChild childIn : ct.getChildren()) {
@@ -295,6 +309,7 @@ public class FlowInterfaceGenerator {
 					if (childOut.getChildName().equals(new StringBuffer(16)
 							.append(prefixOut).append(def.suffix).toString())) {
 						def.setOut(childOut.getComplexType());
+						def.setOutList(childOut.isList());
 						break;
 					}
 				}
@@ -337,32 +352,32 @@ public class FlowInterfaceGenerator {
 			final ComplexType flowInput, final Log log) {
 		this.flowInput = flowInput;
 		this.config = config;
-		this.packageName = new StringBuffer(flowInput.getPackageName())
+		this.packageName = new StringBuffer(this.flowInput.getPackageName())
 				.append("").toString();
-		this.flowName = flowInput.getClassName().substring(0,
-				flowInput.getClassName().lastIndexOf("RequestType"));
-		this.flowOutput = XsdsUtil.findResponse(flowInput,
+		this.flowName = this.flowInput.getClassName().substring(0,
+				this.flowInput.getClassName().lastIndexOf("RequestType"));
+		this.flowOutput = XsdsUtil.findResponse(this.flowInput,
 				config.getComplexTypes(), config);
 
 		this.flow = new SimpleMethodDefinition(new ComplexTypeChild("request",
-				flowInput, BigInteger.ONE, BigInteger.ONE, null),
+				this.flowInput, BigInteger.ONE, BigInteger.ONE, null),
 				this.flowOutput, true);
 
 		this.log = log;
 
-		List<SimpleMethodDefinition> list = getSimpleMethodDefinition(flowInput,
-				"in", "out", true);
+		List<SimpleMethodDefinition> list = getSimpleMethodDefinition(
+				this.flowInput, "in", "out", true);
 		if (!list.isEmpty()) {
 			this.request = list.get(0);
 		} else {
 			this.request = null;
 		}
-		this.subRequests.addAll(getSimpleMethodDefinition(flowInput,
+		this.subRequests.addAll(getSimpleMethodDefinition(this.flowInput,
 				"subRequest", "subResponse", true));
-		this.filters.addAll(getSimpleMethodDefinition(flowInput, "filterIn",
-				"filterOut", true));
-		this.mappings.addAll(
-				getSimpleMethodDefinition(flowInput, "mapIn", "mapOut", true));
+		this.filters.addAll(getSimpleMethodDefinition(this.flowInput,
+				"filterIn", "filterOut", true));
+		this.mappings.addAll(getSimpleMethodDefinition(this.flowInput, "mapIn",
+				"mapOut", true));
 
 		if (this.flowOutput != null) {
 			list = getSimpleMethodDefinition(this.flowOutput, "in", "out",
@@ -436,13 +451,8 @@ public class FlowInterfaceGenerator {
 						child.getComplexType().getClassNameFullQualified(),
 						imports, importedClasses);
 			}
-			if (AbstractGenerator
-					.isChildListImport(this.flowOutput.getChildren())) {
-				AbstractGenerator.addImport("java.util.List", imports,
-						importedClasses);
-			}
-
 		}
+		imports.add("java.util.List");
 		imports.add("com.springsource.insight.annotation.InsightOperation");
 		for (String importedClass : imports) {
 			sb.append("import ").append(importedClass).append(";\n");
@@ -501,15 +511,28 @@ public class FlowInterfaceGenerator {
 		sb.append(this.flowName);
 		sb.append("\n");
 		sb.append("\t\textends Flow<");
-		if (this.flow.getInput().size() > 0) {
-			sb.append(this.flow.getInput().get(0).getComplexType()
-					.getClassNameFullQualified());
+		if (this.request != null && this.request.getIn() != null) {
+			if (this.request.getIn().isList()) {
+				sb.append("List<");
+				sb.append(this.request.getIn().getComplexType()
+						.getClassNameFullQualified());
+				sb.append(">");
+			} else {
+				sb.append(this.flow.getInput().get(0).getComplexType()
+						.getClassNameFullQualified());
+			}
 		} else {
 			sb.append("Void");
 		}
 		sb.append(", ");
 		if (this.flow.getOut() != null) {
-			sb.append(this.flow.getOut().getClassNameFullQualified());
+			if (this.response.isOutList()) {
+				sb.append("List<");
+				sb.append(this.flow.getOut().getClassNameFullQualified());
+				sb.append(">");
+			} else {
+				sb.append(this.flow.getOut().getClassNameFullQualified());
+			}
 		} else {
 			sb.append("Void");
 		}
