@@ -265,4 +265,22 @@ The ComplexMappingTypes could be done as a DirectMappingType too. Here it is don
 		</complexContent>
 	</complexType>
 
+	<complexType name="TechSupport.SystemUserLog.tabularHostnameMappingType">
+		<annotation><documentation>Map the fixed input string to the output string</documentation></annotation>
+		<complexContent>
+			<extension base="MPmp:ComplexMappingType">
+				<sequence>
+					<element name="systemUserReport" type="MPmTechSupport:ApplicationUserLog.hostNameMappingType"/>
+					<element name="in0" type="string" default="127.0.0.1" />
+					<element name="out0" type="string" default="localhost" />
+					<element name="in1" type="string" default="localhost" />
+					<element name="out1" type="string" default="localhost" />
+					<element name="in2" type="string" default="192.168.*" />
+					<element name="out2" type="string" default="internalNetwork" />
+					<element name="default" type="string" default="externalNetwork" />
+					<element name="return" type="string"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 </schema>

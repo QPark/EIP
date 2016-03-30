@@ -94,15 +94,10 @@ public class ComplexContentList {
 	}
 
 	private final List<ComplexContent> complexMappings = new ArrayList<ComplexContent>();
-
 	private final List<ComplexContent> complexUUIDMappings = new ArrayList<ComplexContent>();
-
 	private final List<ComplexContent> defaultMappings = new ArrayList<ComplexContent>();
-
 	private final List<ComplexContent> directMappings = new ArrayList<ComplexContent>();
-
 	private final List<ComplexContent> interfaceTypes = new ArrayList<ComplexContent>();
-
 	private final List<ComplexRequestResponse> requestResponses = new ArrayList<ComplexRequestResponse>();
 
 	/**

@@ -79,6 +79,11 @@
 			<extension base="MPmp:MappingType"/>
 		</complexContent>
 	</complexType>
+	<complexType name="TabularMappingType">
+		<complexContent>
+			<extension base="MPmp:MappingType"/>
+		</complexContent>
+	</complexType>	
 	<complexType name="ComplexUUIDMappingType">
 		<complexContent>
 			<extension base="MPmp:ComplexMappingType">

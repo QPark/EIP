@@ -7,6 +7,7 @@
 package com.qpark.maven.plugin.flowmapper;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -50,6 +51,52 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 				eipVersion, log);
 	}
 
+	/**
+	 * @param children
+	 * @return
+	 */
+	private List<String> getDefaultDefinitionNames() {
+		List<String> names = new ArrayList<String>();
+		for (ComplexTypeChild child : this
+				.getDefaultingChildren(this.complexType)) {
+			names.add(String.format("DEFAULT_%s",
+					child.getJavaChildName().toUpperCase()));
+		}
+		return names;
+	}
+
+	private String getConstructor(final List<String> names) {
+		StringBuffer sb = new StringBuffer(1024);
+		if (names.size() > 0) {
+			sb.append("\tpublic ");
+			sb.append(this.implName);
+			sb.append("() {\n");
+			String suffixIn;
+			String suffixOut;
+			for (String nameIn : names) {
+				if (nameIn.startsWith("DEFAULT_IN")) {
+					suffixIn = nameIn.substring("DEFAULT_IN".length());
+					for (String nameOut : names) {
+						if (nameOut.startsWith("DEFAULT_OUT")) {
+							suffixOut = nameOut
+									.substring("DEFAULT_OUT".length());
+							if (suffixIn.equals(suffixOut)) {
+								sb.append(
+										"\t\tthis.tabularValueMap.put(DEFAULT_IN");
+								sb.append(suffixIn);
+								sb.append(", DEFAULT_OUT");
+								sb.append(suffixIn);
+								sb.append(");\n");
+							}
+						}
+					}
+				}
+			}
+			sb.append("\t}\n\n");
+		}
+		return sb.toString();
+	}
+
 	String generateImpl() {
 		this.log.debug("+generateImpl");
 
@@ -91,6 +138,12 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(";\n");
 		sb.append("\n");
 
+		List<String> defaultDefinitionNames = this.getDefaultDefinitionNames();
+		boolean tabularMapping = defaultDefinitionNames.size() > 1;
+		if (tabularMapping) {
+			importedClasses.add("java.util.HashMap");
+			importedClasses.add("java.util.Map");
+		}
 		for (String importedClass : importedClasses) {
 			sb.append("import ").append(importedClass).append(";\n");
 		}
@@ -121,6 +174,14 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		sb.append("\t/** The {@link ObjectFactory}. */\n");
 		sb.append("\tprivate final ObjectFactory of = new ObjectFactory();\n");
+
+		if (tabularMapping) {
+			sb.append(
+					"\t/** The {@link Map} to support tabular mappings. */\n");
+			sb.append(
+					"\tprivate final Map<String, String> tabularValueMap = new HashMap<String, String>();\n\n");
+			sb.append(this.getConstructor(defaultDefinitionNames));
+		}
 
 		sb.append("\n");
 		sb.append("\t/**\n");
@@ -162,7 +223,29 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.getSetterStatements("mappingType", children));
 		sb.append("\n");
 
-		sb.append("\t\tObject mappedValue = null;\n");
+		if (tabularMapping && children.size() == 1
+				&& children.get(0).getComplexType().isDirectMappingType()) {
+			sb.append("\t\tObject mappedValue = this.tabularValueMap.get(");
+			sb.append(children.get(0).getChildName());
+			sb.append(".getReturn());\n");
+
+			sb.append("\t\tif (mappedValue == null && ");
+			sb.append(children.get(0).getChildName());
+			sb.append(".getReturn() != null) {\n");
+			sb.append(
+					"\t\t\tfor (String key : this.tabularValueMap.keySet()) {\n");
+			sb.append("\t\t\t\tif (");
+			sb.append(children.get(0).getChildName());
+			sb.append(".getReturn().matches(key)) {\n");
+			sb.append(
+					"\t\t\t\t\tmappedValue = this.tabularValueMap.get(key);\n");
+			sb.append("\t\t\t\t}\n");
+			sb.append("\t\t\t}\n");
+			sb.append("\t\t}\n");
+
+		} else {
+			sb.append("\t\tObject mappedValue = null;\n");
+		}
 		if (returnValueClassName != null) {
 			sb.append("\t\t");
 			sb.append(returnValueClassName);
@@ -217,6 +300,13 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		}
 
 		sb.append("\n");
+		if (tabularMapping) {
+			if (defaultDefinitionNames.contains("DEFAULT_DEFAULT")) {
+				sb.append("\t\tif (mappedValue ==null){\n");
+			}
+			sb.append("\t\tmappedValue = DEFAULT_DEFAULT;\n");
+			sb.append("\t\t}\n");
+		}
 		sb.append("\t\tmappingType.setValue(mappedValue);\n");
 
 		if (returnValueClassName != null) {

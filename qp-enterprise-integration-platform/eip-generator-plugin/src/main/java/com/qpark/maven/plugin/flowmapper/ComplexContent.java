@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
@@ -23,6 +23,7 @@ public class ComplexContent {
 	boolean isInterfaceType;
 	String packageName;
 	QName qName;
+
 	ComplexContent(final ComplexType ct, final boolean isDirect,
 			final boolean isComplexUUID, final boolean isComplex,
 			final boolean isInterfaceType) {
@@ -33,9 +34,10 @@ public class ComplexContent {
 		this.isComplex = isComplex;
 		this.isInterfaceType = isInterfaceType;
 	}
+
 	public String getFQInterfaceName() {
 		return new StringBuffer(this.ct.getPackageName().length() + 1
 				+ this.interfaceName.length()).append(this.ct.getPackageName())
-				.append(".").append(this.interfaceName).toString();
+						.append(".").append(this.interfaceName).toString();
 	}
 }
