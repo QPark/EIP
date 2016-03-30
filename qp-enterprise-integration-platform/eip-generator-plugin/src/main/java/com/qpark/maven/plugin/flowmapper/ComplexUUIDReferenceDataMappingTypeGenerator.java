@@ -14,7 +14,6 @@ import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -43,14 +42,17 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 	}
 
 	public ComplexUUIDReferenceDataMappingTypeGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType complexType,
+			final String basicFlowPackageName,
+			final ComplexContent complexContent,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, basicFlowPackageName, complexType, complexContentList,
-				eipVersion, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, basicFlowPackageName, complexContent, complexContentList,
+				eipVersion, compileableSourceDirectory, preparedSourceDirectory,
+				log);
 	}
 
-	String generateImpl() {
+	String generateImplContent() {
 		this.log.debug("+generateImpl");
 		boolean isRefenenceUUIDValueMappingType = this.complexType
 				.getClassName().toLowerCase().endsWith("valuemappingtype");
@@ -260,12 +262,13 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		return sb.toString();
 	}
 
-	public void generateImpl(final File outputDirectory) {
-		String s = this.generateImpl();
+	@Override
+	public void generateImpl() {
+		String s = this.generateImplContent();
 
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
+		File f = Util.getFile(this.compileableSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
 		this.log.info(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {

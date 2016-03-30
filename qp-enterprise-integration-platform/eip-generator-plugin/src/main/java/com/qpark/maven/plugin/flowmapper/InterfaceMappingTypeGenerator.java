@@ -14,7 +14,6 @@ import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -35,14 +34,18 @@ public class InterfaceMappingTypeGenerator
 	}
 
 	public InterfaceMappingTypeGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType complexType,
+			final String basicFlowPackageName,
+			final ComplexContent complexContent,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, basicFlowPackageName, complexType, complexContentList,
-				eipVersion, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, basicFlowPackageName, complexContent, complexContentList,
+				eipVersion, compileableSourceDirectory, preparedSourceDirectory,
+				log);
 	}
 
-	public void generateImpl(final File outputDirectory) {
+	@Override
+	public void generateImpl() {
 		this.log.debug("+generateImpl");
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
@@ -159,9 +162,9 @@ public class InterfaceMappingTypeGenerator
 		sb.append("\t\treturn mappingType;\n");
 		sb.append("\t}\n");
 		sb.append("}\n");
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
+		File f = Util.getFile(this.preparedSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
 		this.log.info(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {

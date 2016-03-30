@@ -20,10 +20,15 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * @author bhausen
  */
-public class ComplexContentList {
+class ComplexContentList {
 	public static boolean isComplexMappingType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/MappingTypes}ComplexMappingType");
+	}
+
+	public static boolean isTabularMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}TabularMappingType");
 	}
 
 	public static boolean isMappingType(final SchemaType schemaType) {
@@ -93,6 +98,7 @@ public class ComplexContentList {
 				"{http://.*?/Interfaces/Mapping}MappingOutputType");
 	}
 
+	private final List<ComplexContent> tabularMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> complexMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> complexUUIDMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> defaultMappings = new ArrayList<ComplexContent>();
@@ -105,6 +111,13 @@ public class ComplexContentList {
 	 */
 	public List<ComplexContent> getComplexMappings() {
 		return this.complexMappings;
+	}
+
+	/**
+	 * @return the complexMappings
+	 */
+	public List<ComplexContent> getTabularMappings() {
+		return this.tabularMappings;
 	}
 
 	/**
@@ -144,39 +157,93 @@ public class ComplexContentList {
 
 	public void setupComplexContentLists(final XsdsUtil config) {
 		ComplexType response;
-		for (ComplexType complexType : config.getComplexTypes()) {
-			response = XsdsUtil.findResponse(complexType,
-					config.getComplexTypes(), config);
-			if (complexType.isRequestType() && response != null
-					&& isMapRequestType(complexType.getType())
+		for (ComplexType ct : config.getComplexTypes()) {
+			response = XsdsUtil.findResponse(ct, config.getComplexTypes(),
+					config);
+			if (ct.isRequestType() && response != null
+					&& isMapRequestType(ct.getType())
 					&& isMapResponseType(response.getType())) {
 				this.requestResponses
-						.add(new ComplexRequestResponse(complexType, response));
-			} else if (isDirectMappingType(complexType.getType())) {
-				this.directMappings.add(new ComplexContent(complexType, true,
-						false, false, false));
-			} else if (isComplexUUIDMappingType(complexType.getType())
-					&& !complexType.getClassName().toLowerCase()
-							.contains("lifecycle")
-					&& GeneratorMapperMojo.getValidChildren(complexType)
-							.size() > 1) {
-				this.complexUUIDMappings.add(new ComplexContent(complexType,
-						false, true, false, false));
-			} else if (isComplexMappingType(complexType.getType())) {
-				this.complexMappings.add(new ComplexContent(complexType, false,
-						false, true, false));
-			} else if (isInterfaceType(complexType.getType())) {
-				this.interfaceTypes.add(new ComplexContent(complexType, false,
-						false, false, true));
-			} else if (isDefaultMappingType(complexType.getType())) {
-				this.defaultMappings.add(new ComplexContent(complexType, false,
-						false, false, true));
-			} else if (isMappingType(complexType.getType())) {
+						.add(new ComplexRequestResponse(ct, response));
+			} else if (isDirectMappingType(ct.getType())) {
+				this.directMappings.add(new ComplexContent(ct).setDirect());
+			} else if (isTabularMappingType(ct.getType())) {
+				this.tabularMappings.add(new ComplexContent(ct).setTabular());
+			} else if (isComplexUUIDMappingType(ct.getType())
+					&& !ct.getClassName().toLowerCase().contains("lifecycle")
+					&& GeneratorMapperMojo.getValidChildren(ct).size() > 1) {
+				this.complexUUIDMappings
+						.add(new ComplexContent(ct).setComplexUUID());
+			} else if (isComplexMappingType(ct.getType())) {
+				this.complexMappings.add(new ComplexContent(ct).setComplex());
+			} else if (isInterfaceType(ct.getType())) {
+				this.interfaceTypes.add(new ComplexContent(ct).setInterface());
+			} else if (isDefaultMappingType(ct.getType())) {
+				this.defaultMappings.add(new ComplexContent(ct).setDefault());
+			} else if (isMappingType(ct.getType())) {
 				/* Add all remaining mapping types as complex mapping types. */
-				this.complexMappings.add(new ComplexContent(complexType, false,
-						false, true, false));
+				this.complexMappings.add(new ComplexContent(ct).setComplex());
 			}
 		}
+	}
+
+	public ComplexContent getComplexContent(final String namespace,
+			final String ctName) {
+		ComplexContent cc = null;
+		String qname;
+		for (ComplexContent complexContent : this.complexMappings) {
+			qname = complexContent.ct.toQNameString();
+			if (qname.endsWith(ctName) && qname.contains(namespace)) {
+				cc = complexContent;
+				break;
+			}
+		}
+		if (cc == null) {
+			for (ComplexContent complexContent : this.complexUUIDMappings) {
+				qname = complexContent.ct.toQNameString();
+				if (qname.endsWith(ctName) && qname.contains(namespace)) {
+					cc = complexContent;
+					break;
+				}
+			}
+		}
+		if (cc == null) {
+			for (ComplexContent complexContent : this.defaultMappings) {
+				qname = complexContent.ct.toQNameString();
+				if (qname.endsWith(ctName) && qname.contains(namespace)) {
+					cc = complexContent;
+					break;
+				}
+			}
+		}
+		if (cc == null) {
+			for (ComplexContent complexContent : this.directMappings) {
+				qname = complexContent.ct.toQNameString();
+				if (qname.endsWith(ctName) && qname.contains(namespace)) {
+					cc = complexContent;
+					break;
+				}
+			}
+		}
+		if (cc == null) {
+			for (ComplexContent complexContent : this.interfaceTypes) {
+				qname = complexContent.ct.toQNameString();
+				if (qname.endsWith(ctName) && qname.contains(namespace)) {
+					cc = complexContent;
+					break;
+				}
+			}
+		}
+		if (cc == null) {
+			for (ComplexContent complexContent : this.tabularMappings) {
+				qname = complexContent.ct.toQNameString();
+				if (qname.endsWith(ctName) && qname.contains(namespace)) {
+					cc = complexContent;
+					break;
+				}
+			}
+		}
+		return cc;
 	}
 
 }

@@ -72,7 +72,7 @@
 						<element name="operation" type="MPmTechSupport:ApplicationUserLog.operationNameMappingType"/>
 						<element name="version" type="MPmTechSupport:ApplicationUserLog.versionMappingType"/>
 						<element name="consumerName" type="MPmTechSupport:ApplicationUserLog.userNameMappingType"/>
-						<element name="consumerHost" type="MPmTechSupport:TechSupport.SystemUserLog.tabularHostnameMappingType"/>
+						<element name="consumerHost" type="MPmTechSupport:ApplicationUserLog.networkTabularMappingType"/>
 						<element name="duration" type="MPmTechSupport:ApplicationUserLog.durationStringMappingType"/>
 					</sequence>
 				</extension>

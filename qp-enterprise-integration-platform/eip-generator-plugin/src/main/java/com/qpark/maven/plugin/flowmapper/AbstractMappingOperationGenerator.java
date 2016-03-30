@@ -47,23 +47,26 @@ public abstract class AbstractMappingOperationGenerator
 	protected final String eipVersion;
 
 	public AbstractMappingOperationGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType request,
-			final ComplexType response,
+			final String basicFlowPackageName, final ComplexRequestResponse crr,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, complexContentList, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, complexContentList, compileableSourceDirectory,
+				preparedSourceDirectory, log);
 		this.basicFlowPackageName = basicFlowPackageName;
-		this.request = request;
-		this.response = response;
+		this.request = crr.request;
+		this.response = crr.response;
 		this.packageName = this.getPackageNameInterface();
 		this.packageNameImpl = this.getPackageNameImpl();
-		this.interfaceName = getInterfaceName(request);
+		this.interfaceName = getInterfaceName(this.request);
 		this.implName = this.getImplName();
 		this.eipVersion = eipVersion;
+		crr.packageName = this.packageName;
+		crr.interfaceName = this.interfaceName;
 	}
 
-	public Entry<String, String> generateInterface(
-			final File outputInterfacesDirectory) {
+	@Override
+	public final void generateInterface() {
 		this.log.debug("+generateInterface");
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> children = this
 				.getChildrenTree();
@@ -139,7 +142,7 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append(this.request.getClassNameFullQualified());
 		sb.append(" request, FlowContext flowContext);\n");
 		sb.append("}\n");
-		File f = Util.getFile(outputInterfacesDirectory, this.packageName,
+		File f = Util.getFile(this.compileableSourceDirectory, this.packageName,
 				new StringBuffer().append(this.interfaceName).append(".java")
 						.toString());
 		this.log.info(new StringBuffer().append("Write Inf  ")
@@ -151,8 +154,6 @@ public abstract class AbstractMappingOperationGenerator
 			e.printStackTrace();
 		}
 		this.log.debug("-generateInterface");
-		return new SimpleEntry<String, String>(this.packageName,
-				this.interfaceName);
 	}
 
 	@Override
@@ -207,8 +208,8 @@ public abstract class AbstractMappingOperationGenerator
 				if (cc != null
 						&& !usedInterfaces.contains(cc.getFQInterfaceName())) {
 					usedInterfaces.add(cc.getFQInterfaceName());
-					String varName = Util.lowerize(cc.interfaceName);
-					String className = cc.interfaceName;
+					String varName = Util.lowerize(cc.interfaceClassName);
+					String className = cc.interfaceClassName;
 					if (!importedClasses.contains(cc.getFQInterfaceName())) {
 						className = cc.getFQInterfaceName();
 					}
@@ -220,7 +221,7 @@ public abstract class AbstractMappingOperationGenerator
 					sb.append(className);
 					sb.append("}.\n\t */\n ");
 					sb.append("\tpublic void set");
-					sb.append(cc.interfaceName);
+					sb.append(cc.interfaceClassName);
 					sb.append("(");
 					sb.append(className);
 					sb.append(" ");

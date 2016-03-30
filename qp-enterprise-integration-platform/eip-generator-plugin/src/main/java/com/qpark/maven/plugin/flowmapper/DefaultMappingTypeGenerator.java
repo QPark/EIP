@@ -9,6 +9,7 @@ package com.qpark.maven.plugin.flowmapper;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,7 +19,6 @@ import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -64,14 +64,17 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 	}
 
 	public DefaultMappingTypeGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType complexType,
+			final String basicFlowPackageName,
+			final ComplexContent complexContent,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, basicFlowPackageName, complexType, complexContentList,
-				eipVersion, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, basicFlowPackageName, complexContent, complexContentList,
+				eipVersion, compileableSourceDirectory, preparedSourceDirectory,
+				log);
 	}
 
-	String generateImpl() {
+	String generateImplContent() {
 		this.log.debug("+generateImpl");
 
 		List<ComplexTypeChild> children = this.getChildren();
@@ -185,6 +188,10 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 			sb.append("new BigDecimal(\"");
 			sb.append(defaultValue);
 			sb.append("\")");
+		} else if (BigInteger.class.equals(defaultValueClass)) {
+			sb.append("new BigInteger(\"");
+			sb.append(defaultValue);
+			sb.append("\")");
 		} else {
 			sb.append(defaultValueClass.getSimpleName());
 			sb.append(".valueOf(\"");
@@ -251,11 +258,12 @@ public class DefaultMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	public void generateImpl(final File outputDirectory) {
-		String s = this.generateImpl();
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
+	@Override
+	public void generateImpl() {
+		String s = this.generateImplContent();
+		File f = Util.getFile(this.compileableSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
 		this.log.info(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {

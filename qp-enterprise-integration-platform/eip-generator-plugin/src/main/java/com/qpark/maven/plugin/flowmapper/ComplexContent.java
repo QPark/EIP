@@ -12,32 +12,56 @@ import javax.xml.namespace.QName;
 
 import com.qpark.maven.xmlbeans.ComplexType;
 
-public class ComplexContent {
+class ComplexContent {
 	ComplexType ct;
-
-	String interfaceName;
-
+	String interfaceClassName = "";
 	boolean isComplex;
 	boolean isComplexUUID;
+	boolean isDefault;
 	boolean isDirect;
 	boolean isInterfaceType;
-	String packageName;
+	boolean isTabular;
+	String interfacePackageName;
 	QName qName;
 
-	ComplexContent(final ComplexType ct, final boolean isDirect,
-			final boolean isComplexUUID, final boolean isComplex,
-			final boolean isInterfaceType) {
+	ComplexContent(final ComplexType ct) {
 		this.ct = ct;
 		this.qName = ct.getType().getName();
-		this.isDirect = isDirect;
-		this.isComplexUUID = isComplexUUID;
-		this.isComplex = isComplex;
-		this.isInterfaceType = isInterfaceType;
 	}
 
 	public String getFQInterfaceName() {
 		return new StringBuffer(this.ct.getPackageName().length() + 1
-				+ this.interfaceName.length()).append(this.ct.getPackageName())
-						.append(".").append(this.interfaceName).toString();
+				+ this.interfaceClassName.length()).append(this.ct.getPackageName())
+						.append(".").append(this.interfaceClassName).toString();
+	}
+
+	ComplexContent setComplex() {
+		this.isComplex = true;
+		return this;
+	}
+
+	ComplexContent setComplexUUID() {
+		this.isComplexUUID = true;
+		return this;
+	}
+
+	ComplexContent setDefault() {
+		this.isDefault = true;
+		return this;
+	}
+
+	ComplexContent setDirect() {
+		this.isDirect = true;
+		return this;
+	}
+
+	ComplexContent setInterface() {
+		this.isInterfaceType = true;
+		return this;
+	}
+
+	ComplexContent setTabular() {
+		this.isTabular = true;
+		return this;
 	}
 }

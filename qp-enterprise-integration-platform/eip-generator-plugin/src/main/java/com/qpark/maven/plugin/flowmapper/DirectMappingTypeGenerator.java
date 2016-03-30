@@ -11,14 +11,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.xmlbeans.SchemaType;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -45,16 +40,18 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
-
 	public DirectMappingTypeGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType complexType,
+			final String basicFlowPackageName,
+			final ComplexContent complexContent,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, basicFlowPackageName, complexType, complexContentList,
-				eipVersion, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, basicFlowPackageName, complexContent, complexContentList,
+				eipVersion, compileableSourceDirectory, preparedSourceDirectory,
+				log);
 	}
 
-	private String generateImpl() {
+	private String generateImplContent() {
 		this.log.debug("+generateImpl");
 
 		String[] propertyNames = getDirectAccessProperties(
@@ -69,14 +66,14 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		if (propertyNames.length == 0) {
 			String msg = new StringBuffer(132)
-					.append(this.complexType.getType().getName().getLocalPart())
+					.append(this.complexType.toQNameString())
 					.append(" does not provide a direct mapping!").toString();
 			this.log.error(msg);
 			throw new IllegalStateException(msg);
 		}
 		if (children.isEmpty()) {
 			String msg = new StringBuffer(132)
-					.append(this.complexType.getType().getName().getLocalPart())
+					.append(this.complexType.toQNameString())
 					.append(" does not contain a child to get the direct mapping value from!")
 					.toString();
 			this.log.error(msg);
@@ -214,7 +211,8 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		boolean lastCascadedIsList = false;
 		for (int i = 0; i < propertyNames.length; i++) {
 			ctc = ctc.getComplexType().getChild(propertyNames[i]);
-			lastCascadedClassDefinition = ctc.getComplexType().getClassNameFullQualified();
+			lastCascadedClassDefinition = ctc.getComplexType()
+					.getClassNameFullQualified();
 			lastCascadedIsList = ctc.isList();
 			sb.append("\t\t");
 			sb.append(ctc.getJavaVarDefinition());
@@ -253,11 +251,12 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	public void generateImpl(final File outputDirectory) {
-		String s = this.generateImpl();
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
+	@Override
+	public void generateImpl() {
+		String s = this.generateImplContent();
+		File f = Util.getFile(this.compileableSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
 		this.log.info(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {

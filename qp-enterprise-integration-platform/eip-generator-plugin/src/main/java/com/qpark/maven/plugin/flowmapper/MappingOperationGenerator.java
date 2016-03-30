@@ -24,15 +24,15 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 public class MappingOperationGenerator
 		extends AbstractMappingOperationGenerator {
 	public MappingOperationGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType request,
-			final ComplexType response,
+			final String basicFlowPackageName, final ComplexRequestResponse crr,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, basicFlowPackageName, request, response,
-				complexContentList, eipVersion, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, basicFlowPackageName, crr, complexContentList, eipVersion,
+				compileableSourceDirectory, preparedSourceDirectory, log);
 	}
 
-	String generateImpl() {
+	String generateImplContent() {
 		this.log.debug("+generateImpl");
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
@@ -188,12 +188,13 @@ public class MappingOperationGenerator
 		return sb.toString();
 	}
 
-	public void generateImpl(final File outputDirectory) {
+	@Override
+	public void generateImpl() {
 		this.log.debug("+generateImpl");
-		String source = this.generateImpl();
-		File f = Util.getFile(outputDirectory, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
+		String source = this.generateImplContent();
+		File f = Util.getFile(this.preparedSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
 		this.log.info(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {
@@ -252,7 +253,7 @@ public class MappingOperationGenerator
 			}
 		} else if (cc.isDirect || cc.isComplex) {
 			sb.append("this.");
-			sb.append(Util.lowerize(cc.interfaceName));
+			sb.append(Util.lowerize(cc.interfaceClassName));
 			sb.append(".createMappingType(");
 			int i = 0;
 			for (ComplexTypeChild ccChild : cc.ct.getChildren()) {
@@ -275,7 +276,7 @@ public class MappingOperationGenerator
 			}
 		} else {
 			sb.append("null;//");
-			sb.append(Util.lowerize(cc.interfaceName));
+			sb.append(Util.lowerize(cc.interfaceClassName));
 			sb.append(".createMappingType(flowContext);\n");
 			sb.insert(0, "\t\t// TODO Nothing found to be done here!\n");
 		}

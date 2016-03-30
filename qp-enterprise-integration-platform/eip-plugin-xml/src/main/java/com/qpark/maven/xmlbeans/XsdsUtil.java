@@ -51,7 +51,6 @@ import org.apache.xmlbeans.XmlUnsignedShort;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.qpark.maven.Util;
 
@@ -257,6 +256,9 @@ public class XsdsUtil {
 		if (schemaType != null && schemaType.getName() != null) {
 			if (schemaType.getName().getLocalPart().equals("string")) {
 				c = String.class;
+			} else if (schemaType.getName().getLocalPart()
+					.equals("normalizedString")) {
+				c = String.class;
 			} else if (schemaType.getName().getLocalPart().equals("dateTime")) {
 				c = Date.class;
 			} else if (schemaType.getName().getLocalPart().equals("time")) {
@@ -282,6 +284,23 @@ public class XsdsUtil {
 			} else if (schemaType.getName().getLocalPart()
 					.equals("hexBinary")) {
 				c = byte[].class;
+
+			} else if (schemaType.getName().getLocalPart()
+					.equals("positiveInteger")) {
+				c = Integer.class;
+			} else if (schemaType.getName().getLocalPart()
+					.equals("negativeInteger")) {
+				c = Integer.class;
+			} else if (schemaType.getName().getLocalPart()
+					.equals("nonPositiveInteger")) {
+				c = Integer.class;
+			} else if (schemaType.getName().getLocalPart()
+					.equals("nonNegativeInteger")) {
+				c = Integer.class;
+
+			} else if (schemaType.getName().getLocalPart()
+					.equals("anySimpleType")) {
+				c = String.class;
 			}
 		}
 		return c;
@@ -461,18 +480,15 @@ public class XsdsUtil {
 	 * @return the {@link Comparator}.
 	 */
 	public static Comparator<QName> getQNameComparator() {
-		Comparator<QName> comparator = new Comparator<QName>() {
-			@Override
-			public int compare(final QName o1, final QName o2) {
-				if (o1 == o2) {
-					return 0;
-				} else if (o2 == null) {
-					return -1;
-				} else if (o1 == null) {
-					return 1;
-				} else {
-					return o1.toString().compareTo(o2.toString());
-				}
+		Comparator<QName> comparator = (o1, o2) -> {
+			if (o1 == o2) {
+				return 0;
+			} else if (o2 == null) {
+				return -1;
+			} else if (o1 == null) {
+				return 1;
+			} else {
+				return o1.toString().compareTo(o2.toString());
 			}
 		};
 		return comparator;
@@ -938,19 +954,16 @@ public class XsdsUtil {
 
 	/** The {@link TreeSet} of {@link ComplexType}. */
 	private final TreeSet<ComplexType> complexTypes = new TreeSet<ComplexType>(
-			new Comparator<ComplexType>() {
-				@Override
-				public int compare(final ComplexType o1, final ComplexType o2) {
-					if (o1 == o2) {
-						return 0;
-					} else if (o2 == null) {
-						return -1;
-					} else if (o1 == null) {
-						return 1;
-					} else {
-						return o1.getClassNameFullQualified()
-								.compareTo(o2.getClassNameFullQualified());
-					}
+			(o1, o2) -> {
+				if (o1 == o2) {
+					return 0;
+				} else if (o2 == null) {
+					return -1;
+				} else if (o1 == null) {
+					return 1;
+				} else {
+					return o1.getClassNameFullQualified()
+							.compareTo(o2.getClassNameFullQualified());
 				}
 			});
 
@@ -961,36 +974,28 @@ public class XsdsUtil {
 	private final String deltaPackageNameSuffix;
 	/** The {@link TreeSet} of {@link ElementType}. */
 	private final TreeSet<ElementType> elementTypes = new TreeSet<ElementType>(
-			new Comparator<ElementType>() {
-				@Override
-				public int compare(final ElementType o1, final ElementType o2) {
-					if (o1 == o2) {
-						return 0;
-					} else if (o2 == null) {
-						return -1;
-					} else if (o1 == null) {
-						return 1;
-					} else {
-						return getQNameComparator().compare(
-								o1.getElement().getName(),
-								o2.getElement().getName());
-					}
+			(o1, o2) -> {
+				if (o1 == o2) {
+					return 0;
+				} else if (o2 == null) {
+					return -1;
+				} else if (o1 == null) {
+					return 1;
+				} else {
+					return getQNameComparator().compare(
+							o1.getElement().getName(),
+							o2.getElement().getName());
 				}
 			});
 
 	/** The {@link EntityResolver} for the local xsds. */
-	private final EntityResolver entityResolver = new EntityResolver() {
-		@Override
-		public InputSource resolveEntity(final String publicId,
-				final String systemId) throws SAXException, IOException {
-			if (XsdsUtil.this.getXsdContainerMap().containsKey(publicId)) {
-				InputSource is = new InputSource(
-						new FileInputStream(XsdsUtil.this.getXsdContainerMap()
-								.get(publicId).getFile()));
-				return is;
-			} else {
-				return null;
-			}
+	private final EntityResolver entityResolver = (publicId, systemId) -> {
+		if (XsdsUtil.this.getXsdContainerMap().containsKey(publicId)) {
+			InputSource is = new InputSource(new FileInputStream(XsdsUtil.this
+					.getXsdContainerMap().get(publicId).getFile()));
+			return is;
+		} else {
+			return null;
 		}
 	};
 

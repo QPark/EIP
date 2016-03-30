@@ -80,8 +80,17 @@
 		</complexContent>
 	</complexType>
 	<complexType name="TabularMappingType">
+		<annotation><documentation>
+			Supports tabular (key->value) mappings. 
+			Input value element names need to start with 'key' and output value element names with 'value'.
+			The key and value content need to be specified with the 'default' attribute of the elements.
+			An the value given with element 'key_xyz' will be mapped to a value of the element 'value_xyz'.
+			A map of key->value pairs defines the mapping possibilities. 
+			A mapping type (having a 'return' element defined) is used as input. This will be used as key to set the return out of the mapping possibilities.
+			A default value could be specified with element name 'default'. 
+			</documentation></annotation>
 		<complexContent>
-			<extension base="MPmp:MappingType"/>
+			<extension base="MPmp:ComplexMappingType"/>
 		</complexContent>
 	</complexType>	
 	<complexType name="ComplexUUIDMappingType">

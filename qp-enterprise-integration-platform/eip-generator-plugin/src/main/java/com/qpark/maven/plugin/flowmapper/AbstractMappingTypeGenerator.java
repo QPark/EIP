@@ -45,21 +45,26 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	protected final String eipVersion;
 
 	public AbstractMappingTypeGenerator(final XsdsUtil config,
-			final String basicFlowPackageName, final ComplexType complexType,
+			final String basicFlowPackageName,
+			final ComplexContent complexContent,
 			final ComplexContentList complexContentList,
-			final String eipVersion, final Log log) {
-		super(config, complexContentList, log);
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, complexContentList, compileableSourceDirectory,
+				preparedSourceDirectory, log);
 		this.basicFlowPackageName = basicFlowPackageName;
-		this.complexType = complexType;
+		this.complexType = complexContent.ct;
 		this.packageName = this.getPackageNameInterface();
 		this.packageNameImpl = this.getPackageNameImpl();
-		this.interfaceName = getInterfaceName(complexType);
+		this.interfaceName = getInterfaceName(this.complexType);
 		this.implName = this.getImplName();
 		this.eipVersion = eipVersion;
+		complexContent.interfaceClassName = this.interfaceName;
+		complexContent.interfacePackageName = this.packageName;
 	}
 
-	public Entry<String, String> generateInterface(
-			final File outputInterfacesDirectory) {
+	@Override
+	public final void generateInterface() {
 		this.log.debug("+generateInterface");
 
 		List<ComplexTypeChild> children = this.getChildren();
@@ -148,7 +153,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append("FlowContext flowContext");
 		sb.append(");\n");
 		sb.append("}\n");
-		File f = Util.getFile(outputInterfacesDirectory, this.packageName,
+		File f = Util.getFile(this.compileableSourceDirectory, this.packageName,
 				new StringBuffer().append(this.interfaceName).append(".java")
 						.toString());
 		this.log.info(new StringBuffer().append("Write Inf  ")
@@ -160,12 +165,26 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 			e.printStackTrace();
 		}
 		this.log.debug("-generateInterface");
-		return new SimpleEntry<String, String>(this.packageName,
-				this.interfaceName);
 	}
 
 	protected List<ComplexTypeChild> getChildren() {
 		return GeneratorMapperMojo.getValidChildren(this.complexType);
+	}
+
+	protected ComplexTypeChild getReturnChild() {
+		ComplexTypeChild returnChild = this.getReturnChild(this.complexType);
+		return returnChild;
+	}
+
+	protected ComplexTypeChild getReturnChild(final ComplexType ct) {
+		ComplexTypeChild returnChild = null;
+		for (ComplexTypeChild child : ct.getChildren()) {
+			if (child.getChildName().equals("return")) {
+				returnChild = child;
+				break;
+			}
+		}
+		return returnChild;
 	}
 
 	protected String getChildrenImports(final List<ComplexTypeChild> children) {

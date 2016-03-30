@@ -8,13 +8,17 @@
  ******************************************************************************/
 package com.qpark.maven.plugin.flowmapper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.namespace.QName;
+
 import org.apache.maven.plugin.logging.Log;
+import org.apache.xmlbeans.SchemaType;
 
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
@@ -67,10 +71,40 @@ public abstract class AbstractGenerator {
 	}
 
 	public static void main(final String[] args) {
-		System.out.println(toJavadocHeader("a\t\t\tb\n\tc d e f"));
-		String s = "'Activated' if bandwidth segment life cycle UUID is part 		 of the reference data category\n\t\t\t\t'Lifecycle State Filter: 		 Bandwidth Segments: Transfer' else 'Deactivated'\n\n\n";
-		System.out.println(toJavadocHeader(s));
-		System.out.println(toJavadocHeader("Number of xclj"));
+		String basePackageName = "com.qpark.eip.inf";
+		String xsdPath = "C:\\xnb\\dev\\xxxx\\domain-gen-flow\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\38\\com.ses.domain\\com.ses.domain.gen\\domain-gen-flow\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
+		File dif = new File(xsdPath);
+		String messagePackageNameSuffix = "mapping flow";
+		long start = System.currentTimeMillis();
+		XsdsUtil xsds = new XsdsUtil(dif, "a.b.c.bus", messagePackageNameSuffix,
+				"delta");
+		ComplexContentList complexContentList = new ComplexContentList();
+		complexContentList.setupComplexContentLists(xsds);
+		System.out
+				.println(Util.getDuration(System.currentTimeMillis() - start));
+
+		String source = null;
+		ComplexType ct;
+		ComplexContent cc;
+		SchemaType type;
+		String ctNamespace;
+		String ctName;
+
+		ctName = "TblSaTrace.recIndexMappingType";
+		ctNamespace = "http://www.ses.com/Interfaces/MonicsSMSRBMappingTypes";
+		ctName = "ApplicationUserLog.networkToLongTabularMappingType";
+		ctNamespace = "http://www.samples.com/Interfaces/TechnicalSupportMappingTypes";
+		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
+		type = ct.getType().getElementProperties()[0].getType();
+		cc = complexContentList.getComplexContent(ctNamespace, ctName);
+
+		TabularMappingTypeGenerator directMapper = new TabularMappingTypeGenerator(
+				xsds, basePackageName, cc, complexContentList, ctName, dif, dif,
+				new org.apache.maven.plugin.logging.SystemStreamLog());
+		source = directMapper.generateImplContent();
+		System.out.println(source);
 	}
 
 	public static String toJavadocHeader(final String documentation) {
@@ -114,13 +148,23 @@ public abstract class AbstractGenerator {
 	protected final Log log;
 	protected String packageName;
 	protected String packageNameImpl;
+	protected File compileableSourceDirectory;
+	protected File preparedSourceDirectory;
 
 	AbstractGenerator(final XsdsUtil config,
-			final ComplexContentList complexContentList, final Log log) {
+			final ComplexContentList complexContentList,
+			final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
 		this.config = config;
 		this.complexContentList = complexContentList;
 		this.log = log;
+		this.compileableSourceDirectory = compileableSourceDirectory;
+		this.preparedSourceDirectory = preparedSourceDirectory;
 	}
+
+	public abstract void generateImpl();
+
+	public abstract void generateInterface();
 
 	protected final void getChildrenImports(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree,
@@ -238,43 +282,10 @@ public abstract class AbstractGenerator {
 	}
 
 	protected final ComplexContent getMapperDefinition(final ComplexType ct) {
-		ComplexContent cc = null;
-		for (ComplexContent complexContent : this.complexContentList
-				.getDirectMappings()) {
-			if (complexContent.ct.getClassNameFullQualified()
-					.equals(ct.getClassNameFullQualified())) {
-				cc = complexContent;
-				break;
-			}
-		}
-		if (cc == null) {
-			for (ComplexContent complexContent : this.complexContentList
-					.getDefaultMappings()) {
-				if (complexContent.ct.getClassNameFullQualified()
-						.equals(ct.getClassNameFullQualified())) {
-					cc = complexContent;
-					break;
-				}
-			}
-		}
-		if (cc == null) {
-			for (ComplexContent complexContent : this.complexContentList
-					.getComplexMappings()) {
-				if (complexContent.ct.getClassNameFullQualified()
-						.equals(ct.getClassNameFullQualified())) {
-					cc = complexContent;
-					break;
-				}
-			}
-		}
-		if (cc == null) {
-			// for (ComplexContent complexContent : this.interfaceTypes) {
-			// if (complexContent.ct.getClassNameFullQualified().equals(
-			// ct.getClassNameFullQualified())) {
-			// cc = complexContent;
-			// break;
-			// }
-			// }
+		ComplexContent cc = this.complexContentList.getComplexContent(
+				ct.getTargetNamespace(), ct.getQNameLocalPart());
+		if (cc != null && cc.isInterfaceType) {
+			cc = null;
 		}
 		return cc;
 	}
@@ -291,7 +302,7 @@ public abstract class AbstractGenerator {
 				if (cc != null
 						&& !usedInterfaces.contains(cc.getFQInterfaceName())) {
 					usedInterfaces.add(cc.getFQInterfaceName());
-					String varName = Util.lowerize(cc.interfaceName);
+					String varName = Util.lowerize(cc.interfaceClassName);
 					String className = cc.getFQInterfaceName();
 					// if (!importedClasses.contains(cc.getFQInterfaceName())) {
 					// className = cc.getFQInterfaceName();

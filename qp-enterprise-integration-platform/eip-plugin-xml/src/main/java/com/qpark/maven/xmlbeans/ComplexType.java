@@ -453,6 +453,17 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
+	 * @return
+	 */
+	public String getQNameLocalPart() {
+		String localpart = "";
+		if (this.type.getName() != null) {
+			localpart = this.type.getName().getLocalPart();
+		}
+		return localpart;
+	}
+
+	/**
 	 * @return the type
 	 */
 	public SchemaType getType() {

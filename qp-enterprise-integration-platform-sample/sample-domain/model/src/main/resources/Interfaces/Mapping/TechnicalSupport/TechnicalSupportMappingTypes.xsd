@@ -264,21 +264,56 @@ The ComplexMappingTypes could be done as a DirectMappingType too. Here it is don
 			</extension>
 		</complexContent>
 	</complexType>
-
-	<complexType name="TechSupport.SystemUserLog.tabularHostnameMappingType">
-		<annotation><documentation>Map the fixed input string to the output string</documentation></annotation>
+	<complexType name="ApplicationUserLog.networkTabularMappingType">
+		<annotation><documentation>Map the hostname to a network identifier</documentation></annotation>
 		<complexContent>
-			<extension base="MPmp:ComplexMappingType">
+			<extension base="MPmp:TabularMappingType">
 				<sequence>
-					<element name="systemUserReport" type="MPmTechSupport:ApplicationUserLog.hostNameMappingType"/>
-					<element name="in0" type="string" default="127.0.0.1" />
-					<element name="out0" type="string" default="localhost" />
-					<element name="in1" type="string" default="localhost" />
-					<element name="out1" type="string" default="localhost" />
-					<element name="in2" type="string" default="192.168.*" />
-					<element name="out2" type="string" default="internalNetwork" />
+					<element name="hostname" type="MPmTechSupport:ApplicationUserLog.hostNameMappingType"/>
+					<element name="key0" type="string" default="127.0.0.1" />
+					<element name="value0" type="string" default="localhost" />
+					<element name="key1" type="string" default="localhost" />
+					<element name="value1" type="string" default="localhost" />
+					<element name="key2" type="string" default="192.168.*" />
+					<element name="value2" type="string" default="internalNetwork" />
 					<element name="default" type="string" default="externalNetwork" />
 					<element name="return" type="string"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="ApplicationUserLog.networkToLongTabularMappingType">
+		<annotation><documentation>Map the hostname to a network identifier</documentation></annotation>
+		<complexContent>
+			<extension base="MPmp:TabularMappingType">
+				<sequence>
+					<element name="network" type="MPmTechSupport:ApplicationUserLog.networkTabularMappingType"/>
+					<element name="key0" type="string" default="localhost" />
+					<element name="value0" type="long" default="1234567" />
+					<element name="key1" type="string" default="internalNetwork" />
+					<element name="value1" type="long" default="2345678" />
+					<element name="key2" type="string" default="externalNetwork" />
+					<element name="value2" type="long" default="3456789" />
+					<element name="default" type="string" default="9876543" />
+					<element name="return" type="long"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="ApplicationUserLog.networkLongToDoubleTabularMappingType">
+		<annotation><documentation>Map the hostname to a network identifier</documentation></annotation>
+		<complexContent>
+			<extension base="MPmp:TabularMappingType">
+				<sequence>
+					<element name="hostname" type="MPmTechSupport:ApplicationUserLog.networkToLongTabularMappingType"/>
+					<element name="key0" type="long" default="1234567" />
+					<element name="value0" type="double" default="123.4567" />
+					<element name="key1" type="long" default="2345678" />
+					<element name="value1" type="double" default="234.5678" />
+					<element name="key2" type="long" default="3456789" />
+					<element name="value2" type="double" default="3456.789" />
+					<element name="default" type="double" default="9876.543" />
+					<element name="return" type="double"/>
 				</sequence>
 			</extension>
 		</complexContent>
