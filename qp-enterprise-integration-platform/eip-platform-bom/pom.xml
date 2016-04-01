@@ -500,11 +500,13 @@
 									</reportSet>
 								</reportSets>
 							</plugin>
+							<!-- Only possible with a source code repository assigned
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-changelog-plugin</artifactId>
 								<version>${plugin.org.apache.maven.plugins.maven-changelog-plugin.version}</version>
 							</plugin>
+							-->
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-dependency-plugin</artifactId>
@@ -547,7 +549,7 @@
 							<plugin>
 								<groupId>org.codehaus.mojo</groupId>
 								<artifactId>findbugs-maven-plugin</artifactId>
-								<version>plugin.org.codehaus.mojo.findbugs-maven-plugin.version</version>
+								<version>${plugin.org.codehaus.mojo.findbugs-maven-plugin.version}</version>
 								<configuration>
 									<xmlOutput>true</xmlOutput>
 									<xmlOutputDirectory>target/site</xmlOutputDirectory>
