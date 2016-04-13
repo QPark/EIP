@@ -100,6 +100,27 @@ public class ComplexType implements Comparable<ComplexType> {
 				"{http://.*?/Interfaces/Mapping}MappingOutputType");
 	}
 
+	private static void setServiceRequestResponseDetection(final XsdsUtil config,
+			final ComplexType ct) {
+		if (ct.getClassName() != null) {
+			int indexRequest = ct.getClassName()
+					.lastIndexOf(config.getServiceRequestSuffix());
+			int indexResponse = ct.getClassName()
+					.lastIndexOf(config.getServiceResponseSuffix());
+			if (indexRequest > 0 && indexResponse > 0) {
+				if (indexRequest > indexResponse) {
+					ct.requestType = true;
+				} else {
+					ct.responseType = true;
+				}
+			} else if (indexRequest > 0) {
+				ct.requestType = true;
+			} else if (indexResponse > 0) {
+				ct.responseType = true;
+			}
+		}
+	}
+
 	private final String annotationDocumentation;
 	private ComplexType baseComplexType;
 	private List<ComplexTypeChild> children;
@@ -213,18 +234,8 @@ public class ComplexType implements Comparable<ComplexType> {
 			if (this.parent != null) {
 				this.parent.getInnerTypeDefs().add(this);
 			}
-			if (this.className
-					.lastIndexOf(config.getServiceRequestSuffix()) > 0) {
-				this.requestType = true;
-			} else {
-				this.requestType = false;
-			}
-			if (this.className
-					.lastIndexOf(config.getServiceResponseSuffix()) > 0) {
-				this.responseType = true;
-			} else {
-				this.responseType = false;
-			}
+			setServiceRequestResponseDetection(config, this);
+
 			SchemaType st = type.getBaseType();
 			if (st != null && st.getName() != null) {
 				this.baseComplexType = config.getComplexType(st.getName());
