@@ -303,16 +303,28 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		ComplexTypeChild child = object.getComplexType()
 				.getChild(propertyNames[index]);
 
+		String optionalName = String.format("optional%s", tabs.length());
+
 		sb.append("").append(tabs);
 		sb.append("if (").append(object.getJavaChildName()).append(" != null");
 		if (object.isList()) {
 			sb.append(" && ").append(object.getJavaChildName())
 					.append(".size() > 0");
-		} else if (child.isJavaPrimitive()) {
-			sb.append(" && ").append(object.getJavaChildName()).append(".")
-					.append(child.getGetterName()).append("() != null");
 		}
 		sb.append(") {\n");
+		if (child.isJavaPrimitive()) {
+			sb.append("\t").append(tabs);
+			sb.append("Optional<?> ").append(optionalName);
+			sb.append(" = Optional.ofNullable(")
+					.append(object.getJavaChildName());
+			sb.append(".").append(child.getGetterName());
+			sb.append("());\n");
+			sb.append("\t").append(tabs);
+			sb.append("if (").append(optionalName).append(".isPresent()) {\n");
+		}
+		if (child.isJavaPrimitive()) {
+			sb.append("\t");
+		}
 		sb.append(tabs).append("\t/* Get the ");
 		sb.append(propertyName);
 		sb.append(" of ");
@@ -322,6 +334,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		}
 		sb.append(". */\n");
 
+		if (child.isJavaPrimitive()) {
+			sb.append("\t");
+		}
 		sb.append(tabs).append("\t");
 		sb.append(propertyName).append(" = ");
 		sb.append(object.getJavaChildName());
@@ -332,6 +347,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		index++;
 		if (index < propertyNames.length) {
 			sb.append(this.getProperty(child, index, propertyNames));
+		}
+		if (child.isJavaPrimitive()) {
+			sb.append("\t").append(tabs).append("}\n");
 		}
 
 		sb.append(tabs).append("}\n");
