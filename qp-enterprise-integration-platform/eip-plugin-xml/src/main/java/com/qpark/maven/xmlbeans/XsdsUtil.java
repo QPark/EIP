@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
-import org.apache.xmlbeans.SchemaGlobalElement;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
@@ -1043,6 +1043,7 @@ public class XsdsUtil {
 			final String serviceRequestSuffix,
 			final String serviceResponseSuffix) {
 		long start = System.currentTimeMillis();
+		long startX = System.currentTimeMillis();
 		this.logger.debug("XsdsUtil");
 		this.baseDirectory = baseDirectory;
 		this.basePackageName = basePackageName == null ? "" : basePackageName;
@@ -1058,19 +1059,54 @@ public class XsdsUtil {
 		this.serviceResponseSuffix = serviceResponseSuffix == null
 				|| serviceResponseSuffix.trim().length() == 0 ? "Response"
 						: serviceResponseSuffix;
+
+		startX = System.currentTimeMillis();
 		this.xsdFiles = getXsdFiles(this.baseDirectory);
-		this.logger.debug("{} Got xsd files",
-				Util.getDuration(System.currentTimeMillis() - start));
+		this.logger.debug("{} to get {} xsd files",
+				Util.getDuration(System.currentTimeMillis() - startX),
+				this.xsdFiles.size());
 
+		startX = System.currentTimeMillis();
 		this.xsdContainerMap = setupXsdContainers(this.xsdFiles, baseDirectory);
-		this.logger.debug("{} Got xsd containers",
-				Util.getDuration(System.currentTimeMillis() - start));
+		this.logger.debug("{} to get XsdContainers out of {} files",
+				Util.getDuration(System.currentTimeMillis() - startX),
+				this.xsdFiles.size());
 
-		int i = 0;
-		long startParse = System.currentTimeMillis();
-		long stsSum = 0;
-		for (File f : this.xsdFiles) {
-			i++;
+		// List<SchemaTypeSystem> stss =
+		// this.xsdFiles.parallelStream().parallel()
+		// .map(f -> XsdsUtil.getSchemaTypeSystem(f,
+		// (publicId, systemId) -> {
+		// XsdContainer xc = XsdsUtil.this.getXsdContainerMap()
+		// .get(publicId);
+		// if (xc != null) {
+		// return new InputSource(
+		// new FileInputStream(xc.getFile()));
+		// } else {
+		// return null;
+		// }
+		// }))
+		// .collect(Collectors.toList());
+		// this.logger.info("{} Got elements and complex type of {} files",
+		// Util.getDuration(System.currentTimeMillis() - start),
+		// this.xsdFiles.size());
+		// stss.parallelStream().parallel()
+		// .forEach(sts -> Arrays.asList(sts.globalElements()).stream()
+		// .forEach(elem -> this.elementTypes
+		// .add(new ElementType(elem, this))));
+		// stss.stream().forEach(sts ->
+		// Arrays.asList(sts.globalTypes()).stream()
+		// .forEach(type -> {
+		// if (!this.complexTypeMap
+		// .containsKey(String.valueOf(type.getName()))) {
+		// ComplexType ct = new ComplexType(type, this);
+		// this.complexTypeMap.put(
+		// String.valueOf(ct.getType().getName()), ct);
+		// this.setupComplexTypes(ct, this.complexTypes);
+		// }
+		// }));
+
+		startX = System.currentTimeMillis();
+		this.xsdFiles.parallelStream().parallel().forEach((f -> {
 			long startf = System.currentTimeMillis();
 			SchemaTypeSystem sts = getSchemaTypeSystem(f, this.entityResolver);
 			if (sts == null) {
@@ -1078,12 +1114,9 @@ public class XsdsUtil {
 						"Could not parse a valid SchemaTypeSystem from file %s",
 						f.getAbsolutePath()));
 			}
-			stsSum += System.currentTimeMillis() - startf;
-			for (SchemaGlobalElement elem : sts.globalElements()) {
-				ElementType elementType = new ElementType(elem, this);
-				this.elementTypes.add(elementType);
-			}
-			for (SchemaType type : sts.globalTypes()) {
+			Arrays.asList(sts.globalElements()).stream().forEach(
+					elem -> this.elementTypes.add(new ElementType(elem, this)));
+			Arrays.asList(sts.globalTypes()).stream().forEach(type -> {
 				if (!this.complexTypeMap
 						.containsKey(String.valueOf(type.getName()))) {
 					ComplexType ct = new ComplexType(type, this);
@@ -1091,21 +1124,24 @@ public class XsdsUtil {
 							.put(String.valueOf(ct.getType().getName()), ct);
 					this.setupComplexTypes(ct, this.complexTypes);
 				}
-			}
-			this.logger.debug("{} Got elements and complex type of file {}",
+			});
+			this.logger.debug("{} to get elements and complex type of file {}",
 					Util.getDuration(System.currentTimeMillis() - startf),
 					f.getAbsolutePath());
-		}
-		this.logger.debug("{} Got elements and complex type of {} files",
-				Util.getDuration(System.currentTimeMillis() - start), i);
-		this.logger.debug("{} duration to get ComplexTypes and ElementTypes",
-				Util.getDuration(System.currentTimeMillis() - startParse));
-		this.logger.debug("{} duration to get SchemaTypeSystem",
-				Util.getDuration(stsSum));
+		}));
+		this.logger.info(
+				"{} to get {} complexTypes and {} elementTypes out of {} files",
+				Util.getDuration(System.currentTimeMillis() - startX),
+				this.complexTypes.size(), this.elementTypes.size(),
+				this.xsdFiles.size());
 
+		startX = System.currentTimeMillis();
 		ServiceIdRegistry.setupServiceIdTree(this);
-		this.logger.info("Setup serviceIds: {}",
+		this.logger.debug("{} to get serviceIds: {}",
+				Util.getDuration(System.currentTimeMillis() - startX),
 				ServiceIdRegistry.getAllServiceIds());
+
+		startX = System.currentTimeMillis();
 		for (ComplexType ct : this.complexTypes) {
 			ct.initChildren(this);
 			if (ct.getType() != null) {
@@ -1113,9 +1149,10 @@ public class XsdsUtil {
 						ct);
 			}
 		}
-		this.logger.debug("{} Init complex type children",
-				Util.getDuration(System.currentTimeMillis() - start));
+		this.logger.debug("{} to init complexType children",
+				Util.getDuration(System.currentTimeMillis() - startX));
 
+		startX = System.currentTimeMillis();
 		for (XsdContainer xsdContainer : this.xsdContainerMap.values()) {
 			try {
 				setupComplexTypeChildrenDocumentation(xsdContainer,
@@ -1124,8 +1161,12 @@ public class XsdsUtil {
 				e.printStackTrace();
 			}
 		}
-		this.logger.debug("{} Init complex type children",
-				Util.getDuration(System.currentTimeMillis() - start));
+		this.logger.debug("{} to setup complexType children documentation",
+				Util.getDuration(System.currentTimeMillis() - startX));
+		this.logger.info("{} to create {} with ServiceIds: ",
+				Util.getDuration(System.currentTimeMillis() - start),
+				this.getClass().getSimpleName(),
+				ServiceIdRegistry.getAllServiceIds());
 	}
 
 	/**
