@@ -308,6 +308,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		if (object.isList()) {
 			sb.append(" && ").append(object.getJavaChildName())
 					.append(".size() > 0");
+		} else if (child.isJavaPrimitive()) {
+			sb.append(" && ").append(object.getJavaChildName()).append(".")
+					.append(child.getGetterName()).append("() != null");
 		}
 		sb.append(") {\n");
 		sb.append(tabs).append("\t/* Get the ");
