@@ -109,6 +109,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		importedClasses.addAll(this.getImplImports(childrenTree));
 		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
 				.append(".FlowContext").toString());
+		importedClasses.add("java.util.Optional");
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
