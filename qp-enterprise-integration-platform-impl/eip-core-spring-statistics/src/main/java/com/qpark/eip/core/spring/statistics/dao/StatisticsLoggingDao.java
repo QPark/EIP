@@ -311,10 +311,15 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 		List<Long> pks = typedQuery.getResultList();
 		Object logEntryReference;
 		for (Long pk : pks) {
-			logEntryReference = this.em.getReference(FlowLogMessageType.class,
-					pk);
-			if (logEntryReference != null) {
-				this.em.remove(logEntryReference);
+			try {
+				logEntryReference = this.em
+						.getReference(FlowLogMessageType.class, pk);
+				if (logEntryReference != null) {
+					this.em.remove(logEntryReference);
+				}
+			} catch (Exception e) {
+				// Nothing do to. Maybe another parallel task already deleted
+				// the entry.
 			}
 		}
 	}
@@ -344,10 +349,15 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 		List<Long> pks = typedQuery.getResultList();
 		Object logEntryReference;
 		for (Long pk : pks) {
-			logEntryReference = this.em.getReference(SystemUserLogType.class,
-					pk);
-			if (logEntryReference != null) {
-				this.em.remove(logEntryReference);
+			try {
+				logEntryReference = this.em
+						.getReference(SystemUserLogType.class, pk);
+				if (logEntryReference != null) {
+					this.em.remove(logEntryReference);
+				}
+			} catch (Exception e) {
+				// Nothing do to. Maybe another parallel task already deleted
+				// the entry.
 			}
 		}
 	}
