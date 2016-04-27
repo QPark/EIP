@@ -109,6 +109,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		importedClasses.addAll(this.getImplImports(childrenTree));
 		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
 				.append(".FlowContext").toString());
+		importedClasses.add("java.util.Optional");
 
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
@@ -303,6 +304,8 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		ComplexTypeChild child = object.getComplexType()
 				.getChild(propertyNames[index]);
 
+		String optionalName = String.format("optional%s", tabs.length());
+
 		sb.append("").append(tabs);
 		sb.append("if (").append(object.getJavaChildName()).append(" != null");
 		if (object.isList()) {
@@ -310,6 +313,19 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 					.append(".size() > 0");
 		}
 		sb.append(") {\n");
+		if (child.isJavaPrimitive()) {
+			sb.append("\t").append(tabs);
+			sb.append("Optional<?> ").append(optionalName);
+			sb.append(" = Optional.ofNullable(")
+					.append(object.getJavaChildName());
+			sb.append(".").append(child.getGetterName());
+			sb.append("());\n");
+			sb.append("\t").append(tabs);
+			sb.append("if (").append(optionalName).append(".isPresent()) {\n");
+		}
+		if (child.isJavaPrimitive()) {
+			sb.append("\t");
+		}
 		sb.append(tabs).append("\t/* Get the ");
 		sb.append(propertyName);
 		sb.append(" of ");
@@ -319,6 +335,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		}
 		sb.append(". */\n");
 
+		if (child.isJavaPrimitive()) {
+			sb.append("\t");
+		}
 		sb.append(tabs).append("\t");
 		sb.append(propertyName).append(" = ");
 		sb.append(object.getJavaChildName());
@@ -329,6 +348,9 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		index++;
 		if (index < propertyNames.length) {
 			sb.append(this.getProperty(child, index, propertyNames));
+		}
+		if (child.isJavaPrimitive()) {
+			sb.append("\t").append(tabs).append("}\n");
 		}
 
 		sb.append(tabs).append("}\n");

@@ -127,8 +127,10 @@ public class DDLGenerator {
 					c = content.substring(0, endIndex);
 					if (whiteList != null && whiteList.size() > 0) {
 						for (String whiteListed : whiteList) {
-							if (c.equals(whiteListed) || c.endsWith(
-									String.format(".%s", whiteListed))) {
+							if (c.equals(whiteListed)
+								|| c.endsWith(String.format(".%s", whiteListed)) // class name
+								|| c.startsWith(String.format("%s.", whiteListed)) // package name
+							) {
 								sb.append("\t\t<class>").append(c)
 										.append("</class>\n");
 								break;
