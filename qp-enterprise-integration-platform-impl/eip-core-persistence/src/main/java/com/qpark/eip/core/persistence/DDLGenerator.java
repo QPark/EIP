@@ -118,6 +118,7 @@ public class DDLGenerator {
 			final List<String> whiteList) {
 		StringBuffer sb = new StringBuffer(128);
 		String c;
+		int numberOfClasses = 0;
 		try (Scanner scanner = new Scanner(is);) {
 			scanner.useDelimiter("<class>");
 			while (scanner.hasNext()) {
@@ -133,15 +134,18 @@ public class DDLGenerator {
 							) {
 								sb.append("\t\t<class>").append(c)
 										.append("</class>\n");
+								numberOfClasses++;
 								break;
 							}
 						}
 					} else {
 						sb.append("\t\t<class>").append(c).append("</class>\n");
+						numberOfClasses++;
 					}
 				}
 			}
 		}
+		logger.info("Detected {} classes, white listed {}", numberOfClasses, whiteList.size());
 		return sb.toString();
 	}
 
@@ -217,7 +221,7 @@ public class DDLGenerator {
 	private String databaseProcuctName = "Oracle";
 
 	/** The {@link org.slf4j.Logger}. */
-	private Logger logger = LoggerFactory.getLogger(DDLGenerator.class);
+	private static Logger logger = LoggerFactory.getLogger(DDLGenerator.class);
 
 	private String resultingPersistenceUnitName = DEFAULT_PERSISTENCE_UNIT_NAME;
 
@@ -246,7 +250,7 @@ public class DDLGenerator {
 			String classes;
 			for (String persistenceXmlLocation : persistenceUnitNames) {
 				location = toPersistenceXmlLocation(persistenceXmlLocation);
-				this.logger.info("Search for {} (mapped from {})", location,
+				logger.info("Search for {} (mapped from {})", location,
 						persistenceXmlLocation);
 				try {
 					is = this.getClass().getResourceAsStream(location);
@@ -254,7 +258,7 @@ public class DDLGenerator {
 							this.whiteList);
 					sb.append(classes);
 				} catch (Exception e) {
-					this.logger.error("Searched for {}: ", location,
+					logger.error("Searched for {}: ", location,
 							persistenceXmlLocation);
 					e.printStackTrace();
 				}
