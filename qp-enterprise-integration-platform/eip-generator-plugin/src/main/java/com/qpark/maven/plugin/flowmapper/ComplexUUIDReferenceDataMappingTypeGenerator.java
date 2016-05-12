@@ -144,14 +144,6 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				.getDefaultDefinitions("private static final");
 		if (defaultDefinitions.length() > 0) {
 			sb.append(defaultDefinitions);
-		} else {
-			throw new IllegalStateException(
-					new StringBuffer(128).append("ComplexUUIDMapperType ")
-							.append(this.complexType
-									.getClassNameFullQualified())
-					.append(" defined in namespace ")
-					.append(this.complexType.getTargetNamespace())
-					.append(" does not define any default.").toString());
 		}
 		sb.append("\t/** The {@link ObjectFactory}. */\n");
 		sb.append("\tprivate final ObjectFactory of = new ObjectFactory();\n");
