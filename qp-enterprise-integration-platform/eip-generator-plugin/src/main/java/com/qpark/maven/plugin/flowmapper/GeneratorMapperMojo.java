@@ -257,23 +257,32 @@ public class GeneratorMapperMojo extends AbstractMojo {
 															this.getLog().error(errorMessage);
 											}
 							}
-							this.getLog().info(new StringBuffer("Generated flows:                ")
-															.append(flows).toString());
-							this.getLog().info(new StringBuffer("Generated direct mappers:       ")
-															.append(directMappers).toString());
-							this.getLog().info(new StringBuffer("Generated default mappers:      ")
-															.append(defaultMappers).toString());
-							this.getLog().info(new StringBuffer("Generated complex UUID mappers: ")
-															.append(complexUUIDMappers).toString());
-							this.getLog().info(new StringBuffer("Generated complex mappers:      ")
-															.append(complexMappers).toString());
-							this.getLog().info(new StringBuffer("Generated tabular mappers:      ")
-															.append(tabularMappers).toString());
-							this.getLog().info(new StringBuffer("Generated interface mappers:    ")
-															.append(interfaceMappers).toString());
-							this.getLog().info(new StringBuffer("Generated mapping operations:   ")
-															.append(mappingOperations).toString());
+					
+		this.getLog().info(String.format("%-40s:%4i", "Namespaces",
+				config.getXsdContainerMap().size()));
+		this.getLog().info(String.format("%-40s:%4i", "ComplexTypes",
+				config.getComplexTypes().size()));
+		this.getLog().info(String.format("%-40s:%4i", "ElementTypes",
+				config.getElementTypes().size()));
 
+		this.getLog()
+				.info(String.format("%-40s:%4i", "Generated flows", flows));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated direct mappers", directMappers));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated default mappers", defaultMappers));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated complex UUID mappers", complexUUIDMappers));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated complex mappers", complexMappers));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated tabular mappers", tabularMappers));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated interface mappers", interfaceMappers));
+		this.getLog().info(String.format("%-40s:%4i",
+				"Generated mapping operations", mappingOperations));
+					
+					
 							this.getLog().debug("-execute");
 
 			}
