@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * Copyright (c) 2013, 2014, 2015, 2016 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
@@ -25,7 +25,19 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 	private static String[] getDirectAccessProperties(final String name) {
 		String[] x = new String[0];
 		int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
+		if (index > 0 && name.toLowerCase().endsWith("valuemappingtype")) {
+			String s = name.substring(index + 1,
+					name.length() - "valuemappingtype".length());
+			x = s.split("\\.");
+		} else if (index > 0 && name.endsWith("UUIDMappingType")) {
+			String s = name.substring(index + 1,
+					name.length() - "UUIDMappingType".length());
+			x = s.split("\\.");
+		} else if (index > 0 && name.endsWith("NameMappingType")) {
+			String s = name.substring(index + 1,
+					name.length() - "NameMappingType".length());
+			x = s.split("\\.");
+		} else if (index > 0 && name.endsWith("MappingType")) {
 			String s = name.substring(index + 1,
 					name.length() - "MappingType".length());
 			x = s.split("\\.");
@@ -56,6 +68,10 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		this.log.debug("+generateImpl");
 		boolean isRefenenceUUIDValueMappingType = this.complexType
 				.getClassName().toLowerCase().endsWith("valuemappingtype");
+		boolean isRefenenceUUIDUUIDMappingType = this.complexType.getClassName()
+				.endsWith("UUIDMappingType");
+		boolean isRefenenceUUIDNameMappingType = this.complexType.getClassName()
+				.endsWith("NameMappingType");
 		String[] propertyNames = getDirectAccessProperties(
 				this.complexType.getType().getName().getLocalPart());
 		if (propertyNames == null || propertyNames.length == 0) {
@@ -144,6 +160,14 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				.getDefaultDefinitions("private static final");
 		if (defaultDefinitions.length() > 0) {
 			sb.append(defaultDefinitions);
+		} else {
+			throw new IllegalStateException(
+					new StringBuffer(128).append("ComplexUUIDMapperType ")
+							.append(this.complexType
+									.getClassNameFullQualified())
+					.append(" defined in namespace ")
+					.append(this.complexType.getTargetNamespace())
+					.append(" does not define any default.").toString());
 		}
 		sb.append("\t/** The {@link ObjectFactory}. */\n");
 		sb.append("\tprivate final ObjectFactory of = new ObjectFactory();\n");
@@ -211,7 +235,7 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		}
 		sb.append(this.getProperty(children.get(0), 0, propertyNames));
 
-		if (children != null) {
+		if (children != null && !isRefenenceUUIDUUIDMappingType) {
 			for (ComplexTypeChild child : children) {
 				if (child.getJavaImportClass().endsWith("ReferenceDataType")) {
 					sb.append("\t\tif (");
@@ -226,6 +250,8 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 					sb.append(uuidMappedPropertyName);
 					if (isRefenenceUUIDValueMappingType) {
 						sb.append(" = entryOfEnumerations.getValue();\n");
+					} else if (isRefenenceUUIDNameMappingType) {
+						sb.append(" = entryOfEnumerations.getName();\n");
 					} else {
 						sb.append(" = entryOfEnumerations.getName();\n");
 					}
@@ -236,6 +262,12 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 					break;
 				}
 			}
+		} else if (isRefenenceUUIDUUIDMappingType) {
+			sb.append("\t\t");
+			sb.append(uuidMappedPropertyName);
+			sb.append(" = ");
+			sb.append(uuidPropertyName);
+			sb.append(";\n");
 		}
 
 		sb.append("\n");
