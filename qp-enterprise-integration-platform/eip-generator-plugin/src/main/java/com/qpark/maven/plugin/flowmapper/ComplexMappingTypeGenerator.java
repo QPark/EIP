@@ -61,7 +61,11 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		boolean returnValueIsList = this.isReturnValueList();
 		String returnValueClassName = this.getReturnValueClassName();
-
+		if (!returnValueIsList && returnValueClassName != null
+				&& returnValueClassName.startsWith("java.lang.")) {
+			returnValueClassName = returnValueClassName.substring(
+					"java.lang.".length(), returnValueClassName.length());
+		}
 		ComplexTypeChild ctc;
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
 		if (propertyNames.length > 0 && children.size() > 0) {
@@ -165,7 +169,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.getSetterStatements("mappingType", children));
 		sb.append("\n");
 
-		sb.append("\t\tObject mappedValue = null;\n");
+		sb.append("\t\tObject mappedReturnValue = null;\n");
 
 		if (returnValueClassName != null) {
 			sb.append("\t\t");
@@ -177,7 +181,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 					+ " as ComplexMapper does not have children to access");
 		}
 
-		String propertiesValue = "mappedValue";
+		String propertiesValue = "mappedReturnValue";
 
 		if (propertyNames.length > 0 && children != null
 				&& children.size() > 0) {
@@ -210,7 +214,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 					sb.append(propertiesValue);
 					sb.append(".equals(entryOfEnumerations.getUUID())) {\n");
 					sb.append(
-							"\t\t\t\t\tmappedValue = entryOfEnumerations.getName();\n");
+							"\t\t\t\t\tmappedReturnValue = entryOfEnumerations.getName();\n");
 					sb.append("\t\t\t\t\tbreak;\n");
 					sb.append("\t\t\t\t}\n");
 					sb.append("\t\t\t}\n");
@@ -222,20 +226,10 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		sb.append("\n");
 
-		sb.append("\t\tmappingType.setValue(mappedValue);\n");
-
 		if (returnValueClassName != null) {
-			sb.append("\t\tif (mappedValue !=null){\n");
-			sb.append("\t\t\t/* Convert mapped value to ");
-			sb.append(returnValueClassName);
-			sb.append(". */\n");
-			sb.append("\t\t\t//mappedReturnValue = (");
-			sb.append(returnValueClassName);
-			sb.append(") mappedValue;\n");
-			sb.append("\t\t}\n");
 			sb.append("\t\tmappingType.setReturn(mappedReturnValue);\n");
 		}
-
+		sb.append("\t\tmappingType.setValue(mappedReturnValue);\n");
 		sb.append("\t\treturn mappingType;\n");
 		sb.append("\t}\n");
 		sb.append("}\n");
