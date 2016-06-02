@@ -7,6 +7,8 @@
 package com.qpark.maven.plugin.xjc;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,11 +110,20 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 		try {
 			updateStaleFileTimestamp = super.performExecution();
 		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			sw.toString();
 			if (e.getCause() != null && e.getCause() != e) {
-				this.getLog().error(e.getCause().getMessage(), e);
+				e.getCause().printStackTrace(pw);
+				this.getLog().info(e.getCause().getMessage());
+				this.getLog().info(sw.toString());
 			} else {
-				this.getLog().error(e.getMessage(), e);
+				e.printStackTrace(pw);
+				this.getLog().info(e.getMessage());
+				this.getLog().info(sw.toString());
 			}
+			this.getLog().error(e.getMessage(), e);
 		}
 		return updateStaleFileTimestamp;
 	}
