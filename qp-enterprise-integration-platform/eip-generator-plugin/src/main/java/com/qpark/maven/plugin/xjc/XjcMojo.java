@@ -104,7 +104,17 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 		this.quiet = false;
 		this.generateEpisode = false;
 		this.createCatalog();
-		return super.performExecution();
+		boolean updateStaleFileTimestamp = false;
+		try {
+			updateStaleFileTimestamp = super.performExecution();
+		} catch (Exception e) {
+			if (e.getCause() != null && e.getCause() != e) {
+				this.getLog().error(e.getCause().getMessage(), e);
+			} else {
+				this.getLog().error(e.getMessage(), e);
+			}
+		}
+		return updateStaleFileTimestamp;
 	}
 
 	private void createCatalog() {
