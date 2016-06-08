@@ -29,16 +29,13 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-mock-operations",
-		defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+@Mojo(name = "generate-mock-operations", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -87,13 +84,11 @@ public class GeneratorMojo extends AbstractMojo {
 		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
-				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		OperationProviderMockGenerator mop;
 
-		Collection<String> serviceIds = ServiceIdRegistry
-				.splitServiceIds(this.serviceId);
+		Collection<String> serviceIds = ServiceIdRegistry.splitServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}
@@ -103,12 +98,9 @@ public class GeneratorMojo extends AbstractMojo {
 		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
-				if (element.isRequest() && ServiceIdRegistry
-						.isValidServiceId(element.getServiceId(), sid)) {
-					mop = new OperationProviderMockGenerator(xsds,
-							this.outputDirectory, element,
-							this.useSpringInsightAnnotation, version,
-							this.getLog());
+				if (element.isRequest() && ServiceIdRegistry.isValidServiceId(element.getServiceId(), sid)) {
+					mop = new OperationProviderMockGenerator(xsds, this.outputDirectory, element,
+							this.useSpringInsightAnnotation, version, this.getLog());
 					mop.generate();
 				}
 			}

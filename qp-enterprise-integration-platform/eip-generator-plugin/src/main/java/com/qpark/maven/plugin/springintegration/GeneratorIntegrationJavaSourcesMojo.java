@@ -36,16 +36,13 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-integration-java",
-		defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = "generate-integration-java", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -89,8 +86,7 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		List<IntegrationGatewayGenerator> igs;
 		for (ElementType element : xsds.getElementTypes()) {
 			if (element.isRequest()) {
-				ig = new IntegrationGatewayGenerator(xsds, this.outputDirectory,
-						element, eipVersion, this.getLog());
+				ig = new IntegrationGatewayGenerator(xsds, this.outputDirectory, element, eipVersion, this.getLog());
 				ig.generate();
 				if (ig.isGenerated()) {
 					igs = serviceIgMap.get(ig.getServiceId());
@@ -103,27 +99,22 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 			}
 		}
 		ServiceOperationProviderGenerator sopg;
-		for (Entry<String, List<IntegrationGatewayGenerator>> entry : serviceIgMap
-				.entrySet()) {
-			sopg = new ServiceOperationProviderGenerator(entry.getKey(),
-					entry.getValue(), this.basePackageName, eipVersion,
-					this.getLog(), this.project);
+		for (Entry<String, List<IntegrationGatewayGenerator>> entry : serviceIgMap.entrySet()) {
+			sopg = new ServiceOperationProviderGenerator(entry.getKey(), entry.getValue(), this.basePackageName,
+					eipVersion, this.getLog(), this.project);
 			sopg.generate();
 		}
 	}
 
-	private void generateBasicIntegrationGatewayInterface(
-			final String eipVersion) {
+	private void generateBasicIntegrationGatewayInterface(final String eipVersion) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("package com.qpark.eip;\n");
 		sb.append("\n");
 		sb.append("/**\n");
 		sb.append(" * Basic spring integration interface.\n");
-		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
-				eipVersion));
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(), eipVersion));
 		sb.append(" */\n");
-		sb.append(
-				"public interface IntegrationGateway<JaxbRequest, JaxbResponse> {\n");
+		sb.append("public interface IntegrationGateway<JaxbRequest, JaxbResponse> {\n");
 		sb.append("\t/**\n");
 		sb.append("\t * Invoke the spring integration gateway.\n");
 		sb.append("\t * @param request the {@link JaxbRequest}\n");
@@ -132,10 +123,8 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		sb.append("\tJaxbResponse invoke(JaxbRequest request);\n");
 		sb.append("}\n");
 		sb.append("\n");
-		File f = Util.getFile(this.outputDirectory, "com.qpark.eip",
-				"IntegrationGateway.java");
-		this.getLog().info(new StringBuffer().append("Write ")
-				.append(f.getAbsolutePath()));
+		File f = Util.getFile(this.outputDirectory, "com.qpark.eip", "IntegrationGateway.java");
+		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
@@ -152,9 +141,8 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
-				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 
 		this.generate(xsds);
 

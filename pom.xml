@@ -50,5 +50,12 @@
 				<module>qp-enterprise-integration-platform-sample/sample-templates</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>sample-domain</id>
+			<modules>
+				<module>qp-enterprise-integration-platform-sample/sample-domain</module>
+				<module>qp-enterprise-integration-platform-sample/sample-domain-gen</module>
+			</modules>
+		</profile>
 	</profiles>
 </project>

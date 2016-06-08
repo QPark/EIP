@@ -26,10 +26,8 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-integration",
-		defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
-public class GeneratorIntegrationMojo
-		extends GeneratorIntegrationJavaSourcesMojo {
+@Mojo(name = "generate-integration", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+public class GeneratorIntegrationMojo extends GeneratorIntegrationJavaSourcesMojo {
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
 	 */
@@ -38,9 +36,8 @@ public class GeneratorIntegrationMojo
 		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = new XsdsUtil(this.baseDirectory, this.basePackageName,
-				this.messagePackageNameSuffix, this.deltaPackageNameSuffix,
-				this.serviceRequestSuffix, this.serviceResponseSuffix);
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		String eipVersion = null;
 		if (this.project.getArtifact() != null) {
 			eipVersion = this.project.getArtifact().getVersion();
@@ -48,9 +45,8 @@ public class GeneratorIntegrationMojo
 
 		this.generate(xsds);
 
-		SpringIntegrationConfigGenerator tc = new SpringIntegrationConfigGenerator(
-				xsds, this.basePackageName, this.outputDirectory, eipVersion,
-				this.getLog(), this.project);
+		SpringIntegrationConfigGenerator tc = new SpringIntegrationConfigGenerator(xsds, this.basePackageName,
+				this.outputDirectory, eipVersion, this.getLog(), this.project);
 		tc.generate();
 
 		this.getLog().debug("-execute");

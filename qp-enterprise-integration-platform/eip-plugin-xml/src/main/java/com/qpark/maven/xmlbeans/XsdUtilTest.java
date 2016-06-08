@@ -33,14 +33,10 @@ public class XsdUtilTest {
 		File dif = new File(xsdPath);
 		String messagePackageNameSuffix = "msg mapping flow";
 		long start = System.currentTimeMillis();
-		XsdsUtil xsds = new XsdsUtil(dif, "a.b.c.bus", messagePackageNameSuffix,
-				"delta");
-		System.out.println(Util.getDuration(System.currentTimeMillis() - start)
-				+ " needed for new XsdsUtil(...)");
-		Map<String, String> notImportedModels = XsdsUtil
-				.getNotImportedModels(xsds, messagePackageNameSuffix);
-		Map<String, String> importedModels = testGetImportedModels(xsds,
-				messagePackageNameSuffix);
+		XsdsUtil xsds = XsdsUtil.getInstance(dif, "a.b.c.bus", messagePackageNameSuffix, "delta");
+		System.out.println(Util.getDuration(System.currentTimeMillis() - start) + " needed for new XsdsUtil(...)");
+		Map<String, String> notImportedModels = XsdsUtil.getNotImportedModels(xsds, messagePackageNameSuffix);
+		Map<String, String> importedModels = testGetImportedModels(xsds, messagePackageNameSuffix);
 		testVerifyModel(xsds, notImportedModels);
 
 		// printCatalog(xsds, xsdPath);
@@ -57,8 +53,7 @@ public class XsdUtilTest {
 		// testPrintComplexTypeResponseSample(xsds, notImportedModels, true);
 		// testPrintComplexTypeChildContent
 
-		System.out
-				.println(Util.getDuration(System.currentTimeMillis() - start));
+		System.out.println(Util.getDuration(System.currentTimeMillis() - start));
 		System.exit(0);
 		SchemaType t;
 		for (ComplexType ct : xsds.getComplexTypes()) {
@@ -69,10 +64,8 @@ public class XsdUtilTest {
 				if (t != null && t.getName() != null) {
 					// System.out.println(sp.getName().getLocalPart());
 					System.out.println(
-							sp.getMinOccurs() + " " + t.getName().getLocalPart()
-									+ " " + XsdsUtil.getBuildInBaseType(t)
-									+ "  " + XsdsUtil.getBuildInBaseTypeClass(t)
-											.getSimpleName());
+							sp.getMinOccurs() + " " + t.getName().getLocalPart() + " " + XsdsUtil.getBuildInBaseType(t)
+									+ "  " + XsdsUtil.getBuildInBaseTypeClass(t).getSimpleName());
 				} else {
 					System.out.println(sp.getName() + " " + t);
 					// System.exit(0);
@@ -88,22 +81,19 @@ public class XsdUtilTest {
 	private static void testFlowInputTypes(final XsdsUtil config) {
 		for (ComplexType ct : config.getComplexTypes()) {
 			if (ct.isFlowInputType()) {
-				System.out.println(ct.getPackageName() + " " + ct.getClassName()
-						+ " " + ct.getClassNameFullQualified());
+				System.out
+						.println(ct.getPackageName() + " " + ct.getClassName() + " " + ct.getClassNameFullQualified());
 			}
 		}
 	}
 
-	private static Map<String, String> testGetImportedModels(
-			final XsdsUtil xsds, final String messagePackageNameSuffix) {
+	private static Map<String, String> testGetImportedModels(final XsdsUtil xsds,
+			final String messagePackageNameSuffix) {
 		TreeMap<String, String> importedModels = new TreeMap<String, String>();
-		for (Entry<String, XsdContainer> xx : xsds.getXsdContainerMap()
-				.entrySet()) {
-			if (XsdsUtil.isMessagePackageName(xx.getValue().getPackageName(),
-					messagePackageNameSuffix)) {
+		for (Entry<String, XsdContainer> xx : xsds.getXsdContainerMap().entrySet()) {
+			if (XsdsUtil.isMessagePackageName(xx.getValue().getPackageName(), messagePackageNameSuffix)) {
 				for (String imp : xx.getValue().getImportedTargetNamespaces()) {
-					importedModels.put(xx.getKey(),
-							xx.getValue().getFile().getAbsolutePath());
+					importedModels.put(xx.getKey(), xx.getValue().getFile().getAbsolutePath());
 				}
 			}
 		}
@@ -111,16 +101,13 @@ public class XsdUtilTest {
 	}
 
 	/** The hierarchy. */
-	private static void testGetServiceIdTree(final ServiceIdEntry entry,
-			final int hierarchy) {
+	private static void testGetServiceIdTree(final ServiceIdEntry entry, final int hierarchy) {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < hierarchy; i++) {
 			sb.append("\t");
 		}
-		System.out.println(sb.toString() + entry.getServiceId() + " "
-				+ entry.getPackageName() + " "
-				+ entry.getAnnotationDocumentation() + " "
-				+ entry.getTargetNamespace());
+		System.out.println(sb.toString() + entry.getServiceId() + " " + entry.getPackageName() + " "
+				+ entry.getAnnotationDocumentation() + " " + entry.getTargetNamespace());
 		for (ServiceIdEntry imported : entry.getImportedServiceEntries()) {
 			testGetServiceIdTree(imported, hierarchy + 1);
 		}
@@ -138,42 +125,34 @@ public class XsdUtilTest {
 			System.out.println("\t" + entry.getAnnotationDocumentation());
 			System.out.println("\t" + entry.getTotalServiceIdImports());
 		}
-		System.out.println(ServiceIdRegistry.isValidServiceId("directory",
-				"directory.v20"));
-		System.out.println(
-				ServiceIdRegistry.isValidServiceId("common", "directory.v20"));
-		System.out.println(ServiceIdRegistry.isValidServiceId("satellite",
-				"directory.v20"));
+		System.out.println(ServiceIdRegistry.isValidServiceId("directory", "directory.v20"));
+		System.out.println(ServiceIdRegistry.isValidServiceId("common", "directory.v20"));
+		System.out.println(ServiceIdRegistry.isValidServiceId("satellite", "directory.v20"));
 	}
 
 	private static void testPrintComplexTypeChildContent(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels,
-			final boolean onlyUsed) {
+			final Map<String, String> notImportedModels, final boolean onlyUsed) {
 		StringBuffer sb = new StringBuffer(128);
 		boolean used = false;
 		for (ComplexType ct : xsds.getComplexTypes()) {
 			used = false;
-			if (ct.getType().getName() != null && !notImportedModels
-					.containsKey(ct.getType().getName().getNamespaceURI())) {
+			if (ct.getType().getName() != null
+					&& !notImportedModels.containsKey(ct.getType().getName().getNamespaceURI())) {
 				used = true;
 			}
 			List<ComplexTypeChild> children = ct.getChildren();
 			if (children.size() > 0) {
 				sb.setLength(0);
-				sb.append(ct.getClassName()).append(" ")
-						.append(ct.getType().getName()).append("\n");
+				sb.append(ct.getClassName()).append(" ").append(ct.getType().getName()).append("\n");
 				for (ComplexTypeChild child : children) {
 					sb.append("\t");
 					sb.append(child.getChildName()).append(" ");
-					sb.append(
-							child.getComplexType().getClassNameFullQualified())
-							.append(" ");
+					sb.append(child.getComplexType().getClassNameFullQualified()).append(" ");
 					sb.append(child.getGetterName()).append(" ");
 					sb.append(child.getSetterName()).append(" ");
 					if (child.getDefaultValue() != null) {
 						sb.append(" DEFAULT ");
-						sb.append(child.getDefaultValue().getStringValue())
-								.append(" ");
+						sb.append(child.getDefaultValue().getStringValue()).append(" ");
 					}
 					sb.append("\n");
 				}
@@ -184,20 +163,17 @@ public class XsdUtilTest {
 		}
 	}
 
-	private static void testPrintComplexTypeContent(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels,
+	private static void testPrintComplexTypeContent(final XsdsUtil xsds, final Map<String, String> notImportedModels,
 			final boolean onlyUsed) {
 		StringBuffer sb = new StringBuffer(128);
 		boolean used;
 		for (ComplexType ct : xsds.getComplexTypes()) {
 			used = false;
 			sb.setLength(0);
-			sb.append(ct.getClassName()).append(" ")
-					.append(ct.getType().getName());
-			sb.append(" ").append(ct.isRequestType()).append("/")
-					.append(ct.isResponseType());
-			if (ct.getType().getName() != null && !notImportedModels
-					.containsKey(ct.getType().getName().getNamespaceURI())) {
+			sb.append(ct.getClassName()).append(" ").append(ct.getType().getName());
+			sb.append(" ").append(ct.isRequestType()).append("/").append(ct.isResponseType());
+			if (ct.getType().getName() != null
+					&& !notImportedModels.containsKey(ct.getType().getName().getNamespaceURI())) {
 				sb.insert(0, "ComplexType imported     : ");
 				used = true;
 			} else {
@@ -210,31 +186,25 @@ public class XsdUtilTest {
 	}
 
 	private static void testPrintComplexTypeFlowsContent(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels,
-			final boolean onlyUsed) {
+			final Map<String, String> notImportedModels, final boolean onlyUsed) {
 		ComplexType flowOutput;
 		for (ComplexType ct : xsds.getComplexTypes()) {
 			if (ct.isFlowInputType()) {
-				flowOutput = XsdsUtil.findResponse(ct, xsds.getComplexTypes(),
-						xsds);
-				System.out.print(
-						ct.getClassName() + "  " + ct.isRequestType() + " ");
+				flowOutput = XsdsUtil.findResponse(ct, xsds.getComplexTypes(), xsds);
+				System.out.print(ct.getClassName() + "  " + ct.isRequestType() + " ");
 				if (flowOutput != null) {
 					System.out.println(flowOutput.getClassName());
 					for (ComplexTypeChild child : ct.getChildren()) {
-						System.out.println("\t" + child.getChildName() + " "
-								+ child.getComplexType().getClassName());
+						System.out.println("\t" + child.getChildName() + " " + child.getComplexType().getClassName());
 					}
 					System.out.println("->" + flowOutput.getClassName());
 					for (ComplexTypeChild child : flowOutput.getChildren()) {
-						System.out.println("\t" + child.getChildName() + " "
-								+ child.getComplexType().getClassName());
+						System.out.println("\t" + child.getChildName() + " " + child.getComplexType().getClassName());
 					}
 				} else {
 					System.out.println(" xxxxx not flow output found.");
 					for (ComplexTypeChild child : ct.getChildren()) {
-						System.out.println("\t" + child.getChildName() + " "
-								+ child.getComplexType().getClassName());
+						System.out.println("\t" + child.getChildName() + " " + child.getComplexType().getClassName());
 					}
 				}
 			}
@@ -242,8 +212,7 @@ public class XsdUtilTest {
 	}
 
 	private static void testPrintComplexTypeRequestResponse(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels,
-			final boolean onlyUsed) {
+			final Map<String, String> notImportedModels, final boolean onlyUsed) {
 		StringBuffer sb = new StringBuffer(128);
 		ComplexType response;
 		boolean used;
@@ -251,8 +220,7 @@ public class XsdUtilTest {
 			used = false;
 			if (ct.isRequestType()) {
 				sb.setLength(0);
-				response = XsdsUtil.findResponse(ct, xsds.getComplexTypes(),
-						xsds);
+				response = XsdsUtil.findResponse(ct, xsds.getComplexTypes(), xsds);
 				sb.append(ct.getClassName());
 				if (response != null) {
 					sb.insert(0, "[+] : ");
@@ -265,8 +233,7 @@ public class XsdUtilTest {
 				sb.append("  ");
 				sb.append(ct.getTargetNamespace());
 
-				if (ct.getTargetNamespace() != null && !notImportedModels
-						.containsKey(ct.getTargetNamespace())) {
+				if (ct.getTargetNamespace() != null && !notImportedModels.containsKey(ct.getTargetNamespace())) {
 					sb.insert(0, "ComplexType imported     ");
 					used = true;
 				} else {
@@ -280,8 +247,7 @@ public class XsdUtilTest {
 	}
 
 	private static void testPrintComplexTypeResponseSample(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels,
-			final boolean onlyUsed) {
+			final Map<String, String> notImportedModels, final boolean onlyUsed) {
 		String xml;
 		Object mock = null;
 		String op = "GetContact";
@@ -293,12 +259,9 @@ public class XsdUtilTest {
 				System.out.println(xml);
 
 				try {
-					JAXBContext jaxbContext = JAXBContext
-							.newInstance(ct.getPackageName());
-					Unmarshaller unmarshaller = jaxbContext
-							.createUnmarshaller();
-					JAXBElement<?> jaxb = (JAXBElement<?>) unmarshaller
-							.unmarshal(new StringReader(xml));
+					JAXBContext jaxbContext = JAXBContext.newInstance(ct.getPackageName());
+					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					JAXBElement<?> jaxb = (JAXBElement<?>) unmarshaller.unmarshal(new StringReader(xml));
 					if (jaxb != null) {
 						mock = jaxb.getValue();
 					}
@@ -312,8 +275,7 @@ public class XsdUtilTest {
 	}
 
 	private static void testPrintElementTypeRequestResponse(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels,
-			final boolean onlyUsed) {
+			final Map<String, String> notImportedModels, final boolean onlyUsed) {
 		StringBuffer sb = new StringBuffer(128);
 		ElementType response;
 		boolean used;
@@ -321,8 +283,7 @@ public class XsdUtilTest {
 			used = false;
 			if (et.isRequest()) {
 				sb.setLength(0);
-				response = XsdsUtil.findResponse(et, xsds.getElementTypes(),
-						xsds);
+				response = XsdsUtil.findResponse(et, xsds.getElementTypes(), xsds);
 				sb.append(et.getClassNameObject());
 				if (response != null) {
 					sb.insert(0, "[+] : ");
@@ -337,8 +298,7 @@ public class XsdUtilTest {
 				sb.append("  ");
 				sb.append(et.getTargetNamespace());
 
-				if (et.getTargetNamespace() != null && !notImportedModels
-						.containsKey(et.getTargetNamespace())) {
+				if (et.getTargetNamespace() != null && !notImportedModels.containsKey(et.getTargetNamespace())) {
 					sb.insert(0, "ElementType imported     ");
 					used = true;
 				} else {
@@ -351,11 +311,9 @@ public class XsdUtilTest {
 		}
 	}
 
-	private static void testPrintNotUsedModels(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels) {
+	private static void testPrintNotUsedModels(final XsdsUtil xsds, final Map<String, String> notImportedModels) {
 		for (Entry<String, String> model : notImportedModels.entrySet()) {
-			System.out.println("Model " + model.getKey()
-					+ " is not used (file: " + model.getValue() + ")");
+			System.out.println("Model " + model.getKey() + " is not used (file: " + model.getValue() + ")");
 		}
 	}
 
@@ -368,67 +326,50 @@ public class XsdUtilTest {
 		serviceId = "appcontrolling, monitoring, busappmonics";
 		for (ElementType et : xsds.getElementTypes()) {
 			if (et.isRequest()) {
-				System.out.println(et.getServiceId() + " " + ServiceIdRegistry
-						.isValidServiceId(et.getServiceId(), serviceId));
+				System.out.println(
+						et.getServiceId() + " " + ServiceIdRegistry.isValidServiceId(et.getServiceId(), serviceId));
 			}
 		}
 	}
 
-	private static void testVerifyModel(final XsdsUtil xsds,
-			final Map<String, String> notImportedModels) {
+	private static void testVerifyModel(final XsdsUtil xsds, final Map<String, String> notImportedModels) {
 		StringBuffer sb = new StringBuffer();
 		for (Entry<String, String> model : notImportedModels.entrySet()) {
-			System.out.println("Model " + model.getKey()
-					+ " is not used (file: " + model.getValue() + ")");
+			System.out.println("Model " + model.getKey() + " is not used (file: " + model.getValue() + ")");
 			sb.append("\t<import namespace=\"");
 			sb.append(model.getKey());
 			sb.append("\" schemaLocation=\"http://www.ses.com/model/");
-			sb.append(model.getValue()
-					.substring(model.getValue().indexOf("\\model\\") + 7,
-							model.getValue().length())
+			sb.append(model.getValue().substring(model.getValue().indexOf("\\model\\") + 7, model.getValue().length())
 					.replaceAll("\\\\", "/").replaceAll("//", "/"));
 			sb.append("\" />\n");
 		}
 		System.out.println(sb.toString());
 		for (XsdContainer xx : xsds.getXsdContainerMap().values()) {
-			for (String importedTargetNamespace : xx
-					.getImportedTargetNamespaces()) {
-				XsdContainer imported = xsds
-						.getXsdContainer(importedTargetNamespace);
+			for (String importedTargetNamespace : xx.getImportedTargetNamespaces()) {
+				XsdContainer imported = xsds.getXsdContainer(importedTargetNamespace);
 				if (imported == null) {
-					System.out.println(
-							"Target namespace " + importedTargetNamespace
-									+ " is not defined but imported by "
-									+ xx.getFile() + "!");
+					System.out.println("Target namespace " + importedTargetNamespace
+							+ " is not defined but imported by " + xx.getFile() + "!");
 				} else {
-					String fileName = xx
-							.getImportedSchemaLocation(importedTargetNamespace);
+					String fileName = xx.getImportedSchemaLocation(importedTargetNamespace);
 					if (fileName.indexOf('/') > 0) {
-						fileName = fileName.substring(
-								fileName.lastIndexOf('/') + 1,
-								fileName.length());
+						fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.length());
 					}
-					if (!imported.getFile().getAbsolutePath()
-							.endsWith(fileName)) {
-						System.out.println(
-								"File " + xx.getFile().getAbsolutePath()
-										+ " uses " + fileName + " instead of "
-										+ imported.getFile().getAbsolutePath());
+					if (!imported.getFile().getAbsolutePath().endsWith(fileName)) {
+						System.out.println("File " + xx.getFile().getAbsolutePath() + " uses " + fileName
+								+ " instead of " + imported.getFile().getAbsolutePath());
 					}
 				}
 			}
 			for (String warning : xx.getWarnings()) {
-				System.out.println("WARNING: " + xx.getTargetNamespace() + ":\t"
-						+ warning);
+				System.out.println("WARNING: " + xx.getTargetNamespace() + ":\t" + warning);
 			}
 		}
 	}
 
-	public static void printCatalog(final XsdsUtil xsds,
-			final String pathPrefix) {
+	public static void printCatalog(final XsdsUtil xsds, final String pathPrefix) {
 		for (ComplexType ct : xsds.getComplexTypes()) {
-			if (ct.getClassName()
-					.equals("MonicsSatelliteInclinedOrbitFlagMappingType")) {
+			if (ct.getClassName().equals("MonicsSatelliteInclinedOrbitFlagMappingType")) {
 				System.out.println(ct.getType().getAnnotation());
 				SchemaAnnotation annotation = ct.getType().getAnnotation();
 				XmlObject[] app = annotation.getUserInformation();
@@ -442,20 +383,15 @@ public class XsdUtilTest {
 						System.out.println(nl.item(0));
 						System.out.println(nl.item(0).getNodeValue());
 					}
-					System.out.println(
-							"  getUserInformation: " + app[0].getDomNode()
-									+ "=\"" + app[0].getClass() + "\"");
+					System.out
+							.println("  getUserInformation: " + app[0].getDomNode() + "=\"" + app[0].getClass() + "\"");
 				}
 			}
 			if (xsds.getXsdContainer(ct.getTargetNamespace()) == null) {
-				System.out.println(ct.getClassNameFullQualified() + " "
-						+ ct.getTargetNamespace() + " XXXXX");
+				System.out.println(ct.getClassNameFullQualified() + " " + ct.getTargetNamespace() + " XXXXX");
 			} else {
-				System.out
-						.println(ct.getClassNameFullQualified() + " "
-								+ xsds.getXsdContainer(
-										ct.getTargetNamespace()).getFile()
-								.getAbsolutePath().replace(pathPrefix, ""));
+				System.out.println(ct.getClassNameFullQualified() + " " + xsds.getXsdContainer(ct.getTargetNamespace())
+						.getFile().getAbsolutePath().replace(pathPrefix, ""));
 			}
 		}
 	}
@@ -465,17 +401,12 @@ public class XsdUtilTest {
 		for (Entry<String, XsdContainer> entry : containers.entrySet()) {
 			System.out.println(entry.getKey());
 			File f = entry.getValue().getFile();
-			System.out.println("\tlocation " + f.getAbsolutePath().substring(
-					dif.getAbsolutePath().length(),
-					f.getAbsolutePath().length()));
-			System.out
-					.println("\tpackage " + entry.getValue().getPackageName());
-			System.out.println("\tdocumentation "
-					+ entry.getValue().getAnnotationDocumentation());
-			System.out.println("\timports "
-					+ entry.getValue().getTotalImportedTargetNamespaces());
-			for (String imported : entry.getValue()
-					.getImportedTargetNamespaces()) {
+			System.out.println("\tlocation "
+					+ f.getAbsolutePath().substring(dif.getAbsolutePath().length(), f.getAbsolutePath().length()));
+			System.out.println("\tpackage " + entry.getValue().getPackageName());
+			System.out.println("\tdocumentation " + entry.getValue().getAnnotationDocumentation());
+			System.out.println("\timports " + entry.getValue().getTotalImportedTargetNamespaces());
+			for (String imported : entry.getValue().getImportedTargetNamespaces()) {
 				// System.out.println("\t\timports " + imported);
 			}
 		}

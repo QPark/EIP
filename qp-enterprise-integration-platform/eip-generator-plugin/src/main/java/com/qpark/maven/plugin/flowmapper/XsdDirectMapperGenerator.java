@@ -31,12 +31,10 @@ public class XsdDirectMapperGenerator {
 		File dif = new File(xsdPath);
 		String messagePackageNameSuffix = "mapping flow";
 		long start = System.currentTimeMillis();
-		XsdsUtil xsds = new XsdsUtil(dif, "a.b.c.bus", messagePackageNameSuffix,
-				"delta");
+		XsdsUtil xsds = XsdsUtil.getInstance(dif, "a.b.c.bus", messagePackageNameSuffix, "delta");
 		ComplexContentList complexContentList = new ComplexContentList();
 		complexContentList.setupComplexContentLists(xsds);
-		System.out
-				.println(Util.getDuration(System.currentTimeMillis() - start));
+		System.out.println(Util.getDuration(System.currentTimeMillis() - start));
 
 		String source = null;
 		ComplexContent cc;
@@ -61,8 +59,7 @@ public class XsdDirectMapperGenerator {
 					sb.append(ctc.getChildName());
 					sb.append("MappingType\">\n");
 
-					sb.append(
-							"\t\t<annotation><documentation>Direct mapping of ");
+					sb.append("\t\t<annotation><documentation>Direct mapping of ");
 					sb.append(ct.getClassName());
 					sb.append(" ");
 					sb.append(ctc.getChildName());
@@ -78,16 +75,14 @@ public class XsdDirectMapperGenerator {
 					sb.append(ct.getQNameLocalPart());
 					sb.append("\" />\n");
 					sb.append("\t\t\t\t\t<element name=\"return\" type=\"");
-					if (ctc.getComplexType().getTargetNamespace()
-							.equals("http://www.w3.org/2001/XMLSchema")) {
+					if (ctc.getComplexType().getTargetNamespace().equals("http://www.w3.org/2001/XMLSchema")) {
 					} else {
 						sb.append("OSPcty10:");
 					}
 					sb.append(ctc.getComplexType().getQNameLocalPart());
 					sb.append("\" />\n");
 
-					sb.append(
-							"\t\t\t\t</sequence>\n\t\t\t</extension>\n\t\t</complexContent>\n\t</complexType>\n");
+					sb.append("\t\t\t\t</sequence>\n\t\t\t</extension>\n\t\t</complexContent>\n\t</complexType>\n");
 				}
 			}
 		}

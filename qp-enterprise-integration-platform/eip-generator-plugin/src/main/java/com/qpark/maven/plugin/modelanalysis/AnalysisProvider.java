@@ -71,15 +71,12 @@ public class AnalysisProvider {
 
 		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";
-		Analysis a = new AnalysisProvider().createEnterprise(basePackageName,
-				modelVersion, basePackageName, xsdPath);
+		Analysis a = new AnalysisProvider().createEnterprise(basePackageName, modelVersion, basePackageName, xsdPath);
 		System.exit(0);
 		try {
 			ObjectFactory of = new ObjectFactory();
-			JAXBElement<EnterpriseType> enterprise = of
-					.createEnterprise(a.getEnterprise());
-			JAXBContext context = JAXBContext
-					.newInstance("com.qpark.eip.model.docmodel");
+			JAXBElement<EnterpriseType> enterprise = of.createEnterprise(a.getEnterprise());
+			JAXBContext context = JAXBContext.newInstance("com.qpark.eip.model.docmodel");
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			StringWriter sw = new StringWriter();
@@ -101,8 +98,7 @@ public class AnalysisProvider {
 	private EnterpriseType enterprise;
 
 	/** The {@link org.slf4j.Logger}. */
-	private final Logger logger = LoggerFactory
-			.getLogger(AnalysisProvider.class);
+	private final Logger logger = LoggerFactory.getLogger(AnalysisProvider.class);
 
 	/**
 	 * Create the {@link Analysis} out of the mode.
@@ -115,9 +111,8 @@ public class AnalysisProvider {
 	 *            the path, where the model could be found.
 	 * @return the {@link Analysis}.
 	 */
-	public Analysis createEnterprise(final String enterpriseName,
-			final String modelVersion, final String basePackageName,
-			final String modelPath) {
+	public Analysis createEnterprise(final String enterpriseName, final String modelVersion,
+			final String basePackageName, final String modelPath) {
 		XsdsUtil xsds = this.createXsdsUtil(basePackageName, modelPath);
 		return this.createEnterprise(enterpriseName, modelVersion, xsds);
 	}
@@ -131,8 +126,7 @@ public class AnalysisProvider {
 	 *            the {@link XsdsUtil}.
 	 * @return the {@link Analysis}.
 	 */
-	public Analysis createEnterprise(final String enterpriseName,
-			final String modelVersion, final XsdsUtil xsds) {
+	public Analysis createEnterprise(final String enterpriseName, final String modelVersion, final XsdsUtil xsds) {
 		this.xsds = xsds;
 		this.analysis = new Analysis(this.of.createEnterpriseType());
 		this.enterprise = this.analysis.getEnterprise();
@@ -147,59 +141,39 @@ public class AnalysisProvider {
 			domain = this.getDomainType(file, modelVersion);
 			cluster = this.getClusterType(domain, file);
 		}
-		for (com.qpark.maven.xmlbeans.ComplexType ct : this.xsds
-				.getComplexTypes()) {
-			this.getDataType(this.analysis.getCluster(ct.getTargetNamespace()),
-					ct);
+		for (com.qpark.maven.xmlbeans.ComplexType ct : this.xsds.getComplexTypes()) {
+			this.getDataType(this.analysis.getCluster(ct.getTargetNamespace()), ct);
 		}
-		for (com.qpark.maven.xmlbeans.ComplexType ct : this.xsds
-				.getComplexTypes()) {
-			this.setFieldTypes(
-					this.analysis.getCluster(ct.getTargetNamespace()), ct);
+		for (com.qpark.maven.xmlbeans.ComplexType ct : this.xsds.getComplexTypes()) {
+			this.setFieldTypes(this.analysis.getCluster(ct.getTargetNamespace()), ct);
 		}
-		for (com.qpark.eip.model.docmodel.DataType dt : this.analysis
-				.getDataTypes()) {
+		for (com.qpark.eip.model.docmodel.DataType dt : this.analysis.getDataTypes()) {
 
 		}
-		for (com.qpark.maven.xmlbeans.ElementType element : this.xsds
-				.getElementTypes()) {
-			this.getElementType(
-					this.analysis.getCluster(element.getTargetNamespace()),
-					element);
+		for (com.qpark.maven.xmlbeans.ElementType element : this.xsds.getElementTypes()) {
+			this.getElementType(this.analysis.getCluster(element.getTargetNamespace()), element);
 		}
-		for (com.qpark.maven.xmlbeans.ElementType element : this.xsds
-				.getElementTypes()) {
+		for (com.qpark.maven.xmlbeans.ElementType element : this.xsds.getElementTypes()) {
 			if (element.isRequest()) {
-				com.qpark.maven.xmlbeans.ElementType response = XsdsUtil
-						.findResponse(element, this.xsds.getElementTypes(),
-								this.xsds);
+				com.qpark.maven.xmlbeans.ElementType response = XsdsUtil.findResponse(element,
+						this.xsds.getElementTypes(), this.xsds);
 				if (response != null) {
-					this.getServiceOperation(
-							this.analysis
-									.getCluster(element.getTargetNamespace()),
+					this.getServiceOperation(this.analysis.getCluster(element.getTargetNamespace()),
 							element.getServiceId(), element.getOperationName(),
-							this.analysis
-									.getElementType(element.toQNameString()),
-							this.analysis
-									.getElementType(response.toQNameString()));
+							this.analysis.getElementType(element.toQNameString()),
+							this.analysis.getElementType(response.toQNameString()));
 				}
 			}
 		}
 
-		for (com.qpark.maven.xmlbeans.ComplexType ctRequest : this.xsds
-				.getComplexTypes()) {
+		for (com.qpark.maven.xmlbeans.ComplexType ctRequest : this.xsds.getComplexTypes()) {
 			if (ctRequest.isRequestType() && ctRequest.isFlowInputType()) {
-				com.qpark.maven.xmlbeans.ComplexType ctResponse = XsdsUtil
-						.findResponse(ctRequest, this.xsds.getComplexTypes(),
-								this.xsds);
+				com.qpark.maven.xmlbeans.ComplexType ctResponse = XsdsUtil.findResponse(ctRequest,
+						this.xsds.getComplexTypes(), this.xsds);
 				if (ctResponse != null && ctResponse.isFlowOutputType()) {
-					FlowType flow = this.getFlowType(
-							this.analysis
-									.getCluster(ctRequest.getTargetNamespace()),
-							(ComplexType) this.analysis
-									.getDataType(ctRequest.toQNameString()),
-							(ComplexType) this.analysis
-									.getDataType(ctResponse.toQNameString()));
+					FlowType flow = this.getFlowType(this.analysis.getCluster(ctRequest.getTargetNamespace()),
+							(ComplexType) this.analysis.getDataType(ctRequest.toQNameString()),
+							(ComplexType) this.analysis.getDataType(ctResponse.toQNameString()));
 					this.enterprise.getFlows().add(flow);
 				}
 			}
@@ -208,13 +182,11 @@ public class AnalysisProvider {
 		return this.analysis;
 	}
 
-	private XsdsUtil createXsdsUtil(final String basePackageName,
-			final String modelPath) {
+	private XsdsUtil createXsdsUtil(final String basePackageName, final String modelPath) {
 		File f = new File(modelPath);
 		String messagePackageNameSuffix = "msg mapping flow";
 
-		XsdsUtil xsds = new XsdsUtil(f, basePackageName,
-				messagePackageNameSuffix, "delta");
+		XsdsUtil xsds = XsdsUtil.getInstance(f, basePackageName, messagePackageNameSuffix, "delta");
 		return xsds;
 	}
 
@@ -227,8 +199,7 @@ public class AnalysisProvider {
 	 *            the {@link XsdContainer}.
 	 * @return the {@link ClusterType}.
 	 */
-	private ClusterType getClusterType(final DomainType domain,
-			final XsdContainer file) {
+	private ClusterType getClusterType(final DomainType domain, final XsdContainer file) {
 		ClusterType value = this.analysis.getCluster(file.getTargetNamespace());
 		if (value == null) {
 			value = this.of.createClusterType();
@@ -247,16 +218,13 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	private DataType getDataType(final ClusterType cluster,
-			final com.qpark.maven.xmlbeans.ComplexType ct) {
-		String elemId = this.uuidProvider.getDataTypeUUID(ct.toQNameString(),
-				cluster.getModelVersion());
+	private DataType getDataType(final ClusterType cluster, final com.qpark.maven.xmlbeans.ComplexType ct) {
+		String elemId = this.uuidProvider.getDataTypeUUID(ct.toQNameString(), cluster.getModelVersion());
 		DataType value = (DataType) this.analysis.get(elemId);
 
 		if (value != null) {
 			// Noting to do.
-		} else if (ct.getTargetNamespace()
-				.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
+		} else if (ct.getTargetNamespace().equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
 				&& this.analysis.getDataType(ct.toQNameString()) == null) {
 			DataType dt = this.of.createDataType();
 			dt.setName(ct.toQNameString());
@@ -312,8 +280,7 @@ public class AnalysisProvider {
 				DataType parent = this.getDataType(cluster, ct.getParent());
 				x.setDescendedFromId(parent.getId());
 			}
-			for (com.qpark.maven.xmlbeans.ComplexType innerCt : ct
-					.getInnerTypeDefs()) {
+			for (com.qpark.maven.xmlbeans.ComplexType innerCt : ct.getInnerTypeDefs()) {
 				this.getDataType(cluster, innerCt);
 			}
 			value = x;
@@ -329,10 +296,8 @@ public class AnalysisProvider {
 	 *            the {@link XsdContainer}.
 	 * @return the {@link DomainType}.
 	 */
-	private DomainType getDomainType(final XsdContainer file,
-			final String modelVersion) {
-		DomainType value = this.analysis
-				.getDomainType(file.getDomainPathName());
+	private DomainType getDomainType(final XsdContainer file, final String modelVersion) {
+		DomainType value = this.analysis.getDomainType(file.getDomainPathName());
 		if (value == null) {
 			value = this.of.createDomainType();
 			value.setName(file.getDomainPathName());
@@ -343,8 +308,7 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	private ElementType getElementType(final ClusterType cluster,
-			final com.qpark.maven.xmlbeans.ElementType element) {
+	private ElementType getElementType(final ClusterType cluster, final com.qpark.maven.xmlbeans.ElementType element) {
 		ElementType value = this.of.createElementType();
 		value.setDescription(element.getAnnotationDocumentation());
 		value.setName(element.toQNameString());
@@ -352,8 +316,7 @@ public class AnalysisProvider {
 		value.setModelVersion(cluster.getModelVersion());
 		value.setParentId(cluster.getId());
 		if (element.getElement().getType() != null) {
-			String elemId = this.uuidProvider.getDataTypeUUID(
-					String.valueOf(element.getElement().getType().getName()),
+			String elemId = this.uuidProvider.getDataTypeUUID(String.valueOf(element.getElement().getType().getName()),
 					cluster.getModelVersion());
 			DataType dt = (DataType) this.analysis.get(elemId);
 			if (dt != null) {
@@ -365,8 +328,7 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	private List<FieldType> getFieldTypes(final ClusterType cluster,
-			final com.qpark.maven.xmlbeans.ComplexType element,
+	private List<FieldType> getFieldTypes(final ClusterType cluster, final com.qpark.maven.xmlbeans.ComplexType element,
 			final String parentId) {
 		List<FieldType> value = new ArrayList<FieldType>();
 		int sequenceNumber = 0;
@@ -378,10 +340,8 @@ public class AnalysisProvider {
 			field.setName(child.getChildName());
 			field.setSequenceNumber(sequenceNumber);
 			field.setCardinality(child.getCardinality());
-			field.setCardinalityMaxOccurs(child.getMaxOccurs() == null ? null
-					: child.getMaxOccurs().intValue());
-			field.setCardinalityMinOccurs(child.getMinOccurs() == null ? null
-					: child.getMinOccurs().intValue());
+			field.setCardinalityMaxOccurs(child.getMaxOccurs() == null ? null : child.getMaxOccurs().intValue());
+			field.setCardinalityMinOccurs(child.getMinOccurs() == null ? null : child.getMinOccurs().intValue());
 			field.setDescription(child.getAnnotationDocumentation());
 			field.setFieldTypeDefinitionId(dt == null ? null : dt.getId());
 			field.setListField(child.isList());
@@ -403,8 +363,7 @@ public class AnalysisProvider {
 	 *            the prefix to subtract.
 	 * @return the name.
 	 */
-	private static String getFlowMethodName(final String fieldName,
-			final String prefix) {
+	private static String getFlowMethodName(final String fieldName, final String prefix) {
 		String suffix = "";
 		if (fieldName.equals(prefix)) {
 			suffix = "";
@@ -417,11 +376,11 @@ public class AnalysisProvider {
 		return suffix;
 	}
 
-	private FlowProcessType getFlowProcessType(final String modelVersion,
-			final String parentId, final String name, final ComplexType ct) {
+	private FlowProcessType getFlowProcessType(final String modelVersion, final String parentId, final String name,
+			final ComplexType ct) {
 		FlowProcessType value = null;
-		List<RequestResponseDataType> rrs = this.getFlowRequestResponse(ct,
-				FLOW_PROCESS_PREFIX_IN, FLOW_PROCESS_PREFIX_OUT, modelVersion);
+		List<RequestResponseDataType> rrs = this.getFlowRequestResponse(ct, FLOW_PROCESS_PREFIX_IN,
+				FLOW_PROCESS_PREFIX_OUT, modelVersion);
 		if (rrs.size() > 0) {
 			value = this.of.createFlowProcessType();
 			value.setName(name);
@@ -433,8 +392,7 @@ public class AnalysisProvider {
 			rrs.get(0).setParentId(value.getId());
 			value.setRequestResponse(rrs.get(0));
 
-			rrs = this.getFlowRequestResponse(ct, FLOW_SUBREQUEST_PREFIX_IN,
-					FLOW_SUBREQUEST_PREFIX_OUT, modelVersion);
+			rrs = this.getFlowRequestResponse(ct, FLOW_SUBREQUEST_PREFIX_IN, FLOW_SUBREQUEST_PREFIX_OUT, modelVersion);
 			for (RequestResponseDataType rr : rrs) {
 				FlowSubRequestType sub = this.of.createFlowSubRequestType();
 				sub.setName(rr.getName());
@@ -448,8 +406,7 @@ public class AnalysisProvider {
 				value.getSubRequest().add(sub);
 			}
 
-			rrs = this.getFlowRequestResponse(ct, FLOW_FILTER_PREFIX_IN,
-					FLOW_FILTER_PREFIX_IN, modelVersion);
+			rrs = this.getFlowRequestResponse(ct, FLOW_FILTER_PREFIX_IN, FLOW_FILTER_PREFIX_IN, modelVersion);
 			for (RequestResponseDataType rr : rrs) {
 				FlowFilterType filter = this.of.createFlowFilterType();
 				filter.setName(rr.getName());
@@ -464,8 +421,7 @@ public class AnalysisProvider {
 				value.getFilter().add(filter);
 			}
 
-			rrs = this.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN,
-					FLOW_MAP_PREFIX_OUT, modelVersion);
+			rrs = this.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN, FLOW_MAP_PREFIX_OUT, modelVersion);
 			for (RequestResponseDataType rr : rrs) {
 				FlowMapInOutType mapInOut = this.of.createFlowMapInOutType();
 				mapInOut.setName(rr.getName());
@@ -480,10 +436,8 @@ public class AnalysisProvider {
 				value.getMapInOut().add(mapInOut);
 
 				for (RequestResponseDataType rrx : rrs) {
-					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-							rrx.getRequestId());
-					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-							rrx.getResponseId());
+					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut, rrx.getRequestId());
+					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut, rrx.getResponseId());
 				}
 			}
 		}
@@ -502,9 +456,8 @@ public class AnalysisProvider {
 	 *            the prefix of the response part.
 	 * @return the {@link FlowRequestResponseNameContainer}.
 	 */
-	private List<RequestResponseDataType> getFlowRequestResponse(
-			final ComplexType ct, final String prefixIn, final String prefixOut,
-			final String modelVersion) {
+	private List<RequestResponseDataType> getFlowRequestResponse(final ComplexType ct, final String prefixIn,
+			final String prefixOut, final String modelVersion) {
 		List<RequestResponseDataType> requestResponses = new ArrayList<RequestResponseDataType>();
 		RequestResponseDataType requestResponse = null;
 		DataType request = null;
@@ -515,50 +468,35 @@ public class AnalysisProvider {
 			if (childOut.getName().startsWith(prefixOut)) {
 				name = getFlowMethodName(childOut.getName(), prefixOut);
 				for (FieldType childIn : ct.getField()) {
-					if (childIn.getName().equals(new StringBuffer(16)
-							.append(prefixIn).append(name).toString())) {
-						request = (DataType) this.analysis
-								.get(childIn.getFieldTypeDefinitionId());
-						response = (DataType) this.analysis
-								.get(childOut.getFieldTypeDefinitionId());
-						requestResponse = this.getRequestResponseDataType(
-								modelVersion, null, request, response);
+					if (childIn.getName().equals(new StringBuffer(16).append(prefixIn).append(name).toString())) {
+						request = (DataType) this.analysis.get(childIn.getFieldTypeDefinitionId());
+						response = (DataType) this.analysis.get(childOut.getFieldTypeDefinitionId());
+						requestResponse = this.getRequestResponseDataType(modelVersion, null, request, response);
 						if (name.trim().length() == 0) {
-							name = new StringBuffer(childIn.getName())
-									.append(childOut.getName()).toString();
+							name = new StringBuffer(childIn.getName()).append(childOut.getName()).toString();
 						}
 						requestResponse.setName(name);
 						requestResponses.add(requestResponse);
-						inChildrenFound.add(
-								new StringBuffer(requestResponse.getRequestId())
-										.append(requestResponse.getRequestId())
-										.toString());
+						inChildrenFound.add(new StringBuffer(requestResponse.getRequestId())
+								.append(requestResponse.getRequestId()).toString());
 					}
 				}
 			}
 		}
 		for (FieldType childIn : ct.getField()) {
-			if (childIn.getName().startsWith(prefixIn)
-					&& !inChildrenFound.contains(childIn.getName())) {
+			if (childIn.getName().startsWith(prefixIn) && !inChildrenFound.contains(childIn.getName())) {
 				name = getFlowMethodName(childIn.getName(), prefixIn);
 				for (FieldType childOut : ct.getField()) {
-					if (childOut.getName().equals(new StringBuffer(16)
-							.append(prefixOut).append(name).toString())) {
-						request = (DataType) this.analysis
-								.get(childIn.getFieldTypeDefinitionId());
-						response = (DataType) this.analysis
-								.get(childOut.getFieldTypeDefinitionId());
-						requestResponse = this.getRequestResponseDataType(
-								modelVersion, null, request, response);
+					if (childOut.getName().equals(new StringBuffer(16).append(prefixOut).append(name).toString())) {
+						request = (DataType) this.analysis.get(childIn.getFieldTypeDefinitionId());
+						response = (DataType) this.analysis.get(childOut.getFieldTypeDefinitionId());
+						requestResponse = this.getRequestResponseDataType(modelVersion, null, request, response);
 						if (name.trim().length() == 0) {
-							name = new StringBuffer(childIn.getName())
-									.append(childOut.getName()).toString();
+							name = new StringBuffer(childIn.getName()).append(childOut.getName()).toString();
 						}
 						requestResponse.setName(name);
-						if (!inChildrenFound.contains(
-								new StringBuffer(requestResponse.getRequestId())
-										.append(requestResponse.getRequestId())
-										.toString())) {
+						if (!inChildrenFound.contains(new StringBuffer(requestResponse.getRequestId())
+								.append(requestResponse.getRequestId()).toString())) {
 							requestResponses.add(requestResponse);
 							inChildrenFound.add(requestResponse.getName());
 						}
@@ -569,37 +507,31 @@ public class AnalysisProvider {
 		return requestResponses;
 	}
 
-	private FlowType getFlowType(final ClusterType cluster,
-			final ComplexType ctRequest, final ComplexType ctResponse) {
+	private FlowType getFlowType(final ClusterType cluster, final ComplexType ctRequest, final ComplexType ctResponse) {
 		FlowType value = this.of.createFlowType();
 		/* Parent is enterprise which does not have an id. */
 		value.setClusterId(cluster.getId());
 		value.setModelVersion(cluster.getModelVersion());
-		value.setName(ctRequest.getJavaClassName().substring(0,
-				ctRequest.getJavaClassName().lastIndexOf("RequestType")));
+		value.setName(
+				ctRequest.getJavaClassName().substring(0, ctRequest.getJavaClassName().lastIndexOf("RequestType")));
 		value.setNamespace(ctRequest.getNamespace());
 		value.setDescription(ctRequest.getDescription());
-		value.setShortName(value.getName()
-				.substring(value.getName().lastIndexOf('.') + 1));
+		value.setShortName(value.getName().substring(value.getName().lastIndexOf('.') + 1));
 
 		this.uuidProvider.setUUID(value);
 
 		value.setInvokeFlowDefinition(
-				this.getRequestResponseDataType(cluster.getModelVersion(),
-						value.getId(), ctRequest, ctResponse));
+				this.getRequestResponseDataType(cluster.getModelVersion(), value.getId(), ctRequest, ctResponse));
 
 		value.setExecuteRequest(
-				this.getFlowProcessType(cluster.getModelVersion(),
-						value.getId(), "executeRequest", ctRequest));
+				this.getFlowProcessType(cluster.getModelVersion(), value.getId(), "executeRequest", ctRequest));
 		value.setProcessResponse(
-				this.getFlowProcessType(cluster.getModelVersion(),
-						value.getId(), "processResponse", ctResponse));
+				this.getFlowProcessType(cluster.getModelVersion(), value.getId(), "processResponse", ctResponse));
 
 		DataType dataType;
 		DataType ct;
 		for (FieldType field : ctRequest.getField()) {
-			dataType = (DataType) this.analysis
-					.get(field.getFieldTypeDefinitionId());
+			dataType = (DataType) this.analysis.get(field.getFieldTypeDefinitionId());
 			if (dataType != null && DataType.class.isInstance(dataType)) {
 				ct = dataType;
 			}
@@ -607,12 +539,11 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	private RequestResponseDataType getRequestResponseDataType(
-			final String modelVersion, final String parentId,
+	private RequestResponseDataType getRequestResponseDataType(final String modelVersion, final String parentId,
 			final DataType request, final DataType response) {
 		RequestResponseDataType value = this.of.createRequestResponseDataType();
-		value.setName(new StringBuffer(128).append(request.getName())
-				.append("#").append(response.getName()).toString());
+		value.setName(
+				new StringBuffer(128).append(request.getName()).append("#").append(response.getName()).toString());
 		value.setParentId(parentId);
 		value.setModelVersion(modelVersion);
 		value.setNamespace(request.getNamespace());
@@ -623,13 +554,11 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	private OperationType getServiceOperation(final ClusterType cluster,
-			final String serviceId, final String operationName,
-			final ElementType request, final ElementType response) {
+	private OperationType getServiceOperation(final ClusterType cluster, final String serviceId,
+			final String operationName, final ElementType request, final ElementType response) {
 		ServiceType service = this.analysis.getServiceType(serviceId);
 		if (service == null) {
-			DomainType domain = (DomainType) this.analysis
-					.get(cluster.getParentId());
+			DomainType domain = (DomainType) this.analysis.get(cluster.getParentId());
 			service = this.of.createServiceType();
 			service.setName(serviceId);
 			service.setModelVersion(cluster.getModelVersion());
@@ -639,30 +568,26 @@ public class AnalysisProvider {
 			service.setNamespace(cluster.getName());
 			service.setPackageName(cluster.getPackageName());
 			service.setServiceId(serviceId);
-			service.setSecurityRoleName(
-					String.format("ROLE_%s", serviceId.toUpperCase()));
+			service.setSecurityRoleName(String.format("ROLE_%s", serviceId.toUpperCase()));
 
 			domain.getService().add(service);
 		}
 
 		OperationType value = this.of.createOperationType();
-		if (request.getDescription() != null
-				&& response.getDescription() != null) {
-			value.setDescription(
-					new StringBuffer(128).append(request.getDescription())
-							.append(response.getDescription()).toString());
+		if (request.getDescription() != null && response.getDescription() != null) {
+			value.setDescription(new StringBuffer(128).append(request.getDescription())
+					.append(response.getDescription()).toString());
 		} else if (request.getDescription() != null) {
 			value.setDescription(request.getDescription());
 		} else if (response.getDescription() != null) {
 			value.setDescription(response.getDescription());
 		}
-		value.setName(new StringBuffer(128).append(cluster.getPackageName())
-				.append(".").append(operationName).toString());
+		value.setName(
+				new StringBuffer(128).append(cluster.getPackageName()).append(".").append(operationName).toString());
 		value.setNamespace(cluster.getName());
 		value.setModelVersion(cluster.getModelVersion());
 		value.setParentId(service.getId());
-		value.setSecurityRoleName(String.format("%s_%s",
-				service.getSecurityRoleName(), operationName.toUpperCase()));
+		value.setSecurityRoleName(String.format("%s_%s", service.getSecurityRoleName(), operationName.toUpperCase()));
 		value.setShortName(operationName);
 		value.setRequest(request.getId());
 		value.setResponse(response.getId());
@@ -672,8 +597,7 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	private void setDataType(final String modelVersion,
-			final com.qpark.maven.xmlbeans.ComplexType element,
+	private void setDataType(final String modelVersion, final com.qpark.maven.xmlbeans.ComplexType element,
 			final DataType value) {
 		value.setDescription(element.getAnnotationDocumentation());
 		value.setName(element.toQNameString());
@@ -685,15 +609,11 @@ public class AnalysisProvider {
 		this.uuidProvider.setUUID(value);
 	}
 
-	private void setDirectType(final String modelVersion,
-			final com.qpark.maven.xmlbeans.ComplexType element,
+	private void setDirectType(final String modelVersion, final com.qpark.maven.xmlbeans.ComplexType element,
 			final DirectMappingType value) {
-		value.setAccessor(element.getType().getName().getLocalPart()
-				.replace("MappingType", ""));
+		value.setAccessor(element.getType().getName().getLocalPart().replace("MappingType", ""));
 		String[] strs = value.getAccessor().split("\\.");
-		if (value.getDescription() == null
-				|| value.getDescription().trim().length() == 0
-						&& strs.length > 0) {
+		if (value.getDescription() == null || value.getDescription().trim().length() == 0 && strs.length > 0) {
 			StringBuffer sb = new StringBuffer(64);
 			sb.append("Get ");
 			for (int i = strs.length - 1; i > 0; i--) {
@@ -704,12 +624,10 @@ public class AnalysisProvider {
 		}
 	}
 
-	private void setDefaultType(final String modelVersion,
-			final com.qpark.maven.xmlbeans.ComplexType element,
+	private void setDefaultType(final String modelVersion, final com.qpark.maven.xmlbeans.ComplexType element,
 			final DefaultMappingType value) {
 		value.setDefaultValue(element.getDefaultValue());
-		if (value.getDescription() == null
-				|| value.getDescription().trim().length() == 0) {
+		if (value.getDescription() == null || value.getDescription().trim().length() == 0) {
 			StringBuffer sb = new StringBuffer(64);
 			sb.append("Default value: ");
 			sb.append(element.getDefaultValue());
@@ -717,8 +635,7 @@ public class AnalysisProvider {
 		}
 	}
 
-	private void setFieldMappingType(final FieldMappingType type,
-			final List<FieldType> fields) {
+	private void setFieldMappingType(final FieldMappingType type, final List<FieldType> fields) {
 		FieldType returnField = null;
 		for (FieldType f : fields) {
 			if (f.getName().equals("return")) {
@@ -731,10 +648,8 @@ public class AnalysisProvider {
 		type.getInput().addAll(fields);
 	}
 
-	private void setFieldTypes(final ClusterType cluster,
-			final com.qpark.maven.xmlbeans.ComplexType ct) {
-		String elemId = this.uuidProvider.getDataTypeUUID(ct.toQNameString(),
-				cluster.getModelVersion());
+	private void setFieldTypes(final ClusterType cluster, final com.qpark.maven.xmlbeans.ComplexType ct) {
+		String elemId = this.uuidProvider.getDataTypeUUID(ct.toQNameString(), cluster.getModelVersion());
 		DataType dt = (DataType) this.analysis.get(elemId);
 
 		List<FieldType> fields = this.getFieldTypes(cluster, ct, elemId);
@@ -747,18 +662,14 @@ public class AnalysisProvider {
 		}
 	}
 
-	private void setFlowMapInOutTypeInterfaceMappingIds(
-			final FlowMapInOutType mapInOut, final String dataTypeId) {
+	private void setFlowMapInOutTypeInterfaceMappingIds(final FlowMapInOutType mapInOut, final String dataTypeId) {
 		DataType dt = (DataType) this.analysis.get(dataTypeId);
 		if (dt != null && ComplexType.class.isInstance(dt)) {
 			for (FieldType field : ((ComplexType) dt).getField()) {
-				DataType dtx = (DataType) this.analysis
-						.get(field.getFieldTypeDefinitionId());
+				DataType dtx = (DataType) this.analysis.get(field.getFieldTypeDefinitionId());
 				if (dtx != null && InterfaceMappingType.class.isInstance(dtx)
-						&& !mapInOut.getInterfaceMappingId()
-								.contains(field.getFieldTypeDefinitionId())) {
-					mapInOut.getInterfaceMappingId()
-							.add(field.getFieldTypeDefinitionId());
+						&& !mapInOut.getInterfaceMappingId().contains(field.getFieldTypeDefinitionId())) {
+					mapInOut.getInterfaceMappingId().add(field.getFieldTypeDefinitionId());
 				}
 			}
 		}
