@@ -23,6 +23,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
@@ -886,7 +887,7 @@ public class XsdsUtil {
 
 	private static Map<String, XsdContainer> setupXsdContainers(
 			final List<File> xsdFiles, final File baseDirectory) {
-		TreeMap<String, XsdContainer> xsdContainerMap = new TreeMap<String, XsdContainer>();
+		Map<String, XsdContainer> xsdContainerMap = new ConcurrentHashMap<String, XsdContainer>();
 		for (File f : xsdFiles) {
 			XsdContainer xsdContainer;
 			try {
@@ -920,7 +921,9 @@ public class XsdsUtil {
 		for (XsdContainer container : xsdContainerMap.values()) {
 			setupXsdContainerTotalImports(container, xsdContainerMap);
 		}
-		return xsdContainerMap;
+		TreeMap<String, XsdContainer> value = new TreeMap<String, XsdContainer>();
+		value.putAll(xsdContainerMap);
+		return value;
 	}
 
 	private static void setupXsdContainerTotalImports(
@@ -950,7 +953,7 @@ public class XsdsUtil {
 	private final String basePackageName;
 
 	/** The map of {@link QName}s with their {@link ComplexType}s. */
-	private final Map<String, ComplexType> complexTypeMap = new HashMap<String, ComplexType>();
+	private final Map<String, ComplexType> complexTypeMap = new ConcurrentHashMap<String, ComplexType>();
 
 	/** The {@link TreeSet} of {@link ComplexType}. */
 	private final TreeSet<ComplexType> complexTypes = new TreeSet<ComplexType>(
@@ -1106,6 +1109,10 @@ public class XsdsUtil {
 		// }));
 
 		startX = System.currentTimeMillis();
+		List<ComplexType> synchronizedComplexTypeList = Collections
+				.synchronizedList(new ArrayList<ComplexType>());
+		List<ElementType> synchronizedElementTypeList = Collections
+				.synchronizedList(new ArrayList<ElementType>());
 		this.xsdFiles.parallelStream().parallel().forEach((f -> {
 			long startf = System.currentTimeMillis();
 			SchemaTypeSystem sts = getSchemaTypeSystem(f, this.entityResolver);
@@ -1115,20 +1122,22 @@ public class XsdsUtil {
 						f.getAbsolutePath()));
 			}
 			Arrays.asList(sts.globalElements()).stream().forEach(
-					elem -> this.elementTypes.add(new ElementType(elem, this)));
+					elem -> synchronizedElementTypeList.add(new ElementType(elem, this)));
 			Arrays.asList(sts.globalTypes()).stream().forEach(type -> {
 				if (!this.complexTypeMap
 						.containsKey(String.valueOf(type.getName()))) {
 					ComplexType ct = new ComplexType(type, this);
 					this.complexTypeMap
 							.put(String.valueOf(ct.getType().getName()), ct);
-					this.setupComplexTypes(ct, this.complexTypes);
+					this.setupComplexTypes(ct, synchronizedComplexTypeList);
 				}
 			});
 			this.logger.debug("{} to get elements and complex type of file {}",
 					Util.getDuration(System.currentTimeMillis() - startf),
 					f.getAbsolutePath());
 		}));
+		this.elementTypes.addAll(synchronizedElementTypeList);
+		this.complexTypes.addAll(synchronizedComplexTypeList);
 		this.logger.info(
 				"{} to get {} complexTypes and {} elementTypes out of {} files",
 				Util.getDuration(System.currentTimeMillis() - startX),
@@ -1279,11 +1288,10 @@ public class XsdsUtil {
 	}
 
 	private void setupComplexTypes(final ComplexType ct,
-			final TreeSet<ComplexType> complexTypes) {
-		this.complexTypes.add(ct);
+			final List<ComplexType> complexTypeList) {
+		complexTypeList.add(ct);
 		for (ComplexType ctx : ct.getInnerTypeDefs()) {
-			this.setupComplexTypes(ctx, complexTypes);
+			this.setupComplexTypes(ctx, complexTypeList);
 		}
 	}
-
 }
