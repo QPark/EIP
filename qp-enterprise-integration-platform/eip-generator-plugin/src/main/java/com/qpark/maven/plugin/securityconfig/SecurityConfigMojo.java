@@ -15,7 +15,6 @@ import java.util.TreeSet;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -103,7 +102,7 @@ public class SecurityConfigMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
 	private final List<String> roleList = new ArrayList<String>();
 

@@ -12,7 +12,6 @@ import java.util.Collection;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -73,7 +72,7 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "useSpringInsightAnnotation", defaultValue = "true")
 	private boolean useSpringInsightAnnotation;
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
@@ -92,15 +91,15 @@ public class GeneratorMojo extends AbstractMojo {
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}
-		String version = null;
-		if (this.project.getArtifact() != null) {
-			version = this.project.getArtifact().getVersion();
+		String eipVersion = null;
+		if (this.project.getExecutionProject() != null) {
+			eipVersion = this.project.getExecutionProject().getVersion();
 		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
 				if (element.isRequest() && ServiceIdRegistry.isValidServiceId(element.getServiceId(), sid)) {
 					mop = new OperationProviderMockGenerator(xsds, this.outputDirectory, element,
-							this.useSpringInsightAnnotation, version, this.getLog());
+							this.useSpringInsightAnnotation, eipVersion, this.getLog());
 					mop.generate();
 				}
 			}

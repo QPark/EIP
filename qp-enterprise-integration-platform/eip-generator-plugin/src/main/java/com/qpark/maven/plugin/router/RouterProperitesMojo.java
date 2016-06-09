@@ -12,7 +12,6 @@ import java.util.Collection;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -224,7 +223,7 @@ public class RouterProperitesMojo extends AbstractMojo {
 		return sb.toString();
 	}
 
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
 	private String eipVersion;
 
@@ -239,8 +238,8 @@ public class RouterProperitesMojo extends AbstractMojo {
 		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 
-		if (this.project.getArtifact() != null) {
-			this.eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			this.eipVersion = this.project.getExecutionProject().getVersion();
 		}
 
 		String fileName;

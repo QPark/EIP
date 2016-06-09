@@ -11,7 +11,6 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -75,7 +74,7 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "serviceResponseSuffix", defaultValue = "Response")
 	private String serviceResponseSuffix;
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
 	/**
 	 * The bean definition of the additional web service payload interceptors.
@@ -111,8 +110,8 @@ public class GeneratorMojo extends AbstractMojo {
 		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		String eipVersion = null;
-		if (this.project.getArtifact() != null) {
-			eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			eipVersion = this.project.getExecutionProject().getVersion();
 		}
 
 		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId, this.serviceVersion, this.revisionNumber,

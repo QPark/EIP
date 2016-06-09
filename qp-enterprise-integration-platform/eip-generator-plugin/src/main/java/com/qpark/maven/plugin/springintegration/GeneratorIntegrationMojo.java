@@ -39,8 +39,8 @@ public class GeneratorIntegrationMojo extends GeneratorIntegrationJavaSourcesMoj
 		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		String eipVersion = null;
-		if (this.project.getArtifact() != null) {
-			eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			eipVersion = this.project.getExecutionProject().getVersion();
 		}
 
 		this.generate(xsds);

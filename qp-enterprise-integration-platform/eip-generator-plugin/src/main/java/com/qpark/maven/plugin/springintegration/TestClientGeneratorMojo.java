@@ -13,7 +13,6 @@ import java.util.TreeSet;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -75,7 +74,7 @@ public class TestClientGeneratorMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "useSpringInsightAnnotation", defaultValue = "false")
 	private boolean useSpringInsightAnnotation;
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
@@ -89,8 +88,8 @@ public class TestClientGeneratorMojo extends AbstractMojo {
 		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		String eipVersion = null;
-		if (this.project.getArtifact() != null) {
-			eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			eipVersion = this.project.getExecutionProject().getVersion();
 		}
 
 		TestClientGenerator tc;

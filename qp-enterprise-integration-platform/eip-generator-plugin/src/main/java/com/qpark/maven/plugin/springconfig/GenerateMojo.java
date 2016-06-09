@@ -11,7 +11,6 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -95,7 +94,7 @@ public class GenerateMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "placeholderConfigurerImpl", defaultValue = "com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer")
 	private String placeholderConfigurerImpl;
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
 
 	/**
@@ -109,8 +108,8 @@ public class GenerateMojo extends AbstractMojo {
 		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 		String eipVersion = null;
-		if (this.project.getArtifact() != null) {
-			eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			eipVersion = this.project.getExecutionProject().getVersion();
 		}
 
 		WebServiceDispatcherXmlGenerator wsdx = new WebServiceDispatcherXmlGenerator(xsds, this.serviceId, this.warName,

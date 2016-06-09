@@ -12,7 +12,6 @@ import javax.xml.bind.Marshaller;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -73,7 +72,7 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The eip version to insert into generated tag. */
 	private String eipVersion;
 	/** The {@link MavenProject}. */
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
 
 	/**
@@ -87,8 +86,8 @@ public class GeneratorMojo extends AbstractMojo {
 
 		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
-		if (this.project.getArtifact() != null) {
-			this.eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			this.eipVersion = this.project.getExecutionProject().getVersion();
 		}
 		if (this.enterpriseName == null || this.enterpriseName.trim().length() == 0) {
 			this.enterpriseName = this.basePackageName;

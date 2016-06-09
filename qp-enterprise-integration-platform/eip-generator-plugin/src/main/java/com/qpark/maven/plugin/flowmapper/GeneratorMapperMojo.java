@@ -15,7 +15,6 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -92,8 +91,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 	/** The directory where to put the generated interfaces. */
 	@Parameter(property = "outputInterfacesDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	private File outputInterfacesDirectory;
-
-	@Component
+	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
 	/**
@@ -108,8 +106,8 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		XsdsUtil config = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName,
 				this.mappingPackageNameSuffixes, null, this.mappingRequestSuffix, this.mappingResponseSuffix);
 		String eipVersion = null;
-		if (this.project.getArtifact() != null) {
-			eipVersion = this.project.getArtifact().getVersion();
+		if (this.project.getExecutionProject() != null) {
+			eipVersion = this.project.getExecutionProject().getVersion();
 		}
 
 		ComplexContentList complexContentList = new ComplexContentList();
@@ -236,18 +234,19 @@ public class GeneratorMapperMojo extends AbstractMojo {
 			}
 		}
 
-		this.getLog().info(String.format("%-40s:%4d", "Namespaces", config.getXsdContainerMap().size()));
-		this.getLog().info(String.format("%-40s:%4d", "ComplexTypes", config.getComplexTypes().size()));
-		this.getLog().info(String.format("%-40s:%4d", "ElementTypes", config.getElementTypes().size()));
+		this.getLog().info(String.format("%-40s:%s", "EIP version", eipVersion));
+		this.getLog().info(String.format("%-40s:%5d", "Namespaces", config.getXsdContainerMap().size()));
+		this.getLog().info(String.format("%-40s:%5d", "ComplexTypes", config.getComplexTypes().size()));
+		this.getLog().info(String.format("%-40s:%5d", "ElementTypes", config.getElementTypes().size()));
 
-		this.getLog().info(String.format("%-40s:%4d", "Generated flows", flows));
-		this.getLog().info(String.format("%-40s:%4d", "Generated direct mappers", directMappers));
-		this.getLog().info(String.format("%-40s:%4d", "Generated default mappers", defaultMappers));
-		this.getLog().info(String.format("%-40s:%4d", "Generated complex UUID mappers", complexUUIDMappers));
-		this.getLog().info(String.format("%-40s:%4d", "Generated complex mappers", complexMappers));
-		this.getLog().info(String.format("%-40s:%4d", "Generated tabular mappers", tabularMappers));
-		this.getLog().info(String.format("%-40s:%4d", "Generated interface mappers", interfaceMappers));
-		this.getLog().info(String.format("%-40s:%4d", "Generated mapping operations", mappingOperations));
+		this.getLog().info(String.format("%-40s:%5d", "Generated flows", flows));
+		this.getLog().info(String.format("%-40s:%5d", "Generated direct mappers", directMappers));
+		this.getLog().info(String.format("%-40s:%5d", "Generated default mappers", defaultMappers));
+		this.getLog().info(String.format("%-40s:%5d", "Generated complex UUID mappers", complexUUIDMappers));
+		this.getLog().info(String.format("%-40s:%5d", "Generated complex mappers", complexMappers));
+		this.getLog().info(String.format("%-40s:%5d", "Generated tabular mappers", tabularMappers));
+		this.getLog().info(String.format("%-40s:%5d", "Generated interface mappers", interfaceMappers));
+		this.getLog().info(String.format("%-40s:%5d", "Generated mapping operations", mappingOperations));
 
 		this.getLog().debug("-execute");
 
