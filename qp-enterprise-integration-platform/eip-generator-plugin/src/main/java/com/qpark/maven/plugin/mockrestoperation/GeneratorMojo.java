@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.Collection;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -33,16 +34,19 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 // defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
 	 * <code>msg</code>.
 	 */
-	@Parameter(property = "restMessagePackageNameSuffix", defaultValue = "restmsg")
+	@Parameter(property = "restMessagePackageNameSuffix",
+			defaultValue = "restmsg")
 	private String restMessagePackageNameSuffix;
 	/**
 	 * The package name of the delta should contain this. Default is
@@ -70,6 +74,17 @@ public class GeneratorMojo extends AbstractMojo {
 	private String serviceResponseSuffix;
 	@Component
 	protected MavenProject project;
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
+	protected MojoExecution execution;
+
+	/**
+	 * Get the executing plugin version - the EIP version.
+	 *
+	 * @return the EIP version.
+	 */
+	protected String getEipVersion() {
+		return this.execution.getVersion();
+	}
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -79,19 +94,23 @@ public class GeneratorMojo extends AbstractMojo {
 		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName,
-				this.restMessagePackageNameSuffix, this.deltaPackageNameSuffix, this.serviceRequestSuffix,
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
+				this.basePackageName, this.restMessagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
 				this.serviceResponseSuffix);
 		RestOperationProviderMockGenerator mop;
 
-		Collection<String> serviceIds = ServiceIdRegistry.splitServiceIds(this.serviceId);
+		Collection<String> serviceIds = ServiceIdRegistry
+				.splitServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
 			serviceIds = ServiceIdRegistry.getAllServiceIds();
 		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
-				if (element.isRequest() && ServiceIdRegistry.isValidServiceId(element.getServiceId(), sid)) {
-					mop = new RestOperationProviderMockGenerator(xsds, this.outputDirectory, element, this.getLog());
+				if (element.isRequest() && ServiceIdRegistry
+						.isValidServiceId(element.getServiceId(), sid)) {
+					mop = new RestOperationProviderMockGenerator(xsds,
+							this.outputDirectory, element, this.getLog());
 					mop.generate();
 				}
 			}

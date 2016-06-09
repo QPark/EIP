@@ -9,6 +9,7 @@ package com.qpark.maven.plugin.servletconfig;
 import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -25,13 +26,16 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-servlet-config", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+@Mojo(name = "generate-servlet-config",
+		defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -79,17 +83,20 @@ public class GeneratorMojo extends AbstractMojo {
 	/**
 	 * The bean definition of the additional web service payload interceptors.
 	 */
-	@Parameter(property = "additionalWebservicePayloadInterceptors", defaultValue = "")
+	@Parameter(property = "additionalWebservicePayloadInterceptors",
+			defaultValue = "")
 	private String additionalWebservicePayloadInterceptors;
 	/**
 	 * <code>true</code>, if no payload validation should be added to the web
 	 * service endpoint .
 	 */
-	@Parameter(property = "disableWebservicePayloadValidation", defaultValue = "false")
+	@Parameter(property = "disableWebservicePayloadValidation",
+			defaultValue = "false")
 	private boolean disableWebservicePayloadValidation;
 
 	/** The class name of the implementing webservice pay load logger. */
-	@Parameter(property = "webservicePayloadLoggerImplementation", defaultValue = "com.qpark.eip.core.spring.PayloadLogger")
+	@Parameter(property = "webservicePayloadLoggerImplementation",
+			defaultValue = "com.qpark.eip.core.spring.PayloadLogger")
 	private String webservicePayloadLoggerImplementation;
 	/**
 	 * The class name of the implementing a javax.servlet.Filter to be applied
@@ -97,6 +104,17 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "additionalWebappFilter", defaultValue = "")
 	private String additionalWebappFilter;
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
+	protected MojoExecution execution;
+
+	/**
+	 * Get the executing plugin version - the EIP version.
+	 *
+	 * @return the EIP version.
+	 */
+	protected String getEipVersion() {
+		return this.execution.getVersion();
+	}
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -107,21 +125,24 @@ public class GeneratorMojo extends AbstractMojo {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
 
-		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
-		String eipVersion = null;
-		if (this.project.getExecutionProject() != null) {
-			eipVersion = this.project.getExecutionProject().getVersion();
-		}
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
+				this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
+				this.serviceResponseSuffix);
+		String eipVersion = this.getEipVersion();
 
-		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId, this.serviceVersion, this.revisionNumber,
-				this.warName, this.additionalWebappFilter, this.outputDirectory, eipVersion, this.getLog());
+		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId,
+				this.serviceVersion, this.revisionNumber, this.warName,
+				this.additionalWebappFilter, this.outputDirectory, eipVersion,
+				this.getLog());
 		wx.generate();
 
-		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds, this.basePackageName, this.serviceId,
-				this.disableWebservicePayloadValidation, this.webservicePayloadLoggerImplementation,
-				this.additionalWebservicePayloadInterceptors, this.outputDirectory, this.project, eipVersion,
-				this.getLog());
+		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds,
+				this.basePackageName, this.serviceId,
+				this.disableWebservicePayloadValidation,
+				this.webservicePayloadLoggerImplementation,
+				this.additionalWebservicePayloadInterceptors,
+				this.outputDirectory, this.project, eipVersion, this.getLog());
 		wsx.generate();
 
 		this.getLog().debug("-execute");

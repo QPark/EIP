@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -29,10 +30,12 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-model-analysis", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+@Mojo(name = "generate-model-analysis",
+		defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base package name where to place the object factories. */
 	@Parameter(property = "basePackageName", defaultValue = "")
@@ -62,7 +65,8 @@ public class GeneratorMojo extends AbstractMojo {
 	@Parameter(property = "serviceResponseSuffix", defaultValue = "Response")
 	private String serviceResponseSuffix;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/** The name of the enterprise (Defaults to the basePackageName). */
 	@Parameter(property = "enterpriseName")
@@ -74,6 +78,17 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The {@link MavenProject}. */
 	@Parameter(defaultValue = "${project}", readonly = true)
 	private MavenProject project;
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
+	protected MojoExecution execution;
+
+	/**
+	 * Get the executing plugin version - the EIP version.
+	 *
+	 * @return the EIP version.
+	 */
+	protected String getEipVersion() {
+		return this.execution.getVersion();
+	}
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -84,32 +99,42 @@ public class GeneratorMojo extends AbstractMojo {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
 
-		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
-		if (this.project.getExecutionProject() != null) {
-			this.eipVersion = this.project.getExecutionProject().getVersion();
-		}
-		if (this.enterpriseName == null || this.enterpriseName.trim().length() == 0) {
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
+				this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
+				this.serviceResponseSuffix);
+		this.eipVersion = this.getEipVersion();
+
+		if (this.enterpriseName == null
+				|| this.enterpriseName.trim().length() == 0) {
 			this.enterpriseName = this.basePackageName;
 		}
-		if (this.modelVersion == null || this.modelVersion.trim().length() == 0) {
+		if (this.modelVersion == null
+				|| this.modelVersion.trim().length() == 0) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-			this.modelVersion = String.format("%s#%s", this.project.getArtifact().getVersion(), sdf.format(new Date()));
+			this.modelVersion = String.format("%s#%s",
+					this.project.getArtifact().getVersion(),
+					sdf.format(new Date()));
 		}
-		Analysis a = new AnalysisProvider().createEnterprise(this.enterpriseName, this.modelVersion, xsds);
+		Analysis a = new AnalysisProvider()
+				.createEnterprise(this.enterpriseName, this.modelVersion, xsds);
 
 		try {
 			ObjectFactory of = new ObjectFactory();
-			JAXBElement<EnterpriseType> enterprise = of.createEnterprise(a.getEnterprise());
-			JAXBContext context = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName());
+			JAXBElement<EnterpriseType> enterprise = of
+					.createEnterprise(a.getEnterprise());
+			JAXBContext context = JAXBContext
+					.newInstance(ObjectFactory.class.getPackage().getName());
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			StringWriter sw = new StringWriter();
 			marshaller.marshal(enterprise, sw);
 
 			File f = Util.getFile(this.outputDirectory,
-					new StringBuffer(64).append(this.enterpriseName).append("-ModelAnalysis.xml").toString());
-			this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+					new StringBuffer(64).append(this.enterpriseName)
+							.append("-ModelAnalysis.xml").toString());
+			this.getLog().info(new StringBuffer().append("Write ")
+					.append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sw.toString());
 			} catch (Exception e) {
