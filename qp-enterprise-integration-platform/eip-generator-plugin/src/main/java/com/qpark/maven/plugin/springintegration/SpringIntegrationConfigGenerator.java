@@ -262,12 +262,12 @@ public class SpringIntegrationConfigGenerator {
 		// .append(servicePackageName).append(":-1}\"\n");
 
 		sb.append("\t\turi=\"${service.endpoint.url.")
-				.append(servicePackageName).append("}\"\n");
+				.append(servicePackageName).append(":http://localhost:8080/}\"\n");
 		properties.append("service.endpoint.url.").append(servicePackageName)
-				.append("=http://localhost:8080/webapp-name-and-version/services/")
+				.append("=http://localhost:8080/")
 				.append(serviceId).append("\n");
-		properties.append("service.endpoint.timeout.ms.")
-				.append(servicePackageName).append("=-1\n");
+		// properties.append("service.endpoint.timeout.ms.")
+		// .append(servicePackageName).append("=-1\n");
 
 		sb.append("\t\tinterceptors=\"eipCaller").append(capitalizeName)
 				.append("WsInterceptors\"\n");
