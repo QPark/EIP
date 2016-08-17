@@ -74,7 +74,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		if (children.isEmpty()) {
 			String msg = new StringBuffer(132)
 					.append(this.complexType.toQNameString())
-					.append(" does not contain a child to get the direct mapping value from!")
+					.append(" does not contain any children!")
 					.toString();
 			this.log.error(msg);
 			throw new IllegalStateException(msg);
@@ -85,9 +85,10 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 			ctc = ctc.getComplexType().getChild(propertyNames[i]);
 			if (ctc == null) {
 				String msg = new StringBuffer(128)
-						.append("Can not find the child ")
-						.append(propertyNames[i]).append(" in ")
-						.append(this.complexType.getType().getName())
+						.append(this.complexType.toQNameString())
+						.append(" does not contain a child ")
+						.append(propertyNames[i])
+						.append("!")
 						.toString();
 				this.log.error(msg);
 				throw new IllegalStateException(msg);
