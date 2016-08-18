@@ -97,6 +97,8 @@ public class MappingOperationGenerator
 		sb.append("(");
 		sb.append(this.request.getClassNameFullQualified());
 		sb.append(" request, FlowContext flowContext) {\n");
+		sb.append(
+				"\t\tthis.logger.trace(\"+invokeMapping {}\", flowContext.getSessionId());\n");
 		sb.append("\t\t");
 		sb.append(this.response.getClassName());
 		sb.append(" response = of.create");
@@ -177,6 +179,9 @@ public class MappingOperationGenerator
 			}
 		}
 		sb.append("\n");
+
+		sb.append(
+				"\t\tthis.logger.trace(\"-invokeMapping {}\", flowContext.getSessionId());\n");
 
 		sb.append("\t\treturn response;\n");
 		sb.append("\t}\n");
