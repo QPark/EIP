@@ -7,8 +7,7 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="ls
-				" />
+				<jaxb:package name="com.qpark.eip.model.docmodel" />
 			</jaxb:schemaBindings>
 		</appinfo>
 	</annotation>
@@ -306,6 +305,9 @@
 			</element>
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation>
+			</element>
+			<element name="sequenceNumber" type="int">
+				<annotation><documentation>The sequence number of the fields element.</documentation></annotation>
 			</element>
 			<element name="fieldTypeDefinitionId" type="DM:UUIDType">
 				<annotation><documentation>The id of the dataType assigned to the field.</documentation></annotation>
