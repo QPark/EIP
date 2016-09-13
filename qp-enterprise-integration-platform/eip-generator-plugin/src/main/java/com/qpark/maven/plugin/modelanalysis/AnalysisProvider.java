@@ -741,17 +741,19 @@ public class AnalysisProvider {
 			value.setAccessor(element.getType().getName().getLocalPart()
 					.replace("MappingType", ""));
 		}
-		String[] strs = value.getAccessor().split("\\.");
-		if (value.getDescription() == null
-				|| value.getDescription().trim().length() == 0
-						&& strs.length > 0) {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append("Get ");
-			for (int i = strs.length - 1; i > 0; i--) {
-				sb.append(strs[i]).append(" of ");
+		if (Objects.nonNull(value.getAccessor())) {
+			String[] strs = value.getAccessor().split("\\.");
+			if (value.getDescription() == null
+					|| value.getDescription().trim().length() == 0
+							&& strs.length > 0) {
+				StringBuffer sb = new StringBuffer(64);
+				sb.append("Get ");
+				for (int i = strs.length - 1; i > 0; i--) {
+					sb.append(strs[i]).append(" of ");
+				}
+				sb.append(strs[0]).append("Type.");
+				value.setDescription(sb.toString());
 			}
-			sb.append(strs[0]).append("Type.");
-			value.setDescription(sb.toString());
 		}
 	}
 
