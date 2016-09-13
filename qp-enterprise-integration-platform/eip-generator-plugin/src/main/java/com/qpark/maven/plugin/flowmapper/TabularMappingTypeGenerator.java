@@ -332,7 +332,12 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 		sb.append(returnValueClassName);
 		sb.append(" mappedValue = this.tabularValueMap.get(");
 		sb.append(inputValueName);
-		sb.append(".getReturn());\n");
+		if (inputValueClass.equals(Boolean.class)
+				|| inputValueClass.equals(boolean.class)) {
+			sb.append(".isReturn());\n");
+		} else {
+			sb.append(".getReturn());\n");
+		}
 
 		if (inputValueClass.equals(String.class)) {
 			sb.append("\t\tif (mappedValue == null && ");
