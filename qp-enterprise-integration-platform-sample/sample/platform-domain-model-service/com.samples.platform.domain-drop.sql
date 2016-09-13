@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- Drop script of persistence unit com.samples.platform.domain.
 -- Target database type: Oracle 10.1
--- Generated at 20160913-223917.264.
+-- Generated at 20160913-232115.826.
 -----------------------------------------------------------------------------
 -- Verify sequence handling at the end of the script
 

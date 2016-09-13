@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.09.13 um 10:39:07 PM CEST 
+// Generiert: 2016.09.13 um 11:21:06 PM CEST 
 //
 
 
@@ -56,8 +56,10 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *         &lt;element name="namespace" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}namespaceType" minOccurs="0"/&gt;
  *         &lt;element name="requestId" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType"/&gt;
  *         &lt;element name="requestDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
+ *         &lt;element name="requestElementDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
  *         &lt;element name="responseId" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType"/&gt;
  *         &lt;element name="responseDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
+ *         &lt;element name="responseElementDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -75,8 +77,10 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
     "namespace",
     "requestId",
     "requestDescription",
+    "requestElementDescription",
     "responseId",
-    "responseDescription"
+    "responseDescription",
+    "responseElementDescription"
 })
 @Entity(name = "RequestResponseDataType")
 @Table(name = "REQUESTRESPONSEDATATYPE")
@@ -108,11 +112,13 @@ public class RequestResponseDataType
     @XmlSchemaType(name = "normalizedString")
     protected String requestId;
     protected String requestDescription;
+    protected String requestElementDescription;
     @XmlElement(required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String responseId;
     protected String responseDescription;
+    protected String responseElementDescription;
     @XmlTransient
     protected Long hjid;
 
@@ -334,6 +340,37 @@ public class RequestResponseDataType
     }
 
     /**
+     * Ruft den Wert der requestElementDescription-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Basic
+    @Column(name = "REQUESTELEMENTDESCRIPTION", length = 2047)
+    public String getRequestElementDescription() {
+        return requestElementDescription;
+    }
+
+    /**
+     * Legt den Wert der requestElementDescription-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRequestElementDescription(String value) {
+        this.requestElementDescription = value;
+    }
+
+    @Transient
+    public boolean isSetRequestElementDescription() {
+        return (this.requestElementDescription!= null);
+    }
+
+    /**
      * Ruft den Wert der responseId-Eigenschaft ab.
      * 
      * @return
@@ -393,6 +430,37 @@ public class RequestResponseDataType
     @Transient
     public boolean isSetResponseDescription() {
         return (this.responseDescription!= null);
+    }
+
+    /**
+     * Ruft den Wert der responseElementDescription-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Basic
+    @Column(name = "RESPONSEELEMENTDESCRIPTION", length = 2047)
+    public String getResponseElementDescription() {
+        return responseElementDescription;
+    }
+
+    /**
+     * Legt den Wert der responseElementDescription-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setResponseElementDescription(String value) {
+        this.responseElementDescription = value;
+    }
+
+    @Transient
+    public boolean isSetResponseElementDescription() {
+        return (this.responseElementDescription!= null);
     }
 
     /**
@@ -494,6 +562,15 @@ public class RequestResponseDataType
             }
         }
         {
+            String lhsRequestElementDescription;
+            lhsRequestElementDescription = this.getRequestElementDescription();
+            String rhsRequestElementDescription;
+            rhsRequestElementDescription = that.getRequestElementDescription();
+            if (!strategy.equals(LocatorUtils.property(thisLocator, "requestElementDescription", lhsRequestElementDescription), LocatorUtils.property(thatLocator, "requestElementDescription", rhsRequestElementDescription), lhsRequestElementDescription, rhsRequestElementDescription)) {
+                return false;
+            }
+        }
+        {
             String lhsResponseId;
             lhsResponseId = this.getResponseId();
             String rhsResponseId;
@@ -508,6 +585,15 @@ public class RequestResponseDataType
             String rhsResponseDescription;
             rhsResponseDescription = that.getResponseDescription();
             if (!strategy.equals(LocatorUtils.property(thisLocator, "responseDescription", lhsResponseDescription), LocatorUtils.property(thatLocator, "responseDescription", rhsResponseDescription), lhsResponseDescription, rhsResponseDescription)) {
+                return false;
+            }
+        }
+        {
+            String lhsResponseElementDescription;
+            lhsResponseElementDescription = this.getResponseElementDescription();
+            String rhsResponseElementDescription;
+            rhsResponseElementDescription = that.getResponseElementDescription();
+            if (!strategy.equals(LocatorUtils.property(thisLocator, "responseElementDescription", lhsResponseElementDescription), LocatorUtils.property(thatLocator, "responseElementDescription", rhsResponseElementDescription), lhsResponseElementDescription, rhsResponseElementDescription)) {
                 return false;
             }
         }
@@ -557,6 +643,11 @@ public class RequestResponseDataType
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestDescription", theRequestDescription), currentHashCode, theRequestDescription);
         }
         {
+            String theRequestElementDescription;
+            theRequestElementDescription = this.getRequestElementDescription();
+            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestElementDescription", theRequestElementDescription), currentHashCode, theRequestElementDescription);
+        }
+        {
             String theResponseId;
             theResponseId = this.getResponseId();
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "responseId", theResponseId), currentHashCode, theResponseId);
@@ -565,6 +656,11 @@ public class RequestResponseDataType
             String theResponseDescription;
             theResponseDescription = this.getResponseDescription();
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "responseDescription", theResponseDescription), currentHashCode, theResponseDescription);
+        }
+        {
+            String theResponseElementDescription;
+            theResponseElementDescription = this.getResponseElementDescription();
+            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "responseElementDescription", theResponseElementDescription), currentHashCode, theResponseElementDescription);
         }
         return currentHashCode;
     }
