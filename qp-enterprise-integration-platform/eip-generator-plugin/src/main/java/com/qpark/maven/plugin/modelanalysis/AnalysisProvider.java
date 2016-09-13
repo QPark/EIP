@@ -715,11 +715,15 @@ public class AnalysisProvider {
 	private void setDirectMappingType(final String modelVersion,
 			final com.qpark.maven.xmlbeans.ComplexType element,
 			final DirectMappingType value) {
-		String accessorPart = element.getType().getName().getLocalPart()
-				.substring(
-						element.getType().getName().getLocalPart().indexOf('.'),
-						element.getType().getName().getLocalPart().length())
-				.replace("MappingType", "");
+		String accessorPart = "";
+		if (element.getType().getName().getLocalPart().indexOf('.') > 0) {
+			accessorPart = element.getType().getName().getLocalPart()
+					.substring(
+							element.getType().getName().getLocalPart().indexOf(
+									'.'),
+					element.getType().getName().getLocalPart().length() - 1)
+					.replace("MappingType", "");
+		}
 		element.getChildren().stream()
 				.filter(ctc -> !ctc.getChildName().equals("value")
 						&& !ctc.getChildName().equals("return"))
