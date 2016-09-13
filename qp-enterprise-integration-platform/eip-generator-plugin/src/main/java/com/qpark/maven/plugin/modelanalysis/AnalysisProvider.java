@@ -715,25 +715,28 @@ public class AnalysisProvider {
 	private void setDirectMappingType(final String modelVersion,
 			final com.qpark.maven.xmlbeans.ComplexType element,
 			final DirectMappingType value) {
-		String accessorPart = "";
 		if (element.getType().getName().getLocalPart().indexOf('.') > 0) {
-			accessorPart = element.getType().getName().getLocalPart()
+			String accessorPart = element.getType().getName().getLocalPart()
 					.substring(
-							element.getType().getName().getLocalPart().indexOf(
-									'.'),
-					element.getType().getName().getLocalPart().length() - 1)
+							element.getType().getName().getLocalPart()
+									.indexOf('.'),
+							element.getType().getName().getLocalPart().length()
+									- 1)
 					.replace("MappingType", "");
+
+			element.getChildren().stream()
+					.filter(ctc -> !ctc.getChildName().equals("value")
+							&& !ctc.getChildName().equals("return"))
+					.findFirst().ifPresent(ctc -> {
+						String ctId = this.uuidProvider.getDataTypeUUID(
+								element.toQNameString(), modelVersion);
+						value.setAccessorFieldId(this.uuidProvider
+								.getFieldTypeUUID(ctc.getChildName(), ctId,
+										modelVersion));
+						value.setAccessor(
+								String.format("%s.%s", "", accessorPart));
+					});
 		}
-		element.getChildren().stream()
-				.filter(ctc -> !ctc.getChildName().equals("value")
-						&& !ctc.getChildName().equals("return"))
-				.findFirst().ifPresent(ctc -> {
-					String ctId = this.uuidProvider.getDataTypeUUID(
-							element.toQNameString(), modelVersion);
-					value.setAccessorFieldId(this.uuidProvider.getFieldTypeUUID(
-							ctc.getChildName(), ctId, modelVersion));
-					value.setAccessor(String.format("%s.%s", "", accessorPart));
-				});
 		if (Objects.nonNull(value.getAccessor())) {
 			value.setAccessor(element.getType().getName().getLocalPart()
 					.replace("MappingType", ""));
