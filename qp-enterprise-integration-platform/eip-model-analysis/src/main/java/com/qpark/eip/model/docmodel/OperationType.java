@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.02.20 um 06:03:00 AM CET 
+// Generiert: 2016.09.13 um 08:58:01 PM CEST 
 //
 
 
@@ -12,9 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +21,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OrderColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -62,10 +62,8 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *         &lt;element name="shortName" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}nameType"/&gt;
  *         &lt;element name="namespace" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}namespaceType" minOccurs="0"/&gt;
  *         &lt;element name="securityRoleName" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}nameType"/&gt;
- *         &lt;element name="request" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType"/&gt;
- *         &lt;element name="response" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType"/&gt;
- *         &lt;element name="invokes" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="description" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType"/&gt;
+ *         &lt;element name="requestResponse" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}RequestResponseDataType"/&gt;
+ *         &lt;element name="invokes" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -83,10 +81,8 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
     "shortName",
     "namespace",
     "securityRoleName",
-    "request",
-    "response",
-    "invokes",
-    "description"
+    "requestResponse",
+    "invokes"
 })
 @Entity(name = "OperationType")
 @Table(name = "OPERATIONTYPE")
@@ -122,17 +118,8 @@ public class OperationType
     @XmlSchemaType(name = "normalizedString")
     protected String securityRoleName;
     @XmlElement(required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String request;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String response;
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected List<String> invokes;
-    @XmlElement(required = true)
-    protected String description;
+    protected RequestResponseDataType requestResponse;
+    protected List<FlowType> invokes;
     @XmlTransient
     protected Long hjid;
 
@@ -354,65 +341,36 @@ public class OperationType
     }
 
     /**
-     * Ruft den Wert der request-Eigenschaft ab.
+     * Ruft den Wert der requestResponse-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link RequestResponseDataType }
      *     
      */
-    @Basic
-    @Column(name = "REQUEST", length = 36)
-    public String getRequest() {
-        return request;
+    @ManyToOne(targetEntity = RequestResponseDataType.class, cascade = {
+        CascadeType.ALL
+    })
+    @JoinColumn(name = "REQUESTRESPONSE_OPERATIONTYP_0")
+    public RequestResponseDataType getRequestResponse() {
+        return requestResponse;
     }
 
     /**
-     * Legt den Wert der request-Eigenschaft fest.
+     * Legt den Wert der requestResponse-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link RequestResponseDataType }
      *     
      */
-    public void setRequest(String value) {
-        this.request = value;
+    public void setRequestResponse(RequestResponseDataType value) {
+        this.requestResponse = value;
     }
 
     @Transient
-    public boolean isSetRequest() {
-        return (this.request!= null);
-    }
-
-    /**
-     * Ruft den Wert der response-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "RESPONSE", length = 36)
-    public String getResponse() {
-        return response;
-    }
-
-    /**
-     * Legt den Wert der response-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setResponse(String value) {
-        this.response = value;
-    }
-
-    @Transient
-    public boolean isSetResponse() {
-        return (this.response!= null);
+    public boolean isSetRequestResponse() {
+        return (this.requestResponse!= null);
     }
 
     /**
@@ -433,19 +391,17 @@ public class OperationType
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link FlowType }
      * 
      * 
      */
-    @ElementCollection
-    @OrderColumn(name = "HJINDEX")
-    @Column(name = "HJVALUE", length = 36)
-    @CollectionTable(name = "OPERATIONTYPE_INVOKES", joinColumns = {
-        @JoinColumn(name = "HJID")
+    @OneToMany(targetEntity = FlowType.class, cascade = {
+        CascadeType.ALL
     })
-    public List<String> getInvokes() {
+    @JoinColumn(name = "INVOKES_OPERATIONTYPE_HJID")
+    public List<FlowType> getInvokes() {
         if (invokes == null) {
-            invokes = new ArrayList<String>();
+            invokes = new ArrayList<FlowType>();
         }
         return this.invokes;
     }
@@ -454,7 +410,7 @@ public class OperationType
      * 
      * 
      */
-    public void setInvokes(List<String> invokes) {
+    public void setInvokes(List<FlowType> invokes) {
         this.invokes = invokes;
     }
 
@@ -465,37 +421,6 @@ public class OperationType
 
     public void unsetInvokes() {
         this.invokes = null;
-    }
-
-    /**
-     * Ruft den Wert der description-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "DESCRIPTION", length = 2047)
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Legt den Wert der description-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    @Transient
-    public boolean isSetDescription() {
-        return (this.description!= null);
     }
 
     /**
@@ -597,38 +522,20 @@ public class OperationType
             }
         }
         {
-            String lhsRequest;
-            lhsRequest = this.getRequest();
-            String rhsRequest;
-            rhsRequest = that.getRequest();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "request", lhsRequest), LocatorUtils.property(thatLocator, "request", rhsRequest), lhsRequest, rhsRequest)) {
+            RequestResponseDataType lhsRequestResponse;
+            lhsRequestResponse = this.getRequestResponse();
+            RequestResponseDataType rhsRequestResponse;
+            rhsRequestResponse = that.getRequestResponse();
+            if (!strategy.equals(LocatorUtils.property(thisLocator, "requestResponse", lhsRequestResponse), LocatorUtils.property(thatLocator, "requestResponse", rhsRequestResponse), lhsRequestResponse, rhsRequestResponse)) {
                 return false;
             }
         }
         {
-            String lhsResponse;
-            lhsResponse = this.getResponse();
-            String rhsResponse;
-            rhsResponse = that.getResponse();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "response", lhsResponse), LocatorUtils.property(thatLocator, "response", rhsResponse), lhsResponse, rhsResponse)) {
-                return false;
-            }
-        }
-        {
-            List<String> lhsInvokes;
+            List<FlowType> lhsInvokes;
             lhsInvokes = (this.isSetInvokes()?this.getInvokes():null);
-            List<String> rhsInvokes;
+            List<FlowType> rhsInvokes;
             rhsInvokes = (that.isSetInvokes()?that.getInvokes():null);
             if (!strategy.equals(LocatorUtils.property(thisLocator, "invokes", lhsInvokes), LocatorUtils.property(thatLocator, "invokes", rhsInvokes), lhsInvokes, rhsInvokes)) {
-                return false;
-            }
-        }
-        {
-            String lhsDescription;
-            lhsDescription = this.getDescription();
-            String rhsDescription;
-            rhsDescription = that.getDescription();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "description", lhsDescription), LocatorUtils.property(thatLocator, "description", rhsDescription), lhsDescription, rhsDescription)) {
                 return false;
             }
         }
@@ -678,24 +585,14 @@ public class OperationType
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "securityRoleName", theSecurityRoleName), currentHashCode, theSecurityRoleName);
         }
         {
-            String theRequest;
-            theRequest = this.getRequest();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "request", theRequest), currentHashCode, theRequest);
+            RequestResponseDataType theRequestResponse;
+            theRequestResponse = this.getRequestResponse();
+            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestResponse", theRequestResponse), currentHashCode, theRequestResponse);
         }
         {
-            String theResponse;
-            theResponse = this.getResponse();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "response", theResponse), currentHashCode, theResponse);
-        }
-        {
-            List<String> theInvokes;
+            List<FlowType> theInvokes;
             theInvokes = (this.isSetInvokes()?this.getInvokes():null);
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "invokes", theInvokes), currentHashCode, theInvokes);
-        }
-        {
-            String theDescription;
-            theDescription = this.getDescription();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "description", theDescription), currentHashCode, theDescription);
         }
         return currentHashCode;
     }

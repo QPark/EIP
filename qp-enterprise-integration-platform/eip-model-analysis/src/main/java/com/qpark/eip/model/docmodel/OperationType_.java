@@ -9,12 +9,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(OperationType.class)
 public abstract class OperationType_ {
 
-	public static volatile SingularAttribute<OperationType, ElementType> request;
 	public static volatile SingularAttribute<OperationType, String> modelVersion;
-	public static volatile SingularAttribute<OperationType, ElementType> response;
 	public static volatile SingularAttribute<OperationType, String> name;
 	public static volatile SingularAttribute<OperationType, String> namespace;
-	public static volatile SingularAttribute<OperationType, String> description;
+	public static volatile SingularAttribute<OperationType, RequestResponseDataType> requestResponse;
 	public static volatile SingularAttribute<OperationType, String> id;
 	public static volatile SingularAttribute<OperationType, String> securityRoleName;
 	public static volatile SingularAttribute<OperationType, String> shortName;

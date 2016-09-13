@@ -8,6 +8,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(DirectMappingType.class)
 public abstract class DirectMappingType_ extends com.qpark.eip.model.docmodel.FieldMappingType_ {
 
+	public static volatile SingularAttribute<DirectMappingType, String> accessorFieldId;
 	public static volatile SingularAttribute<DirectMappingType, String> accessor;
 
 }

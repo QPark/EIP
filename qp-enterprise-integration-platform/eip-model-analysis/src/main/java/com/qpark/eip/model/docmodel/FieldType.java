@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.02.20 um 06:03:00 AM CET 
+// Generiert: 2016.09.13 um 08:58:01 PM CEST 
 //
 
 
@@ -54,7 +54,6 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *         &lt;element name="parentId" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" minOccurs="0"/&gt;
  *         &lt;element name="name" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}nameType"/&gt;
  *         &lt;element name="namespace" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}namespaceType" minOccurs="0"/&gt;
- *         &lt;element name="sequenceNumber" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="fieldTypeDefinitionId" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType"/&gt;
  *         &lt;element name="cardinality" type="{http://www.w3.org/2001/XMLSchema}normalizedString"/&gt;
  *         &lt;element name="cardinalityMinOccurs" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/&gt;
@@ -77,7 +76,6 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
     "parentId",
     "name",
     "namespace",
-    "sequenceNumber",
     "fieldTypeDefinitionId",
     "cardinality",
     "cardinalityMinOccurs",
@@ -111,7 +109,6 @@ public class FieldType
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String namespace;
-    protected int sequenceNumber;
     @XmlElement(required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -282,29 +279,6 @@ public class FieldType
     @Transient
     public boolean isSetNamespace() {
         return (this.namespace!= null);
-    }
-
-    /**
-     * Ruft den Wert der sequenceNumber-Eigenschaft ab.
-     * 
-     */
-    @Basic
-    @Column(name = "SEQUENCENUMBER", precision = 10, scale = 0)
-    public int getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    /**
-     * Legt den Wert der sequenceNumber-Eigenschaft fest.
-     * 
-     */
-    public void setSequenceNumber(int value) {
-        this.sequenceNumber = value;
-    }
-
-    @Transient
-    public boolean isSetSequenceNumber() {
-        return true;
     }
 
     /**
@@ -589,15 +563,6 @@ public class FieldType
             }
         }
         {
-            int lhsSequenceNumber;
-            lhsSequenceNumber = this.getSequenceNumber();
-            int rhsSequenceNumber;
-            rhsSequenceNumber = that.getSequenceNumber();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "sequenceNumber", lhsSequenceNumber), LocatorUtils.property(thatLocator, "sequenceNumber", rhsSequenceNumber), lhsSequenceNumber, rhsSequenceNumber)) {
-                return false;
-            }
-        }
-        {
             String lhsFieldTypeDefinitionId;
             lhsFieldTypeDefinitionId = this.getFieldTypeDefinitionId();
             String rhsFieldTypeDefinitionId;
@@ -694,11 +659,6 @@ public class FieldType
             String theNamespace;
             theNamespace = this.getNamespace();
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "namespace", theNamespace), currentHashCode, theNamespace);
-        }
-        {
-            int theSequenceNumber;
-            theSequenceNumber = this.getSequenceNumber();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "sequenceNumber", theSequenceNumber), currentHashCode, theSequenceNumber);
         }
         {
             String theFieldTypeDefinitionId;

@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.02.20 um 06:03:00 AM CET 
+// Generiert: 2016.09.13 um 08:58:01 PM CEST 
 //
 
 
@@ -82,7 +82,8 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 @XmlSeeAlso({
     FieldMappingType.class,
     InterfaceMappingType.class,
-    ComplexType.class
+    ComplexType.class,
+    ElementType.class
 })
 @Entity(name = "DataType")
 @Table(name = "DATATYPE")
