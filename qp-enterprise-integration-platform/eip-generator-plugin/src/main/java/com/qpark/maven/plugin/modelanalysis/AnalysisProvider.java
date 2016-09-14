@@ -587,9 +587,9 @@ public class AnalysisProvider {
 
 		this.uuidProvider.setUUID(value);
 
-		value.setInvokeFlowDefinition(this.getRequestResponseDataType(
-				cluster.getModelVersion(), value.getId(), ctRequest, ctResponse,
-				(String) null, (String) null));
+		value.setInvokeFlowDefinition(
+				this.getRequestResponseDataType(cluster.getModelVersion(),
+						value.getId(), ctRequest, ctResponse, null, null));
 
 		value.setExecuteRequest(
 				this.getFlowProcessType(cluster.getModelVersion(),
@@ -624,35 +624,6 @@ public class AnalysisProvider {
 		value.setRequestDescription(request.getDescription());
 		value.setResponseId(response.getId());
 		value.setResponseDescription(response.getDescription());
-		if (Objects.nonNull(requestElement)) {
-			value.setRequestElementDescription(requestElement.getDescription());
-		}
-		if (Objects.nonNull(responseElement)) {
-			value.setResponseElementDescription(
-					responseElement.getDescription());
-		}
-
-		this.uuidProvider.setUUID(value);
-		return value;
-	}
-
-	private RequestResponseDataType getRequestResponseDataType(
-			final String modelVersion, final String parentId,
-			final DataType request, final DataType response,
-			final String requestElementDescription,
-			final String responseElementDescription) {
-		RequestResponseDataType value = this.of.createRequestResponseDataType();
-		value.setName(new StringBuffer(128).append(request.getName())
-				.append("#").append(response.getName()).toString());
-		value.setParentId(parentId);
-		value.setModelVersion(modelVersion);
-		value.setNamespace(request.getNamespace());
-		value.setRequestId(request.getId());
-		value.setRequestDescription(request.getDescription());
-		value.setResponseId(response.getId());
-		value.setResponseDescription(response.getDescription());
-		value.setRequestElementDescription(requestElementDescription);
-		value.setResponseElementDescription(requestElementDescription);
 
 		this.uuidProvider.setUUID(value);
 		return value;
@@ -691,7 +662,7 @@ public class AnalysisProvider {
 		value.setShortName(operationName);
 		RequestResponseDataType rr = this.getRequestResponseDataType(
 				cluster.getModelVersion(), service.getId(), request, response,
-				(String) null, (String) null);
+				null, null);
 		value.setRequestResponse(rr);
 
 		this.uuidProvider.setUUID(value);

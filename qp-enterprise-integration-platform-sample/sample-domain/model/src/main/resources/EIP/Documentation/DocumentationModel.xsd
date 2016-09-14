@@ -354,6 +354,12 @@
 			<element name="securityRoleName" type="DM:nameType">
 				<annotation><documentation>The role name used in the WEBAPP spring security.</documentation></annotation>
 			</element>
+			<element name="requestFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
+			</element>
+			<element name="responseFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
+			</element>
 			<element name="requestResponse" type="DM:RequestResponseDataType">
 				<annotation><documentation>Combination of in and output elementTypes.</documentation></annotation>
 			</element>
@@ -397,6 +403,12 @@
 			<element name="clusterId" type="DM:UUIDType" >
 				<annotation><documentation>The id of the cluster that defines the flow.</documentation></annotation>
 			</element>
+			<element name="inFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
+			</element>
+			<element name="outFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
+			</element>
 			<element name="invokeFlowDefinition" type="DM:RequestResponseDataType">
 				<annotation><documentation>Combination of request and response complexTypes defining the flow input and output type.</documentation></annotation>
 			</element>
@@ -423,8 +435,14 @@
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation>
 			</element>
+			<element name="responseFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
+			</element>
 			<element name="requestResponse" type="DM:RequestResponseDataType">
 				<annotation><documentation>Combination of request and response complexTypes.</documentation></annotation>
+			</element>
+			<element name="requestFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
 			</element>
 			<element name="subRequest" type="DM:FlowSubRequestType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="filter" type="DM:FlowFilterType" minOccurs="0" maxOccurs="unbounded"/>
@@ -446,6 +464,12 @@
 			</element>
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation>
+			</element>
+			<element name="mapInFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
+			</element>
+			<element name="mapOutFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
 			</element>
 			<element name="mapInOut" type="DM:RequestResponseDataType">
 				<annotation><documentation>Combination of in and output complexTypes.</documentation></annotation>
@@ -471,6 +495,12 @@
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation>
 			</element>
+			<element name="subRequestFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
+			</element>
+			<element name="subResponseFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
+			</element>
 			<element name="subRequestInOut" type="DM:RequestResponseDataType">
 				<annotation><documentation>Combination of in and output complexTypes.</documentation></annotation>
 			</element>
@@ -491,6 +521,12 @@
 			</element>
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation>
+			</element>
+			<element name="filterInFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
+			</element>
+			<element name="filterOutFieldDescription" type="DM:descriptionType" minOccurs="0">
+				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
 			</element>
 			<element name="filterInOut" type="DM:RequestResponseDataType">
 				<annotation><documentation>Combination of in and output complexTypes.</documentation></annotation>
@@ -519,17 +555,11 @@
 			<element name="requestDescription" type="DM:descriptionType" minOccurs="0">
 				<annotation><documentation>The annotation documentation of the request.</documentation></annotation>
 			</element>
-			<element name="requestElementDescription" type="DM:descriptionType" minOccurs="0">
-				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation>
-			</element>
 			<element name="responseId" type="DM:UUIDType">
 				<annotation><documentation>The UUID of the DataType defining the response.</documentation></annotation>
 			</element>
 			<element name="responseDescription" type="DM:descriptionType" minOccurs="0">
 				<annotation><documentation>The annotation documentation of the response type.</documentation></annotation>
-			</element>
-			<element name="responseElementDescription" type="DM:descriptionType" minOccurs="0">
-				<annotation><documentation>The annotation documentation of the sequence element containing the response.</documentation></annotation>
 			</element>
 		</sequence>
 	</complexType>
