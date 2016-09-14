@@ -45,37 +45,86 @@ import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 public class AnalysisProvider {
-	/** The prefix to identify flow filter input. */
-	public static final String FLOW_PROCESS_PREFIX_IN = "in";
-	/** The prefix to identify flow filter output. */
-	public static final String FLOW_PROCESS_PREFIX_OUT = "out";
+	private static class RequestResponseDataFieldContainer {
+		FieldType childIn;
+		FieldType childOut;
+		RequestResponseDataType rr;
+
+		RequestResponseDataFieldContainer(final RequestResponseDataType rr,
+				final FieldType childIn, final FieldType childOut) {
+			this.rr = rr;
+			this.childIn = childIn;
+			this.childOut = childOut;
+		}
+	}
+
 	/** The prefix to identify flow filter input. */
 	public static final String FLOW_FILTER_PREFIX_IN = "filterIn";
 	/** The prefix to identify flow filter output. */
 	public static final String FLOW_FILTER_PREFIX_OUT = "filterOut";
+	/** The prefix to identify flow map method input. */
+	public static final String FLOW_MAP_PREFIX_IN = "mapIn";
+	/** The prefix to identify flow map method output. */
+	public static final String FLOW_MAP_PREFIX_OUT = "mapOut";
+	/** The prefix to identify flow filter input. */
+	public static final String FLOW_PROCESS_PREFIX_IN = "in";
+	/** The prefix to identify flow filter output. */
+	public static final String FLOW_PROCESS_PREFIX_OUT = "out";
+
 	/** The prefix to identify flow rule input. */
 	public static final String FLOW_RULE_PREFIX_IN = "ruleIn";
+
 	/** The prefix to identify flow rule output. */
 	public static final String FLOW_RULE_PREFIX_OUT = "ruleOut";
+
 	/** The prefix to identify flow sub request input. */
 	public static final String FLOW_SUBREQUEST_PREFIX_IN = "subRequest";
 
 	/** The prefix to identify flow sub request output. */
 	public static final String FLOW_SUBREQUEST_PREFIX_OUT = "subResponse";
 
-	/** The prefix to identify flow map method input. */
-	public static final String FLOW_MAP_PREFIX_IN = "mapIn";
+	private static XsdsUtil createXsdsUtil(final String basePackageName,
+			final String modelPath) {
+		File f = new File(modelPath);
+		String messagePackageNameSuffix = "msg mapping flow";
 
-	/** The prefix to identify flow map method output. */
-	public static final String FLOW_MAP_PREFIX_OUT = "mapOut";
+		XsdsUtil xsds = XsdsUtil.getInstance(f, basePackageName,
+				messagePackageNameSuffix, "delta");
+		return xsds;
+	}
+
+	/**
+	 * Get name of the {@link RequestResponseDataType}.
+	 *
+	 * @param fieldName
+	 *            the name of the field.
+	 * @param prefix
+	 *            the prefix to subtract.
+	 * @return the name.
+	 */
+	private static String getFlowMethodName(final String fieldName,
+			final String prefix) {
+		String suffix = "";
+		if (fieldName.equals(prefix)) {
+			suffix = "";
+		} else {
+			suffix = fieldName.substring(prefix.length(), fieldName.length());
+		}
+		if (suffix.contains("#")) {
+			suffix = suffix.substring(0, suffix.indexOf('#'));
+		}
+		return suffix;
+	}
+
+	// private XsdsUtil xsds;
 
 	public static void main(final String[] args) {
 
 		String xsdPath;
 		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\bus-dev\\src\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 
 		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";
@@ -98,11 +147,17 @@ public class AnalysisProvider {
 		}
 	}
 
-	private UUIDProvider uuidProvider;
-
-	private ObjectFactory of = new ObjectFactory();
-
-	private XsdsUtil xsds;
+	private static boolean testFlowExecutionFieldName(final String fieldName,
+			final String prefixIn, final String prefixOut,
+			final String flowExecutionName) {
+		boolean value = false;
+		value = String.format("%s%s", prefixIn, flowExecutionName).toString()
+				.equals(fieldName)
+				|| (prefixIn.equals(fieldName)
+						&& String.format("%s%s", prefixIn, prefixOut).toString()
+								.equals(flowExecutionName));
+		return value;
+	}
 
 	private Analysis analysis;
 
@@ -111,6 +166,159 @@ public class AnalysisProvider {
 	/** The {@link org.slf4j.Logger}. */
 	private final Logger logger = LoggerFactory
 			.getLogger(AnalysisProvider.class);
+
+	private ObjectFactory of = new ObjectFactory();
+
+	private UUIDProvider uuidProvider;
+
+	@SuppressWarnings("static-method")
+	private void addFlowExecutionOrder(final String modelVersion,
+			final String parentId, final String name, final ComplexType ct,
+			final FlowProcessType value) {
+		for (FieldType field : ct.getField()) {
+			String fieldName = field.getName();
+			value.getFilter().stream()
+					.filter(f -> testFlowExecutionFieldName(fieldName,
+							FLOW_FILTER_PREFIX_IN, FLOW_FILTER_PREFIX_OUT,
+							f.getName()))
+					.findFirst()
+					.ifPresent(f -> value.getExecutionOrder().add(f.getId()));
+			value.getRule().stream()
+					.filter(f -> testFlowExecutionFieldName(fieldName,
+							FLOW_RULE_PREFIX_IN, FLOW_RULE_PREFIX_OUT,
+							f.getName()))
+					.findFirst()
+					.ifPresent(f -> value.getExecutionOrder().add(f.getId()));
+			value.getMapInOut().stream()
+					.filter(f -> testFlowExecutionFieldName(fieldName,
+							FLOW_MAP_PREFIX_IN, FLOW_MAP_PREFIX_OUT,
+							f.getName()))
+					.findFirst()
+					.ifPresent(f -> value.getExecutionOrder().add(f.getId()));
+			value.getSubRequest().stream()
+					.filter(f -> testFlowExecutionFieldName(fieldName,
+							FLOW_SUBREQUEST_PREFIX_IN,
+							FLOW_SUBREQUEST_PREFIX_OUT, f.getName()))
+					.findFirst()
+					.ifPresent(f -> value.getExecutionOrder().add(f.getId()));
+		}
+	}
+
+	private void addFlowFilter(final String modelVersion, final String parentId,
+			final String name, final ComplexType ct,
+			final FlowProcessType value) {
+		List<RequestResponseDataFieldContainer> rrdfs = this
+				.getFlowRequestResponse(ct, FLOW_FILTER_PREFIX_IN,
+						FLOW_FILTER_PREFIX_OUT, modelVersion);
+		for (RequestResponseDataFieldContainer rrdf : rrdfs) {
+			FlowFilterType filter = this.of.createFlowFilterType();
+			filter.setName(rrdf.rr.getName());
+			filter.setNamespace(ct.getNamespace());
+			filter.setParentId(value.getId());
+			filter.setModelVersion(modelVersion);
+			this.uuidProvider.setUUID(filter);
+
+			rrdf.rr.setParentId(filter.getId());
+			filter.setFilterInOut(rrdf.rr);
+			if (Objects.nonNull(rrdf.childIn)) {
+				filter.setFilterInFieldDescription(
+						rrdf.childIn.getDescription());
+			}
+			if (Objects.nonNull(rrdf.childOut)) {
+				filter.setFilterOutFieldDescription(
+						rrdf.childOut.getDescription());
+			}
+			value.getFilter().add(filter);
+		}
+	}
+
+	private void addFlowMapping(final String modelVersion,
+			final String parentId, final String name, final ComplexType ct,
+			final FlowProcessType value) {
+		List<RequestResponseDataFieldContainer> rrdfs = this
+				.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN,
+						FLOW_MAP_PREFIX_OUT, modelVersion);
+		for (RequestResponseDataFieldContainer rrdf : rrdfs) {
+			FlowMapInOutType mapInOut = this.of.createFlowMapInOutType();
+			mapInOut.setName(rrdf.rr.getName());
+			mapInOut.setNamespace(ct.getNamespace());
+			mapInOut.setParentId(value.getId());
+			mapInOut.setModelVersion(modelVersion);
+			this.uuidProvider.setUUID(mapInOut);
+
+			rrdf.rr.setParentId(mapInOut.getId());
+			mapInOut.setMapInOut(rrdf.rr);
+			if (Objects.nonNull(rrdf.childIn)) {
+				mapInOut.setMapInFieldDescription(
+						rrdf.childIn.getDescription());
+			}
+			if (Objects.nonNull(rrdf.childOut)) {
+				mapInOut.setMapOutFieldDescription(
+						rrdf.childOut.getDescription());
+			}
+			value.getMapInOut().add(mapInOut);
+
+			for (RequestResponseDataFieldContainer rrdfx : rrdfs) {
+				this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
+						rrdfx.rr.getRequestId());
+				this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
+						rrdfx.rr.getResponseId());
+			}
+		}
+	}
+
+	private void addFlowRule(final String modelVersion, final String parentId,
+			final String name, final ComplexType ct,
+			final FlowProcessType value) {
+		List<RequestResponseDataFieldContainer> rrdfs = this
+				.getFlowRequestResponse(ct, FLOW_RULE_PREFIX_IN,
+						FLOW_RULE_PREFIX_OUT, modelVersion);
+		for (RequestResponseDataFieldContainer rrdf : rrdfs) {
+			FlowRuleType rule = this.of.createFlowRuleType();
+			rule.setName(rrdf.rr.getName());
+			rule.setNamespace(ct.getNamespace());
+			rule.setParentId(value.getId());
+			rule.setModelVersion(modelVersion);
+			this.uuidProvider.setUUID(rule);
+
+			rrdf.rr.setParentId(rule.getId());
+			rule.setRuleInOut(rrdf.rr);
+			if (Objects.nonNull(rrdf.childIn)) {
+				rule.setRuleInFieldDescription(rrdf.childIn.getDescription());
+			}
+			if (Objects.nonNull(rrdf.childOut)) {
+				rule.setRuleOutFieldDescription(rrdf.childOut.getDescription());
+			}
+			value.getRule().add(rule);
+		}
+	}
+
+	private void addFlowSubRequest(final String modelVersion,
+			final String parentId, final String name, final ComplexType ct,
+			final FlowProcessType value) {
+		List<RequestResponseDataFieldContainer> rrdfs = this
+				.getFlowRequestResponse(ct, FLOW_SUBREQUEST_PREFIX_IN,
+						FLOW_SUBREQUEST_PREFIX_OUT, modelVersion);
+		for (RequestResponseDataFieldContainer rrdf : rrdfs) {
+			FlowSubRequestType sub = this.of.createFlowSubRequestType();
+			sub.setName(rrdf.rr.getName());
+			sub.setNamespace(ct.getNamespace());
+			sub.setParentId(value.getId());
+			sub.setModelVersion(modelVersion);
+			this.uuidProvider.setUUID(sub);
+			rrdf.rr.setParentId(sub.getId());
+			sub.setSubRequestInOut(rrdf.rr);
+			if (Objects.nonNull(rrdf.childIn)) {
+				sub.setSubRequestFieldDescription(
+						rrdf.childIn.getDescription());
+			}
+			if (Objects.nonNull(rrdf.childOut)) {
+				sub.setSubResponseFieldDescription(
+						rrdf.childOut.getDescription());
+			}
+			value.getSubRequest().add(sub);
+		}
+	}
 
 	/**
 	 * Create the {@link Analysis} out of the mode.
@@ -126,8 +334,8 @@ public class AnalysisProvider {
 	public Analysis createEnterprise(final String enterpriseName,
 			final String modelVersion, final String basePackageName,
 			final String modelPath) {
-		XsdsUtil xsds = this.createXsdsUtil(basePackageName, modelPath);
-		return this.createEnterprise(enterpriseName, modelVersion, xsds);
+		return this.createEnterprise(enterpriseName, modelVersion,
+				createXsdsUtil(basePackageName, modelPath));
 	}
 
 	/**
@@ -141,7 +349,8 @@ public class AnalysisProvider {
 	 */
 	public Analysis createEnterprise(final String enterpriseName,
 			final String modelVersion, final XsdsUtil xsds) {
-		this.xsds = xsds;
+		this.logger.debug("+createEnterprise {} {}", enterpriseName,
+				modelVersion);
 		this.analysis = new Analysis(this.of.createEnterpriseType());
 		this.enterprise = this.analysis.getEnterprise();
 		this.enterprise.setName(enterpriseName);
@@ -149,218 +358,66 @@ public class AnalysisProvider {
 
 		this.uuidProvider = new UUIDProvider(this.analysis);
 
-		DomainType domain;
-		ClusterType cluster;
-		for (XsdContainer file : this.xsds.getXsdContainerMap().values()) {
-			domain = this.getDomainType(file, modelVersion);
-			cluster = this.getClusterType(domain, file);
-		}
-		for (com.qpark.maven.xmlbeans.ComplexType ct : this.xsds
-				.getComplexTypes()) {
-			this.getDataType(this.analysis.getCluster(ct.getTargetNamespace()),
-					ct);
-		}
-		for (com.qpark.maven.xmlbeans.ComplexType ct : this.xsds
-				.getComplexTypes()) {
-			this.setFieldTypes(
-					this.analysis.getCluster(ct.getTargetNamespace()), ct);
-		}
-		for (com.qpark.eip.model.docmodel.DataType dt : this.analysis
-				.getDataTypes()) {
-
-		}
-		for (com.qpark.maven.xmlbeans.ElementType element : this.xsds
-				.getElementTypes()) {
-			this.getElementType(
-					this.analysis.getCluster(element.getTargetNamespace()),
-					element);
-		}
-		for (com.qpark.maven.xmlbeans.ElementType element : this.xsds
-				.getElementTypes()) {
-			if (element.isRequest()) {
-				com.qpark.maven.xmlbeans.ElementType response = XsdsUtil
-						.findResponse(element, this.xsds.getElementTypes(),
-								this.xsds);
-				if (response != null) {
-					String ctRequestDescription = null;
-					if (Objects.nonNull(element.getComplexType())) {
-						ctRequestDescription = element.getComplexType()
-								.getAnnotationDocumentation();
+		xsds.getXsdContainerMap().values().stream().forEach(file -> {
+			DomainType domain = this.parseDomainType(file, modelVersion);
+			this.parseClusterType(domain, file);
+		});
+		xsds.getComplexTypes().stream().forEach(ct -> this.parseDataType(
+				this.analysis.getCluster(ct.getTargetNamespace()), ct));
+		xsds.getComplexTypes().stream().forEach(ct -> this.setFieldTypes(
+				this.analysis.getCluster(ct.getTargetNamespace()), ct));
+		xsds.getElementTypes().stream().forEach(et -> this.getElementType(
+				this.analysis.getCluster(et.getTargetNamespace()), et));
+		xsds.getElementTypes().stream().filter(et -> et.isRequest())
+				.forEach(etRequest -> {
+					com.qpark.maven.xmlbeans.ElementType etResponse = XsdsUtil
+							.findResponse(etRequest, xsds.getElementTypes(),
+									xsds);
+					if (Objects.nonNull(etResponse)) {
+						String ctRequestDescription = null;
+						if (Objects.nonNull(etRequest.getComplexType())) {
+							ctRequestDescription = etRequest.getComplexType()
+									.getAnnotationDocumentation();
+						}
+						String ctResponseDescription = null;
+						if (Objects.nonNull(etResponse.getComplexType())) {
+							ctResponseDescription = etResponse.getComplexType()
+									.getAnnotationDocumentation();
+						}
+						this.getServiceOperation(
+								this.analysis.getCluster(
+										etRequest.getTargetNamespace()),
+								etRequest.getServiceId(),
+								etRequest.getOperationName(),
+								this.analysis.getElementType(
+										etRequest.toQNameString()),
+								ctRequestDescription,
+								this.analysis.getElementType(
+										etResponse.toQNameString()),
+								ctResponseDescription);
 					}
-					String ctResponseDescription = null;
-					if (Objects.nonNull(response.getComplexType())) {
-						ctResponseDescription = response.getComplexType()
-								.getAnnotationDocumentation();
+				});
+		xsds.getComplexTypes().stream()
+				.filter(ct -> ct.isRequestType() && ct.isFlowInputType())
+				.forEach(ctRequest -> {
+					com.qpark.maven.xmlbeans.ComplexType ctResponse = XsdsUtil
+							.findResponse(ctRequest, xsds.getComplexTypes(),
+									xsds);
+					if (Objects.nonNull(ctResponse)
+							&& ctResponse.isFlowOutputType()) {
+						FlowType flow = this.getFlowType(
+								this.analysis.getCluster(
+										ctRequest.getTargetNamespace()),
+								(ComplexType) this.analysis
+										.getDataType(ctRequest.toQNameString()),
+								(ComplexType) this.analysis.getDataType(
+										ctResponse.toQNameString()));
+						this.enterprise.getFlows().add(flow);
 					}
-					this.getServiceOperation(
-							this.analysis
-									.getCluster(element.getTargetNamespace()),
-							element.getServiceId(), element.getOperationName(),
-							this.analysis
-									.getElementType(element.toQNameString()),
-							ctRequestDescription,
-							this.analysis
-									.getElementType(response.toQNameString()),
-							ctResponseDescription);
-				}
-			}
-		}
-
-		for (com.qpark.maven.xmlbeans.ComplexType ctRequest : this.xsds
-				.getComplexTypes()) {
-			if (ctRequest.isRequestType() && ctRequest.isFlowInputType()) {
-				com.qpark.maven.xmlbeans.ComplexType ctResponse = XsdsUtil
-						.findResponse(ctRequest, this.xsds.getComplexTypes(),
-								this.xsds);
-				if (ctResponse != null && ctResponse.isFlowOutputType()) {
-					FlowType flow = this.getFlowType(
-							this.analysis
-									.getCluster(ctRequest.getTargetNamespace()),
-							(ComplexType) this.analysis
-									.getDataType(ctRequest.toQNameString()),
-							(ComplexType) this.analysis
-									.getDataType(ctResponse.toQNameString()));
-					this.enterprise.getFlows().add(flow);
-				}
-			}
-		}
-
+				});
+		this.logger.debug("-createEnterprise {} {}", enterpriseName,
+				modelVersion);
 		return this.analysis;
-	}
-
-	private XsdsUtil createXsdsUtil(final String basePackageName,
-			final String modelPath) {
-		File f = new File(modelPath);
-		String messagePackageNameSuffix = "msg mapping flow";
-
-		XsdsUtil xsds = XsdsUtil.getInstance(f, basePackageName,
-				messagePackageNameSuffix, "delta");
-		return xsds;
-	}
-
-	/**
-	 * Get the {@link ClusterType} of the {@link XsdContainer}.
-	 *
-	 * @param domain
-	 *            the {@link DomainType}.
-	 * @param file
-	 *            the {@link XsdContainer}.
-	 * @return the {@link ClusterType}.
-	 */
-	private ClusterType getClusterType(final DomainType domain,
-			final XsdContainer file) {
-		ClusterType value = this.analysis.getCluster(file.getTargetNamespace());
-		if (value == null) {
-			value = this.of.createClusterType();
-			value.setName(file.getTargetNamespace());
-			value.setModelVersion(domain.getModelVersion());
-			this.uuidProvider.setUUID(value);
-			value.setParentId(domain.getId());
-			domain.getCluster().add(value);
-
-			value.setDescription(file.getAnnotationDocumentation());
-			value.setFileName(file.getFile().getName());
-			value.setPackageName(file.getPackageName());
-			value.setVersion(file.getVersion());
-			value.getWarning().addAll(file.getWarnings());
-		}
-		return value;
-	}
-
-	private DataType getDataType(final ClusterType cluster,
-			final com.qpark.maven.xmlbeans.ComplexType ct) {
-		String elemId = this.uuidProvider.getDataTypeUUID(ct.toQNameString(),
-				cluster.getModelVersion());
-		DataType value = (DataType) this.analysis.get(elemId);
-
-		if (value != null) {
-			// Noting to do.
-		} else if (ct.getTargetNamespace()
-				.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
-				&& this.analysis.getDataType(ct.toQNameString()) == null) {
-			DataType dt = this.of.createDataType();
-			dt.setName(ct.toQNameString());
-			this.setDataType(cluster.getModelVersion(), ct, dt);
-			this.uuidProvider.setUUID(dt);
-			this.enterprise.getBasicDataTypes().add(dt);
-		} else if (ct.isDefaultMappingType()) {
-			DefaultMappingType x = this.of.createDefaultMappingType();
-			x.setParentId(cluster.getId());
-			x.setMappingType("default");
-			this.setDataType(cluster.getModelVersion(), ct, x);
-			this.setDefaultMappingType(cluster.getModelVersion(), ct, x);
-			cluster.getDefaultMappingType().add(x);
-			value = x;
-		} else if (ct.isDirectMappingType()) {
-			DirectMappingType x = this.of.createDirectMappingType();
-			x.setParentId(cluster.getId());
-			x.setMappingType("direct");
-			this.setDataType(cluster.getModelVersion(), ct, x);
-			this.setDirectMappingType(cluster.getModelVersion(), ct, x);
-			cluster.getDirectMappingType().add(x);
-			value = x;
-		} else if (ct.isComplexMappingType()) {
-			ComplexMappingType x = this.of.createComplexMappingType();
-			x.setParentId(cluster.getId());
-			x.setMappingType("complex");
-			this.setDataType(cluster.getModelVersion(), ct, x);
-			cluster.getComplexMappingType().add(x);
-			value = x;
-		} else if (ct.isComplexUUIDMappingType()) {
-			ComplexUUIDMappingType x = this.of.createComplexUUIDMappingType();
-			x.setParentId(cluster.getId());
-			x.setMappingType("complexUUID");
-			this.setDataType(cluster.getModelVersion(), ct, x);
-			cluster.getComplexUUIDMappingType().add(x);
-			value = x;
-		} else if (ct.isInterfaceMappingType()) {
-			InterfaceMappingType x = this.of.createInterfaceMappingType();
-			x.setParentId(cluster.getId());
-			this.setDataType(cluster.getModelVersion(), ct, x);
-			cluster.getInterfaceMappingType().add(x);
-			value = x;
-		} else if (this.analysis.get(elemId) == null) {
-			ComplexType x = this.of.createComplexType();
-			x.setParentId(cluster.getId());
-			this.setDataType(cluster.getModelVersion(), ct, x);
-			x.setIsFlowInputType(ct.isFlowInputType());
-			x.setIsFlowOutputType(ct.isFlowOutputType());
-			x.setIsMappingRequestType(ct.isMapRequestType());
-			x.setIsMappingResponseType(ct.isMapResponseType());
-			cluster.getComplexType().add(x);
-			if (ct.getParent() != null) {
-				DataType parent = this.getDataType(cluster, ct.getParent());
-				x.setDescendedFromId(parent.getId());
-			}
-			for (com.qpark.maven.xmlbeans.ComplexType innerCt : ct
-					.getInnerTypeDefs()) {
-				this.getDataType(cluster, innerCt);
-			}
-			value = x;
-		}
-		return value;
-	}
-
-	/**
-	 * Get the {@link DomainType} of the {@link XsdContainer}. If the
-	 * {@link DomainType} is not present at this stage, it will be created.
-	 *
-	 * @param file
-	 *            the {@link XsdContainer}.
-	 * @return the {@link DomainType}.
-	 */
-	private DomainType getDomainType(final XsdContainer file,
-			final String modelVersion) {
-		DomainType value = this.analysis
-				.getDomainType(file.getDomainPathName());
-		if (value == null) {
-			value = this.of.createDomainType();
-			value.setName(file.getDomainPathName());
-			value.setModelVersion(modelVersion);
-			this.uuidProvider.setUUID(value);
-			this.enterprise.getDomains().add(value);
-		}
-		return value;
 	}
 
 	private ElementType getElementType(final ClusterType cluster,
@@ -391,7 +448,7 @@ public class AnalysisProvider {
 		List<FieldType> value = new ArrayList<FieldType>();
 		int sequenceNumber = 0;
 		for (ComplexTypeChild child : element.getChildren()) {
-			DataType dt = this.getDataType(cluster, child.getComplexType());
+			DataType dt = this.parseDataType(cluster, child.getComplexType());
 			FieldType field = this.of.createFieldType();
 			field.setParentId(parentId);
 			field.setModelVersion(cluster.getModelVersion());
@@ -414,34 +471,11 @@ public class AnalysisProvider {
 		return value;
 	}
 
-	/**
-	 * Get name of the {@link RequestResponseDataType}.
-	 *
-	 * @param fieldName
-	 *            the name of the field.
-	 * @param prefix
-	 *            the prefix to subtract.
-	 * @return the name.
-	 */
-	private static String getFlowMethodName(final String fieldName,
-			final String prefix) {
-		String suffix = "";
-		if (fieldName.equals(prefix)) {
-			suffix = "";
-		} else {
-			suffix = fieldName.substring(prefix.length(), fieldName.length());
-		}
-		if (suffix.contains("#")) {
-			suffix = suffix.substring(0, suffix.indexOf('#'));
-		}
-		return suffix;
-	}
-
 	private FlowProcessType getFlowProcessType(final String modelVersion,
 			final String parentId, final String name, final ComplexType ct) {
-
-		List<RequestResponseDataFields> rrdfs = this.getFlowRequestResponse(ct,
-				FLOW_PROCESS_PREFIX_IN, FLOW_PROCESS_PREFIX_OUT, modelVersion);
+		List<RequestResponseDataFieldContainer> rrdfs = this
+				.getFlowRequestResponse(ct, FLOW_PROCESS_PREFIX_IN,
+						FLOW_PROCESS_PREFIX_OUT, modelVersion);
 		if (rrdfs.size() <= 0) {
 			return null;
 		} else {
@@ -463,154 +497,14 @@ public class AnalysisProvider {
 						rrdfs.get(0).childOut.getDescription());
 			}
 
-			rrdfs = this.getFlowRequestResponse(ct, FLOW_SUBREQUEST_PREFIX_IN,
-					FLOW_SUBREQUEST_PREFIX_OUT, modelVersion);
-			for (RequestResponseDataFields rrdf : rrdfs) {
-				FlowSubRequestType sub = this.of.createFlowSubRequestType();
-				sub.setName(rrdf.rr.getName());
-				sub.setNamespace(rrdf.rr.getNamespace());
-				sub.setParentId(value.getId());
-				sub.setModelVersion(modelVersion);
-				this.uuidProvider.setUUID(sub);
-				rrdf.rr.setParentId(sub.getId());
-				sub.setSubRequestInOut(rrdf.rr);
-				if (Objects.nonNull(rrdf.childIn)) {
-					sub.setSubRequestFieldDescription(
-							rrdf.childIn.getDescription());
-				}
-				if (Objects.nonNull(rrdf.childOut)) {
-					sub.setSubResponseFieldDescription(
-							rrdf.childOut.getDescription());
-				}
-				value.getSubRequest().add(sub);
-			}
-
-			rrdfs = this.getFlowRequestResponse(ct, FLOW_FILTER_PREFIX_IN,
-					FLOW_FILTER_PREFIX_IN, modelVersion);
-			for (RequestResponseDataFields rrdf : rrdfs) {
-				FlowFilterType filter = this.of.createFlowFilterType();
-				filter.setName(rrdf.rr.getName());
-				filter.setNamespace(rrdf.rr.getNamespace());
-				filter.setParentId(value.getId());
-				filter.setModelVersion(modelVersion);
-				this.uuidProvider.setUUID(filter);
-
-				rrdf.rr.setParentId(filter.getId());
-				filter.setFilterInOut(rrdf.rr);
-				if (Objects.nonNull(rrdf.childIn)) {
-					filter.setFilterInFieldDescription(
-							rrdf.childIn.getDescription());
-				}
-				if (Objects.nonNull(rrdf.childOut)) {
-					filter.setFilterOutFieldDescription(
-							rrdf.childOut.getDescription());
-				}
-				value.getFilter().add(filter);
-			}
-
-			rrdfs = this.getFlowRequestResponse(ct, FLOW_RULE_PREFIX_IN,
-					FLOW_RULE_PREFIX_IN, modelVersion);
-			for (RequestResponseDataFields rrdf : rrdfs) {
-				FlowRuleType rule = this.of.createFlowRuleType();
-				rule.setName(rrdf.rr.getName());
-				rule.setNamespace(rrdf.rr.getNamespace());
-				rule.setParentId(value.getId());
-				rule.setModelVersion(modelVersion);
-				this.uuidProvider.setUUID(rule);
-
-				rrdf.rr.setParentId(rule.getId());
-				rule.setRuleInOut(rrdf.rr);
-				if (Objects.nonNull(rrdf.childIn)) {
-					rule.setRuleInFieldDescription(
-							rrdf.childIn.getDescription());
-				}
-				if (Objects.nonNull(rrdf.childOut)) {
-					rule.setRuleOutFieldDescription(
-							rrdf.childOut.getDescription());
-				}
-				value.getRule().add(rule);
-			}
-
-			rrdfs = this.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN,
-					FLOW_MAP_PREFIX_OUT, modelVersion);
-			for (RequestResponseDataFields rrdf : rrdfs) {
-				FlowMapInOutType mapInOut = this.of.createFlowMapInOutType();
-				mapInOut.setName(rrdf.rr.getName());
-				mapInOut.setNamespace(rrdf.rr.getNamespace());
-				mapInOut.setParentId(value.getId());
-				mapInOut.setModelVersion(modelVersion);
-				this.uuidProvider.setUUID(mapInOut);
-
-				rrdf.rr.setParentId(mapInOut.getId());
-				mapInOut.setMapInOut(rrdf.rr);
-				if (Objects.nonNull(rrdf.childIn)) {
-					mapInOut.setMapInFieldDescription(
-							rrdf.childIn.getDescription());
-				}
-				if (Objects.nonNull(rrdf.childOut)) {
-					mapInOut.setMapOutFieldDescription(
-							rrdf.childOut.getDescription());
-				}
-				value.getMapInOut().add(mapInOut);
-
-				for (RequestResponseDataFields rrdfx : rrdfs) {
-					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-							rrdfx.rr.getRequestId());
-					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-							rrdfx.rr.getResponseId());
-				}
-			}
-			ct.getField().stream()
-					.filter(f -> Objects.nonNull(f.getFieldTypeDefinitionId()))
-					.map(f -> f.getFieldTypeDefinitionId()).forEach(fdId -> {
-						value.getFilter().stream()
-								.filter(f -> Objects.nonNull(f.getFilterInOut())
-										&& Objects.nonNull(f.getFilterInOut()
-												.getRequestId())
-								&& f.getFilterInOut().getRequestId()
-										.equals(fdId))
-								.findFirst().ifPresent(f -> value
-										.getExecutionOrder().add(fdId));
-						value.getRule().stream()
-								.filter(r -> Objects.nonNull(r.getRuleInOut())
-										&& Objects.nonNull(
-												r.getRuleInOut().getRequestId())
-								&& r.getRuleInOut().getRequestId().equals(fdId))
-								.findFirst().ifPresent(f -> value
-										.getExecutionOrder().add(fdId));
-						value.getMapInOut().stream()
-								.filter(r -> Objects.nonNull(r.getMapInOut())
-										&& Objects.nonNull(
-												r.getMapInOut().getRequestId())
-								&& r.getMapInOut().getRequestId().equals(fdId))
-								.findFirst().ifPresent(f -> value
-										.getExecutionOrder().add(fdId));
-						value.getSubRequest().stream().filter(
-								r -> Objects.nonNull(r.getSubRequestInOut())
-										&& Objects
-												.nonNull(r.getSubRequestInOut()
-														.getRequestId())
-								&& r.getSubRequestInOut().getRequestId()
-										.equals(fdId))
-								.findFirst().ifPresent(f -> value
-										.getExecutionOrder().add(fdId));
-					});
+			this.addFlowSubRequest(modelVersion, parentId, name, ct, value);
+			this.addFlowFilter(modelVersion, parentId, name, ct, value);
+			this.addFlowRule(modelVersion, parentId, name, ct, value);
+			this.addFlowMapping(modelVersion, parentId, name, ct, value);
+			this.addFlowExecutionOrder(modelVersion, parentId, name, ct, value);
 
 			return value;
 		}
-	}
-
-	static class RequestResponseDataFields {
-		RequestResponseDataFields(final RequestResponseDataType rr,
-				final FieldType childIn, final FieldType childOut) {
-			this.rr = rr;
-			this.childIn = childIn;
-			this.childOut = childOut;
-		}
-
-		RequestResponseDataType rr;
-		FieldType childIn;
-		FieldType childOut;
 	}
 
 	/**
@@ -625,11 +519,11 @@ public class AnalysisProvider {
 	 *            the prefix of the response part.
 	 * @return the {@link FlowRequestResponseNameContainer}.
 	 */
-	private List<RequestResponseDataFields> getFlowRequestResponse(
+	private List<RequestResponseDataFieldContainer> getFlowRequestResponse(
 			final ComplexType ct, final String prefixIn, final String prefixOut,
 			final String modelVersion) {
-		List<RequestResponseDataFields> requestResponses = new ArrayList<RequestResponseDataFields>();
-		RequestResponseDataFields rrf;
+		List<RequestResponseDataFieldContainer> requestResponses = new ArrayList<RequestResponseDataFieldContainer>();
+		RequestResponseDataFieldContainer rrf;
 		RequestResponseDataType requestResponse = null;
 		DataType request = null;
 		DataType response = null;
@@ -648,12 +542,12 @@ public class AnalysisProvider {
 						requestResponse = this.getRequestResponseDataType(
 								modelVersion, null, request, response);
 						if (name.trim().length() == 0) {
-							name = new StringBuffer(childIn.getName())
-									.append(childOut.getName()).toString();
+							name = String.format("%s%s", prefixIn, prefixOut)
+									.toString();
 						}
 						requestResponse.setName(name);
-						rrf = new RequestResponseDataFields(requestResponse,
-								childIn, childOut);
+						rrf = new RequestResponseDataFieldContainer(
+								requestResponse, childIn, childOut);
 						requestResponses.add(rrf);
 						inChildrenFound.add(
 								new StringBuffer(requestResponse.getRequestId())
@@ -677,16 +571,16 @@ public class AnalysisProvider {
 						requestResponse = this.getRequestResponseDataType(
 								modelVersion, null, request, response);
 						if (name.trim().length() == 0) {
-							name = new StringBuffer(childIn.getName())
-									.append(childOut.getName()).toString();
+							name = String.format("%s%s", prefixIn, prefixOut)
+									.toString();
 						}
 						requestResponse.setName(name);
 						if (!inChildrenFound.contains(
 								new StringBuffer(requestResponse.getRequestId())
 										.append(requestResponse.getRequestId())
 										.toString())) {
-							rrf = new RequestResponseDataFields(requestResponse,
-									childIn, childOut);
+							rrf = new RequestResponseDataFieldContainer(
+									requestResponse, childIn, childOut);
 							requestResponses.add(rrf);
 							inChildrenFound.add(requestResponse.getName());
 						}
@@ -723,15 +617,6 @@ public class AnalysisProvider {
 				this.getFlowProcessType(cluster.getModelVersion(),
 						value.getId(), "processResponse", ctResponse));
 
-		DataType dataType;
-		DataType ct;
-		for (FieldType field : ctRequest.getField()) {
-			dataType = (DataType) this.analysis
-					.get(field.getFieldTypeDefinitionId());
-			if (dataType != null && DataType.class.isInstance(dataType)) {
-				ct = dataType;
-			}
-		}
 		return value;
 	}
 
@@ -796,6 +681,131 @@ public class AnalysisProvider {
 		return value;
 	}
 
+	/**
+	 * Get the {@link ClusterType} of the {@link XsdContainer}.
+	 *
+	 * @param domain
+	 *            the {@link DomainType}.
+	 * @param file
+	 *            the {@link XsdContainer}.
+	 * @return the {@link ClusterType}.
+	 */
+	private ClusterType parseClusterType(final DomainType domain,
+			final XsdContainer file) {
+		ClusterType value = this.analysis.getCluster(file.getTargetNamespace());
+		if (value == null) {
+			value = this.of.createClusterType();
+			value.setName(file.getTargetNamespace());
+			value.setModelVersion(domain.getModelVersion());
+			this.uuidProvider.setUUID(value);
+			value.setParentId(domain.getId());
+			domain.getCluster().add(value);
+
+			value.setDescription(file.getAnnotationDocumentation());
+			value.setFileName(file.getFile().getName());
+			value.setPackageName(file.getPackageName());
+			value.setVersion(file.getVersion());
+			value.getWarning().addAll(file.getWarnings());
+		}
+		return value;
+	}
+
+	private DataType parseDataType(final ClusterType cluster,
+			final com.qpark.maven.xmlbeans.ComplexType ct) {
+		String elemId = this.uuidProvider.getDataTypeUUID(ct.toQNameString(),
+				cluster.getModelVersion());
+		DataType value = (DataType) this.analysis.get(elemId);
+
+		if (value != null) {
+			// Noting to do.
+		} else if (ct.getTargetNamespace()
+				.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
+				&& this.analysis.getDataType(ct.toQNameString()) == null) {
+			DataType dt = this.of.createDataType();
+			dt.setName(ct.toQNameString());
+			this.setDataType(cluster.getModelVersion(), ct, dt);
+			this.uuidProvider.setUUID(dt);
+			this.enterprise.getBasicDataTypes().add(dt);
+		} else if (ct.isDefaultMappingType()) {
+			DefaultMappingType x = this.of.createDefaultMappingType();
+			x.setParentId(cluster.getId());
+			x.setMappingType("default");
+			this.setDataType(cluster.getModelVersion(), ct, x);
+			this.setDefaultMappingType(cluster.getModelVersion(), ct, x);
+			cluster.getDefaultMappingType().add(x);
+			value = x;
+		} else if (ct.isDirectMappingType()) {
+			DirectMappingType x = this.of.createDirectMappingType();
+			x.setParentId(cluster.getId());
+			x.setMappingType("direct");
+			this.setDataType(cluster.getModelVersion(), ct, x);
+			this.setDirectMappingType(cluster.getModelVersion(), ct, x);
+			cluster.getDirectMappingType().add(x);
+			value = x;
+		} else if (ct.isComplexMappingType()) {
+			ComplexMappingType x = this.of.createComplexMappingType();
+			x.setParentId(cluster.getId());
+			x.setMappingType("complex");
+			this.setDataType(cluster.getModelVersion(), ct, x);
+			cluster.getComplexMappingType().add(x);
+			value = x;
+		} else if (ct.isComplexUUIDMappingType()) {
+			ComplexUUIDMappingType x = this.of.createComplexUUIDMappingType();
+			x.setParentId(cluster.getId());
+			x.setMappingType("complexUUID");
+			this.setDataType(cluster.getModelVersion(), ct, x);
+			cluster.getComplexUUIDMappingType().add(x);
+			value = x;
+		} else if (ct.isInterfaceMappingType()) {
+			InterfaceMappingType x = this.of.createInterfaceMappingType();
+			x.setParentId(cluster.getId());
+			this.setDataType(cluster.getModelVersion(), ct, x);
+			cluster.getInterfaceMappingType().add(x);
+			value = x;
+		} else if (this.analysis.get(elemId) == null) {
+			ComplexType x = this.of.createComplexType();
+			x.setParentId(cluster.getId());
+			this.setDataType(cluster.getModelVersion(), ct, x);
+			x.setIsFlowInputType(ct.isFlowInputType());
+			x.setIsFlowOutputType(ct.isFlowOutputType());
+			x.setIsMappingRequestType(ct.isMapRequestType());
+			x.setIsMappingResponseType(ct.isMapResponseType());
+			cluster.getComplexType().add(x);
+			if (ct.getParent() != null) {
+				DataType parent = this.parseDataType(cluster, ct.getParent());
+				x.setDescendedFromId(parent.getId());
+			}
+			for (com.qpark.maven.xmlbeans.ComplexType innerCt : ct
+					.getInnerTypeDefs()) {
+				this.parseDataType(cluster, innerCt);
+			}
+			value = x;
+		}
+		return value;
+	}
+
+	/**
+	 * Get the {@link DomainType} of the {@link XsdContainer}. If the
+	 * {@link DomainType} is not present at this stage, it will be created.
+	 *
+	 * @param file
+	 *            the {@link XsdContainer}.
+	 * @return the {@link DomainType}.
+	 */
+	private DomainType parseDomainType(final XsdContainer file,
+			final String modelVersion) {
+		DomainType value = this.analysis
+				.getDomainType(file.getDomainPathName());
+		if (value == null) {
+			value = this.of.createDomainType();
+			value.setName(file.getDomainPathName());
+			value.setModelVersion(modelVersion);
+			this.uuidProvider.setUUID(value);
+			this.enterprise.getDomains().add(value);
+		}
+		return value;
+	}
+
 	private void setDataType(final String modelVersion,
 			final com.qpark.maven.xmlbeans.ComplexType element,
 			final DataType value) {
@@ -807,6 +817,20 @@ public class AnalysisProvider {
 		value.setJavaPackageName(element.getPackageName());
 		value.setShortName(element.getClassName());
 		this.uuidProvider.setUUID(value);
+	}
+
+	@SuppressWarnings("static-method")
+	private void setDefaultMappingType(final String modelVersion,
+			final com.qpark.maven.xmlbeans.ComplexType element,
+			final DefaultMappingType value) {
+		value.setDefaultValue(element.getDefaultValue());
+		if (value.getDescription() == null
+				|| value.getDescription().trim().length() == 0) {
+			StringBuffer sb = new StringBuffer(64);
+			sb.append("Default value: ");
+			sb.append(element.getDefaultValue());
+			value.setDescription(sb.toString());
+		}
 	}
 
 	private void setDirectMappingType(final String modelVersion,
@@ -855,19 +879,7 @@ public class AnalysisProvider {
 		}
 	}
 
-	private void setDefaultMappingType(final String modelVersion,
-			final com.qpark.maven.xmlbeans.ComplexType element,
-			final DefaultMappingType value) {
-		value.setDefaultValue(element.getDefaultValue());
-		if (value.getDescription() == null
-				|| value.getDescription().trim().length() == 0) {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append("Default value: ");
-			sb.append(element.getDefaultValue());
-			value.setDescription(sb.toString());
-		}
-	}
-
+	@SuppressWarnings("static-method")
 	private void setFieldMappingType(final FieldMappingType type,
 			final List<FieldType> fields) {
 		FieldType returnField = null;
