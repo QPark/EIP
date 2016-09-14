@@ -63,9 +63,9 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *         &lt;element name="parentId" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" minOccurs="0"/&gt;
  *         &lt;element name="name" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}nameType"/&gt;
  *         &lt;element name="namespace" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}namespaceType" minOccurs="0"/&gt;
+ *         &lt;element name="requestFieldDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
  *         &lt;element name="responseFieldDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
  *         &lt;element name="requestResponse" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}RequestResponseDataType"/&gt;
- *         &lt;element name="requestFieldDescription" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}descriptionType" minOccurs="0"/&gt;
  *         &lt;element name="executionOrder" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="subRequest" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowSubRequestType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="filter" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowFilterType" maxOccurs="unbounded" minOccurs="0"/&gt;
@@ -86,9 +86,9 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
     "parentId",
     "name",
     "namespace",
+    "requestFieldDescription",
     "responseFieldDescription",
     "requestResponse",
-    "requestFieldDescription",
     "executionOrder",
     "subRequest",
     "filter",
@@ -120,10 +120,10 @@ public class FlowProcessType
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String namespace;
+    protected String requestFieldDescription;
     protected String responseFieldDescription;
     @XmlElement(required = true)
     protected RequestResponseDataType requestResponse;
-    protected String requestFieldDescription;
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected List<String> executionOrder;
     protected List<FlowSubRequestType> subRequest;
