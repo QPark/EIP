@@ -23,6 +23,7 @@
         <class>com.qpark.eip.model.docmodel.FlowFilterType</class>
         <class>com.qpark.eip.model.docmodel.FlowMapInOutType</class>
         <class>com.qpark.eip.model.docmodel.FlowProcessType</class>
+        <class>com.qpark.eip.model.docmodel.FlowRuleType</class>
         <class>com.qpark.eip.model.docmodel.FlowSubRequestType</class>
         <class>com.qpark.eip.model.docmodel.FlowType</class>
         <class>com.qpark.eip.model.docmodel.InterfaceMappingType</class>
