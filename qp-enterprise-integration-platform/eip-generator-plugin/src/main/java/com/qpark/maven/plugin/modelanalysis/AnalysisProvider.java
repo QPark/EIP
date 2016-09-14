@@ -69,12 +69,13 @@ public class AnalysisProvider {
 		String xsdPath;
 		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\bus-dev\\src\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 
 		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";
 		Analysis a = new AnalysisProvider().createEnterprise(basePackageName,
 				modelVersion, basePackageName, xsdPath);
-		System.exit(0);
+		// System.exit(0);
 		try {
 			ObjectFactory of = new ObjectFactory();
 			JAXBElement<EnterpriseType> enterprise = of
@@ -175,14 +176,26 @@ public class AnalysisProvider {
 						.findResponse(element, this.xsds.getElementTypes(),
 								this.xsds);
 				if (response != null) {
+					String ctRequestDescription = null;
+					if (Objects.nonNull(element.getComplexType())) {
+						ctRequestDescription = element.getComplexType()
+								.getAnnotationDocumentation();
+					}
+					String ctResponseDescription = null;
+					if (Objects.nonNull(response.getComplexType())) {
+						ctResponseDescription = response.getComplexType()
+								.getAnnotationDocumentation();
+					}
 					this.getServiceOperation(
 							this.analysis
 									.getCluster(element.getTargetNamespace()),
 							element.getServiceId(), element.getOperationName(),
 							this.analysis
 									.getElementType(element.toQNameString()),
+							ctRequestDescription,
 							this.analysis
-									.getElementType(response.toQNameString()));
+									.getElementType(response.toQNameString()),
+							ctResponseDescription);
 				}
 			}
 		}
@@ -420,75 +433,132 @@ public class AnalysisProvider {
 
 	private FlowProcessType getFlowProcessType(final String modelVersion,
 			final String parentId, final String name, final ComplexType ct) {
-		FlowProcessType value = null;
-		List<RequestResponseDataType> rrs = this.getFlowRequestResponse(ct,
+
+		List<RequestResponseDataFields> rrdfs = this.getFlowRequestResponse(ct,
 				FLOW_PROCESS_PREFIX_IN, FLOW_PROCESS_PREFIX_OUT, modelVersion);
-		if (rrs.size() > 0) {
-			value = this.of.createFlowProcessType();
+		if (rrdfs.size() <= 0) {
+			return null;
+		} else {
+			final FlowProcessType value = this.of.createFlowProcessType();
 			value.setName(name);
 			value.setModelVersion(modelVersion);
 			value.setParentId(parentId);
 			value.setNamespace(ct.getNamespace());
 			this.uuidProvider.setUUID(value);
 
-			rrs.get(0).setParentId(value.getId());
-			value.setRequestResponse(rrs.get(0));
+			rrdfs.get(0).rr.setParentId(value.getId());
+			value.setRequestResponse(rrdfs.get(0).rr);
+			if (Objects.nonNull(rrdfs.get(0).childIn)) {
+				value.setRequestFieldDescription(
+						rrdfs.get(0).childIn.getDescription());
+			}
+			if (Objects.nonNull(rrdfs.get(0).childOut)) {
+				value.setResponseFieldDescription(
+						rrdfs.get(0).childOut.getDescription());
+			}
 
-			rrs = this.getFlowRequestResponse(ct, FLOW_SUBREQUEST_PREFIX_IN,
+			rrdfs = this.getFlowRequestResponse(ct, FLOW_SUBREQUEST_PREFIX_IN,
 					FLOW_SUBREQUEST_PREFIX_OUT, modelVersion);
-			for (RequestResponseDataType rr : rrs) {
+			for (RequestResponseDataFields rrdf : rrdfs) {
 				FlowSubRequestType sub = this.of.createFlowSubRequestType();
-				sub.setName(rr.getName());
-				sub.setNamespace(rr.getNamespace());
+				sub.setName(rrdf.rr.getName());
+				sub.setNamespace(rrdf.rr.getNamespace());
 				sub.setParentId(value.getId());
 				sub.setModelVersion(modelVersion);
 				this.uuidProvider.setUUID(sub);
-				rr.setParentId(sub.getId());
-				sub.setSubRequestInOut(rr);
-
+				rrdf.rr.setParentId(sub.getId());
+				sub.setSubRequestInOut(rrdf.rr);
+				if (Objects.nonNull(rrdf.childIn)) {
+					sub.setSubRequestFieldDescription(
+							rrdf.childIn.getDescription());
+				}
+				if (Objects.nonNull(rrdf.childOut)) {
+					sub.setSubResponseFieldDescription(
+							rrdf.childOut.getDescription());
+				}
 				value.getSubRequest().add(sub);
 			}
 
-			rrs = this.getFlowRequestResponse(ct, FLOW_FILTER_PREFIX_IN,
+			rrdfs = this.getFlowRequestResponse(ct, FLOW_FILTER_PREFIX_IN,
 					FLOW_FILTER_PREFIX_IN, modelVersion);
-			for (RequestResponseDataType rr : rrs) {
+			for (RequestResponseDataFields rrdf : rrdfs) {
 				FlowFilterType filter = this.of.createFlowFilterType();
-				filter.setName(rr.getName());
-				filter.setNamespace(rr.getNamespace());
+				filter.setName(rrdf.rr.getName());
+				filter.setNamespace(rrdf.rr.getNamespace());
 				filter.setParentId(value.getId());
 				filter.setModelVersion(modelVersion);
 				this.uuidProvider.setUUID(filter);
 
-				rr.setParentId(filter.getId());
-				filter.setFilterInOut(rr);
-
+				rrdf.rr.setParentId(filter.getId());
+				filter.setFilterInOut(rrdf.rr);
+				if (Objects.nonNull(rrdf.childIn)) {
+					filter.setFilterInFieldDescription(
+							rrdf.childIn.getDescription());
+				}
+				if (Objects.nonNull(rrdf.childOut)) {
+					filter.setFilterOutFieldDescription(
+							rrdf.childOut.getDescription());
+				}
 				value.getFilter().add(filter);
 			}
 
-			rrs = this.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN,
+			rrdfs = this.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN,
 					FLOW_MAP_PREFIX_OUT, modelVersion);
-			for (RequestResponseDataType rr : rrs) {
+			for (RequestResponseDataFields rrdf : rrdfs) {
 				FlowMapInOutType mapInOut = this.of.createFlowMapInOutType();
-				mapInOut.setName(rr.getName());
-				mapInOut.setNamespace(rr.getNamespace());
+				mapInOut.setName(rrdf.rr.getName());
+				mapInOut.setNamespace(rrdf.rr.getNamespace());
 				mapInOut.setParentId(value.getId());
 				mapInOut.setModelVersion(modelVersion);
 				this.uuidProvider.setUUID(mapInOut);
 
-				rr.setParentId(mapInOut.getId());
-				mapInOut.setMapInOut(rr);
-
+				rrdf.rr.setParentId(mapInOut.getId());
+				mapInOut.setMapInOut(rrdf.rr);
+				if (Objects.nonNull(rrdf.childIn)) {
+					mapInOut.setMapInFieldDescription(
+							rrdf.childIn.getDescription());
+				}
+				if (Objects.nonNull(rrdf.childOut)) {
+					mapInOut.setMapOutFieldDescription(
+							rrdf.childOut.getDescription());
+				}
 				value.getMapInOut().add(mapInOut);
 
-				for (RequestResponseDataType rrx : rrs) {
+				for (RequestResponseDataFields rrdfx : rrdfs) {
 					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-							rrx.getRequestId());
+							rrdfx.rr.getRequestId());
 					this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-							rrx.getResponseId());
+							rrdfx.rr.getResponseId());
 				}
 			}
+			ct.getField().stream()
+					.filter(f -> Objects.nonNull(f.getFieldTypeDefinitionId()))
+					.map(f -> f.getFieldTypeDefinitionId()).forEach(fdId -> {
+						value.getFilter().stream()
+								.filter(f -> Objects.nonNull(f.getFilterInOut())
+										&& Objects.nonNull(f.getFilterInOut()
+												.getRequestId())
+										&& f.getFilterInOut().getRequestId()
+												.equals(fdId))
+								.findFirst().ifPresent(f -> value
+										.getExecutionOrder().add(fdId));
+					});
+
+			return value;
 		}
-		return value;
+	}
+
+	static class RequestResponseDataFields {
+		RequestResponseDataFields(final RequestResponseDataType rr,
+				final FieldType childIn, final FieldType childOut) {
+			this.rr = rr;
+			this.childIn = childIn;
+			this.childOut = childOut;
+		}
+
+		RequestResponseDataType rr;
+		FieldType childIn;
+		FieldType childOut;
 	}
 
 	/**
@@ -503,10 +573,11 @@ public class AnalysisProvider {
 	 *            the prefix of the response part.
 	 * @return the {@link FlowRequestResponseNameContainer}.
 	 */
-	private List<RequestResponseDataType> getFlowRequestResponse(
+	private List<RequestResponseDataFields> getFlowRequestResponse(
 			final ComplexType ct, final String prefixIn, final String prefixOut,
 			final String modelVersion) {
-		List<RequestResponseDataType> requestResponses = new ArrayList<RequestResponseDataType>();
+		List<RequestResponseDataFields> requestResponses = new ArrayList<RequestResponseDataFields>();
+		RequestResponseDataFields rrf;
 		RequestResponseDataType requestResponse = null;
 		DataType request = null;
 		DataType response = null;
@@ -523,14 +594,15 @@ public class AnalysisProvider {
 						response = (DataType) this.analysis
 								.get(childOut.getFieldTypeDefinitionId());
 						requestResponse = this.getRequestResponseDataType(
-								modelVersion, null, request, response, childIn,
-								childOut);
+								modelVersion, null, request, response);
 						if (name.trim().length() == 0) {
 							name = new StringBuffer(childIn.getName())
 									.append(childOut.getName()).toString();
 						}
 						requestResponse.setName(name);
-						requestResponses.add(requestResponse);
+						rrf = new RequestResponseDataFields(requestResponse,
+								childIn, childOut);
+						requestResponses.add(rrf);
 						inChildrenFound.add(
 								new StringBuffer(requestResponse.getRequestId())
 										.append(requestResponse.getRequestId())
@@ -551,8 +623,7 @@ public class AnalysisProvider {
 						response = (DataType) this.analysis
 								.get(childOut.getFieldTypeDefinitionId());
 						requestResponse = this.getRequestResponseDataType(
-								modelVersion, null, request, response, childIn,
-								childOut);
+								modelVersion, null, request, response);
 						if (name.trim().length() == 0) {
 							name = new StringBuffer(childIn.getName())
 									.append(childOut.getName()).toString();
@@ -562,7 +633,9 @@ public class AnalysisProvider {
 								new StringBuffer(requestResponse.getRequestId())
 										.append(requestResponse.getRequestId())
 										.toString())) {
-							requestResponses.add(requestResponse);
+							rrf = new RequestResponseDataFields(requestResponse,
+									childIn, childOut);
+							requestResponses.add(rrf);
 							inChildrenFound.add(requestResponse.getName());
 						}
 					}
@@ -589,7 +662,7 @@ public class AnalysisProvider {
 
 		value.setInvokeFlowDefinition(
 				this.getRequestResponseDataType(cluster.getModelVersion(),
-						value.getId(), ctRequest, ctResponse, null, null));
+						value.getId(), ctRequest, ctResponse));
 
 		value.setExecuteRequest(
 				this.getFlowProcessType(cluster.getModelVersion(),
@@ -612,8 +685,7 @@ public class AnalysisProvider {
 
 	private RequestResponseDataType getRequestResponseDataType(
 			final String modelVersion, final String parentId,
-			final DataType request, final DataType response,
-			final FieldType requestElement, final FieldType responseElement) {
+			final DataType request, final DataType response) {
 		RequestResponseDataType value = this.of.createRequestResponseDataType();
 		value.setName(new StringBuffer(128).append(request.getName())
 				.append("#").append(response.getName()).toString());
@@ -631,7 +703,8 @@ public class AnalysisProvider {
 
 	private OperationType getServiceOperation(final ClusterType cluster,
 			final String serviceId, final String operationName,
-			final ElementType request, final ElementType response) {
+			final ElementType request, final String ctRequestDescription,
+			final ElementType response, final String ctResponseDescription) {
 		ServiceType service = this.analysis.getServiceType(serviceId);
 		if (service == null) {
 			DomainType domain = (DomainType) this.analysis
@@ -660,9 +733,10 @@ public class AnalysisProvider {
 		value.setSecurityRoleName(String.format("%s_%s",
 				service.getSecurityRoleName(), operationName.toUpperCase()));
 		value.setShortName(operationName);
+		value.setRequestFieldDescription(ctRequestDescription);
+		value.setResponseFieldDescription(ctResponseDescription);
 		RequestResponseDataType rr = this.getRequestResponseDataType(
-				cluster.getModelVersion(), service.getId(), request, response,
-				null, null);
+				cluster.getModelVersion(), service.getId(), request, response);
 		value.setRequestResponse(rr);
 
 		this.uuidProvider.setUUID(value);
@@ -684,32 +758,33 @@ public class AnalysisProvider {
 	}
 
 	private void setDirectMappingType(final String modelVersion,
-			final com.qpark.maven.xmlbeans.ComplexType element,
+			final com.qpark.maven.xmlbeans.ComplexType ct,
 			final DirectMappingType value) {
-		if (element.getType().getName().getLocalPart().indexOf('.') > 0) {
-			String accessorPart = element.getType().getName().getLocalPart()
+		if (Objects.nonNull(ct.getType())
+				&& ct.getType().getName().getLocalPart().indexOf('.') > 0) {
+			String accessorPart = ct.getType().getName().getLocalPart()
 					.substring(
-							element.getType().getName().getLocalPart()
-									.indexOf('.'),
-							element.getType().getName().getLocalPart().length()
-									- 1)
+							ct.getType().getName().getLocalPart().indexOf('.')
+									+ 1,
+							ct.getType().getName().getLocalPart().length())
 					.replace("MappingType", "");
-
-			element.getChildren().stream()
-					.filter(ctc -> !ctc.getChildName().equals("value")
+			ct.getChildren().stream()
+					.filter(ctc -> Objects.nonNull(ctc.getComplexType())
+							&& !ctc.getChildName().equals("value")
 							&& !ctc.getChildName().equals("return"))
 					.findFirst().ifPresent(ctc -> {
 						String ctId = this.uuidProvider.getDataTypeUUID(
-								element.toQNameString(), modelVersion);
-						value.setAccessorFieldId(this.uuidProvider
-								.getFieldTypeUUID(ctc.getChildName(), ctId,
-										modelVersion));
-						value.setAccessor(
-								String.format("%s.%s", "", accessorPart));
+								ctc.getComplexType().toQNameString(),
+								modelVersion);
+						value.setAccessorFieldId(
+								this.uuidProvider.getFieldTypeUUID(accessorPart,
+										ctId, modelVersion));
+						value.setAccessor(String.format("%s.%s",
+								ctc.getChildName(), accessorPart));
 					});
 		}
-		if (Objects.nonNull(value.getAccessor())) {
-			value.setAccessor(element.getType().getName().getLocalPart()
+		if (Objects.isNull(value.getAccessor())) {
+			value.setAccessor(ct.getType().getName().getLocalPart()
 					.replace("MappingType", ""));
 		}
 		if (Objects.nonNull(value.getAccessor())) {
