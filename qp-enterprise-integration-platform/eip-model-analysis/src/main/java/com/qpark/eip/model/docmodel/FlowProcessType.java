@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.09.14 um 09:30:20 AM CEST 
+// Generiert: 2016.09.14 um 10:27:55 AM CEST 
 //
 
 
@@ -69,7 +69,7 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *         &lt;element name="executionOrder" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="subRequest" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowSubRequestType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="filter" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowFilterType" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="rule" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowFilterType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="rule" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowRuleType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="mapInOut" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FlowMapInOutType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
@@ -128,7 +128,7 @@ public class FlowProcessType
     protected List<String> executionOrder;
     protected List<FlowSubRequestType> subRequest;
     protected List<FlowFilterType> filter;
-    protected List<FlowFilterType> rule;
+    protected List<FlowRuleType> rule;
     protected List<FlowMapInOutType> mapInOut;
     @XmlTransient
     protected Long hjid;
@@ -289,6 +289,37 @@ public class FlowProcessType
     }
 
     /**
+     * Ruft den Wert der requestFieldDescription-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Basic
+    @Column(name = "REQUESTFIELDDESCRIPTION", length = 2047)
+    public String getRequestFieldDescription() {
+        return requestFieldDescription;
+    }
+
+    /**
+     * Legt den Wert der requestFieldDescription-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRequestFieldDescription(String value) {
+        this.requestFieldDescription = value;
+    }
+
+    @Transient
+    public boolean isSetRequestFieldDescription() {
+        return (this.requestFieldDescription!= null);
+    }
+
+    /**
      * Ruft den Wert der responseFieldDescription-Eigenschaft ab.
      * 
      * @return
@@ -350,37 +381,6 @@ public class FlowProcessType
     @Transient
     public boolean isSetRequestResponse() {
         return (this.requestResponse!= null);
-    }
-
-    /**
-     * Ruft den Wert der requestFieldDescription-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Basic
-    @Column(name = "REQUESTFIELDDESCRIPTION", length = 2047)
-    public String getRequestFieldDescription() {
-        return requestFieldDescription;
-    }
-
-    /**
-     * Legt den Wert der requestFieldDescription-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRequestFieldDescription(String value) {
-        this.requestFieldDescription = value;
-    }
-
-    @Transient
-    public boolean isSetRequestFieldDescription() {
-        return (this.requestFieldDescription!= null);
     }
 
     /**
@@ -553,17 +553,17 @@ public class FlowProcessType
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link FlowFilterType }
+     * {@link FlowRuleType }
      * 
      * 
      */
-    @OneToMany(targetEntity = FlowFilterType.class, cascade = {
+    @OneToMany(targetEntity = FlowRuleType.class, cascade = {
         CascadeType.ALL
     })
     @JoinColumn(name = "RULE__FLOWPROCESSTYPE_HJID")
-    public List<FlowFilterType> getRule() {
+    public List<FlowRuleType> getRule() {
         if (rule == null) {
-            rule = new ArrayList<FlowFilterType>();
+            rule = new ArrayList<FlowRuleType>();
         }
         return this.rule;
     }
@@ -572,7 +572,7 @@ public class FlowProcessType
      * 
      * 
      */
-    public void setRule(List<FlowFilterType> rule) {
+    public void setRule(List<FlowRuleType> rule) {
         this.rule = rule;
     }
 
@@ -716,6 +716,15 @@ public class FlowProcessType
             }
         }
         {
+            String lhsRequestFieldDescription;
+            lhsRequestFieldDescription = this.getRequestFieldDescription();
+            String rhsRequestFieldDescription;
+            rhsRequestFieldDescription = that.getRequestFieldDescription();
+            if (!strategy.equals(LocatorUtils.property(thisLocator, "requestFieldDescription", lhsRequestFieldDescription), LocatorUtils.property(thatLocator, "requestFieldDescription", rhsRequestFieldDescription), lhsRequestFieldDescription, rhsRequestFieldDescription)) {
+                return false;
+            }
+        }
+        {
             String lhsResponseFieldDescription;
             lhsResponseFieldDescription = this.getResponseFieldDescription();
             String rhsResponseFieldDescription;
@@ -730,15 +739,6 @@ public class FlowProcessType
             RequestResponseDataType rhsRequestResponse;
             rhsRequestResponse = that.getRequestResponse();
             if (!strategy.equals(LocatorUtils.property(thisLocator, "requestResponse", lhsRequestResponse), LocatorUtils.property(thatLocator, "requestResponse", rhsRequestResponse), lhsRequestResponse, rhsRequestResponse)) {
-                return false;
-            }
-        }
-        {
-            String lhsRequestFieldDescription;
-            lhsRequestFieldDescription = this.getRequestFieldDescription();
-            String rhsRequestFieldDescription;
-            rhsRequestFieldDescription = that.getRequestFieldDescription();
-            if (!strategy.equals(LocatorUtils.property(thisLocator, "requestFieldDescription", lhsRequestFieldDescription), LocatorUtils.property(thatLocator, "requestFieldDescription", rhsRequestFieldDescription), lhsRequestFieldDescription, rhsRequestFieldDescription)) {
                 return false;
             }
         }
@@ -770,9 +770,9 @@ public class FlowProcessType
             }
         }
         {
-            List<FlowFilterType> lhsRule;
+            List<FlowRuleType> lhsRule;
             lhsRule = (this.isSetRule()?this.getRule():null);
-            List<FlowFilterType> rhsRule;
+            List<FlowRuleType> rhsRule;
             rhsRule = (that.isSetRule()?that.getRule():null);
             if (!strategy.equals(LocatorUtils.property(thisLocator, "rule", lhsRule), LocatorUtils.property(thatLocator, "rule", rhsRule), lhsRule, rhsRule)) {
                 return false;
@@ -823,6 +823,11 @@ public class FlowProcessType
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "namespace", theNamespace), currentHashCode, theNamespace);
         }
         {
+            String theRequestFieldDescription;
+            theRequestFieldDescription = this.getRequestFieldDescription();
+            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestFieldDescription", theRequestFieldDescription), currentHashCode, theRequestFieldDescription);
+        }
+        {
             String theResponseFieldDescription;
             theResponseFieldDescription = this.getResponseFieldDescription();
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "responseFieldDescription", theResponseFieldDescription), currentHashCode, theResponseFieldDescription);
@@ -831,11 +836,6 @@ public class FlowProcessType
             RequestResponseDataType theRequestResponse;
             theRequestResponse = this.getRequestResponse();
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestResponse", theRequestResponse), currentHashCode, theRequestResponse);
-        }
-        {
-            String theRequestFieldDescription;
-            theRequestFieldDescription = this.getRequestFieldDescription();
-            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "requestFieldDescription", theRequestFieldDescription), currentHashCode, theRequestFieldDescription);
         }
         {
             List<String> theExecutionOrder;
@@ -853,7 +853,7 @@ public class FlowProcessType
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "filter", theFilter), currentHashCode, theFilter);
         }
         {
-            List<FlowFilterType> theRule;
+            List<FlowRuleType> theRule;
             theRule = (this.isSetRule()?this.getRule():null);
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "rule", theRule), currentHashCode, theRule);
         }

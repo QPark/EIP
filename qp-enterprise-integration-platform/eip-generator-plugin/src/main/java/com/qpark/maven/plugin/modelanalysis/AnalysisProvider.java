@@ -32,6 +32,7 @@ import com.qpark.eip.model.docmodel.FieldType;
 import com.qpark.eip.model.docmodel.FlowFilterType;
 import com.qpark.eip.model.docmodel.FlowMapInOutType;
 import com.qpark.eip.model.docmodel.FlowProcessType;
+import com.qpark.eip.model.docmodel.FlowRuleType;
 import com.qpark.eip.model.docmodel.FlowSubRequestType;
 import com.qpark.eip.model.docmodel.FlowType;
 import com.qpark.eip.model.docmodel.InterfaceMappingType;
@@ -52,6 +53,10 @@ public class AnalysisProvider {
 	public static final String FLOW_FILTER_PREFIX_IN = "filterIn";
 	/** The prefix to identify flow filter output. */
 	public static final String FLOW_FILTER_PREFIX_OUT = "filterOut";
+	/** The prefix to identify flow rule input. */
+	public static final String FLOW_RULE_PREFIX_IN = "ruleIn";
+	/** The prefix to identify flow rule output. */
+	public static final String FLOW_RULE_PREFIX_OUT = "ruleOut";
 	/** The prefix to identify flow sub request input. */
 	public static final String FLOW_SUBREQUEST_PREFIX_IN = "subRequest";
 
@@ -70,6 +75,7 @@ public class AnalysisProvider {
 		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\bus-dev\\src\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 
 		String basePackageName = "com.samples.platform";
 		String modelVersion = "4.0.0";
@@ -502,6 +508,29 @@ public class AnalysisProvider {
 				value.getFilter().add(filter);
 			}
 
+			rrdfs = this.getFlowRequestResponse(ct, FLOW_RULE_PREFIX_IN,
+					FLOW_RULE_PREFIX_IN, modelVersion);
+			for (RequestResponseDataFields rrdf : rrdfs) {
+				FlowRuleType rule = this.of.createFlowRuleType();
+				rule.setName(rrdf.rr.getName());
+				rule.setNamespace(rrdf.rr.getNamespace());
+				rule.setParentId(value.getId());
+				rule.setModelVersion(modelVersion);
+				this.uuidProvider.setUUID(rule);
+
+				rrdf.rr.setParentId(rule.getId());
+				rule.setRuleInOut(rrdf.rr);
+				if (Objects.nonNull(rrdf.childIn)) {
+					rule.setRuleInFieldDescription(
+							rrdf.childIn.getDescription());
+				}
+				if (Objects.nonNull(rrdf.childOut)) {
+					rule.setRuleOutFieldDescription(
+							rrdf.childOut.getDescription());
+				}
+				value.getRule().add(rule);
+			}
+
 			rrdfs = this.getFlowRequestResponse(ct, FLOW_MAP_PREFIX_IN,
 					FLOW_MAP_PREFIX_OUT, modelVersion);
 			for (RequestResponseDataFields rrdf : rrdfs) {
@@ -538,8 +567,31 @@ public class AnalysisProvider {
 								.filter(f -> Objects.nonNull(f.getFilterInOut())
 										&& Objects.nonNull(f.getFilterInOut()
 												.getRequestId())
-										&& f.getFilterInOut().getRequestId()
-												.equals(fdId))
+								&& f.getFilterInOut().getRequestId()
+										.equals(fdId))
+								.findFirst().ifPresent(f -> value
+										.getExecutionOrder().add(fdId));
+						value.getRule().stream()
+								.filter(r -> Objects.nonNull(r.getRuleInOut())
+										&& Objects.nonNull(
+												r.getRuleInOut().getRequestId())
+								&& r.getRuleInOut().getRequestId().equals(fdId))
+								.findFirst().ifPresent(f -> value
+										.getExecutionOrder().add(fdId));
+						value.getMapInOut().stream()
+								.filter(r -> Objects.nonNull(r.getMapInOut())
+										&& Objects.nonNull(
+												r.getMapInOut().getRequestId())
+								&& r.getMapInOut().getRequestId().equals(fdId))
+								.findFirst().ifPresent(f -> value
+										.getExecutionOrder().add(fdId));
+						value.getSubRequest().stream().filter(
+								r -> Objects.nonNull(r.getSubRequestInOut())
+										&& Objects
+												.nonNull(r.getSubRequestInOut()
+														.getRequestId())
+								&& r.getSubRequestInOut().getRequestId()
+										.equals(fdId))
 								.findFirst().ifPresent(f -> value
 										.getExecutionOrder().add(fdId));
 					});

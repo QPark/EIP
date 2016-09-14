@@ -18,6 +18,7 @@ import com.qpark.eip.model.docmodel.FieldType;
 import com.qpark.eip.model.docmodel.FlowFilterType;
 import com.qpark.eip.model.docmodel.FlowMapInOutType;
 import com.qpark.eip.model.docmodel.FlowProcessType;
+import com.qpark.eip.model.docmodel.FlowRuleType;
 import com.qpark.eip.model.docmodel.FlowSubRequestType;
 import com.qpark.eip.model.docmodel.FlowType;
 import com.qpark.eip.model.docmodel.OperationType;
@@ -88,6 +89,15 @@ public class UUIDProvider {
 	public void setUUID(final FlowFilterType value) {
 		value.setId(String.valueOf(UUID.nameUUIDFromBytes(
 				new StringBuffer(128).append(FlowFilterType.class.getName())
+						.append("#").append(value.getModelVersion()).append("#")
+						.append(value.getName()).append("#")
+						.append(value.getParentId()).toString().getBytes())));
+		this.analysis.add(value.getId(), value);
+	}
+
+	public void setUUID(final FlowRuleType value) {
+		value.setId(String.valueOf(UUID.nameUUIDFromBytes(
+				new StringBuffer(128).append(FlowRuleType.class.getName())
 						.append("#").append(value.getModelVersion()).append("#")
 						.append(value.getName()).append("#")
 						.append(value.getParentId()).toString().getBytes())));

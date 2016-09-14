@@ -1,5 +1,4 @@
-com.qpark.eip.model.docmodel
-xcom.qpark.eip.model.common.AssetType
-xcom.qpark.eip.model.common.EntityType
-xcom.samples.platform.model.library.BookType
-xcom.samples.platform.model.library.LibraryType
+com.qpark.eip.model.common.AssetType
+com.qpark.eip.model.common.EntityType
+com.samples.platform.model.library.BookType
+com.samples.platform.model.library.LibraryType

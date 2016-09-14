@@ -449,7 +449,7 @@
 			</element>
 			<element name="subRequest" type="DM:FlowSubRequestType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="filter" type="DM:FlowFilterType" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="rule" type="DM:FlowFilterType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="rule" type="DM:FlowRuleType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="mapInOut" type="DM:FlowMapInOutType" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>

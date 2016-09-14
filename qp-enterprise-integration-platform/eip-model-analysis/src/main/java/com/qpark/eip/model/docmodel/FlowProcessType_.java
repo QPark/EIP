@@ -10,7 +10,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class FlowProcessType_ {
 
 	public static volatile SingularAttribute<FlowProcessType, String> modelVersion;
-	public static volatile ListAttribute<FlowProcessType, FlowFilterType> rule;
+	public static volatile ListAttribute<FlowProcessType, FlowRuleType> rule;
 	public static volatile SingularAttribute<FlowProcessType, String> requestFieldDescription;
 	public static volatile SingularAttribute<FlowProcessType, Long> hjid;
 	public static volatile SingularAttribute<FlowProcessType, String> parentId;
