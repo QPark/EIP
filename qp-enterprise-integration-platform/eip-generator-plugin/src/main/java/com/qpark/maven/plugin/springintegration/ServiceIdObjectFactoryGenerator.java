@@ -22,7 +22,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
  * Generates a ServiceObjectFactory out of the XSDs containing elements.
- * 
+ *
  * @author bhausen
  */
 public class ServiceIdObjectFactoryGenerator {
@@ -58,7 +58,7 @@ public class ServiceIdObjectFactoryGenerator {
 		TreeSet<String> contextPath = new TreeSet<String>();
 		StringBuffer methods = new StringBuffer();
 		StringBuffer objectFactories = new StringBuffer();
-		ServiceIdEntry entry = ServiceIdRegistry
+		ServiceIdEntry entry = this.xsds.getServiceIdRegistry()
 				.getServiceIdEntry(this.serviceId);
 		if (entry != null) {
 			XsdContainer xc = this.xsds

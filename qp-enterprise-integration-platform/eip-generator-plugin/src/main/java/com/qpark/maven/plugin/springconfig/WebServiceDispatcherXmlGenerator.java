@@ -55,7 +55,7 @@ public class WebServiceDispatcherXmlGenerator {
 		this.log = log;
 		this.elementTypes = config.getElementTypes();
 		if (serviceId == null) {
-			Collection<String> serviceIds = ServiceIdRegistry
+			Collection<String> serviceIds = config.getServiceIdRegistry()
 					.getAllServiceIds();
 			StringBuffer sb = new StringBuffer(128);
 			for (String sid : serviceIds) {
@@ -125,14 +125,15 @@ public class WebServiceDispatcherXmlGenerator {
 					.splitServiceIds(this.serviceId);
 			totalServiceIds.addAll(list);
 			for (String sid : list) {
-				totalServiceIds.addAll(ServiceIdRegistry.getServiceIdEntry(sid)
-						.getTotalServiceIdImports());
+				totalServiceIds.addAll(this.config.getServiceIdRegistry()
+						.getServiceIdEntry(sid).getTotalServiceIdImports());
 			}
 			for (String sid : totalServiceIds) {
 				this.createWebServiceDynamicWsdlConfig(sid);
 			}
 		} else {
-			for (String sid : ServiceIdRegistry.getAllServiceIds()) {
+			for (String sid : this.config.getServiceIdRegistry()
+					.getAllServiceIds()) {
 				this.createWebServiceDynamicWsdlConfig(sid);
 			}
 		}
@@ -147,7 +148,7 @@ public class WebServiceDispatcherXmlGenerator {
 		sb.append(this.marshallerName);
 		sb.append("\" \n");
 		sb.append("\t\tcontext-path=\"");
-		sb.append(ServiceIdRegistry
+		sb.append(this.config.getServiceIdRegistry()
 				.getCombinedMarshallerContextPath(this.serviceId));
 		sb.append("\"\n\t/>\n");
 		return sb.toString();
@@ -176,7 +177,7 @@ public class WebServiceDispatcherXmlGenerator {
 		String operationNameElement;
 		String serviceIdElement;
 		for (ElementType element : this.elementTypes) {
-			if (element.isRequest() && ServiceIdRegistry
+			if (element.isRequest() && this.config.getServiceIdRegistry()
 					.isValidServiceId(element.getServiceId(), this.serviceId)) {
 				ElementType elementResponse = XsdsUtil.findResponse(element,
 						this.config.getElementTypes(), this.config);
@@ -221,7 +222,8 @@ public class WebServiceDispatcherXmlGenerator {
 	}
 
 	private String getWebServiceDynamicWsdlConfig(final String sid) {
-		ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
+		ServiceIdEntry entry = this.config.getServiceIdRegistry()
+				.getServiceIdEntry(sid);
 		XsdContainer xc = this.config
 				.getXsdContainer(entry.getTargetNamespace());
 

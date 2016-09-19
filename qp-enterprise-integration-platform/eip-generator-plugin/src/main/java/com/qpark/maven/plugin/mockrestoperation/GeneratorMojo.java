@@ -103,11 +103,11 @@ public class GeneratorMojo extends AbstractMojo {
 		Collection<String> serviceIds = ServiceIdRegistry
 				.splitServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
-			serviceIds = ServiceIdRegistry.getAllServiceIds();
+			serviceIds = xsds.getServiceIdRegistry().getAllServiceIds();
 		}
 		for (String sid : serviceIds) {
 			for (ElementType element : xsds.getElementTypes()) {
-				if (element.isRequest() && ServiceIdRegistry
+				if (element.isRequest() && xsds.getServiceIdRegistry()
 						.isValidServiceId(element.getServiceId(), sid)) {
 					mop = new RestOperationProviderMockGenerator(xsds,
 							this.outputDirectory, element, this.getLog());

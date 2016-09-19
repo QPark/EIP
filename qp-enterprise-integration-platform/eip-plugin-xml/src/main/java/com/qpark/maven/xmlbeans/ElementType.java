@@ -151,8 +151,9 @@ public class ElementType {
 				.append(this.getClassNameGateway()).toString();
 
 		/* Service id definition. */
-		this.serviceId = ServiceIdRegistry.getServiceId(this.packageName,
-				this.getTargetNamespace(), config.getMessagePackageNameSuffix(),
+		this.serviceId = config.getServiceIdRegistry().getServiceId(
+				this.packageName, this.getTargetNamespace(),
+				config.getMessagePackageNameSuffix(),
 				config.getDeltaPackageNameSuffix());
 
 		this.beanIdOperationProvider = new StringBuffer(64)

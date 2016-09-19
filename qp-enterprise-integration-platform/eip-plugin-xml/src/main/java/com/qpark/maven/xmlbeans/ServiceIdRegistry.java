@@ -26,17 +26,17 @@ public class ServiceIdRegistry {
 
 	private static final String SERVICE_DEFINITION = ".service.";
 
-	private static final Map<String, ServiceIdEntry> serviceIdMap = new TreeMap<String, ServiceIdEntry>();
-	private static final Map<String, ServiceIdEntry> serviceIdPackageNameMap = new TreeMap<String, ServiceIdEntry>();
-	private static final Set<String> serviceIds = new TreeSet<String>();
-	private static final Map<String, ServiceIdEntry> serviceIdTargetNamespaceMap = new TreeMap<String, ServiceIdEntry>();
+	private final Map<String, ServiceIdEntry> serviceIdMap = new TreeMap<String, ServiceIdEntry>();
+	private final Map<String, ServiceIdEntry> serviceIdPackageNameMap = new TreeMap<String, ServiceIdEntry>();
+	private final Set<String> serviceIds = new TreeSet<String>();
+	private final Map<String, ServiceIdEntry> serviceIdTargetNamespaceMap = new TreeMap<String, ServiceIdEntry>();
 
 	/**
 	 * @return
 	 */
-	public static Collection<String> getAllServiceIds() {
+	public Collection<String> getAllServiceIds() {
 		Set<String> ts = new TreeSet<String>();
-		ts.addAll(serviceIds);
+		ts.addAll(this.serviceIds);
 		return ts;
 	}
 
@@ -99,11 +99,10 @@ public class ServiceIdRegistry {
 	 * @param deltaPackageNameSuffix
 	 * @return the service id.
 	 */
-	static String getServiceId(final String packageName,
-			final String targetNamespace, final String messageSuffix,
-			final String deltaPackageNameSuffix) {
+	String getServiceId(final String packageName, final String targetNamespace,
+			final String messageSuffix, final String deltaPackageNameSuffix) {
 		String serviceId = "";
-		ServiceIdEntry entry = serviceIdPackageNameMap.get(packageName);
+		ServiceIdEntry entry = this.serviceIdPackageNameMap.get(packageName);
 		if (entry != null) {
 			serviceId = entry.getServiceId();
 		} else {
@@ -139,17 +138,17 @@ public class ServiceIdRegistry {
 				entry = new ServiceIdEntry(serviceId, packageName,
 						targetNamespace);
 				logger.info("Found {}", entry);
-				serviceIdPackageNameMap.put(packageName, entry);
-				serviceIdTargetNamespaceMap.put(targetNamespace, entry);
-				serviceIdMap.put(serviceId, entry);
-				serviceIds.add(serviceId);
+				this.serviceIdPackageNameMap.put(packageName, entry);
+				this.serviceIdTargetNamespaceMap.put(targetNamespace, entry);
+				this.serviceIdMap.put(serviceId, entry);
+				this.serviceIds.add(serviceId);
 			}
 		}
 		return serviceId;
 	}
 
-	public static ServiceIdEntry getServiceIdEntry(final String serviceId) {
-		return serviceIdMap.get(serviceId);
+	public ServiceIdEntry getServiceIdEntry(final String serviceId) {
+		return this.serviceIdMap.get(serviceId);
 	}
 
 	public static List<String> splitServiceIds(final String serviceId) {
@@ -157,19 +156,18 @@ public class ServiceIdRegistry {
 		return list;
 	}
 
-	public static String getCombinedMarshallerContextPath(
-			final String serviceIds) {
+	public String getCombinedMarshallerContextPath(final String serviceIds) {
 		StringBuffer sb = new StringBuffer(128);
 		Set<String> sids = new TreeSet<String>();
 		List<String> list = splitByCommaAndSpace(serviceIds);
 		if (list.isEmpty()) {
-			sids.addAll(getAllServiceIds());
+			sids.addAll(this.getAllServiceIds());
 		} else {
 			sids.addAll(list);
 			for (String sid : list) {
 				try {
-					sids.addAll(
-							getServiceIdEntry(sid).getTotalServiceIdImports());
+					sids.addAll(this.getServiceIdEntry(sid)
+							.getTotalServiceIdImports());
 				} catch (RuntimeException e) {
 					throw new RuntimeException(new StringBuffer(64)
 							.append("Can not find the serviceId \"").append(sid)
@@ -181,12 +179,12 @@ public class ServiceIdRegistry {
 			if (sb.length() > 0) {
 				sb.append(":");
 			}
-			sb.append(getServiceIdEntry(sid).getPackageName());
+			sb.append(this.getServiceIdEntry(sid).getPackageName());
 		}
 		return sb.toString();
 	}
 
-	public static boolean isValidServiceId(final String elementServiceId,
+	public boolean isValidServiceId(final String elementServiceId,
 			final String serviceId) {
 		boolean valid = false;
 		Collection<String> serviceIds = splitServiceIds(serviceId);
@@ -195,7 +193,7 @@ public class ServiceIdRegistry {
 		} else {
 			ServiceIdEntry entry;
 			for (String sid : serviceIds) {
-				entry = getServiceIdEntry(sid);
+				entry = this.getServiceIdEntry(sid);
 				if (entry != null) {
 					valid = entry.getServiceId().equals(elementServiceId)
 							|| entry.getTotalServiceIdImports()
@@ -235,7 +233,7 @@ public class ServiceIdRegistry {
 	private static Logger logger = LoggerFactory
 			.getLogger(ServiceIdRegistry.class);
 
-	private static void setServiceEntryImports(final ServiceIdEntry entry,
+	private void setServiceEntryImports(final ServiceIdEntry entry,
 			final Map<String, XsdContainer> map) {
 		XsdContainer container = map.get(entry.getTargetNamespace());
 		if (container == null) {
@@ -246,20 +244,20 @@ public class ServiceIdRegistry {
 			ServiceIdEntry child;
 			for (String importedTargetNamespace : container
 					.getImportedTargetNamespaces()) {
-				child = serviceIdTargetNamespaceMap
+				child = this.serviceIdTargetNamespaceMap
 						.get(importedTargetNamespace);
 				if (child != null) {
 					entry.getImportedServiceEntries().add(child);
-					setServiceEntryImports(child, map);
+					this.setServiceEntryImports(child, map);
 				}
 			}
 		}
 	}
 
-	static void setupServiceIdTree(final XsdsUtil xsds) {
+	void setupServiceIdTree(final XsdsUtil xsds) {
 		ServiceIdEntry entry;
-		for (String serviceId : serviceIds) {
-			entry = serviceIdMap.get(serviceId);
+		for (String serviceId : this.serviceIds) {
+			entry = this.serviceIdMap.get(serviceId);
 			if (entry == null) {
 				throw new IllegalStateException(
 						"No ServiceIdEntry found for serviceId \"" + serviceId
@@ -269,7 +267,7 @@ public class ServiceIdRegistry {
 						.get(entry.getTargetNamespace());
 				entry.setAnnotationDocumentation(
 						container.getAnnotationDocumentation());
-				setServiceEntryImports(entry, xsds.getXsdContainerMap());
+				this.setServiceEntryImports(entry, xsds.getXsdContainerMap());
 			}
 		}
 	}

@@ -134,7 +134,7 @@ public class GenerateMojo extends AbstractMojo {
 		wsdx.generate();
 
 		ApplicationPropertiesConfigXmlGenerator pcx = new ApplicationPropertiesConfigXmlGenerator(
-				this.basePackageName, this.serviceId, this.serviceVersion,
+				xsds, this.basePackageName, this.serviceId, this.serviceVersion,
 				this.revisionNumber, this.placeholderConfigurerImpl,
 				this.outputDirectory, this.project, eipVersion, this.getLog());
 		pcx.generate();

@@ -15,7 +15,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import com.qpark.maven.Util;
-import com.qpark.maven.xmlbeans.ServiceIdRegistry;
+import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
  * Generates a ServiceObjectFactory out of the XSDs containing elements.
@@ -24,6 +24,7 @@ import com.qpark.maven.xmlbeans.ServiceIdRegistry;
  */
 public class ApplicationPropertiesConfigXmlGenerator {
 	private final String basePackageName;
+	private final XsdsUtil config;
 	private final String serviceId;
 	private final String serviceVersion;
 	private final File outputDirectory;
@@ -37,11 +38,13 @@ public class ApplicationPropertiesConfigXmlGenerator {
 	 * @param config
 	 * @param elementTypes
 	 */
-	public ApplicationPropertiesConfigXmlGenerator(final String basePackageName,
-			final String serviceId, final String serviceVersion,
-			final String revisionNumber, final String placeholderConfigurerImpl,
-			final File outputDirectory, final MavenProject project,
-			final String eipVersion, final Log log) {
+	public ApplicationPropertiesConfigXmlGenerator(final XsdsUtil config,
+			final String basePackageName, final String serviceId,
+			final String serviceVersion, final String revisionNumber,
+			final String placeholderConfigurerImpl, final File outputDirectory,
+			final MavenProject project, final String eipVersion,
+			final Log log) {
+		this.config = config;
 		this.basePackageName = basePackageName;
 		this.serviceId = serviceId;
 		this.serviceVersion = serviceVersion;
@@ -136,8 +139,9 @@ public class ApplicationPropertiesConfigXmlGenerator {
 				this.project.getVersion());
 		// appl.setProperty("eip.application.jaxb.context.name",
 		// Util.getContextPath(this.config.getPackageNames()));
-		appl.setProperty("eip.application.jaxb.context.name", ServiceIdRegistry
-				.getCombinedMarshallerContextPath(this.serviceId));
+		appl.setProperty("eip.application.jaxb.context.name",
+				this.config.getServiceIdRegistry()
+						.getCombinedMarshallerContextPath(this.serviceId));
 		appl.setProperty("eip.web.service.server", "http://localhost:8080/");
 
 		return appl;

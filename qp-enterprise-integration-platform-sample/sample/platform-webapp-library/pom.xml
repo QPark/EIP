@@ -160,6 +160,19 @@ WEB-INF/lib/xws-security-3.0.jar
 						</configuration>
 					</execution>
 					<execution>
+						<id>condense service schemas</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>condense-service-schemas</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${model.dir}</outputDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<serviceId>${eip.service.ids}</serviceId>
+						</configuration>
+					</execution>
+					<execution>
 						<id>make schemalocations relative</id>
 						<phase>process-classes</phase>
 						<goals>

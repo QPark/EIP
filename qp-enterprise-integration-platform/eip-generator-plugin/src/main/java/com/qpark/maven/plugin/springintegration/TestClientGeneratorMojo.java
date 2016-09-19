@@ -111,7 +111,7 @@ public class TestClientGeneratorMojo extends AbstractMojo {
 		Collection<String> serviceIds = ServiceIdRegistry
 				.splitServiceIds(this.serviceId);
 		if (serviceIds.size() == 0) {
-			serviceIds = ServiceIdRegistry.getAllServiceIds();
+			serviceIds = xsds.getServiceIdRegistry().getAllServiceIds();
 		}
 
 		this.getLog().info("ServiceId size " + serviceIds.size());

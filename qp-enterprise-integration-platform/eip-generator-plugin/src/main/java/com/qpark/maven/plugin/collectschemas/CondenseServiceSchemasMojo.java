@@ -17,6 +17,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -31,7 +32,8 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "condense-service-schemas", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = "condense-service-schemas",
+		defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class CondenseServiceSchemasMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "baseDirectory",
@@ -85,25 +87,38 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 		return this.execution.getVersion();
 	}
 
-	protected void generate(final XsdsUtil xsds) {
-		List<String> serviceIds = ServiceIdRegistry
-				.splitServiceIds(this.serviceId);
+	protected static void condense(final XsdsUtil xsds, final String serviceId,
+			final Log log) {
+		List<String> serviceIds = ServiceIdRegistry.splitServiceIds(serviceId);
 		if (Objects.nonNull(serviceIds) && serviceIds.size() > 0) {
+			xsds.getXsdContainerMap().values().stream()
+					.forEach(xc -> log
+							.info(String.format("Contains namespaces: %s %s",
+									xc.getTargetNamespace(), xc.getFile())));
 			TreeSet<String> totalTargetNamespaces = new TreeSet<String>();
-			ServiceIdRegistry.getAllServiceIds().stream()
+			xsds.getServiceIdRegistry().getAllServiceIds().stream()
 					.filter(si -> serviceIds.contains(si))
-					.map(si -> ServiceIdRegistry.getServiceIdEntry(si))
+					.map(si -> xsds.getServiceIdRegistry()
+							.getServiceIdEntry(si))
 					.map(sie -> sie.getTargetNamespace())
 					.filter(tn -> Objects.nonNull(tn))
 					.map(tn -> xsds.getXsdContainer(tn))
 					.filter(xc -> Objects.nonNull(xc))
 					.map(xc -> xc.getTotalImportedTargetNamespaces())
 					.forEach(tns -> totalTargetNamespaces.addAll(tns));
+			log.info(String.format("Keep namespaces: %s",
+					totalTargetNamespaces));
 			xsds.getXsdContainerMap().values().stream()
 					.filter(xc -> !totalTargetNamespaces
 							.contains(xc.getTargetNamespace()))
 					.forEach(xc -> {
-						xc.getFile().delete();
+						if (xc.getFile().delete()) {
+							log.info(String.format("Delete file %s",
+									xc.getFile()));
+						} else {
+							log.info(String.format("Could not delete file %s",
+									xc.getFile()));
+						}
 					});
 		}
 	}
@@ -121,8 +136,7 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
 				this.serviceResponseSuffix);
 
-		this.generate(xsds);
-
+		condense(xsds, this.serviceId, this.getLog());
 		this.getLog().debug("-execute");
 	}
 }

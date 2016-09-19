@@ -161,8 +161,8 @@ public class SpringIntegrationConfigGenerator {
 				.append(capitalizeName).append("Marshaller\" \n");
 		sb.append("\t\tcontext-path=\"");
 		// sb.append(Util.getContextPath(packageNames));
-		sb.append(
-				ServiceIdRegistry.getCombinedMarshallerContextPath(serviceId));
+		sb.append(this.config.getServiceIdRegistry()
+				.getCombinedMarshallerContextPath(serviceId));
 		sb.append("\"\n\t/>\n");
 
 		sb.append("\n");
@@ -262,10 +262,11 @@ public class SpringIntegrationConfigGenerator {
 		// .append(servicePackageName).append(":-1}\"\n");
 
 		sb.append("\t\turi=\"${service.endpoint.url.")
-				.append(servicePackageName).append(":http://localhost:8080/}\"\n");
+				.append(servicePackageName)
+				.append(":http://localhost:8080/}\"\n");
 		properties.append("service.endpoint.url.").append(servicePackageName)
-				.append("=http://localhost:8080/")
-				.append(serviceId).append("\n");
+				.append("=http://localhost:8080/").append(serviceId)
+				.append("\n");
 		// properties.append("service.endpoint.timeout.ms.")
 		// .append(servicePackageName).append("=-1\n");
 

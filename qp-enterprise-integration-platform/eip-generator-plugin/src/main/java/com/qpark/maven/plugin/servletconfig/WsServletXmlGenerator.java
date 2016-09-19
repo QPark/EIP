@@ -179,7 +179,7 @@ public class WsServletXmlGenerator {
 		sb.append("\t\t\t<props>\n");
 		String targetNamespace = null;
 		for (ElementType element : this.elementTypes) {
-			if (element.isRequest() && ServiceIdRegistry
+			if (element.isRequest() && this.config.getServiceIdRegistry()
 					.isValidServiceId(element.getServiceId(), this.serviceId)) {
 				ElementType elementResponse = XsdsUtil.findResponse(element,
 						this.config.getElementTypes(), this.config);
@@ -236,7 +236,7 @@ public class WsServletXmlGenerator {
 		sb.append(".messages.incoming\"/>\n");
 		sb.append("\t\t<property name=\"contextPath\" value=\"");
 		// sb.append(Util.getContextPath(packageNames));
-		sb.append(ServiceIdRegistry
+		sb.append(this.config.getServiceIdRegistry()
 				.getCombinedMarshallerContextPath(this.serviceId));
 		sb.append("\"/>\n");
 		sb.append("\t</bean>\n");
@@ -254,10 +254,12 @@ public class WsServletXmlGenerator {
 			Collection<String> serviceIds = ServiceIdRegistry
 					.splitServiceIds(this.serviceId);
 			if (serviceIds.size() == 0) {
-				serviceIds = ServiceIdRegistry.getAllServiceIds();
+				serviceIds = this.config.getServiceIdRegistry()
+						.getAllServiceIds();
 			}
 			for (String sid : serviceIds) {
-				ServiceIdEntry entry = ServiceIdRegistry.getServiceIdEntry(sid);
+				ServiceIdEntry entry = this.config.getServiceIdRegistry()
+						.getServiceIdEntry(sid);
 				XsdContainer xc = this.config
 						.getXsdContainer(entry.getTargetNamespace());
 				sb.append("\t\t\t\t<value>/WEB-INF/classes");

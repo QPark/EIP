@@ -902,15 +902,14 @@ public class XsdsUtil {
 										.append("Target namespace \"")
 										.append(xsdContainer
 												.getTargetNamespace())
-										.append("\" defined in file ")
-										.append(xsdContainerMap
-												.get(xsdContainer
-														.getTargetNamespace())
-												.getFile().getAbsolutePath())
-										.append(" and ")
-										.append(xsdContainer.getFile()
-												.getAbsolutePath())
-										.append("!").toString());
+								.append("\" defined in file ")
+								.append(xsdContainerMap
+										.get(xsdContainer.getTargetNamespace())
+										.getFile().getAbsolutePath())
+								.append(" and ")
+								.append(xsdContainer.getFile()
+										.getAbsolutePath()).append("!")
+								.toString());
 					} else {
 						xsdContainerMap.put(xsdContainer.getTargetNamespace(),
 								xsdContainer);
@@ -921,6 +920,9 @@ public class XsdsUtil {
 			}
 		}
 		for (XsdContainer container : xsdContainerMap.values()) {
+			logger.debug("setup totat imports  container  {}{}",
+					container.getTargetNamespace(),
+					container.getFile().getAbsolutePath());
 			setupXsdContainerTotalImports(container, xsdContainerMap);
 		}
 		TreeMap<String, XsdContainer> value = new TreeMap<String, XsdContainer>();
@@ -1056,61 +1058,51 @@ public class XsdsUtil {
 	private static int reused = 0;
 	private static int used = 0;
 
+	private static boolean isSame(final XsdsUtil test, final File baseDirectory,
+			final String basePackageName, final String messagePackageNameSuffix,
+			final String deltaPackageNameSuffix,
+			final String serviceRequestSuffix,
+			final String serviceResponseSuffix) {
+		boolean value = false;
+		if (Objects.nonNull(test)
+				&& (baseDirectory == test.baseDirectory
+						|| baseDirectory.equals(test.baseDirectory))
+				&& String.valueOf(basePackageName)
+						.equals(String.valueOf(test.basePackageName))
+				&& String.valueOf(messagePackageNameSuffix)
+						.equals(String.valueOf(test.messagePackageNameSuffix))
+				&& String.valueOf(deltaPackageNameSuffix)
+						.equals(String.valueOf(test.deltaPackageNameSuffix))
+				&& String.valueOf(serviceRequestSuffix)
+						.equals(String.valueOf(test.serviceRequestSuffix))
+				&& String.valueOf(serviceResponseSuffix)
+						.equals(String.valueOf(test.serviceResponseSuffix))) {
+			value = true;
+		}
+		return value;
+	}
+
 	public static XsdsUtil getInstance(final File baseDirectory,
 			final String basePackageName, final String messagePackageNameSuffix,
 			final String deltaPackageNameSuffix,
 			final String serviceRequestSuffix,
 			final String serviceResponseSuffix) {
 		XsdsUtil value;
-		if (instance0 != null
-				&& (baseDirectory == instance0.baseDirectory
-						|| baseDirectory.equals(instance0.baseDirectory))
-				&& String.valueOf(basePackageName)
-						.equals(String.valueOf(instance0.basePackageName))
-				&& String.valueOf(messagePackageNameSuffix)
-						.equals(String
-								.valueOf(instance0.messagePackageNameSuffix))
-				&& String.valueOf(deltaPackageNameSuffix)
-						.equals(String
-								.valueOf(instance0.deltaPackageNameSuffix))
-				&& String.valueOf(serviceRequestSuffix)
-						.equals(String.valueOf(instance0.serviceRequestSuffix))
-				&& String.valueOf(serviceResponseSuffix).equals(
-						String.valueOf(instance0.serviceResponseSuffix))) {
+		if (isSame(instance0, baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix,
+				serviceRequestSuffix, serviceResponseSuffix)) {
 			reused++;
 			value = instance0;
-		} else if (instance1 != null
-				&& (baseDirectory == instance1.baseDirectory
-						|| baseDirectory.equals(instance1.baseDirectory))
-				&& String.valueOf(basePackageName)
-						.equals(String.valueOf(instance1.basePackageName))
-				&& String.valueOf(messagePackageNameSuffix)
-						.equals(String
-								.valueOf(instance1.messagePackageNameSuffix))
-				&& String.valueOf(deltaPackageNameSuffix)
-						.equals(String
-								.valueOf(instance1.deltaPackageNameSuffix))
-				&& String.valueOf(serviceRequestSuffix)
-						.equals(String.valueOf(instance1.serviceRequestSuffix))
-				&& String.valueOf(serviceResponseSuffix).equals(
-						String.valueOf(instance1.serviceResponseSuffix))) {
+		} else if (isSame(instance1, baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix,
+				serviceRequestSuffix, serviceResponseSuffix)) {
+
 			reused++;
 			value = instance1;
-		} else if (instance2 != null
-				&& (baseDirectory == instance2.baseDirectory
-						|| baseDirectory.equals(instance2.baseDirectory))
-				&& String.valueOf(basePackageName)
-						.equals(String.valueOf(instance2.basePackageName))
-				&& String.valueOf(messagePackageNameSuffix)
-						.equals(String
-								.valueOf(instance2.messagePackageNameSuffix))
-				&& String.valueOf(deltaPackageNameSuffix)
-						.equals(String
-								.valueOf(instance2.deltaPackageNameSuffix))
-				&& String.valueOf(serviceRequestSuffix)
-						.equals(String.valueOf(instance2.serviceRequestSuffix))
-				&& String.valueOf(serviceResponseSuffix).equals(
-						String.valueOf(instance2.serviceResponseSuffix))) {
+		} else if (isSame(instance2, baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix,
+				serviceRequestSuffix, serviceResponseSuffix)) {
+
 			reused++;
 			value = instance2;
 		} else {
@@ -1142,7 +1134,7 @@ public class XsdsUtil {
 		used++;
 		logger.info("XsdsUtil used " + used + " times and reused " + reused
 				+ " times");
-		return instance0;
+		return value;
 	}
 
 	private long start;
@@ -1171,23 +1163,37 @@ public class XsdsUtil {
 						: serviceResponseSuffix;
 
 		startX = System.currentTimeMillis();
+		logger.info("Scanning {} for xsd files ...", this.baseDirectory);
 		this.xsdFiles = getXsdFiles(this.baseDirectory);
+		this.xsdFiles.stream().forEach(xsdFile -> logger
+				.debug(String.format("Contains xsdFile: %s", xsdFile)));
 		logger.debug("{} to get {} xsd files",
 				Util.getDuration(System.currentTimeMillis() - startX),
 				this.xsdFiles.size());
 
 		startX = System.currentTimeMillis();
-		this.xsdContainerMap = setupXsdContainers(this.xsdFiles, baseDirectory);
+		this.xsdContainerMap = setupXsdContainers(this.xsdFiles,
+				this.baseDirectory);
+		this.getXsdContainerMap().values().stream()
+				.forEach(xc -> logger.debug(String.format("XsdContainer: %s %s",
+						xc.getTargetNamespace(), xc.getFile())));
 		logger.debug("{} to get XsdContainers out of {} files",
 				Util.getDuration(System.currentTimeMillis() - startX),
 				this.xsdFiles.size());
+
+		startX = System.currentTimeMillis();
+		this.serviceIdRegistry = new ServiceIdRegistry();
+		this.serviceIdRegistry.setupServiceIdTree(this);
+		logger.debug("{} to get serviceIds: {}",
+				Util.getDuration(System.currentTimeMillis() - startX),
+				this.serviceIdRegistry.getAllServiceIds());
 
 		startX = System.currentTimeMillis();
 		List<ComplexType> synchronizedComplexTypeList = Collections
 				.synchronizedList(new ArrayList<ComplexType>());
 		List<ElementType> synchronizedElementTypeList = Collections
 				.synchronizedList(new ArrayList<ElementType>());
-		this.xsdFiles.parallelStream().parallel().forEach((f -> {
+		this.xsdFiles.parallelStream().parallel().forEach(f -> {
 			long startf = System.currentTimeMillis();
 			SchemaTypeSystem sts = getSchemaTypeSystem(f, this.entityResolver);
 			if (sts == null) {
@@ -1210,7 +1216,7 @@ public class XsdsUtil {
 			logger.debug("{} to get elements and complex type of file {}",
 					Util.getDuration(System.currentTimeMillis() - startf),
 					f.getAbsolutePath());
-		}));
+		});
 		this.elementTypes.addAll(synchronizedElementTypeList);
 		this.complexTypes.addAll(synchronizedComplexTypeList);
 		logger.info(
@@ -1218,12 +1224,6 @@ public class XsdsUtil {
 				Util.getDuration(System.currentTimeMillis() - startX),
 				this.complexTypes.size(), this.elementTypes.size(),
 				this.xsdFiles.size());
-
-		startX = System.currentTimeMillis();
-		ServiceIdRegistry.setupServiceIdTree(this);
-		logger.debug("{} to get serviceIds: {}",
-				Util.getDuration(System.currentTimeMillis() - startX),
-				ServiceIdRegistry.getAllServiceIds());
 
 		startX = System.currentTimeMillis();
 		this.complexTypes.stream().filter(ct -> Objects.nonNull(ct.getType()))
@@ -1260,7 +1260,13 @@ public class XsdsUtil {
 		logger.info("{} to create {} with ServiceIds: ",
 				Util.getDuration(System.currentTimeMillis() - this.start),
 				this.getClass().getSimpleName(),
-				ServiceIdRegistry.getAllServiceIds());
+				this.serviceIdRegistry.getAllServiceIds());
+	}
+
+	private ServiceIdRegistry serviceIdRegistry;
+
+	public ServiceIdRegistry getServiceIdRegistry() {
+		return this.serviceIdRegistry;
 	}
 
 	/**
