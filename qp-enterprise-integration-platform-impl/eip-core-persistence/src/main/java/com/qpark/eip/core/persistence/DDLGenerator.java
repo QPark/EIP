@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -19,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class DDLGenerator {
 	private static final String DEFAULT_PERSISTENCE_UNIT_NAME = "com.qpark.eip.core.persistence.ddl";
 
-	private static void fixGeneratedScriptProblems(final String fileName,
+	private static void fixGeneratedScriptProblems(final File f,
 			final String persistenceUnitName, final String databaseProcuctName,
 			final String databaseMajorVersion,
 			final String databaseMinorVersion, final String scriptType,
@@ -46,7 +47,7 @@ public class DDLGenerator {
 		sb.append("\n-- Verify sequence handling at the end of the script");
 		sb.append("\n");
 		sb.append("\n");
-		try (Scanner sc = new Scanner(new File(fileName));) {
+		try (Scanner sc = new Scanner(f);) {
 			String s;
 			while (sc.hasNextLine()) {
 				s = sc.nextLine();
@@ -85,7 +86,7 @@ public class DDLGenerator {
 				sb.append(s);
 				sb.append(";\n");
 			}
-			Files.write(Paths.get(fileName), sb.toString().getBytes());
+			Files.write(Paths.get(f.toURI()), sb.toString().getBytes());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -129,8 +130,12 @@ public class DDLGenerator {
 					if (whiteList != null && whiteList.size() > 0) {
 						for (String whiteListed : whiteList) {
 							if (c.equals(whiteListed)
-								|| c.endsWith(String.format(".%s", whiteListed)) // class name
-								|| c.startsWith(String.format("%s.", whiteListed)) // package name
+									|| c.endsWith(
+											String.format(".%s", whiteListed)) // class
+																			   // name
+									|| c.startsWith(
+											String.format("%s.", whiteListed)) // package
+																			   // name
 							) {
 								sb.append("\t\t<class>").append(c)
 										.append("</class>\n");
@@ -145,7 +150,8 @@ public class DDLGenerator {
 				}
 			}
 		}
-		logger.info("Detected {} classes, white listed {}", numberOfClasses, whiteList.size());
+		logger.info("Detected {} classes, white listed {}", numberOfClasses,
+				whiteList == null ? "0" : whiteList.size());
 		return sb.toString();
 	}
 
@@ -246,14 +252,13 @@ public class DDLGenerator {
 		StringBuffer sb = new StringBuffer(1024);
 		if (persistenceUnitNames != null) {
 			String location;
-			InputStream is;
 			String classes;
 			for (String persistenceXmlLocation : persistenceUnitNames) {
 				location = toPersistenceXmlLocation(persistenceXmlLocation);
 				logger.info("Search for {} (mapped from {})", location,
 						persistenceXmlLocation);
-				try {
-					is = this.getClass().getResourceAsStream(location);
+				try (InputStream is = this.getClass()
+						.getResourceAsStream(location)) {
 					classes = DDLGenerator.getPersistenceXmlClasses(is,
 							this.whiteList);
 					sb.append(classes);
@@ -273,6 +278,10 @@ public class DDLGenerator {
 	}
 
 	public void generateDDL() {
+		this.generateDDL(null);
+	}
+
+	public void generateDDL(final File directory) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss.SSS");
 		String generateDate = sdf.format(new Date());
 		String createFileName = new StringBuffer(64)
@@ -281,6 +290,28 @@ public class DDLGenerator {
 		String dropFileName = new StringBuffer(64)
 				.append(this.resultingPersistenceUnitName).append("-drop.sql")
 				.toString();
+		File c;
+		File d;
+		if (Objects.nonNull(directory)) {
+			if (!directory.exists()) {
+				try {
+					directory.mkdirs();
+				} catch (Exception e) {
+				}
+			}
+			c = new File(directory, createFileName);
+			d = new File(directory, dropFileName);
+		} else {
+			File target = new File("target");
+			if (!target.exists()) {
+				try {
+					target.mkdirs();
+				} catch (Exception e) {
+				}
+			}
+			c = new File(target, createFileName);
+			d = new File(target, dropFileName);
+		}
 
 		Properties properties = new Properties();
 		properties.setProperty("javax.persistence.database-product-name",
@@ -294,10 +325,10 @@ public class DDLGenerator {
 				"drop-and-create");
 		properties.setProperty(
 				"javax.persistence.schema-generation.scripts.drop-target",
-				dropFileName);
+				c.getAbsolutePath());
 		properties.setProperty(
 				"javax.persistence.schema-generation.scripts.create-target",
-				createFileName);
+				d.getAbsolutePath());
 
 		// org.eclipse.persistence.config.PersistenceUnitProperties pup;
 		properties.put("eclipselink.ddl-generation.index-foreign-keys", "true");
@@ -305,14 +336,12 @@ public class DDLGenerator {
 		Persistence.generateSchema(this.resultingPersistenceUnitName,
 				properties);
 
-		fixGeneratedScriptProblems(createFileName,
-				this.resultingPersistenceUnitName, this.databaseProcuctName,
-				this.databaseMajorVersion, this.databaseMinorVersion, "Create",
-				generateDate);
-		fixGeneratedScriptProblems(dropFileName,
-				this.resultingPersistenceUnitName, this.databaseProcuctName,
-				this.databaseMajorVersion, this.databaseMinorVersion, "Drop",
-				generateDate);
+		fixGeneratedScriptProblems(c, this.resultingPersistenceUnitName,
+				this.databaseProcuctName, this.databaseMajorVersion,
+				this.databaseMinorVersion, "Create", generateDate);
+		fixGeneratedScriptProblems(d, this.resultingPersistenceUnitName,
+				this.databaseProcuctName, this.databaseMajorVersion,
+				this.databaseMinorVersion, "Drop", generateDate);
 	}
 
 	/**
