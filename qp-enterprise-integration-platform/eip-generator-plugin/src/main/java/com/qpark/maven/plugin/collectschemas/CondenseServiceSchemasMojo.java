@@ -96,17 +96,20 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 	private static void copyFile(final File baseDirectory,
 			final File outputDirectory, final File file, final Log log)
 					throws IOException {
-		Path out = getOutPath(baseDirectory, outputDirectory, file);
+		String outName = file.getAbsolutePath().replace(
+				baseDirectory.getAbsolutePath(),
+				outputDirectory.getAbsolutePath());
+		Path out = Paths.get(new File(outName).toURI());
 		if (!Files.isWritable(out.getParent())) {
 			Files.createDirectories(out.getParent());
 		}
 		try (FileInputStream fis = new FileInputStream(file)) {
 			Files.copy(fis, out);
-			log.info(String.format("Copy file %s to ", file,
-					out.toAbsolutePath()));
+			log.info(String.format("Copy xsd %s", file.getAbsolutePath()
+					.replace(baseDirectory.getAbsolutePath(), "")));
 		} catch (IOException e) {
 			log.info(String.format("Could not copy file %s to ", file,
-					out.toAbsolutePath()));
+					out.toFile().getAbsolutePath()));
 			throw e;
 		}
 	}
@@ -129,7 +132,7 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 		if (Objects.nonNull(serviceIds) && serviceIds.size() > 0) {
 			xsds.getXsdContainerMap().values().stream()
 					.forEach(xc -> log
-							.info(String.format("Contains namespaces: %s %s",
+							.debug(String.format("Contains namespaces: %s %s",
 									xc.getTargetNamespace(), xc.getFile())));
 			TreeSet<String> importedNamespaces = new TreeSet<String>();
 			xsds.getServiceIdRegistry().getAllServiceIds().stream()
@@ -176,14 +179,6 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 						});
 			}
 		}
-	}
-
-	private static Path getOutPath(final File baseDirectory,
-			final File outputDirectory, final File file) {
-		File f = new File(
-				file.getAbsolutePath().replace(baseDirectory.getAbsolutePath(),
-						outputDirectory.getAbsolutePath()));
-		return Paths.get(f.toURI());
 	}
 
 	/**
