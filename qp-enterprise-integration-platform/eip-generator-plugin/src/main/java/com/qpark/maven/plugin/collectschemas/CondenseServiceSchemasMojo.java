@@ -9,6 +9,11 @@
 package com.qpark.maven.plugin.collectschemas;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -25,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import com.qpark.maven.xmlbeans.ServiceIdRegistry;
+import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -87,15 +93,45 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 		return this.execution.getVersion();
 	}
 
+	private static void copyFile(final File baseDirectory,
+			final File outputDirectory, final File file, final Log log)
+					throws IOException {
+		Path out = getOutPath(baseDirectory, outputDirectory, file);
+		if (!Files.isWritable(out.getParent())) {
+			Files.createDirectories(out.getParent());
+		}
+		try (FileInputStream fis = new FileInputStream(file)) {
+			Files.copy(fis, out);
+			log.info(String.format("Copy file %s to ", file,
+					out.toAbsolutePath()));
+		} catch (IOException e) {
+			log.info(String.format("Could not copy file %s to ", file,
+					out.toAbsolutePath()));
+			throw e;
+		}
+	}
+
+	private static void addImportedNamespaces(final XsdsUtil xsds,
+			final XsdContainer xc, final TreeSet<String> imports) {
+		imports.add(xc.getTargetNamespace());
+		xc.getImportedTargetNamespaces().stream()
+				.filter(ns -> !imports.contains(ns)).forEach(ns -> {
+					imports.add(ns);
+					addImportedNamespaces(xsds, xsds.getXsdContainer(ns),
+							imports);
+				});
+	}
+
 	protected static void condense(final XsdsUtil xsds, final String serviceId,
-			final Log log) {
+			final File baseDirectory, final File outputDirectory, final Log log)
+					throws IOException {
 		List<String> serviceIds = ServiceIdRegistry.splitServiceIds(serviceId);
 		if (Objects.nonNull(serviceIds) && serviceIds.size() > 0) {
 			xsds.getXsdContainerMap().values().stream()
 					.forEach(xc -> log
 							.info(String.format("Contains namespaces: %s %s",
 									xc.getTargetNamespace(), xc.getFile())));
-			TreeSet<String> totalTargetNamespaces = new TreeSet<String>();
+			TreeSet<String> importedNamespaces = new TreeSet<String>();
 			xsds.getServiceIdRegistry().getAllServiceIds().stream()
 					.filter(si -> serviceIds.contains(si))
 					.map(si -> xsds.getServiceIdRegistry()
@@ -103,24 +139,51 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 					.map(sie -> sie.getTargetNamespace())
 					.filter(tn -> Objects.nonNull(tn))
 					.map(tn -> xsds.getXsdContainer(tn))
-					.filter(xc -> Objects.nonNull(xc))
-					.map(xc -> xc.getTotalImportedTargetNamespaces())
-					.forEach(tns -> totalTargetNamespaces.addAll(tns));
-			log.info(String.format("Keep namespaces: %s",
-					totalTargetNamespaces));
-			xsds.getXsdContainerMap().values().stream()
-					.filter(xc -> !totalTargetNamespaces
-							.contains(xc.getTargetNamespace()))
-					.forEach(xc -> {
-						if (xc.getFile().delete()) {
-							log.info(String.format("Delete file %s",
-									xc.getFile()));
-						} else {
-							log.info(String.format("Could not delete file %s",
-									xc.getFile()));
-						}
+					.filter(xc -> Objects.nonNull(xc)).forEach(xc -> {
+						addImportedNamespaces(xsds, xc, importedNamespaces);
 					});
+			if (Objects.nonNull(outputDirectory)
+					&& !baseDirectory.equals(outputDirectory)) {
+				log.info(String.format("Copy namespaces: %s",
+						importedNamespaces));
+				xsds.getXsdContainerMap().values().stream()
+						.filter(xc -> importedNamespaces
+								.contains(xc.getTargetNamespace()))
+						.forEach(xc -> {
+							try {
+								copyFile(baseDirectory, outputDirectory,
+										xc.getFile(), log);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						});
+			} else {
+				log.info(String.format("Keep namespaces: %s",
+						importedNamespaces));
+				xsds.getXsdContainerMap().values().stream()
+						.filter(xc -> !importedNamespaces
+								.contains(xc.getTargetNamespace()))
+						.forEach(xc -> {
+							if (xc.getFile().delete()) {
+								log.info(String.format("Delete file %s",
+										xc.getFile()));
+							} else {
+								log.info(String.format(
+										"Could not delete file %s",
+										xc.getFile()));
+							}
+						});
+			}
 		}
+	}
+
+	private static Path getOutPath(final File baseDirectory,
+			final File outputDirectory, final File file) {
+		File f = new File(
+				file.getAbsolutePath().replace(baseDirectory.getAbsolutePath(),
+						outputDirectory.getAbsolutePath()));
+		return Paths.get(f.toURI());
 	}
 
 	/**
@@ -135,8 +198,12 @@ public class CondenseServiceSchemasMojo extends AbstractMojo {
 				this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
 				this.serviceResponseSuffix);
-
-		condense(xsds, this.serviceId, this.getLog());
+		try {
+			condense(xsds, this.serviceId, this.baseDirectory,
+					this.outputDirectory, this.getLog());
+		} catch (IOException e) {
+			throw new MojoExecutionException(e.getMessage());
+		}
 		this.getLog().debug("-execute");
 	}
 }

@@ -29,6 +29,7 @@
 		<service.final.name>${bus.war.prefix}${service.application.name}-${service.name}</service.final.name>
 		<service.war.name>${service.final.name}-${project.version}</service.war.name>
 		<model.dir>${project.build.directory}/model</model.dir>
+		<model.dir.condensed>${project.build.directory}/model-condensed</model.dir.condensed>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<router.definition.dir>${project.build.directory}/classes/router/definition</router.definition.dir>
 	</properties>
@@ -133,6 +134,19 @@ WEB-INF/lib/xws-security-3.0.jar
 				<artifactId>eip-generator-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>condense service schemas</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>condense-service-schemas</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${model.dir.condensed}</outputDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<serviceId>${eip.service.ids}</serviceId>
+						</configuration>
+					</execution>
+					<execution>
 						<id>generate mock operation providers</id>
 						<phase>process-sources</phase>
 						<goals>
@@ -160,26 +174,13 @@ WEB-INF/lib/xws-security-3.0.jar
 						</configuration>
 					</execution>
 					<execution>
-						<id>condense service schemas</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>condense-service-schemas</goal>
-						</goals>
-						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
-							<outputDirectory>${model.dir}</outputDirectory>
-							<basePackageName>${base.package.name}</basePackageName>
-							<serviceId>${eip.service.ids}</serviceId>
-						</configuration>
-					</execution>
-					<execution>
 						<id>make schemalocations relative</id>
 						<phase>process-classes</phase>
 						<goals>
 							<goal>relative-schemalocation</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
+							<baseDirectory>${model.dir.condensed}</baseDirectory>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
 					</execution>
@@ -190,7 +191,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>webapp-schemalocation</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
+							<baseDirectory>${model.dir.condensed}</baseDirectory>
 							<outputDirectory>${project.build.directory}/${service.final.name}</outputDirectory>
 						</configuration>
 					</execution>
@@ -201,7 +202,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>generate-servlet-config</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
+							<baseDirectory>${model.dir.condensed}</baseDirectory>
 							<outputDirectory>${project.build.directory}/${service.final.name}/WEB-INF</outputDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
 							<serviceId>${eip.service.ids}</serviceId>
@@ -228,7 +229,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>generate-spring-config</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
+							<baseDirectory>${model.dir.condensed}</baseDirectory>
 							<outputDirectory>${project.build.directory}/${service.final.name}/WEB-INF/classes</outputDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
 							<serviceId>${eip.service.ids}</serviceId>
