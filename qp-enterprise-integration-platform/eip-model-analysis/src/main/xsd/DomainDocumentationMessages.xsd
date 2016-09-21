@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+
+	xmlns:DomainDoc="http://www.qpark-consulting.com/EIP/Utility/DocumentationModel"
+
+	xmlns:DomainDocMsg="http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0"
+	targetNamespace="http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0"
+>
+
+	<import namespace="http://www.qpark-consulting.com/EIP/Utility/DocumentationModel" schemaLocation="DocumentationModel.xsd"/>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.service.domain.doc.msg"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+	</annotation>
+	
+	<complexType name="RequestMessage">
+		<annotation>
+			<documentation>The RequestMessage is inherited by all request messages. The userName is part of all request messages since the service provider filters the response based on authorisation of the user.</documentation>
+		</annotation>
+		<sequence>
+			<element name="userName" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>The application user</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="GetServiceIdRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage"/>
+		</complexContent>
+	</complexType>
+	<complexType name="GetServiceIdResponseType">
+		<sequence>
+			<element name="serviceId" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="GetServiceIdRequest" type="DomainDocMsg:GetServiceIdRequestType">
+		<annotation><documentation>Get the service id list.</documentation></annotation>
+	</element>
+	<element name="GetServiceIdResponse" type="DomainDocMsg:GetServiceIdResponseType"/>
+
+	<complexType name="GetServiceRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="serviceId" type="normalizedString" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetServiceResponseType">
+		<sequence>
+			<element name="service" type="DomainDoc:ServiceType"/>
+		</sequence>
+	</complexType>
+	<element name="GetServiceRequest" type="DomainDocMsg:GetServiceRequestType">
+		<annotation><documentation>Request the Service with the serviceId.</documentation></annotation>
+	</element>
+	<element name="GetServiceResponse" type="DomainDocMsg:GetServiceResponseType"/>
+
+	<complexType name="GetElementTypeRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="id" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetElementTypeResponseType">
+		<sequence>
+			<element name="elementType" type="DomainDoc:ElementType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	<element name="GetElementTypeRequest" type="DomainDocMsg:GetElementTypeRequestType">
+		<annotation><documentation>Get the ElementType list.</documentation></annotation>
+	</element>
+	<element name="GetElementTypeResponse" type="DomainDocMsg:GetElementTypeResponseType"/>
+
+	<complexType name="GetDataTypeRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="id" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetDataTypeResponseType">
+		<sequence>
+			<element name="dataType" type="DomainDoc:DataType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	<element name="GetDataTypeRequest" type="DomainDocMsg:GetDataTypeRequestType">
+		<annotation><documentation>Request the DataType with id.</documentation></annotation>
+	</element>
+	<element name="GetDataTypeResponse" type="DomainDocMsg:GetDataTypeResponseType"/>
+
+	<complexType name="GetTargetNamespaceRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage"/>
+		</complexContent>
+	</complexType>
+	<complexType name="GetTargetNamespaceResponseType">
+		<sequence>
+			<element name="targetNamespace" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="GetTargetNamespaceRequest" type="DomainDocMsg:GetTargetNamespaceRequestType">
+		<annotation><documentation>Get the target namespace list.</documentation></annotation>
+	</element>
+	<element name="GetTargetNamespaceResponse" type="DomainDocMsg:GetTargetNamespaceResponseType"/>
+
+	<complexType name="GetClusterRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="targetNamespace" type="normalizedString" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetClusterResponseType">
+		<sequence>
+			<element name="cluster" type="DomainDoc:ClusterType"/>
+		</sequence>
+	</complexType>
+	<element name="GetClusterRequest" type="DomainDocMsg:GetClusterRequestType">
+		<annotation><documentation>Request the Cluster with the targetNamespace.</documentation></annotation>
+	</element>
+	<element name="GetClusterResponse" type="DomainDocMsg:GetClusterResponseType"/>
+
+	<complexType name="GetComplexTypeRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="id" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetComplexTypeResponseType">
+		<sequence>
+			<element name="complexType" type="DomainDoc:ComplexType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	<element name="GetComplexTypeRequest" type="DomainDocMsg:GetComplexTypeRequestType">
+		<annotation><documentation>Request the ComplexType with id.</documentation></annotation>
+	</element>
+	<element name="GetComplexTypeResponse" type="DomainDocMsg:GetComplexTypeResponseType"/>
+
+	<complexType name="GetFlowRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="namePattern" type="normalizedString" minOccurs="0" >
+						<annotation><documentation>A name pattern criteria.</documentation></annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetFlowResponseType">
+		<sequence>
+			<element name="flow" type="DomainDoc:FlowType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	<element name="GetFlowRequest" type="DomainDocMsg:GetFlowRequestType">
+		<annotation><documentation>Requests all Flows with name matching the name pattern.</documentation></annotation>
+	</element>
+	<element name="GetFlowResponse" type="DomainDocMsg:GetFlowResponseType"/>
+
+	<complexType name="GetFlowInterfaceMappingTypeRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="flowId" type="normalizedString" >
+						<annotation><documentation>The UUID of the flow.</documentation></annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetFlowInterfaceMappingTypeResponseType">
+		<sequence>
+			<element name="interfaceType" type="DomainDoc:InterfaceMappingType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	<element name="GetFlowInterfaceMappingTypeRequest" type="DomainDocMsg:GetFlowInterfaceMappingTypeRequestType">
+		<annotation><documentation>Request the InterfaceMappingTypes included in the Flow defined with id.</documentation></annotation>
+	</element>
+	<element name="GetFlowInterfaceMappingTypeResponse" type="DomainDocMsg:GetFlowInterfaceMappingTypeResponseType"/>
+
+	<complexType name="GetFieldMappingTypeRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage">
+				<sequence>
+					<element name="id" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="GetFieldMappingTypeResponseType">
+		<sequence>
+			<element name="fieldMappingType" type="DomainDoc:FieldMappingType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	<element name="GetFieldMappingTypeRequest" type="DomainDocMsg:GetFieldMappingTypeRequestType">
+		<annotation><documentation>Request the FieldMappingType with id.</documentation></annotation>
+	</element>
+	<element name="GetFieldMappingTypeResponse" type="DomainDocMsg:GetFieldMappingTypeResponseType"/>
+
+</schema>
