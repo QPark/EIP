@@ -57,6 +57,18 @@
 							<formats><format>zip</format></formats>
 						</configuration>
 					</execution>
+					<execution>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly-xsds.xml</descriptor>
+					</descriptors>
+				</configuration>
+						<id>assembly-0</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
