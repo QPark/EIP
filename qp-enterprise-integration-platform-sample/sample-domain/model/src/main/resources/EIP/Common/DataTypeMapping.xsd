@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+
+	xmlns:EIPjdtm="http://www.qpark.com/JavaDataTypeMappingTypes"
+	targetNamespace="http://www.qpark.com/JavaDataTypeMappingTypes"
+>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.model.datatypemapping"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation></documentation>
+	</annotation>
+
+   <complexType name="JavaDataMappingType" abstract="true">
+		<annotation>
+			<documentation>W3 org types mapped into Java classes</documentation>
+		</annotation>
+		<sequence>
+			<element name="anyType" type="anyType">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="anySimpleType" type="anySimpleType">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="duration" type="duration">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="date" type="date">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="dateTime" type="dateTime">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="boolean" type="boolean">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="base64Binary" type="base64Binary">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="hexBinary" type="hexBinary">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="anyURI" type="anyURI">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="QName" type="QName">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="string" type="string">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="normalizedString" type="normalizedString">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="token" type="token">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="float" type="float">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="double" type="double">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="decimal" type="decimal">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="integer" type="integer">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="long" type="long">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="int" type="int">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="short" type="short">
+				<annotation><documentation></documentation></annotation>
+			</element>
+			<element name="byte" type="byte">
+				<annotation><documentation></documentation></annotation>
+			</element>
+		</sequence>
+	</complexType>
+</schema>
