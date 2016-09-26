@@ -28,67 +28,67 @@
 			<documentation>W3 org types mapped into Java classes</documentation>
 		</annotation>
 		<sequence>
-			<element name="anyType" type="anyType">
+			<!--element name="w3cAnyType" type="anyType">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="anySimpleType" type="anySimpleType">
+			<element name="w3cAnyURI" type="anyURI">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="duration" type="duration">
+			<element name="w3cAnySimpleType" type="anySimpleType">
+				<annotation><documentation></documentation></annotation>
+			</element-->
+			<element name="w3cDuration" type="duration">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="date" type="date">
+			<element name="w3cDate" type="date">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="dateTime" type="dateTime">
+			<element name="w3cDateTime" type="dateTime">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="boolean" type="boolean">
+			<element name="w3cBoolean" type="boolean">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="base64Binary" type="base64Binary">
+			<element name="w3cBase64Binary" type="base64Binary">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="hexBinary" type="hexBinary">
+			<element name="w3cHexBinary" type="hexBinary">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="anyURI" type="anyURI">
+			<element name="w3cQName" type="QName">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="QName" type="QName">
+			<element name="w3cString" type="string">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="string" type="string">
+			<element name="w3cNormalizedString" type="normalizedString">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="normalizedString" type="normalizedString">
+			<element name="w3cToken" type="token">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="token" type="token">
+			<element name="w3cFloat" type="float">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="float" type="float">
+			<element name="w3cDouble" type="double">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="double" type="double">
+			<element name="w3cDecimal" type="decimal">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="decimal" type="decimal">
+			<element name="w3cInteger" type="integer">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="integer" type="integer">
+			<element name="w3cLong" type="long">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="long" type="long">
+			<element name="w3cInt" type="int">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="int" type="int">
+			<element name="w3cShort" type="short">
 				<annotation><documentation></documentation></annotation>
 			</element>
-			<element name="short" type="short">
-				<annotation><documentation></documentation></annotation>
-			</element>
-			<element name="byte" type="byte">
+			<element name="w3cByte" type="byte">
 				<annotation><documentation></documentation></annotation>
 			</element>
 		</sequence>

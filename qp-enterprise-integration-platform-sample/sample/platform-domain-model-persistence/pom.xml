@@ -46,7 +46,7 @@
 									<artifactId>model</artifactId>
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
-									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Documentation/DocumentationModel.xsd</includes>
+									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Common/DataTypeMapping.xsd,EIP/Documentation/DocumentationModel.xsd</includes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
