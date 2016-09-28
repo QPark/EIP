@@ -20,7 +20,7 @@
 				<jaxb:package name="com.qpark.eip.model.common"/>
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation></documentation>
+		<documentation>Common Datatypes used by EIP</documentation>
 	</annotation>
 
 	<simpleType name="RegularExpressionType">
@@ -42,7 +42,7 @@
  			Every entity in the master data architecture needs an assigned UUID.</documentation>
 		</annotation>
 		<restriction base="normalizedString">
-			<length value="36" fixed='true'/>
+			<length value="36" fixed="true"/>
 		</restriction>
 	</simpleType>
 

@@ -20,76 +20,76 @@
 				<jaxb:package name="com.qpark.eip.model.datatypemapping"/>
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation></documentation>
+		<documentation>Technical description how the W3C defined XSD types are mapping to Java classes by XJC</documentation>
 	</annotation>
 
    <complexType name="JavaDataMappingType" abstract="true">
 		<annotation>
-			<documentation>W3 org types mapped into Java classes</documentation>
+			<documentation>W3C defined XSD types mapped Java classes by XJC</documentation>
 		</annotation>
 		<sequence>
-			<!--element name="w3cAnyType" type="anyType">
-				<annotation><documentation></documentation></annotation>
+			<element name="w3cAnyType" type="anyType">
+				<annotation><documentation>java.lang.Object</documentation></annotation>
 			</element>
 			<element name="w3cAnyURI" type="anyURI">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>java.lang.String</documentation></annotation>
 			</element>
 			<element name="w3cAnySimpleType" type="anySimpleType">
-				<annotation><documentation></documentation></annotation>
-			</element-->
+				<annotation><documentation>java.lang.Object</documentation></annotation>
+			</element>
 			<element name="w3cDuration" type="duration">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>javax.xml.datatype.Duration</documentation></annotation>
 			</element>
 			<element name="w3cDate" type="date">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>javax.xml.datatype.XMLGregorianCalendar</documentation></annotation>
 			</element>
 			<element name="w3cDateTime" type="dateTime">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>javax.xml.datatype.XMLGregorianCalendar</documentation></annotation>
 			</element>
 			<element name="w3cBoolean" type="boolean">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>boolean</documentation></annotation>
 			</element>
 			<element name="w3cBase64Binary" type="base64Binary">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>byte[]</documentation></annotation>
 			</element>
 			<element name="w3cHexBinary" type="hexBinary">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>byte[]</documentation></annotation>
 			</element>
 			<element name="w3cQName" type="QName">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>javax.xml.namespace.QName</documentation></annotation>
 			</element>
 			<element name="w3cString" type="string">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>java.lang.String</documentation></annotation>
 			</element>
 			<element name="w3cNormalizedString" type="normalizedString">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>java.lang.String</documentation></annotation>
 			</element>
 			<element name="w3cToken" type="token">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>java.lang.String</documentation></annotation>
 			</element>
 			<element name="w3cFloat" type="float">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>float</documentation></annotation>
 			</element>
 			<element name="w3cDouble" type="double">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>double</documentation></annotation>
 			</element>
 			<element name="w3cDecimal" type="decimal">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>java.math.BigDecimal</documentation></annotation>
 			</element>
 			<element name="w3cInteger" type="integer">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>java.math.BigInteger</documentation></annotation>
 			</element>
 			<element name="w3cLong" type="long">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>long</documentation></annotation>
 			</element>
 			<element name="w3cInt" type="int">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>int</documentation></annotation>
 			</element>
 			<element name="w3cShort" type="short">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>short</documentation></annotation>
 			</element>
 			<element name="w3cByte" type="byte">
-				<annotation><documentation></documentation></annotation>
+				<annotation><documentation>byte</documentation></annotation>
 			</element>
 		</sequence>
 	</complexType>
