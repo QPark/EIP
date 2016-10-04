@@ -1091,24 +1091,35 @@ public class XsdsUtil {
 		if (isSame(instance0, baseDirectory, basePackageName,
 				messagePackageNameSuffix, deltaPackageNameSuffix,
 				serviceRequestSuffix, serviceResponseSuffix)) {
+			
 			reused++;
 			value = instance0;
+			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
 		} else if (isSame(instance1, baseDirectory, basePackageName,
 				messagePackageNameSuffix, deltaPackageNameSuffix,
 				serviceRequestSuffix, serviceResponseSuffix)) {
 
 			reused++;
 			value = instance1;
+			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
 		} else if (isSame(instance2, baseDirectory, basePackageName,
 				messagePackageNameSuffix, deltaPackageNameSuffix,
 				serviceRequestSuffix, serviceResponseSuffix)) {
 
 			reused++;
 			value = instance2;
+			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
 		} else {
 			value = new XsdsUtil(baseDirectory, basePackageName,
 					messagePackageNameSuffix, deltaPackageNameSuffix,
 					serviceRequestSuffix, serviceResponseSuffix);
+			
+			logger.info("{}", String.format("XsdsUtil creating %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
+
 			if (instance0 == null) {
 				instance0 = value;
 			} else if (instance1 == null) {
