@@ -9,6 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class InterfaceMappingType_ extends com.qpark.eip.model.docmodel.DataType_ {
 
 	public static volatile ListAttribute<InterfaceMappingType, FieldType> fieldMappings;
+	public static volatile ListAttribute<InterfaceMappingType, String> fieldMappingInputType;
 
 }
 
