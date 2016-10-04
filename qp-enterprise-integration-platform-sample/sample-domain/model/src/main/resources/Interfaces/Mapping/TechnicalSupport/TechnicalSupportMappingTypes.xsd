@@ -318,4 +318,38 @@ The ComplexMappingTypes could be done as a DirectMappingType too. Here it is don
 			</extension>
 		</complexContent>
 	</complexType>
+
+	<complexType name="EIP.DefaultStringDefinitionMappingType">
+		<annotation>
+			<documentation>Default value of 'Empty string'</documentation>
+		</annotation>
+		<sequence>
+			<element name="return" type="string" default="Empty string"/>
+		</sequence>
+	</complexType>
+	<complexType name="EIP.DefaultBooleanDefinitionMappingType">
+		<annotation>
+			<documentation>Default value of true</documentation>
+		</annotation>
+		<sequence>
+			<element name="return" type="boolean" default="false"/>
+		</sequence>
+	</complexType>
+	<complexType name="EIP.DefaultDoubleDefinitionMappingType">
+		<annotation>
+			<documentation>Default value of 1.41</documentation>
+		</annotation>
+		<sequence>
+			<element name="return" type="double" default="1.41"/>
+		</sequence>
+	</complexType>
+	<complexType name="EIP.DefaultIntDefinitionMappingType">
+		<annotation>
+			<documentation>Default value of 0</documentation>
+		</annotation>
+		<sequence>
+			<element name="return" type="int" default="0"/>
+		</sequence>
+	</complexType>
+
 </schema>
