@@ -30,9 +30,12 @@ class ComplexContent {
 	}
 
 	public String getFQInterfaceName() {
-		return new StringBuffer(this.ct.getPackageName().length() + 1
-				+ this.interfaceClassName.length()).append(this.ct.getPackageName())
-						.append(".").append(this.interfaceClassName).toString();
+		return String.format("%s.%s", this.ct.getPackageName(),
+				this.interfaceClassName).toString();
+	}
+
+	public String getInterfaceName() {
+		return this.interfaceClassName;
 	}
 
 	ComplexContent setComplex() {
