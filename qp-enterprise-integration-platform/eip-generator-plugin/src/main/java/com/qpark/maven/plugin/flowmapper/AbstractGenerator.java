@@ -300,10 +300,11 @@ public abstract class AbstractGenerator {
 						usedInterfaces.add(cc.getFQInterfaceName());
 						String varName = Util.lowerize(cc.interfaceClassName);
 						String className = cc.getFQInterfaceName();
+						className = cc.getInterfaceName();
 						sb.append("\t/** The ");
-						if (cc.isDirect) {
-							sb.append("{@link DirectMappingType} ");
-						}
+//						if (cc.isDirect) {
+//							sb.append("{@link DirectMappingType} ");
+//						}
 						sb.append("{@link ");
 						sb.append(className);
 						sb.append("}. */\n");
