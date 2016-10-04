@@ -259,6 +259,9 @@
 					<element name="fieldMappings" type="DM:FieldType" minOccurs="0" maxOccurs="unbounded">
 						<annotation><documentation>The children of the interface mapping type defined in the sequence.</documentation></annotation>
 					</element>
+					<element name="fieldMappingInputType" type="DM:UUIDType" minOccurs="0" maxOccurs="unbounded">
+						<annotation><documentation>The UUIDs of the DataTypes needed as input for this interface mapping type.</documentation></annotation>
+					</element>
 				</sequence>
 			</extension>
 		</complexContent>
