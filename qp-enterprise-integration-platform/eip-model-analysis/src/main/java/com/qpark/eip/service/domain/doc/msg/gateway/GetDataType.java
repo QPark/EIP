@@ -7,10 +7,10 @@ import com.qpark.eip.service.domain.doc.msg.GetDataTypeResponseType;
 
 /**
  * Gateway to call operation get data type on service <code>domain.doc</code>.
- * 
+ *
  * @author bhausen
  */
 public interface GetDataType {
-	JAXBElement<GetDataTypeRequestType> invoke(
-			JAXBElement<GetDataTypeResponseType> request);
+	JAXBElement<GetDataTypeResponseType> invoke(
+			JAXBElement<GetDataTypeRequestType> request);
 }

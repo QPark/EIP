@@ -9,13 +9,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetFieldMappingTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFieldMappingTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetFieldMappingType;
 
 /**
  * Operation get field mapping type on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetFieldMappingTypeOperation {
+public class GetFieldMappingTypeOperation implements GetFieldMappingType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetFieldMappingType";
 	/** The {@link AnalysisDao}. */
@@ -34,7 +35,8 @@ public class GetFieldMappingTypeOperation {
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetFieldMappingTypeResponseType} .
 	 */
-	public final JAXBElement<GetFieldMappingTypeResponseType> getFieldMappingType(
+	@Override
+	public final JAXBElement<GetFieldMappingTypeResponseType> invoke(
 			final JAXBElement<GetFieldMappingTypeRequestType> message) {
 		this.logger.debug("+getFieldMappingType");
 		GetFieldMappingTypeRequestType request = message.getValue();

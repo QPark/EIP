@@ -9,13 +9,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetServiceIdRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetServiceIdResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetServiceId;
 
 /**
  * Operation get service id on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetServiceIdOperation {
+public class GetServiceIdOperation implements GetServiceId {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetServiceId";
 	/** The {@link AnalysisDao}. */
@@ -33,7 +34,8 @@ public class GetServiceIdOperation {
 	 *            {@link GetServiceIdRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetServiceIdResponseType}.
 	 */
-	public final JAXBElement<GetServiceIdResponseType> getServiceId(
+	@Override
+	public final JAXBElement<GetServiceIdResponseType> invoke(
 			final JAXBElement<GetServiceIdRequestType> message) {
 		this.logger.debug("+getServiceId");
 		GetServiceIdResponseType response = this.of

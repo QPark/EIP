@@ -9,13 +9,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetTargetNamespaceRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetTargetNamespaceResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetTargetNamespace;
 
 /**
  * Operation get target namespace on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetTargetNamespaceOperation {
+public class GetTargetNamespaceOperation implements GetTargetNamespace {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetTargetNamespace";
 	/** The {@link AnalysisDao}. */
@@ -34,7 +35,8 @@ public class GetTargetNamespaceOperation {
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetTargetNamespaceResponseType}.
 	 */
-	public final JAXBElement<GetTargetNamespaceResponseType> getTargetNamespace(
+	@Override
+	public final JAXBElement<GetTargetNamespaceResponseType> invoke(
 			final JAXBElement<GetTargetNamespaceRequestType> message) {
 		this.logger.debug("+getTargetNamespace");
 		GetTargetNamespaceResponseType response = this.of

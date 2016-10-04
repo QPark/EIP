@@ -7,10 +7,10 @@ import com.qpark.eip.service.domain.doc.msg.GetFlowResponseType;
 
 /**
  * Gateway to call operation get flow on service <code>domain.doc</code>.
- * 
+ *
  * @author bhausen
  */
 public interface GetFlow {
-	JAXBElement<GetFlowRequestType> invoke(
-			JAXBElement<GetFlowResponseType> request);
+	JAXBElement<GetFlowResponseType> invoke(
+			JAXBElement<GetFlowRequestType> request);
 }

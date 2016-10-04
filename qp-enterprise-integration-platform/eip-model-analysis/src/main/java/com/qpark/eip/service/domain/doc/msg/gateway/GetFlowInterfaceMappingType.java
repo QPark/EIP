@@ -8,10 +8,10 @@ import com.qpark.eip.service.domain.doc.msg.GetFlowInterfaceMappingTypeResponseT
 /**
  * Gateway to call operation get flow interface mapping type on service
  * <code>domain.doc</code>.
- * 
+ *
  * @author bhausen
  */
 public interface GetFlowInterfaceMappingType {
-	JAXBElement<GetFlowInterfaceMappingTypeRequestType> invoke(
-			JAXBElement<GetFlowInterfaceMappingTypeResponseType> request);
+	JAXBElement<GetFlowInterfaceMappingTypeResponseType> invoke(
+			JAXBElement<GetFlowInterfaceMappingTypeRequestType> request);
 }

@@ -9,13 +9,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetDataTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetDataTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetDataType;
 
 /**
  * Operation get data type on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetDataTypeOperation {
+public class GetDataTypeOperation implements GetDataType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetDataType";
 	/** The {@link AnalysisDao}. */
@@ -33,7 +34,8 @@ public class GetDataTypeOperation {
 	 *            {@link GetDataTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetDataTypeResponseType}.
 	 */
-	public final JAXBElement<GetDataTypeResponseType> getDataType(
+	@Override
+	public final JAXBElement<GetDataTypeResponseType> invoke(
 			final JAXBElement<GetDataTypeRequestType> message) {
 		this.logger.debug("+getDataType");
 		GetDataTypeRequestType request = message.getValue();

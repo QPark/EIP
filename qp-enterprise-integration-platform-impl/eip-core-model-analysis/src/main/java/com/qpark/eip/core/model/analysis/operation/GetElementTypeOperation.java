@@ -9,13 +9,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetElementTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetElementTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetElementType;
 
 /**
  * Operation get element type on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetElementTypeOperation {
+public class GetElementTypeOperation implements GetElementType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetElementType";
 	/** The {@link AnalysisDao}. */
@@ -34,7 +35,8 @@ public class GetElementTypeOperation {
 	 * @return the {@link JAXBElement} with a {@link GetElementTypeResponseType}
 	 *         .
 	 */
-	public final JAXBElement<GetElementTypeResponseType> getElementType(
+	@Override
+	public final JAXBElement<GetElementTypeResponseType> invoke(
 			final JAXBElement<GetElementTypeRequestType> message) {
 		this.logger.debug("+getElementType");
 		GetElementTypeRequestType request = message.getValue();

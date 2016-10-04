@@ -9,13 +9,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetComplexType;
 
 /**
  * Operation get complex type on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetComplexTypeOperation {
+public class GetComplexTypeOperation implements GetComplexType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetComplexType";
 	/** The {@link AnalysisDao}. */
@@ -34,7 +35,8 @@ public class GetComplexTypeOperation {
 	 * @return the {@link JAXBElement} with a {@link GetComplexTypeResponseType}
 	 *         .
 	 */
-	public final JAXBElement<GetComplexTypeResponseType> getComplexType(
+	@Override
+	public final JAXBElement<GetComplexTypeResponseType> invoke(
 			final JAXBElement<GetComplexTypeRequestType> message) {
 		this.logger.debug("+getComplexType");
 		GetComplexTypeRequestType request = message.getValue();

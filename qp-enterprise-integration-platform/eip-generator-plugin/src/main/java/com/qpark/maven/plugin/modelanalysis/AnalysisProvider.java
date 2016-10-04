@@ -3,10 +3,13 @@ package com.qpark.maven.plugin.modelanalysis;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -153,9 +156,9 @@ public class AnalysisProvider {
 		boolean value = false;
 		value = String.format("%s%s", prefixIn, flowExecutionName).toString()
 				.equals(fieldName)
-				|| (prefixIn.equals(fieldName)
+				|| prefixIn.equals(fieldName)
 						&& String.format("%s%s", prefixIn, prefixOut).toString()
-								.equals(flowExecutionName));
+								.equals(flowExecutionName);
 		return value;
 	}
 
@@ -415,9 +418,50 @@ public class AnalysisProvider {
 						this.enterprise.getFlows().add(flow);
 					}
 				});
+		this.analysis.getDataTypes().stream()
+				.filter(dt -> InterfaceMappingType.class.isInstance(dt))
+				.map(dt -> (InterfaceMappingType) dt).forEach(inf -> {
+					Set<String> fieldMappingIds = new TreeSet<String>();
+					Map<String, ComplexType> ctMap = new HashMap<String, ComplexType>();
+					fieldMappingIds.addAll(inf.getFieldMappings().stream()
+							.map(fm -> fm.getId())
+							.collect(Collectors.toList()));
+					this.getFieldMappingInputTypes(fieldMappingIds, ctMap);
+					ctMap.values().stream()
+							.filter(ct -> Objects.nonNull(ct.getName()))
+							.forEach(ct -> inf.getFieldMappingInputType()
+									.add(ct.getId()));
+				});
 		this.logger.debug("-createEnterprise {} {}", enterpriseName,
 				modelVersion);
 		return this.analysis;
+	}
+
+	private void getFieldMappingInputTypes(final Set<String> fieldMappingIds,
+			final Map<String, ComplexType> ctMap) {
+		List<FieldMappingType> fieldMappings = this.analysis.getDataTypes()
+				.stream().filter(dt -> FieldMappingType.class.isInstance(dt))
+				.map(dt -> (FieldMappingType) dt)
+				.filter(fmt -> fieldMappingIds.contains(fmt.getId()))
+				.collect(Collectors.toList());
+		if (Objects.nonNull(fieldMappings) && fieldMappings.size() > 0) {
+			Set<String> ids = new TreeSet<String>();
+			fieldMappings.stream()
+					.forEach(
+							fm -> fm.getInput().stream()
+									.filter(i -> Objects.nonNull(i.getName())
+											&& !i.getName()
+													.equals("interfaceName")
+									&& !i.getName().equals("value")
+									&& !i.getName().equals("return"))
+					.forEach(i -> ids.add(i.getFieldTypeDefinitionId())));
+			this.analysis.getDataTypes().stream()
+					.filter(dt -> ComplexType.class.isInstance(dt))
+					.map(dt -> (ComplexType) dt)
+					.filter(ct -> ids.contains(ct.getId()))
+					.forEach(ct -> ctMap.put(ct.getId(), ct));
+			this.getFieldMappingInputTypes(ids, ctMap);
+		}
 	}
 
 	private ElementType getElementType(final ClusterType cluster,

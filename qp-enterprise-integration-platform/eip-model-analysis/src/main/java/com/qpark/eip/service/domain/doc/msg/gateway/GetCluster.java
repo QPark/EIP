@@ -7,11 +7,11 @@ import com.qpark.eip.service.domain.doc.msg.GetClusterResponseType;
 
 /**
  * Gateway to call operation get cluster on service <code>domain.doc</code>.
- * 
+ *
  * @author bhausen
  */
 public interface GetCluster {
-	JAXBElement<GetClusterRequestType> invoke(
-			JAXBElement<GetClusterResponseType> request);
+	JAXBElement<GetClusterResponseType> invoke(
+			JAXBElement<GetClusterRequestType> request);
 
 }

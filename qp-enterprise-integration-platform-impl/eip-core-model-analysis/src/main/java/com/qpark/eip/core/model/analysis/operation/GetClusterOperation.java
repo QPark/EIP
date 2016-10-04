@@ -10,13 +10,14 @@ import com.qpark.eip.service.domain.doc.msg.GetClusterRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetClusterResponseType;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetCluster;
 
 /**
  * Operation get cluster on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetClusterOperation {
+public class GetClusterOperation implements GetCluster {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetCluster";
 	/** The {@link AnalysisDao}. */
@@ -35,7 +36,8 @@ public class GetClusterOperation {
 	 * @return the {@link JAXBElement} with a {@link GetComplexTypeResponseType}
 	 *         .
 	 */
-	public final JAXBElement<GetClusterResponseType> getCluster(
+	@Override
+	public JAXBElement<GetClusterResponseType> invoke(
 			final JAXBElement<GetClusterRequestType> message) {
 		this.logger.debug("+getCluster");
 		GetClusterRequestType request = message.getValue();

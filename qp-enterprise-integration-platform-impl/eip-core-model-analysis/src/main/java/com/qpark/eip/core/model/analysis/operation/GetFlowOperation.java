@@ -12,13 +12,14 @@ import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetFlowRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFlowResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetFlow;
 
 /**
  * Operation get flow on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetFlowOperation {
+public class GetFlowOperation implements GetFlow {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "operationProviderDomainDocGetFlow";
 
@@ -60,7 +61,8 @@ public class GetFlowOperation {
 	 *            {@link GetFlowRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetFlowResponseType}.
 	 */
-	public final JAXBElement<GetFlowResponseType> getFlow(
+	@Override
+	public final JAXBElement<GetFlowResponseType> invoke(
 			final JAXBElement<GetFlowRequestType> message) {
 		this.logger.debug("+getFlow");
 		GetFlowRequestType request = message.getValue();
