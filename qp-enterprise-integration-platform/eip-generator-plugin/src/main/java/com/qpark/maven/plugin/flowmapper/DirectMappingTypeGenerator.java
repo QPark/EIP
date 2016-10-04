@@ -51,7 +51,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 				log);
 	}
 
-	private String generateImplContent() {
+	String generateImplContent() {
 		this.log.debug("+generateImpl");
 
 		String[] propertyNames = getDirectAccessProperties(
