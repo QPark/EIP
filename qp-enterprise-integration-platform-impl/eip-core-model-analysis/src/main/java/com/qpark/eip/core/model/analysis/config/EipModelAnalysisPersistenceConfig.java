@@ -23,6 +23,7 @@ import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.qpark.eip.core.EipJpaVendorAdapterConfiguration;
+import com.qpark.eip.core.model.analysis.AnalysisDao;
 
 /**
  * Provides the spring config of the persistence unit

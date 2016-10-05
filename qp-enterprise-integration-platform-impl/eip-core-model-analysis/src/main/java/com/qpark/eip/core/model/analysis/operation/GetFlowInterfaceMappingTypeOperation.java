@@ -6,12 +6,17 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
 import com.qpark.eip.core.model.analysis.AnalysisDao;
+import com.qpark.eip.model.docmodel.ComplexType;
 import com.qpark.eip.service.domain.doc.msg.GetFlowInterfaceMappingTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFlowInterfaceMappingTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -74,19 +79,18 @@ public class GetFlowInterfaceMappingTypeOperation
 						.map(fmid -> this.dao
 								.getFieldMappingTypeById(modelVersion, fmid))
 						.forEach(fmo -> fmo.ifPresent(fm -> {
-							ctMap.clear();
-							this.logger.info("\tFieldMappingType {}",
-									fm.getName());
-							this.dao.getComplexTypesById(modelVersion,
-									fm.getFieldMappingInputType()).stream()
-									.forEach(ct -> ctMap.put(ct.getId(), ct));
-							ctMap.values().stream()
-									.filter(ct -> Objects.nonNull(ct.getName()))
-									.sorted((ct1, ct2) -> ct1.getName()
-											.compareTo(ct2.getName()))
-									.forEach(ct -> this.logger.info("\t\t{}",
-											ct.getName()));
-						}));
+					ctMap.clear();
+					this.logger.info("\tFieldMappingType {}", fm.getName());
+					this.dao.getComplexTypesById(modelVersion,
+							fm.getFieldMappingInputType()).stream()
+							.forEach(ct -> ctMap.put(ct.getId(), ct));
+					ctMap.values().stream()
+							.filter(ct -> Objects.nonNull(ct.getName()))
+							.sorted((ct1, ct2) -> ct1.getName()
+									.compareTo(ct2.getName()))
+							.forEach(ct -> this.logger.info("\t\t{}",
+									ct.getName()));
+				}));
 			});
 		} catch (Throwable e) {
 			/* Add a not covered error to the response. */
