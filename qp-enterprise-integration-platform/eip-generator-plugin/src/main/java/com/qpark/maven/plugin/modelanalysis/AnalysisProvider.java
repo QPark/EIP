@@ -423,7 +423,7 @@ public class AnalysisProvider {
 				.map(dt -> (FieldMappingType) dt).forEach(fm -> {
 					Set<String> fieldMappingIds = new TreeSet<String>();
 					Map<String, ComplexType> ctMap = new HashMap<String, ComplexType>();
-					fieldMappingIds.addAll(fm.getInput().stream()
+					fieldMappingIds.addAll(fm.getInput().stream().filter(in -> Objects.nonNull(in) && Objects.nonNull(in.getFieldTypeDefinitionId()))
 							.map(in -> in.getFieldTypeDefinitionId())
 							.collect(Collectors.toList()));
 					this.getFieldMappingInputTypes(fieldMappingIds, ctMap);
