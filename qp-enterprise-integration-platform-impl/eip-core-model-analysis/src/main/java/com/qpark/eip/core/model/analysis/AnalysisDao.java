@@ -11,6 +11,7 @@ package com.qpark.eip.core.model.analysis;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -278,6 +279,36 @@ public class AnalysisDao {
 		TypedQuery<FieldMappingType> typedQuery = this.em.createQuery(q);
 		List<FieldMappingType> value = typedQuery.getResultList();
 		value.stream().forEach(ct -> EagerLoader.load(ct));
+		return value;
+	}
+
+	/**
+	 * Get the list of {@link FieldMappingType} with the ids.
+	 *
+	 * @param modelVersion
+	 *            the model version.
+	 * @param ids
+	 *            the list of ids to return.
+	 * @return the list of {@link FieldMappingType}.
+	 * @since 3.5.1
+	 */
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public Optional<FieldMappingType> getFieldMappingTypeById(
+			final String modelVersion, final String id) {
+		CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		CriteriaQuery<FieldMappingType> q = cb
+				.createQuery(FieldMappingType.class);
+		Root<FieldMappingType> f = q.from(FieldMappingType.class);
+		q.where(cb.equal(f.<String> get(FieldMappingType_.modelVersion),
+				modelVersion),
+				cb.equal(f.<String> get(FieldMappingType_.id), id));
+		TypedQuery<FieldMappingType> typedQuery = this.em.createQuery(q);
+		List<FieldMappingType> list = typedQuery.getResultList();
+
+		Optional<FieldMappingType> value = list.stream().findFirst();
+		value.ifPresent(ct -> EagerLoader.load(ct));
 		return value;
 	}
 
