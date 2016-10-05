@@ -47,6 +47,7 @@
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
 									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Common/DataTypeMapping.xsd</includes>
+									<excludes>EIP/Documentation/**.xsd</excludes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
