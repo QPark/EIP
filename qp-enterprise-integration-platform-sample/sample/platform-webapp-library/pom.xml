@@ -354,6 +354,11 @@ WEB-INF/lib/xws-security-3.0.jar
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>platform-service-provider-domaindoc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>platform-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>

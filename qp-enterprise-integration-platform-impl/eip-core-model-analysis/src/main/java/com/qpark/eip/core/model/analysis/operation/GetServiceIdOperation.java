@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014, 2015, 2016 QPark Consulting S.a r.l. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
 import javax.xml.bind.JAXBElement;
@@ -18,7 +24,7 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetServiceId;
  */
 public class GetServiceIdOperation implements GetServiceId {
 	/** The bean name to use. */
-	public static final String BEAN_NAME = "operationProviderDomainDocGetServiceId";
+	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetServiceId";
 	/** The {@link AnalysisDao}. */
 	@Autowired
 	private AnalysisDao dao;

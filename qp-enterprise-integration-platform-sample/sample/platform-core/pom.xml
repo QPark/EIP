@@ -62,6 +62,10 @@
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core-spring-lockedoperation</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-model-analysis</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>

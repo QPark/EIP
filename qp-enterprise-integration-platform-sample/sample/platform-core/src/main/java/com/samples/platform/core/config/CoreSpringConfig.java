@@ -36,6 +36,7 @@ import com.qpark.eip.core.EipJpaVendorAdapterConfiguration;
 import com.qpark.eip.core.EipSettings;
 import com.qpark.eip.core.failure.BaseFailureHandler;
 import com.qpark.eip.core.logback.LoggingInitializer;
+import com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig;
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.qpark.eip.core.spring.ContextNameProvider;
@@ -62,6 +63,7 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 		com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig.class,
 		com.qpark.eip.core.spring.auth.config.EipAuthConfig.class,
 		com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig.class,
+		com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig.class,
 
 		com.samples.platform.persistenceconfig.PersistenceConfig.class,
 		com.samples.platform.persistenceconfig.JndiDataSourceConfig.class
@@ -141,6 +143,38 @@ public class CoreSpringConfig implements ServletContextAware,
 	 */
 	@Bean(name = EipLockedoperationConfig.JPA_VENDOR_ADAPTER_CONFIGURATION_BEAN_NAME)
 	public EipJpaVendorAdapterConfiguration getEipLockedoperationJpaVendorConfiguration() {
+		EipJpaVendorAdapterConfiguration bean = new EipJpaVendorAdapterConfiguration();
+		bean.setJpaVendorAdapterClassName(
+				"org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter");
+		bean.setJpaVendorAdapterGenerateDdl(true);
+		bean.setJpaVendorAdpaterDatabasePlatform(
+				"org.hibernate.dialect.HSQLDialect");
+		return bean;
+	}
+
+	/**
+	 * Get the {@link DataSource} of {@link EipModelAnalysisPersistenceConfig}.
+	 *
+	 * @return the {@link DataSource} of
+	 *         {@link EipModelAnalysisPersistenceConfig}.
+	 */
+	@Bean(name = EipModelAnalysisPersistenceConfig.DATASOURCE_BEAN_NAME)
+	public DataSource getEipModelAnalysisDataSource() {
+		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+		DataSource bean = dsLookup
+				.getDataSource(PersistenceConfig.DATASOURCE_JDNI_NAME);
+		return bean;
+	}
+
+	/**
+	 * Set the {@link EipJpaVendorAdapterConfiguration} of
+	 * {@link EipModelAnalysisPersistenceConfig}.
+	 *
+	 * @return the {@link EipJpaVendorAdapterConfiguration} of
+	 *         {@link EipModelAnalysisPersistenceConfig}.
+	 */
+	@Bean(name = EipModelAnalysisPersistenceConfig.JPA_VENDOR_ADAPTER_CONFIGURATION_BEAN_NAME)
+	public EipJpaVendorAdapterConfiguration getEipModelAnalysisJpaVendorConfiguration() {
 		EipJpaVendorAdapterConfiguration bean = new EipJpaVendorAdapterConfiguration();
 		bean.setJpaVendorAdapterClassName(
 				"org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter");
