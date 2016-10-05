@@ -199,6 +199,9 @@
 					<element name="mappingType" type="normalizedString">
 						<annotation><documentation>'direct', 'default', 'complex' or 'complexUUID'.</documentation></annotation>
 					</element>
+					<element name="fieldMappingInputType" type="DM:UUIDType" minOccurs="0" maxOccurs="unbounded">
+						<annotation><documentation>The recursive list of UUIDs of the DataTypes (without FieldMappingTypes) needed as input for this field mapping type.</documentation></annotation>
+					</element>
 				</sequence>
 			</extension>
 		</complexContent>
