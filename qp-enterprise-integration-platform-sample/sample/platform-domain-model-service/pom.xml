@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.5.2</version><!--qpark-eip-version-->
+		<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -45,13 +45,14 @@
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>model</artifactId>
-									<version>3.5.2</version><!--qpark-eip-version-->
+									<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
+									<excludes>EIP/Documentation/**.xsd</excludes>
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>service</artifactId>
-									<version>3.5.2</version><!--qpark-eip-version-->
+									<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
@@ -68,14 +69,14 @@
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-jaxb</artifactId>
-									<version>3.5.2</version><!--qpark-eip-version-->
+									<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>
 								</artifactItem>
 								<!-- The following to have the sources of the jaxb classes visible with this artefact -->
 								<artifactItem>
 									<groupId>${domain.groupId}.gen</groupId>
 									<artifactId>domain-gen-jaxb</artifactId>
-									<version>3.5.2</version><!--qpark-eip-version-->
+									<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 									<classifier>generated-java-sources</classifier>
 									<outputDirectory>${java.gen.dir}</outputDirectory>
 								</artifactItem>
@@ -191,14 +192,19 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>platform-domain-model-persistence</artifactId>
-			<version>3.5.2</version><!--qpark-eip-version-->
+			<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}.gen</groupId>
 			<artifactId>domain-gen-jaxb</artifactId>
-			<version>3.5.2</version><!--qpark-eip-version-->
+			<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.qpark.maven</groupId>
+			<artifactId>eip-model-analysis</artifactId>
+			<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>

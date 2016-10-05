@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.5.2</version><!--qpark-eip-version-->
+		<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -23,7 +23,7 @@
 	<description>Webapp containing the library service.</description>
 
 	<properties>
-		<eip.service.ids>library, iss.tech.support</eip.service.ids>
+		<eip.service.ids>library, iss.tech.support, domain.doc</eip.service.ids>
 		<service.name>library</service.name>
 		<service.application.name>${bus.application.name}</service.application.name>
 		<service.final.name>${bus.war.prefix}${service.application.name}-${service.name}</service.final.name>
@@ -122,6 +122,14 @@ WEB-INF/lib/xws-security-3.0.jar
 									<groupId>${domain.groupId}</groupId>
 									<artifactId>service</artifactId>
 									<version>${domain.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.qpark.maven</groupId>
+									<artifactId>eip-model-analysis</artifactId>
+									<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
+									<classifier>xsds</classifier>
+									<type>zip</type>
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 							</artifactItems>

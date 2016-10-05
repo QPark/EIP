@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.5.2</version><!--qpark-eip-version-->
+		<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -46,7 +46,7 @@
 									<artifactId>model</artifactId>
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
-									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Common/DataTypeMapping.xsd,EIP/Documentation/DocumentationModel.xsd</includes>
+									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Common/DataTypeMapping.xsd</includes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

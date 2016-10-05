@@ -11,62 +11,32 @@
 -->
 
 	<parent>
-		<groupId>com.qpark.eip.core</groupId>
-		<artifactId>eip-base</artifactId>
+		<groupId>com.samples.platform</groupId>
+		<artifactId>platform-base</artifactId>
 		<version>3.5.3-SNAPSHOT</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>eip-core-spring-scheduling</artifactId>
+	<artifactId>platform-service-provider-domaindoc</artifactId>
 	<packaging>jar</packaging>
-	<name>eip-core-spring-scheduling</name>
-	<description>Provide reconfigurable scheduled operation calls.</description>
+	<description>Handle the application domain.doc service operation.</description>
 
 	<dependencies>
+		<!-- additional connector dependencies -->
+		<!-- bus dependencies -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>eip-core</artifactId>
+			<artifactId>platform-domain-model-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>platform-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjtools</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-			<scope>test</scope>
-		</dependency>
-	
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
