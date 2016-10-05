@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -40,9 +43,9 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 /**
  * .
  * 
- * <p>Java-Klasse für FieldMappingType complex type.
+ * <p>Java class for FieldMappingType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="FieldMappingType"&gt;
@@ -52,6 +55,7 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *         &lt;element name="input" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}FieldType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="returnValueTypeId" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" minOccurs="0"/&gt;
  *         &lt;element name="mappingType" type="{http://www.w3.org/2001/XMLSchema}normalizedString"/&gt;
+ *         &lt;element name="fieldMappingInputType" type="{http://www.qpark-consulting.com/EIP/Utility/DocumentationModel}UUIDType" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
@@ -64,7 +68,8 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 @XmlType(name = "FieldMappingType", propOrder = {
     "input",
     "returnValueTypeId",
-    "mappingType"
+    "mappingType",
+    "fieldMappingInputType"
 })
 @XmlSeeAlso({
     DirectMappingType.class,
@@ -87,6 +92,8 @@ public abstract class FieldMappingType
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String mappingType;
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected List<String> fieldMappingInputType;
 
     /**
      * Gets the value of the input property.
@@ -139,7 +146,7 @@ public abstract class FieldMappingType
     }
 
     /**
-     * Ruft den Wert der returnValueTypeId-Eigenschaft ab.
+     * Gets the value of the returnValueTypeId property.
      * 
      * @return
      *     possible object is
@@ -153,7 +160,7 @@ public abstract class FieldMappingType
     }
 
     /**
-     * Legt den Wert der returnValueTypeId-Eigenschaft fest.
+     * Sets the value of the returnValueTypeId property.
      * 
      * @param value
      *     allowed object is
@@ -170,7 +177,7 @@ public abstract class FieldMappingType
     }
 
     /**
-     * Ruft den Wert der mappingType-Eigenschaft ab.
+     * Gets the value of the mappingType property.
      * 
      * @return
      *     possible object is
@@ -184,7 +191,7 @@ public abstract class FieldMappingType
     }
 
     /**
-     * Legt den Wert der mappingType-Eigenschaft fest.
+     * Sets the value of the mappingType property.
      * 
      * @param value
      *     allowed object is
@@ -198,6 +205,58 @@ public abstract class FieldMappingType
     @Transient
     public boolean isSetMappingType() {
         return (this.mappingType!= null);
+    }
+
+    /**
+     * Gets the value of the fieldMappingInputType property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the fieldMappingInputType property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getFieldMappingInputType().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    @ElementCollection
+    @OrderColumn(name = "HJINDEX")
+    @Column(name = "HJVALUE", length = 36)
+    @CollectionTable(name = "FIELDMAPPINGTYPE_FIELDMAPPIN_0", joinColumns = {
+        @JoinColumn(name = "HJID")
+    })
+    public List<String> getFieldMappingInputType() {
+        if (fieldMappingInputType == null) {
+            fieldMappingInputType = new ArrayList<String>();
+        }
+        return this.fieldMappingInputType;
+    }
+
+    /**
+     * 
+     * 
+     */
+    public void setFieldMappingInputType(List<String> fieldMappingInputType) {
+        this.fieldMappingInputType = fieldMappingInputType;
+    }
+
+    @Transient
+    public boolean isSetFieldMappingInputType() {
+        return ((this.fieldMappingInputType!= null)&&(!this.fieldMappingInputType.isEmpty()));
+    }
+
+    public void unsetFieldMappingInputType() {
+        this.fieldMappingInputType = null;
     }
 
     public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
@@ -238,6 +297,15 @@ public abstract class FieldMappingType
                 return false;
             }
         }
+        {
+            List<String> lhsFieldMappingInputType;
+            lhsFieldMappingInputType = (this.isSetFieldMappingInputType()?this.getFieldMappingInputType():null);
+            List<String> rhsFieldMappingInputType;
+            rhsFieldMappingInputType = (that.isSetFieldMappingInputType()?that.getFieldMappingInputType():null);
+            if (!strategy.equals(LocatorUtils.property(thisLocator, "fieldMappingInputType", lhsFieldMappingInputType), LocatorUtils.property(thatLocator, "fieldMappingInputType", rhsFieldMappingInputType), lhsFieldMappingInputType, rhsFieldMappingInputType)) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -262,6 +330,11 @@ public abstract class FieldMappingType
             String theMappingType;
             theMappingType = this.getMappingType();
             currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "mappingType", theMappingType), currentHashCode, theMappingType);
+        }
+        {
+            List<String> theFieldMappingInputType;
+            theFieldMappingInputType = (this.isSetFieldMappingInputType()?this.getFieldMappingInputType():null);
+            currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "fieldMappingInputType", theFieldMappingInputType), currentHashCode, theFieldMappingInputType);
         }
         return currentHashCode;
     }
