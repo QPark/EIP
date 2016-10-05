@@ -7,11 +7,14 @@
 package com.qpark.maven.plugin.mockoperation;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.maven.plugin.logging.Log;
 
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
+import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.ElementType;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -216,10 +219,36 @@ public class OperationProviderMockGenerator {
 
 			sb.append("\t\t\tthis.logger.debug(\"-");
 			sb.append(this.methodName);
-			sb.append(" #{}, #f{}\",\n");
-			sb.append(
-					"\t\t\t\t\tresponse/*.get()*/ != null ? 1 : 0, response.getFailure()\n");
-			sb.append("\t\t\t\t\t\t\t.size());\n");
+			Optional<ComplexTypeChild> listChild = this.ctResponse.getChildren()
+					.stream()
+					.filter(ctc -> !ctc.getChildName().equals("failure")
+							&& ctc.isList())
+					.findFirst();
+
+			if (this.hasFailureList(this.ctResponse)) {
+				if (listChild.isPresent()) {
+					sb.append(" #{}, #f{}\",\n");
+					sb.append("\t\t\t\t\t");
+					sb.append("response/*.get");
+					sb.append(Util.capitalize(listChild.get().getChildName()));
+					sb.append("().size()*/,");
+					sb.append(" response.getFailure().size());\n");
+				} else {
+					sb.append(" #1, #f{}\",\n");
+					sb.append("\t\t\t\t\t");
+					sb.append(" response.getFailure().size());\n");
+				}
+			} else {
+				if (listChild.isPresent()) {
+					sb.append(" #{}, #f-\",\n");
+					sb.append("\t\t\t\t\t");
+					sb.append("response/*.get");
+					sb.append(Util.capitalize(listChild.get().getChildName()));
+					sb.append("().size()*/);\n");
+				} else {
+					sb.append(" #1, #f-\");\n");
+				}
+			}
 
 			sb.append("\t\t}\n");
 
@@ -313,5 +342,15 @@ public class OperationProviderMockGenerator {
 			}
 			this.log.debug("-generate");
 		}
+	}
+
+	private boolean hasFailureList(final ComplexType ct) {
+		boolean value = ct.getChildren().stream().filter(
+				ctc -> ctc.getChildName().equals("failure") && ctc.isList())
+				.findFirst().isPresent();
+		if (!value && Objects.nonNull(ct.getParent())) {
+			value = this.hasFailureList(ct.getParent());
+		}
+		return value;
 	}
 }
