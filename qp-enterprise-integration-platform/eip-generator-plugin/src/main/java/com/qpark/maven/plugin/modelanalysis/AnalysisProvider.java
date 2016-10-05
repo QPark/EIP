@@ -419,12 +419,26 @@ public class AnalysisProvider {
 					}
 				});
 		this.analysis.getDataTypes().stream()
+				.filter(dt -> FieldMappingType.class.isInstance(dt))
+				.map(dt -> (FieldMappingType) dt).forEach(fm -> {
+					Set<String> fieldMappingIds = new TreeSet<String>();
+					Map<String, ComplexType> ctMap = new HashMap<String, ComplexType>();
+					fieldMappingIds.addAll(fm.getInput().stream()
+							.map(in -> in.getFieldTypeDefinitionId())
+							.collect(Collectors.toList()));
+					this.getFieldMappingInputTypes(fieldMappingIds, ctMap);
+					ctMap.values().stream()
+							.filter(ct -> Objects.nonNull(ct.getName()))
+							.forEach(ct -> fm.getFieldMappingInputType()
+									.add(ct.getId()));
+				});
+		this.analysis.getDataTypes().stream()
 				.filter(dt -> InterfaceMappingType.class.isInstance(dt))
 				.map(dt -> (InterfaceMappingType) dt).forEach(inf -> {
 					Set<String> fieldMappingIds = new TreeSet<String>();
 					Map<String, ComplexType> ctMap = new HashMap<String, ComplexType>();
 					fieldMappingIds.addAll(inf.getFieldMappings().stream()
-							.map(fm -> fm.getId())
+							.map(fm -> fm.getFieldTypeDefinitionId())
 							.collect(Collectors.toList()));
 					this.getFieldMappingInputTypes(fieldMappingIds, ctMap);
 					ctMap.values().stream()
