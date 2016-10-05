@@ -62,6 +62,14 @@ public class EipModelAnalysisPersistenceConfig {
 	}
 
 	/**
+	 * @return the {@link AnalysisDao}.
+	 */
+	@Bean
+	public AnalysisDao getAnalysisDao() {
+		return new AnalysisDao();
+	}
+
+	/**
 	 * Get the {@link LocalContainerEntityManagerFactoryBean}.
 	 *
 	 * @return the {@link LocalContainerEntityManagerFactoryBean}.
