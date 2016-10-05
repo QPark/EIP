@@ -12,6 +12,7 @@ public abstract class FieldMappingType_ extends com.qpark.eip.model.docmodel.Dat
 	public static volatile ListAttribute<FieldMappingType, FieldType> input;
 	public static volatile SingularAttribute<FieldMappingType, String> returnValueTypeId;
 	public static volatile SingularAttribute<FieldMappingType, String> mappingType;
+	public static volatile ListAttribute<FieldMappingType, String> fieldMappingInputType;
 
 }
 
