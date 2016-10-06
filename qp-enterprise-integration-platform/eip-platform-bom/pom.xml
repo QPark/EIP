@@ -44,6 +44,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+		<qpark-eip-version>${project.version}</qpark-eip-version>
+		
 		<io.spring.platform.version>1.1.4.RELEASE</io.spring.platform.version>
 
 		<javax.javaee-api>7.0</javax.javaee-api>
