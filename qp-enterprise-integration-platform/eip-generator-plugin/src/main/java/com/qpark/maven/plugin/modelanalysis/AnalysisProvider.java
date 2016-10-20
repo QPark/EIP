@@ -261,12 +261,10 @@ public class AnalysisProvider {
 			}
 			value.getMapInOut().add(mapInOut);
 
-			for (RequestResponseDataFieldContainer rrdfx : rrdfs) {
-				this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-						rrdfx.rr.getRequestId());
-				this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-						rrdfx.rr.getResponseId());
-			}
+			this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
+					rrdf.rr.getRequestId());
+			this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
+					rrdf.rr.getResponseId());
 		}
 	}
 
