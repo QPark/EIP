@@ -261,12 +261,10 @@ public class AnalysisProvider {
 			}
 			value.getMapInOut().add(mapInOut);
 
-			for (RequestResponseDataFieldContainer rrdfx : rrdfs) {
-				this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-						rrdfx.rr.getRequestId());
-				this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
-						rrdfx.rr.getResponseId());
-			}
+			this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
+					rrdf.rr.getRequestId());
+			this.setFlowMapInOutTypeInterfaceMappingIds(mapInOut,
+					rrdf.rr.getResponseId());
 		}
 	}
 
@@ -421,9 +419,16 @@ public class AnalysisProvider {
 		this.analysis.getDataTypes().stream()
 				.filter(dt -> FieldMappingType.class.isInstance(dt))
 				.map(dt -> (FieldMappingType) dt).forEach(fm -> {
-					Set<String> fieldMappingIds = new TreeSet<String>();
-					Map<String, ComplexType> ctMap = new HashMap<String, ComplexType>();
-					fieldMappingIds.addAll(fm.getInput().stream().filter(in -> Objects.nonNull(in) && Objects.nonNull(in.getFieldTypeDefinitionId()))
+					Set<String> fieldMappingIds = new TreeSet<>();
+					Map<String, ComplexType> ctMap = new HashMap<>();
+					fieldMappingIds.addAll(fm.getInput().stream()
+							.filter(in -> Objects.nonNull(in)
+									&& Objects.nonNull(in.getName())
+									&& !in.getName().equals("value")
+									&& !in.getName().equals("return")
+									&& !in.getName().equals("interfaceName")
+									&& Objects.nonNull(
+											in.getFieldTypeDefinitionId()))
 							.map(in -> in.getFieldTypeDefinitionId())
 							.collect(Collectors.toList()));
 					this.getFieldMappingInputTypes(fieldMappingIds, ctMap);
@@ -435,8 +440,8 @@ public class AnalysisProvider {
 		this.analysis.getDataTypes().stream()
 				.filter(dt -> InterfaceMappingType.class.isInstance(dt))
 				.map(dt -> (InterfaceMappingType) dt).forEach(inf -> {
-					Set<String> fieldMappingIds = new TreeSet<String>();
-					Map<String, ComplexType> ctMap = new HashMap<String, ComplexType>();
+					Set<String> fieldMappingIds = new TreeSet<>();
+					Map<String, ComplexType> ctMap = new HashMap<>();
 					fieldMappingIds.addAll(inf.getFieldMappings().stream()
 							.map(fm -> fm.getFieldTypeDefinitionId())
 							.collect(Collectors.toList()));
@@ -453,22 +458,25 @@ public class AnalysisProvider {
 
 	private void getFieldMappingInputTypes(final Set<String> fieldMappingIds,
 			final Map<String, ComplexType> ctMap) {
-		List<FieldMappingType> fieldMappings = this.analysis.getDataTypes()
-				.stream().filter(dt -> FieldMappingType.class.isInstance(dt))
-				.map(dt -> (FieldMappingType) dt)
-				.filter(fmt -> fieldMappingIds.contains(fmt.getId()))
-				.collect(Collectors.toList());
+		List<FieldMappingType> fieldMappings = new ArrayList<>();
+		fieldMappingIds.stream().forEach(id -> {
+			DataType dt = this.analysis.getDataTypeById(id);
+			if (FieldMappingType.class.isInstance(dt)) {
+				fieldMappings.add((FieldMappingType) dt);
+			} else if (ComplexType.class.isInstance(dt)) {
+				ctMap.put(dt.getId(), (ComplexType) dt);
+			}
+		});
 		if (Objects.nonNull(fieldMappings) && fieldMappings.size() > 0) {
-			Set<String> ids = new TreeSet<String>();
-			fieldMappings.stream()
-					.forEach(
-							fm -> fm.getInput().stream()
-									.filter(i -> Objects.nonNull(i.getName())
-											&& !i.getName()
-													.equals("interfaceName")
+			Set<String> ids = new TreeSet<>();
+			fieldMappings.stream().filter(fm -> Objects.nonNull(fm))
+					.forEach(fm -> fm.getInput().stream()
+							.filter(i -> Objects.nonNull(i.getName())
+									&& !i.getName().equals("interfaceName")
 									&& !i.getName().equals("value")
 									&& !i.getName().equals("return"))
-					.forEach(i -> ids.add(i.getFieldTypeDefinitionId())));
+							.forEach(i -> ids
+									.add(i.getFieldTypeDefinitionId())));
 			this.analysis.getDataTypes().stream()
 					.filter(dt -> ComplexType.class.isInstance(dt))
 					.map(dt -> (ComplexType) dt)
