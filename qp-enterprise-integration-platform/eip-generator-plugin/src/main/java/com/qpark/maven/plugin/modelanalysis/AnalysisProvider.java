@@ -417,12 +417,12 @@ public class AnalysisProvider {
 					}
 				});
 		xsds.getComplexTypes().stream()
-				.filter(ct -> Objects.nonNull(ct.getParent())
-						&& !ct.getParent().isPrimitiveType())
+				.filter(ct -> Objects.nonNull(ct.getBaseComplexType())
+						&& !ct.getBaseComplexType().isPrimitiveType())
 				.forEach(ct -> {
 					DataType dt = this.analysis.getDataType(ct.toQNameString());
-					DataType dtp = this.analysis
-							.getDataType(ct.getParent().toQNameString());
+					DataType dtp = this.analysis.getDataType(
+							ct.getBaseComplexType().toQNameString());
 					if (Objects.nonNull(dt) && ComplexType.class.isInstance(dt)
 							&& Objects.nonNull(dtp)) {
 						((ComplexType) dt).setDescendedFromId(dtp.getId());
