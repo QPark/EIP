@@ -416,6 +416,18 @@ public class AnalysisProvider {
 						this.enterprise.getFlows().add(flow);
 					}
 				});
+		xsds.getComplexTypes().stream()
+				.filter(ct -> Objects.nonNull(ct.getParent())
+						&& !ct.getParent().isPrimitiveType())
+				.forEach(ct -> {
+					DataType dt = this.analysis.getDataType(ct.toQNameString());
+					DataType dtp = this.analysis
+							.getDataType(ct.getParent().toQNameString());
+					if (Objects.nonNull(dt) && ComplexType.class.isInstance(dt)
+							&& Objects.nonNull(dtp)) {
+						((ComplexType) dt).setDescendedFromId(dtp.getId());
+					}
+				});
 		this.analysis.getDataTypes().stream()
 				.filter(dt -> FieldMappingType.class.isInstance(dt))
 				.map(dt -> (FieldMappingType) dt).forEach(fm -> {
