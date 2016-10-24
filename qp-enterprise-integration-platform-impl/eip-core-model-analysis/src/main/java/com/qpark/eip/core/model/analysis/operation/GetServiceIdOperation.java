@@ -6,6 +6,8 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
+import java.util.Objects;
+
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class GetServiceIdOperation implements GetServiceId {
 	private final ObjectFactory of = new ObjectFactory();
 
 	/**
-	 * @param message
+	 * @param request
 	 *            the {@link JAXBElement} containing a
 	 *            {@link GetServiceIdRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetServiceIdResponseType}.
@@ -44,11 +46,16 @@ public class GetServiceIdOperation implements GetServiceId {
 	public final JAXBElement<GetServiceIdResponseType> invoke(
 			final JAXBElement<GetServiceIdRequestType> message) {
 		this.logger.debug("+getServiceId");
+		GetServiceIdRequestType request = message.getValue();
 		GetServiceIdResponseType response = this.of
 				.createGetServiceIdResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			String modelVersion = this.dao.getLastModelVersion();
+			String modelVersion = request.getRevision();
+			if (Objects.isNull(modelVersion)
+					|| modelVersion.trim().length() == 0) {
+				modelVersion = this.dao.getLastModelVersion();
+			}
 			response.getServiceId()
 					.addAll(this.dao.getServiceIds(modelVersion));
 		} catch (Throwable e) {

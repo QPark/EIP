@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="userName" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="revision" type="{http://www.w3.org/2001/XMLSchema}normalizedString"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -38,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestMessage", propOrder = {
-    "userName"
+	    "userName",
+	    "revision"
 })
 @XmlSeeAlso({
     GetServiceIdRequestType.class,
@@ -56,6 +58,8 @@ public class RequestMessage {
 
     @XmlElement(required = true)
     protected String userName;
+    @XmlElement(required = false)
+    protected String revision;
 
     /**
      * Gets the value of the userName property.
@@ -81,4 +85,27 @@ public class RequestMessage {
         this.userName = value;
     }
 
+    /**
+     * Gets the value of the revision property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRevision() {
+        return revision;
+    }
+
+    /**
+     * Sets the value of the revision property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRevision(String value) {
+        this.revision = value;
+    }
 }

@@ -6,6 +6,8 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
+import java.util.Objects;
+
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,11 @@ public class GetFieldMappingTypeOperation implements GetFieldMappingType {
 				.createGetFieldMappingTypeResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			String modelVersion = this.dao.getLastModelVersion();
+			String modelVersion = request.getRevision();
+			if (Objects.isNull(modelVersion)
+					|| modelVersion.trim().length() == 0) {
+				modelVersion = this.dao.getLastModelVersion();
+			}
 			response.getFieldMappingType().addAll(this.dao
 					.getFieldMappingTypesById(modelVersion, request.getId()));
 		} catch (Throwable e) {

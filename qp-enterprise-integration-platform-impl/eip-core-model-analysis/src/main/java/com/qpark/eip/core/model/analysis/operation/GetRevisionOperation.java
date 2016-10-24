@@ -6,67 +6,58 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
-import java.util.Objects;
-
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
 import com.qpark.eip.core.model.analysis.AnalysisDao;
-import com.qpark.eip.service.domain.doc.msg.GetDataTypeRequestType;
-import com.qpark.eip.service.domain.doc.msg.GetDataTypeResponseType;
+import com.qpark.eip.service.domain.doc.msg.GetRevisionRequestType;
+import com.qpark.eip.service.domain.doc.msg.GetRevisionResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
-import com.qpark.eip.service.domain.doc.msg.gateway.GetDataType;
+import com.qpark.eip.service.domain.doc.msg.gateway.GetRevision;
 
 /**
- * Operation get data type on service <code>domain.doc</code>.
+ * Operation get revision on service <code>domain.doc</code>.
  *
  * @author bhausen
  */
-public class GetDataTypeOperation implements GetDataType {
+public class GetRevisionOperation implements GetRevision {
 	/** The bean name to use. */
-	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetDataType";
+	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetRevision";
 	/** The {@link AnalysisDao}. */
 	@Autowired
 	private AnalysisDao dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
-			.getLogger(GetDataTypeOperation.class);
+			.getLogger(GetRevisionOperation.class);
 	/** The {@link ObjectFactory}. */
 	private final ObjectFactory of = new ObjectFactory();
 
 	/**
 	 * @param message
 	 *            the {@link JAXBElement} containing a
-	 *            {@link GetDataTypeRequestType}.
-	 * @return the {@link JAXBElement} with a {@link GetDataTypeResponseType}.
+	 *            {@link GetRevisionRequestType}.
+	 * @return the {@link JAXBElement} with a {@link GetRevisionResponseType}.
 	 */
 	@Override
-	public final JAXBElement<GetDataTypeResponseType> invoke(
-			final JAXBElement<GetDataTypeRequestType> message) {
-		this.logger.debug("+getDataType");
-		GetDataTypeRequestType request = message.getValue();
-		GetDataTypeResponseType response = this.of
-				.createGetDataTypeResponseType();
+	public final JAXBElement<GetRevisionResponseType> invoke(
+			final JAXBElement<GetRevisionRequestType> message) {
+		this.logger.debug("+getRevision");
+		GetRevisionResponseType response = this.of
+				.createGetRevisionResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			String modelVersion = request.getRevision();
-			if (Objects.isNull(modelVersion)
-					|| modelVersion.trim().length() == 0) {
-				modelVersion = this.dao.getLastModelVersion();
-			}
-			response.getDataType().addAll(
-					this.dao.getDataTypesById(modelVersion, request.getId()));
+			response.getRevision().addAll(this.dao.getRevisions());
 		} catch (Throwable e) {
 			/* Add a not covered error to the response. */
 			this.logger.error(e.getMessage(), e);
 		} finally {
-			this.logger.debug(" getDataType duration {}",
+			this.logger.debug(" getRevision duration {}",
 					DateUtil.getDuration(start, System.currentTimeMillis()));
-			this.logger.debug("-getDataType #{}",
-					response.getDataType().size());
+			this.logger.debug("-getRevision #{}",
+					response.getRevision().size());
 		}
-		return this.of.createGetDataTypeResponse(response);
+		return this.of.createGetRevisionResponse(response);
 	}
 }

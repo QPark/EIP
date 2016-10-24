@@ -31,6 +31,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _GetRevisionRequest_QNAME = new QName("http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", "GetRevisionRequest");
+    private final static QName _GetRevisionResponse_QNAME = new QName("http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", "GetRevisionResponse");
     private final static QName _GetServiceIdRequest_QNAME = new QName("http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", "GetServiceIdRequest");
     private final static QName _GetServiceIdResponse_QNAME = new QName("http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", "GetServiceIdResponse");
     private final static QName _GetServiceRequest_QNAME = new QName("http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", "GetServiceRequest");
@@ -73,6 +75,22 @@ public class ObjectFactory {
      */
     public GetServiceIdResponseType createGetServiceIdResponseType() {
         return new GetServiceIdResponseType();
+    }
+
+    /**
+     * Create an instance of {@link GetRevisionRequestType }
+     * 
+     */
+    public GetRevisionRequestType createGetRevisionRequestType() {
+        return new GetRevisionRequestType();
+    }
+
+    /**
+     * Create an instance of {@link GetRevisionResponseType }
+     * 
+     */
+    public GetRevisionResponseType createGetRevisionResponseType() {
+        return new GetRevisionResponseType();
     }
 
     /**
@@ -243,6 +261,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", name = "GetServiceIdResponse")
     public JAXBElement<GetServiceIdResponseType> createGetServiceIdResponse(GetServiceIdResponseType value) {
         return new JAXBElement<GetServiceIdResponseType>(_GetServiceIdResponse_QNAME, GetServiceIdResponseType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetRevisionRequestType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", name = "GetRevisionRequest")
+    public JAXBElement<GetRevisionRequestType> createGetRevisionRequest(GetRevisionRequestType value) {
+        return new JAXBElement<GetRevisionRequestType>(_GetRevisionRequest_QNAME, GetRevisionRequestType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetRevisionResponseType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.qpark-consulting.com/EIP/Utility/DocumentationModelServiceMessages-1.0", name = "GetRevisionResponse")
+    public JAXBElement<GetRevisionResponseType> createGetRevisionResponse(GetRevisionResponseType value) {
+        return new JAXBElement<GetRevisionResponseType>(_GetRevisionResponse_QNAME, GetRevisionResponseType.class, null, value);
     }
 
     /**

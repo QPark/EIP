@@ -6,6 +6,8 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
+import java.util.Objects;
+
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,11 @@ public class GetClusterOperation implements GetCluster {
 				.createGetClusterResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			String modelVersion = this.dao.getLastModelVersion();
+			String modelVersion = request.getRevision();
+			if (Objects.isNull(modelVersion)
+					|| modelVersion.trim().length() == 0) {
+				modelVersion = this.dao.getLastModelVersion();
+			}
 			response.setCluster(this.dao.getClusterByTargetNamespace(
 					modelVersion, request.getTargetNamespace()));
 		} catch (Throwable e) {

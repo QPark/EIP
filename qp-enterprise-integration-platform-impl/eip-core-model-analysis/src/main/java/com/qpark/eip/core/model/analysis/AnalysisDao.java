@@ -90,13 +90,10 @@ public class AnalysisDao {
 	 * @param modelVersion
 	 *            the version of the model.
 	 * @return <code>true</code> if exists, else <code>false</code>.
-	 * @deprecated The additional operations (since 3.5.0) do not support
-	 *             multiple models in one database.
 	 */
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
-	@Deprecated
 	public boolean existsEnterprise(final String name,
 			final String modelVersion) {
 		boolean value = false;
@@ -557,6 +554,28 @@ public class AnalysisDao {
 		List<ServiceType> services = typedQuery.getResultList();
 		services.stream().filter(s -> Objects.nonNull(s.getServiceId()))
 				.forEach(s -> value.add(s.getServiceId()));
+		return value;
+	}
+
+	/**
+	 * Get the list of serviceIds available.
+	 *
+	 * @param modelVersion
+	 *            the model version.
+	 * @return the list of serviceIds available.
+	 * @since 3.5.1
+	 */
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<String> getRevisions() {
+		CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		CriteriaQuery<String> q = cb.createQuery(String.class);
+		Root<EnterpriseType> f = q.from(EnterpriseType.class);
+		q.select(f.<String> get(EnterpriseType_.modelVersion));
+		q.orderBy(cb.asc(f.<String> get(EnterpriseType_.modelVersion)));
+		TypedQuery<String> typedQuery = this.em.createQuery(q);
+		List<String> value = typedQuery.getResultList();
 		return value;
 	}
 

@@ -6,6 +6,8 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
+import java.util.Objects;
+
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +47,16 @@ public class GetTargetNamespaceOperation implements GetTargetNamespace {
 	public final JAXBElement<GetTargetNamespaceResponseType> invoke(
 			final JAXBElement<GetTargetNamespaceRequestType> message) {
 		this.logger.debug("+getTargetNamespace");
+		GetTargetNamespaceRequestType request = message.getValue();
 		GetTargetNamespaceResponseType response = this.of
 				.createGetTargetNamespaceResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			String modelVersion = this.dao.getLastModelVersion();
+			String modelVersion = request.getRevision();
+			if (Objects.isNull(modelVersion)
+					|| modelVersion.trim().length() == 0) {
+				modelVersion = this.dao.getLastModelVersion();
+			}
 			response.getTargetNamespace()
 					.addAll(this.dao.getTargetNamespaces(modelVersion));
 		} catch (Throwable e) {

@@ -16,6 +16,7 @@ import com.qpark.eip.core.model.analysis.operation.GetElementTypeOperation;
 import com.qpark.eip.core.model.analysis.operation.GetFieldMappingTypeOperation;
 import com.qpark.eip.core.model.analysis.operation.GetFlowInterfaceMappingTypeOperation;
 import com.qpark.eip.core.model.analysis.operation.GetFlowOperation;
+import com.qpark.eip.core.model.analysis.operation.GetRevisionOperation;
 import com.qpark.eip.core.model.analysis.operation.GetServiceIdOperation;
 import com.qpark.eip.core.model.analysis.operation.GetServiceOperation;
 import com.qpark.eip.core.model.analysis.operation.GetTargetNamespaceOperation;
@@ -81,6 +82,14 @@ public class EipModelAnalysisOperationConfig {
 	@Bean(name = GetFlowOperation.BEAN_NAME)
 	public GetFlowOperation getFlowOperation() {
 		return new GetFlowOperation();
+	}
+
+	/**
+	 * @return the {@link GetRevisionOperation} bean.
+	 */
+	@Bean(name = GetRevisionOperation.BEAN_NAME)
+	public GetRevisionOperation getRevisionOperation() {
+		return new GetRevisionOperation();
 	}
 
 	/**

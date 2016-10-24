@@ -76,7 +76,11 @@ public class GetFlowOperation implements GetFlow {
 		long start = System.currentTimeMillis();
 		try {
 			translateNamePattern(request.getNamePattern()).ifPresent(s -> {
-				String modelVersion = this.dao.getLastModelVersion();
+				String modelVersion = request.getRevision();
+				if (Objects.isNull(modelVersion)
+						|| modelVersion.trim().length() == 0) {
+					modelVersion = this.dao.getLastModelVersion();
+				}
 				response.getFlow()
 						.addAll(this.dao.getFlowByNamePattern(modelVersion, s));
 			});

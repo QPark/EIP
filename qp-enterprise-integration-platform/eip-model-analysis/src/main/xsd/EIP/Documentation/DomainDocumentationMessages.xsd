@@ -28,8 +28,28 @@
 					<documentation>The application user</documentation>
 				</annotation>
 			</element>
+			<element name="revision" type="normalizedString" minOccurs="0" >
+				<annotation>
+					<documentation>The revision to get. If not entered the latest will be returned.</documentation>
+				</annotation>
+			</element>
 		</sequence>
 	</complexType>
+
+	<complexType name="GetRevisionRequestType">
+		<complexContent>
+			<extension base="DomainDocMsg:RequestMessage"/>
+		</complexContent>
+	</complexType>
+	<complexType name="GetRevisionResponseType">
+		<sequence>
+			<element name="revision" type="normalizedString" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="GetRevisionRequest" type="DomainDocMsg:GetRevisionRequestType">
+		<annotation><documentation>Get the service id list.</documentation></annotation>
+	</element>
+	<element name="GetRevisionResponse" type="DomainDocMsg:GetRevisionResponseType"/>
 
 	<complexType name="GetServiceIdRequestType">
 		<complexContent>
