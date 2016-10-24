@@ -9,6 +9,7 @@ package com.qpark.maven.xmlbeans;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -100,8 +101,8 @@ public class ComplexType implements Comparable<ComplexType> {
 				"{http://.*?/Interfaces/Mapping}MappingOutputType");
 	}
 
-	private static void setServiceRequestResponseDetection(final XsdsUtil config,
-			final ComplexType ct) {
+	private static void setServiceRequestResponseDetection(
+			final XsdsUtil config, final ComplexType ct) {
 		if (ct.getClassName() != null) {
 			int indexRequest = ct.getClassName()
 					.lastIndexOf(config.getServiceRequestSuffix());
@@ -306,11 +307,26 @@ public class ComplexType implements Comparable<ComplexType> {
 
 	void initDescent(final XsdsUtil config) {
 		SchemaType st = this.type.getBaseType();
-		if (st != null && st.getName() != null) {
+		if (Objects.nonNull(st) && Objects.nonNull(st.getName())) {
 			this.baseComplexType = config.getComplexType(st.getName());
-			if (this.baseComplexType != null && this.baseComplexType
+			if (Objects.nonNull(this.baseComplexType) && this.baseComplexType
 					.toQNameString().equals(this.toQNameString())) {
 				this.baseComplexType = null;
+			}
+		}
+		if (Objects.isNull(this.baseComplexType) && this.type.isSimpleType()
+				&& (this.type.getEnumerationValues() == null
+						|| this.type.getEnumerationValues().length == 0)) {
+			SchemaType buildInBase = XsdsUtil.getBuildInBaseType(this.type);
+			if (Objects.nonNull(buildInBase)
+					&& Objects.nonNull(buildInBase.getName())) {
+				this.baseComplexType = config
+						.getComplexType(buildInBase.getName());
+				if (Objects.nonNull(this.baseComplexType)
+						&& this.baseComplexType.toQNameString()
+								.equals(this.toQNameString())) {
+					this.baseComplexType = null;
+				}
 			}
 		}
 	}
@@ -471,7 +487,8 @@ public class ComplexType implements Comparable<ComplexType> {
 	 */
 	public String getQNameLocalPart() {
 		String localpart = "";
-		if (this.type.getName() != null) {
+		if (Objects.nonNull(this.type.getName())
+				&& Objects.nonNull(this.type.getName().getLocalPart())) {
 			localpart = this.type.getName().getLocalPart();
 		}
 		return localpart;

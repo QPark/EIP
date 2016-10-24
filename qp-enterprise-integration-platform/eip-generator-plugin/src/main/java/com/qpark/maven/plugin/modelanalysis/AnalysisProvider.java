@@ -416,26 +416,44 @@ public class AnalysisProvider {
 						this.enterprise.getFlows().add(flow);
 					}
 				});
-		xsds.getComplexTypes().stream()
+		xsds.getComplexTypes().stream().parallel()
 				.filter(ct -> Objects.nonNull(ct.getBaseComplexType())
 						&& !ct.getBaseComplexType().isPrimitiveType())
 				.forEach(ct -> {
 					DataType dt = this.analysis.getDataType(ct.toQNameString());
 					DataType dtp = this.analysis.getDataType(
 							ct.getBaseComplexType().toQNameString());
-					if (Objects.nonNull(dt) && ComplexType.class.isInstance(dt)
-							&& Objects.nonNull(dtp)) {
-						((ComplexType) dt).setDescendedFromId(dtp.getId());
+					if (Objects.nonNull(dt)
+							&& ComplexType.class.isInstance(dt)) {
+						if (Objects.nonNull(dtp)) {
+							((ComplexType) dt).setDescendedFromId(dtp.getId());
+						}
 					}
+				});
+		this.analysis.getDataTypes().stream().parallel()
+				.filter(dt -> (dt.getJavaPackageName().isEmpty()
+						|| dt.getJavaPackageName().startsWith("java"))
+						&& !dt.getNamespace()
+								.equals("http://www.w3.org/2001/XMLSchema")
+				&& ComplexType.class.isInstance(dt)).forEach(dt -> {
+					this.analysis.getDataTypes().stream()
+							.filter(dtx -> dtx.getNamespace()
+									.equals("http://www.w3.org/2001/XMLSchema")
+									&& dtx.getJavaClassName()
+											.equals(dt.getJavaClassName()))
+							.findFirst().ifPresent(dtx -> ((ComplexType) dt)
+									.setDescendedFromId(dtx.getId()));
 				});
 		this.analysis.getDataTypes().stream()
 				.filter(dt -> FieldMappingType.class.isInstance(dt))
 				.map(dt -> (FieldMappingType) dt).forEach(fm -> {
 					Set<String> fieldMappingIds = new TreeSet<>();
 					Map<String, ComplexType> ctMap = new HashMap<>();
-					fieldMappingIds.addAll(fm.getInput().stream()
-							.filter(in -> Objects.nonNull(in)
-									&& Objects.nonNull(in.getName())
+					fieldMappingIds
+							.addAll(fm.getInput().stream()
+									.filter(in -> Objects.nonNull(in)
+											&& Objects
+													.nonNull(in.getName())
 									&& !in.getName().equals("value")
 									&& !in.getName().equals("return")
 									&& !in.getName().equals("interfaceName")
@@ -482,9 +500,11 @@ public class AnalysisProvider {
 		if (Objects.nonNull(fieldMappings) && fieldMappings.size() > 0) {
 			Set<String> ids = new TreeSet<>();
 			fieldMappings.stream().filter(fm -> Objects.nonNull(fm))
-					.forEach(fm -> fm.getInput().stream()
-							.filter(i -> Objects.nonNull(i.getName())
-									&& !i.getName().equals("interfaceName")
+					.forEach(
+							fm -> fm.getInput().stream()
+									.filter(i -> Objects.nonNull(i.getName())
+											&& !i.getName()
+													.equals("interfaceName")
 									&& !i.getName().equals("value")
 									&& !i.getName().equals("return"))
 							.forEach(i -> ids
@@ -893,7 +913,10 @@ public class AnalysisProvider {
 		value.setNamespace(element.getTargetNamespace());
 		value.setJavaClassName(element.getClassNameFullQualified());
 		value.setJavaPackageName(element.getPackageName());
-		value.setShortName(element.getClassName());
+		value.setShortName(element.getQNameLocalPart());
+		if (!value.getShortName().equals("")) {
+			value.setShortName(element.getClassName());
+		}
 		this.uuidProvider.setUUID(value);
 	}
 
