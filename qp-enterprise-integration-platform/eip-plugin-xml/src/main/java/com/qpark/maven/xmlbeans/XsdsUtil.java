@@ -1230,6 +1230,8 @@ public class XsdsUtil {
 		});
 		this.elementTypes.addAll(synchronizedElementTypeList);
 		this.complexTypes.addAll(synchronizedComplexTypeList);
+		this.complexTypes.stream().parallel()
+				.forEach(ct -> ct.setupBaseComplexType(this));
 		logger.info(
 				"{} to get {} complexTypes and {} elementTypes out of {} files",
 				Util.getDuration(System.currentTimeMillis() - startX),
