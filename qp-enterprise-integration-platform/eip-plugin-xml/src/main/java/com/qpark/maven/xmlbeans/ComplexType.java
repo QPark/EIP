@@ -236,14 +236,6 @@ public class ComplexType implements Comparable<ComplexType> {
 			}
 			setServiceRequestResponseDetection(config, this);
 
-			SchemaType st = type.getBaseType();
-			if (st != null && st.getName() != null) {
-				this.baseComplexType = config.getComplexType(st.getName());
-				if (this.baseComplexType != null && this.baseComplexType
-						.toQNameString().equals(this.toQNameString())) {
-					this.baseComplexType = null;
-				}
-			}
 			for (SchemaProperty o : type.getElementProperties()) {
 				if (!o.getType().isSimpleType()
 						&& !o.getType().isPrimitiveType()
@@ -310,6 +302,17 @@ public class ComplexType implements Comparable<ComplexType> {
 
 		this.mapRequestType = isMapRequestType(type);
 		this.mapResponseType = isMapResponseType(type);
+	}
+
+	void initDescent(final XsdsUtil config) {
+		SchemaType st = this.type.getBaseType();
+		if (st != null && st.getName() != null) {
+			this.baseComplexType = config.getComplexType(st.getName());
+			if (this.baseComplexType != null && this.baseComplexType
+					.toQNameString().equals(this.toQNameString())) {
+				this.baseComplexType = null;
+			}
+		}
 	}
 
 	/**
