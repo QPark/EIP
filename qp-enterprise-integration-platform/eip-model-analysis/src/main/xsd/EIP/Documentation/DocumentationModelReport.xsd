@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+	xmlns:DMR="http://www.qpark-consulting.com/EIP/Utility/DocumentationModelReport"
+	targetNamespace="http://www.qpark-consulting.com/EIP/Utility/DocumentationModelReport"
+>
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.model.docmodelreport" />
+			</jaxb:schemaBindings>
+		</appinfo>
+	</annotation>
+
+	<complexType name="ServiceOperationType">
+		<sequence>
+			<element name="service" type="normalizedString">
+				<annotation><documentation>The service id.</documentation></annotation>
+			</element>
+			<element name="operation" type="normalizedString">
+				<annotation><documentation>The operation name.</documentation></annotation>
+			</element>
+			<element name="requestResponse" type="DMR:RequestResponseTypeType">
+				<annotation><documentation>The operation request or response.</documentation></annotation>
+			</element>
+			<element name="description" type="string" minOccurs="0">
+				<annotation><documentation>The description of the operation.</documentation></annotation>
+			</element>
+			<element name="elements" type="string" minOccurs="0">
+				<annotation><documentation>The child elements of the operations request or response type.</documentation></annotation>
+			</element>
+			<element name="flowLink" type="string" minOccurs="0">
+				<annotation><documentation>The names of the flows linked with the operation.</documentation></annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="FlowProcessStepType">
+		<sequence>
+			<element name="flow" type="normalizedString">
+				<annotation><documentation>The name of the Flow.</documentation></annotation>
+			</element>
+			<element name="direction" type="DMR:FlowProcessStepDirectionType">
+				<annotation><documentation>The direction of the Flows process step.</documentation></annotation>
+			</element>
+			<element name="inputOutput" type="string">
+				<annotation><documentation>The representation of the input- or output type used in the Flows process step.</documentation></annotation>
+			</element>
+			<element name="type" type="DMR:FlowProcessStepStepType">
+				<annotation><documentation>The processing step type.</documentation></annotation>
+			</element>
+			<element name="processingStep" type="normalizedString">
+				<annotation><documentation>The name of the Flows processing step.</documentation></annotation>
+			</element>
+			<element name="description" type="string" minOccurs="0">
+				<annotation><documentation>The description of the Flows processing step.</documentation></annotation>
+			</element>
+			<element name="mappingInputTypes" type="string" minOccurs="0">
+				<annotation><documentation>The representation of the input types used by the mapping of the Flows processing type.</documentation></annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="FlowMappingInterfaceFieldType">
+		<sequence>
+			<element name="flow" type="normalizedString">
+				<annotation><documentation>The name of the Flow.</documentation></annotation>
+			</element>
+			<element name="interfaceType" type="normalizedString">
+				<annotation><documentation>The name of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="field" type="normalizedString">
+				<annotation><documentation>The name of the field of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="cardinality" type="string" minOccurs="0">
+				<annotation><documentation>The cardinality ([0..1], [0..*], [1..1] ...) of the field of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="fieldDescription" type="string" >
+				<annotation><documentation>The description of the field of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="mapping" type="normalizedString" >
+				<annotation><documentation>The mapping type name of the field of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="mappingType" type="normalizedString" >
+				<annotation><documentation>The mapping type type(default, direct, complex ...) of the field of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="description" type="string" >
+				<annotation><documentation>The mapping type description of the field of the mapping interface type.</documentation></annotation>
+			</element>
+			<element name="mappingInputTypes" type="string" >
+				<annotation><documentation>The representation of the input types used by the mapping type the field of the mapping interface type.</documentation></annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="UsedComplexTypeType">
+		<sequence>
+			<element name="typeName" type="normalizedString">
+				<annotation><documentation>The name of the complex type.</documentation></annotation>
+			</element>
+			<element name="namespace" type="normalizedString">
+				<annotation><documentation>The target namespace of the complex type.</documentation></annotation>
+			</element>
+			<element name="description" type="string" minOccurs="0">
+				<annotation><documentation>The description of the complex type.</documentation></annotation>
+			</element>
+			<element name="fields" type="string" minOccurs="0">
+				<annotation><documentation>The child elements of the complex type.</documentation></annotation>
+			</element>
+			<element name="inheritedFrom" type="string" minOccurs="0">
+				<annotation><documentation>The hierarchy of ancestors of the complex type.</documentation></annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<simpleType name="RequestResponseTypeType">
+		<annotation><documentation>A service operation request or response.</documentation></annotation>
+		<restriction base="normalizedString">
+			<enumeration value="Request"/>
+			<enumeration value="Response"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="FlowProcessStepDirectionType">
+		<annotation><documentation>A Flow process step direction.</documentation></annotation>
+		<restriction base="normalizedString">
+			<enumeration value="Inbound"/>
+			<enumeration value="Outbound"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="FlowProcessStepStepType">
+		<annotation><documentation>A Flow process step type.</documentation></annotation>
+		<restriction base="normalizedString">
+			<enumeration value="Mapping"/>
+			<enumeration value="Rule"/>
+			<enumeration value="Information Request"/>
+		</restriction>
+	</simpleType>
+
+</schema>
