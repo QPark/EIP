@@ -1,0 +1,55 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+
+	xmlns:LSv25="http://www.qpark.com/LimeSurvey/LimeSurvey-2.5"
+	targetNamespace="http://www.qpark.com/LimeSurvey/LimeSurvey-2.5"
+>
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.lime.survey.model.v25" />
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation></documentation>
+	</annotation>
+
+	<complexType name="RequestType">
+		<sequence>
+			<element name="method" type="normalizedString">
+				<annotation><documentation>The name of the method to request.</documentation></annotation>
+			</element>
+			<element name="params" type="string" minOccurs="0" maxOccurs="unbounded">
+				<annotation><documentation>The parameters to pass to the method request.</documentation></annotation>
+			</element>
+			<element name="id" type="int" minOccurs="0" maxOccurs="1">
+				<annotation><documentation>The parameters to pass to the method request.</documentation></annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="GetSessionKeyResponseType">
+		<sequence>
+			<element name="id" type="int"/>
+			<element name="result" type="string">
+				<annotation><documentation>The session key.</documentation></annotation>
+			</element>
+			<element name="error" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="ListSurveysResponseType">
+		<sequence>
+			<element name="id" type="int"/>
+			<element name="result" type="LSv25:ListSurveysEntryType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="error" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="ListSurveysEntryType">
+		<sequence>
+			<element name="sid" type="int"/>
+			<element name="surveysTitle" type="string"/>
+			<element name="startdate" type="dateTime"/>
+			<element name="expires" type="dateTime"/>
+			<element name="active" type="normalizedString"/>
+		</sequence>
+	</complexType>
+</schema>
