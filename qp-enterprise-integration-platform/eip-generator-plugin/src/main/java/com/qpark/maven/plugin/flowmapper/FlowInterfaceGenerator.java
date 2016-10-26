@@ -211,6 +211,8 @@ public class FlowInterfaceGenerator {
 				sb.append(smd.suffix);
 			} else if (methodName.equals("filter")) {
 				sb.append(smd.suffix);
+			} else if (methodName.equals("rule")) {
+				sb.append(smd.suffix);
 			} else if (smd.isRequest() && !methodName.endsWith("Request")) {
 				sb.append("Request");
 			} else if (!smd.isRequest() && !methodName.endsWith("Response")) {
@@ -258,6 +260,8 @@ public class FlowInterfaceGenerator {
 			} else if (methodName.equals("subRequest")) {
 				sb.append(smd.suffix);
 			} else if (methodName.equals("filter")) {
+				sb.append(smd.suffix);
+			} else if (methodName.equals("rule")) {
 				sb.append(smd.suffix);
 			} else if (smd.isRequest() && !methodName.endsWith("Request")) {
 				sb.append("Request");
