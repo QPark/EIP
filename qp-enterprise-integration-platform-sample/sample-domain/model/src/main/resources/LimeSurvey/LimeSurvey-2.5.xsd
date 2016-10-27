@@ -87,4 +87,22 @@
 			<element name="error" type="string"/>
 		</sequence>
 	</complexType>
+	<complexType name="ExportResponsesListType">
+		<sequence>
+			<element name="responses" type="LSv25:ExportResponsesListEntryType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="ExportResponsesListEntryType">
+		<sequence>
+			<element name="id" type="string" minOccurs="0" />
+			<element name="submitdate" type="dateTime" minOccurs="0" />
+			<element name="lastpage" type="string" minOccurs="0" />
+			<element name="startlanguage" type="string" minOccurs="0" />
+			<element name="token" type="string" minOccurs="0" />
+			<element name="startdate" type="dateTime" minOccurs="0" />
+			<element name="datestamp" type="dateTime" minOccurs="0" />
+			<element name="ipaddr" type="string" minOccurs="0" />
+			<element name="refurl" type="string" minOccurs="0" />
+		</sequence>
+	</complexType>
 </schema>
