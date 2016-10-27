@@ -286,7 +286,8 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 								.append(".ObjectFactory").toString()
 								// ,"org.springframework.beans.factory.annotation.Autowired"
 								,
-						"org.springframework.stereotype.Component"
+						"org.springframework.stereotype.Component",
+						"java.util.Objects"
 		// ,"org.apache.commons.beanutils.PropertyUtils"
 		);
 		return imports;

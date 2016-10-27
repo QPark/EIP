@@ -169,12 +169,12 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.getSetterStatements("mappingType", children));
 		sb.append("\n");
 
-		sb.append("\t\tObject mappedReturnValue = null;\n");
-
 		if (returnValueClassName != null) {
 			sb.append("\t\t");
 			sb.append(returnValueClassName);
 			sb.append(" mappedReturnValue;\n");
+		} else {
+			sb.append("\t\tObject mappedReturnValue = null;\n");
 		}
 		if (children.size() == 0) {
 			this.log.warn(this.complexType.getType().getName()
@@ -291,8 +291,8 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 				.getChild(propertyNames[index]);
 		if (child != null) {
 			sb.append("").append(tabs);
-			sb.append("if (").append(object.getJavaChildName())
-					.append(" != null");
+			sb.append("if (Objects.nonNull(").append(object.getJavaChildName())
+					.append(")");
 			if (object.isList()) {
 				sb.append(" && ").append(object.getJavaChildName())
 						.append(".size() > 0");
