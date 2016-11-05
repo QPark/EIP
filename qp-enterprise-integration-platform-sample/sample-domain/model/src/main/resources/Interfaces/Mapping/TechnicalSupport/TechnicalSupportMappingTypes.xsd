@@ -295,7 +295,24 @@ The ComplexMappingTypes could be done as a DirectMappingType too. Here it is don
 					<element name="key2" type="string" default="externalNetwork" />
 					<element name="value2" type="long" default="3456789" />
 					<element name="default" type="string" default="9876543" />
-					<element name="return" type="long"/>
+					<element name="return" type="long" default="987654321"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="ApplicationUserLog.networkToDecimalTabularMappingType">
+		<annotation><documentation>Map the hostname to a network identifier</documentation></annotation>
+		<complexContent>
+			<extension base="MPmp:TabularMappingType">
+				<sequence>
+					<element name="network" type="MPmTechSupport:ApplicationUserLog.networkTabularMappingType"/>
+					<element name="key0" type="string" default="localhost" />
+					<element name="value0" type="decimal" default="1234567.0" />
+					<element name="key1" type="string" default="internalNetwork" />
+					<element name="value1" type="decimal" default="2345678.0" />
+					<element name="key2" type="string" default="externalNetwork" />
+					<element name="value2" type="decimal" default="3456789" />
+					<element name="return" type="decimal" default="987654321.0"/>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -313,7 +330,7 @@ The ComplexMappingTypes could be done as a DirectMappingType too. Here it is don
 					<element name="key2" type="long" default="3456789" />
 					<element name="value2" type="double" default="3456.789" />
 					<element name="default" type="double" default="9876.543" />
-					<element name="return" type="double"/>
+					<element name="return" type="double" default="987654321.2"/>
 				</sequence>
 			</extension>
 		</complexContent>
