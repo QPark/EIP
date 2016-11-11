@@ -60,7 +60,7 @@ public class FlowInterfaceGenerator {
 
 		public ComplexTypeChild getIn() {
 			ComplexTypeChild ctc = null;
-			for (ComplexTypeChild i : this.getInput()) {
+			for (final ComplexTypeChild i : this.getInput()) {
 				ctc = i;
 				break;
 			}
@@ -96,7 +96,7 @@ public class FlowInterfaceGenerator {
 
 	private static String getJavaDocCommentInvokeRequestResponseMethod(
 			final SimpleMethodDefinition smd) {
-		StringBuffer sb = new StringBuffer(128);
+		final StringBuffer sb = new StringBuffer(128);
 		if (smd != null) {
 			String a = "Process the ";
 			String b = "response";
@@ -116,7 +116,7 @@ public class FlowInterfaceGenerator {
 
 	private static String getJavaDocCommentMapMethod(
 			final SimpleMethodDefinition smd) {
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		sb.append("\t * Map");
 		if (smd.getInput().size() > 0) {
 			sb.append(" a");
@@ -141,7 +141,7 @@ public class FlowInterfaceGenerator {
 
 	private static String getJavaDocCommentSubRequest(
 			final SimpleMethodDefinition smd) {
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		sb.append("\t * Do a sub request to get ");
 		if (smd.getOut() != null) {
 			sb.append("\n\t * a {@link ");
@@ -166,7 +166,7 @@ public class FlowInterfaceGenerator {
 
 	private static String getMethodDeclaration(final SimpleMethodDefinition smd,
 			final String methodName, final String javaDocComment) {
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 
 		if (smd != null) {
 			sb.append("\n");
@@ -174,7 +174,7 @@ public class FlowInterfaceGenerator {
 			if (javaDocComment != null) {
 				sb.append(javaDocComment);
 			}
-			for (ComplexTypeChild ctc : smd.getInput()) {
+			for (final ComplexTypeChild ctc : smd.getInput()) {
 				sb.append("\t * @param ");
 				sb.append(ctc.getChildName());
 				sb.append(" the {@link ");
@@ -250,7 +250,7 @@ public class FlowInterfaceGenerator {
 
 	private static String getMethodLink(final SimpleMethodDefinition smd,
 			final String methodName) {
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 
 		if (smd != null) {
 			sb.append("{@link #");
@@ -270,13 +270,13 @@ public class FlowInterfaceGenerator {
 			}
 			sb.append("(");
 			for (int i = 0; i < smd.getInput().size(); i++) {
-				ComplexTypeChild ctc = smd.getInput().get(i);
+				final ComplexTypeChild ctc = smd.getInput().get(i);
 				if (i > 0) {
 					sb.append(", ");
 				}
 				sb.append(ctc.getComplexType().getClassNameFullQualified());
 			}
-			sb.append(")}");
+			sb.append(", FlowContext)}");
 		}
 		return sb.toString();
 	}
@@ -284,17 +284,17 @@ public class FlowInterfaceGenerator {
 	private static List<SimpleMethodDefinition> getSimpleMethodDefinition(
 			final ComplexType ct, final String prefixIn, final String prefixOut,
 			final boolean request) {
-		List<SimpleMethodDefinition> simpleMethods = new ArrayList<SimpleMethodDefinition>();
-		Set<String> inChildrenFound = new TreeSet<String>();
+		final List<SimpleMethodDefinition> simpleMethods = new ArrayList<SimpleMethodDefinition>();
+		final Set<String> inChildrenFound = new TreeSet<String>();
 		SimpleMethodDefinition def;
-		for (ComplexTypeChild childOut : ct.getChildren()) {
+		for (final ComplexTypeChild childOut : ct.getChildren()) {
 			if (childOut.getChildName().startsWith(prefixOut)) {
 				def = new SimpleMethodDefinition(childOut.getComplexType(),
 						request);
 				def.setOutList(childOut.isList());
 				simpleMethods.add(def);
 				def.setSuffix(getSuffix(childOut, prefixOut));
-				for (ComplexTypeChild childIn : ct.getChildren()) {
+				for (final ComplexTypeChild childIn : ct.getChildren()) {
 					if (childIn.getChildName().equals(new StringBuffer(16)
 							.append(prefixIn).append(def.suffix).toString())) {
 						def.getInput().add(childIn);
@@ -303,13 +303,13 @@ public class FlowInterfaceGenerator {
 				}
 			}
 		}
-		for (ComplexTypeChild childIn : ct.getChildren()) {
+		for (final ComplexTypeChild childIn : ct.getChildren()) {
 			if (childIn.getChildName().startsWith(prefixIn)
 					&& !inChildrenFound.contains(childIn.getChildName())) {
 				def = new SimpleMethodDefinition(childIn, request);
 				simpleMethods.add(def);
 				def.setSuffix(getSuffix(childIn, prefixIn));
-				for (ComplexTypeChild childOut : ct.getChildren()) {
+				for (final ComplexTypeChild childOut : ct.getChildren()) {
 					if (childOut.getChildName().equals(new StringBuffer(16)
 							.append(prefixOut).append(def.suffix).toString())) {
 						def.setOut(childOut.getComplexType());
@@ -408,16 +408,16 @@ public class FlowInterfaceGenerator {
 
 	public void generateInterface(final File outputDirectory,
 			final String basicFlowPackageName) {
-		String source = this.generateInterface(basicFlowPackageName);
+		final String source = this.generateInterface(basicFlowPackageName);
 		this.log.debug("+generateInterface");
-		File f = Util.getFile(outputDirectory, this.packageName,
+		final File f = Util.getFile(outputDirectory, this.packageName,
 				new StringBuffer().append(this.flowName).append(".java")
 						.toString());
 		this.log.info(new StringBuffer().append("Write Flow ")
 				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, source);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			this.log.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -427,21 +427,21 @@ public class FlowInterfaceGenerator {
 	String generateInterface(final String basicFlowPackageName) {
 		this.log.debug("+generateInterface");
 
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append("package ");
 		sb.append(this.packageName);
 		sb.append(";\n");
 		sb.append("\n");
 
-		Set<String> imports = new TreeSet<String>();
+		final Set<String> imports = new TreeSet<String>();
 		imports.add(new StringBuffer(basicFlowPackageName).append(".Flow")
 				.toString());
 		imports.add(new StringBuffer(basicFlowPackageName)
 				.append(".FlowContext").toString());
-		Set<String> importedClasses = new TreeSet<String>();
+		final Set<String> importedClasses = new TreeSet<String>();
 		importedClasses.add(this.flowInput.getClassNameFullQualified());
 
-		for (ComplexTypeChild child : this.flowInput.getChildren()) {
+		for (final ComplexTypeChild child : this.flowInput.getChildren()) {
 			AbstractGenerator.addImport(
 					child.getComplexType().getClassNameFullQualified(), imports,
 					importedClasses);
@@ -453,7 +453,7 @@ public class FlowInterfaceGenerator {
 
 		if (this.flowOutput != null) {
 			importedClasses.add(this.flowOutput.getClassNameFullQualified());
-			for (ComplexTypeChild child : this.flowOutput.getChildren()) {
+			for (final ComplexTypeChild child : this.flowOutput.getChildren()) {
 				AbstractGenerator.addImport(
 						child.getComplexType().getClassNameFullQualified(),
 						imports, importedClasses);
@@ -461,7 +461,7 @@ public class FlowInterfaceGenerator {
 		}
 		imports.add("java.util.List");
 		imports.add("com.springsource.insight.annotation.InsightOperation");
-		for (String importedClass : imports) {
+		for (final String importedClass : imports) {
 			sb.append("import ").append(importedClass).append(";\n");
 		}
 
@@ -494,7 +494,7 @@ public class FlowInterfaceGenerator {
 			}
 			if (!this.subRequests.isEmpty()) {
 				sb.append(".\n * <p/>\n * Be sure to call:\n * <ul>\n");
-				for (SimpleMethodDefinition smd : this.subRequests) {
+				for (final SimpleMethodDefinition smd : this.subRequests) {
 					sb.append(" * </li>");
 					sb.append(getMethodLink(smd, "subRequest"));
 					sb.append("</li>\n");
@@ -503,7 +503,7 @@ public class FlowInterfaceGenerator {
 			}
 			if (!this.filters.isEmpty()) {
 				sb.append(".\n * <p/>\n * Apply the filters:\n * <ul>\n");
-				for (SimpleMethodDefinition smd : this.filters) {
+				for (final SimpleMethodDefinition smd : this.filters) {
 					sb.append(" * </li>");
 					sb.append(getMethodLink(smd, "filter"));
 					sb.append("</li>\n");
@@ -512,7 +512,7 @@ public class FlowInterfaceGenerator {
 			}
 			if (!this.rules.isEmpty()) {
 				sb.append(".\n * <p/>\n * Apply the rules:\n * <ul>\n");
-				for (SimpleMethodDefinition smd : this.rules) {
+				for (final SimpleMethodDefinition smd : this.rules) {
 					sb.append(" * </li>");
 					sb.append(getMethodLink(smd, "rule"));
 					sb.append("</li>\n");
@@ -566,21 +566,21 @@ public class FlowInterfaceGenerator {
 		sb.append(getMethodDeclaration(this.response, "processResponse",
 				getJavaDocCommentInvokeRequestResponseMethod(this.response)));
 
-		for (SimpleMethodDefinition smd : this.subRequests) {
+		for (final SimpleMethodDefinition smd : this.subRequests) {
 			sb.append(getMethodDeclaration(smd, "subRequest",
 					getJavaDocCommentSubRequest(smd)));
 		}
-		for (SimpleMethodDefinition smd : this.filters) {
+		for (final SimpleMethodDefinition smd : this.filters) {
 			sb.append(getMethodDeclaration(smd, "filter",
 					getJavaDocCommentSubRequest(smd)));
 		}
-		for (SimpleMethodDefinition smd : this.rules) {
+		for (final SimpleMethodDefinition smd : this.rules) {
 			sb.append(getMethodDeclaration(smd, "rule",
 					getJavaDocCommentSubRequest(smd)));
 		}
-		Set<String> inOutMethods = new TreeSet<String>();
+		final Set<String> inOutMethods = new TreeSet<String>();
 		String link;
-		for (SimpleMethodDefinition smd : this.mappings) {
+		for (final SimpleMethodDefinition smd : this.mappings) {
 			link = getMethodLink(smd, "mapInOut");
 			if (!inOutMethods.contains(link)) {
 				inOutMethods.add(link);
