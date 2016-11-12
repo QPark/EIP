@@ -21,6 +21,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -59,7 +60,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 * @return the {@link Date} .
 	 */
 	private static Date getDayEnd(final Date d) {
-		Calendar gc = new GregorianCalendar(LOGGING_TIMEZONE);
+		final Calendar gc = new GregorianCalendar(LOGGING_TIMEZONE);
 		gc.setTime(d);
 		gc.set(Calendar.HOUR_OF_DAY, 23);
 		gc.set(Calendar.MINUTE, 59);
@@ -75,7 +76,7 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	 * @return the {@link Date} .
 	 */
 	private static Date getDayStart(final Date d) {
-		Calendar gc = new GregorianCalendar(LOGGING_TIMEZONE);
+		final Calendar gc = new GregorianCalendar(LOGGING_TIMEZONE);
 		gc.setTime(d);
 		gc.set(Calendar.HOUR_OF_DAY, 0);
 		gc.set(Calendar.MINUTE, 0);
@@ -129,12 +130,12 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 		}
 
 		/* Setup to search existing one. */
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<SystemUserLogType> q = cb
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<SystemUserLogType> q = cb
 				.createQuery(SystemUserLogType.class);
-		Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
+		final Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
 
-		List<Predicate> predicates = new ArrayList<Predicate>();
+		final List<Predicate> predicates = new ArrayList<Predicate>();
 		predicates.add(cb.equal(c.<String> get(SystemUserLogType_.context),
 				log.getContext()));
 		predicates.add(cb.equal(c.<String> get(SystemUserLogType_.version),
@@ -173,15 +174,15 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 					this.setupSystemUserLog(persistence, log);
 					this.em.merge(persistence);
 				}
-			} catch (NoResultException e) {
+			} catch (final NoResultException e) {
 				/* Not found -> persist */
 				persistence = log;
 				this.setupSystemUserLog(persistence, null);
 				this.em.persist(persistence);
-			} catch (NonUniqueResultException e) {
+			} catch (final NonUniqueResultException e) {
 				/* Found more */
 				typedQuery = this.em.createQuery(q);
-				List<SystemUserLogType> list = typedQuery.getResultList();
+				final List<SystemUserLogType> list = typedQuery.getResultList();
 				SystemUserLogType l;
 				for (int i = 0; i < list.size(); i++) {
 					l = list.get(i);
@@ -260,36 +261,24 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void eraseApplicationUserLog(final Date toDate) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<Long> q = cb.createQuery(Long.class);
-		Root<ApplicationUserLogType> c = q.from(ApplicationUserLogType.class);
-		q.select(c.<Long> get(ApplicationUserLogType_.hjid));
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaDelete<ApplicationUserLogType> q = cb
+				.createCriteriaDelete(ApplicationUserLogType.class);
+		final Root<ApplicationUserLogType> c = q
+				.from(ApplicationUserLogType.class);
 		q.where(cb.lessThan(c.<Date> get(ApplicationUserLogType_.stopItem),
 				toDate),
 				cb.equal(c.<String> get(ApplicationUserLogType_.context),
 						this.contextNameProvider.getContextName()));
-		q.orderBy(cb.desc(c.get(ApplicationUserLogType_.userName)),
-				cb.desc(c.get(ApplicationUserLogType_.serviceName)),
-				cb.desc(c.get(ApplicationUserLogType_.operationName)));
-		TypedQuery<Long> typedQuery = this.em.createQuery(q);
-		List<Long> pks = typedQuery.getResultList();
-		Object logEntryReference;
-		for (Long pk : pks) {
-			try {
-				logEntryReference = this.em
-						.getReference(ApplicationUserLogType.class, pk);
-				if (logEntryReference != null) {
-					this.em.remove(logEntryReference);
-				}
-			} catch (Exception e) {
-				// Nothing do to. Maybe another parallel task already deleted
-				// the entry.
-			}
+		try {
+			this.em.createQuery(q).executeUpdate();
+		} catch (final Exception e) {
+			this.logger.error("eraseApplicationUserLog: {}", e.getMessage());
 		}
 	}
 
 	/**
-	 * Erase all {@link SystemUserLogType}s of the application scope older than
+	 * Erase all {@link FlowLogMessageType}s of the application scope older than
 	 * the given date.
 	 *
 	 * @param toDate
@@ -298,29 +287,16 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void eraseFlowLogMessage(final Date toDate) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<Long> q = cb.createQuery(Long.class);
-		Root<FlowLogMessageType> c = q.from(FlowLogMessageType.class);
-		q.select(c.<Long> get(FlowLogMessageType_.hjid));
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaDelete<FlowLogMessageType> q = cb
+				.createCriteriaDelete(FlowLogMessageType.class);
+		final Root<FlowLogMessageType> c = q.from(FlowLogMessageType.class);
 		q.where(cb.lessThan(c.<Date> get(FlowLogMessageType_.logTimeItem),
 				toDate));
-		q.orderBy(cb.desc(c.<String> get(FlowLogMessageType_.flowIdentifier)),
-				cb.desc(c.<String> get(FlowLogMessageType_.flowStep)),
-				cb.desc(c.<String> get(FlowLogMessageType_.flowSession)));
-		TypedQuery<Long> typedQuery = this.em.createQuery(q);
-		List<Long> pks = typedQuery.getResultList();
-		Object logEntryReference;
-		for (Long pk : pks) {
-			try {
-				logEntryReference = this.em
-						.getReference(FlowLogMessageType.class, pk);
-				if (logEntryReference != null) {
-					this.em.remove(logEntryReference);
-				}
-			} catch (Exception e) {
-				// Nothing do to. Maybe another parallel task already deleted
-				// the entry.
-			}
+		try {
+			this.em.createQuery(q).executeUpdate();
+		} catch (final Exception e) {
+			this.logger.error("eraseFlowLogMessage: {}", e.getMessage());
 		}
 	}
 
@@ -334,31 +310,18 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public void eraseSystemUserLog(final Date toDate) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<Long> q = cb.createQuery(Long.class);
-		Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
-		q.select(c.<Long> get(SystemUserLogType_.hjid));
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaDelete<SystemUserLogType> q = cb
+				.createCriteriaDelete(SystemUserLogType.class);
+		final Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
 		q.where(cb.lessThan(c.<Date> get(SystemUserLogType_.logDateItem),
 				toDate),
 				cb.equal(c.<String> get(SystemUserLogType_.context),
 						this.contextNameProvider.getContextName()));
-		q.orderBy(cb.desc(c.get(SystemUserLogType_.userName)),
-				cb.desc(c.get(SystemUserLogType_.serviceName)),
-				cb.desc(c.get(SystemUserLogType_.operationName)));
-		TypedQuery<Long> typedQuery = this.em.createQuery(q);
-		List<Long> pks = typedQuery.getResultList();
-		Object logEntryReference;
-		for (Long pk : pks) {
-			try {
-				logEntryReference = this.em
-						.getReference(SystemUserLogType.class, pk);
-				if (logEntryReference != null) {
-					this.em.remove(logEntryReference);
-				}
-			} catch (Exception e) {
-				// Nothing do to. Maybe another parallel task already deleted
-				// the entry.
-			}
+		try {
+			this.em.createQuery(q).executeUpdate();
+		} catch (final Exception e) {
+			this.logger.error("eraseSystemUserLog: {}", e.getMessage());
 		}
 	}
 
@@ -373,20 +336,22 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 			propagation = Propagation.REQUIRED)
 	public List<ApplicationUserLogType> getApplicationUserLogType(
 			final Date date) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		Date d = date;
 		if (d == null) {
 			d = new Date();
 		}
-		CriteriaQuery<ApplicationUserLogType> q = cb
+		final CriteriaQuery<ApplicationUserLogType> q = cb
 				.createQuery(ApplicationUserLogType.class);
-		Root<ApplicationUserLogType> c = q.from(ApplicationUserLogType.class);
+		final Root<ApplicationUserLogType> c = q
+				.from(ApplicationUserLogType.class);
 		q.where(cb.equal(c.<String> get(ApplicationUserLogType_.context),
 				this.contextNameProvider.getContextName()),
 				cb.between(c.<Date> get(ApplicationUserLogType_.startItem),
 						getDayStart(d), getDayEnd(d)));
 
-		TypedQuery<ApplicationUserLogType> typedQuery = this.em.createQuery(q);
+		final TypedQuery<ApplicationUserLogType> typedQuery = this.em
+				.createQuery(q);
 		return typedQuery.getResultList();
 	}
 
@@ -424,20 +389,20 @@ public class StatisticsLoggingDao extends AbstractEipDao {
 	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<SystemUserLogType> getSystemUserLogType(final Date date) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		Date d = date;
 		if (d == null) {
 			d = new Date();
 		}
-		CriteriaQuery<SystemUserLogType> q = cb
+		final CriteriaQuery<SystemUserLogType> q = cb
 				.createQuery(SystemUserLogType.class);
-		Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
+		final Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
 		q.where(cb.equal(c.<String> get(SystemUserLogType_.context),
 				this.contextNameProvider.getContextName()),
 				cb.between(c.<Date> get(SystemUserLogType_.logDateItem),
 						getDayStart(d), getDayEnd(d)));
 
-		TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);
+		final TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);
 		return typedQuery.getResultList();
 	}
 
