@@ -36,6 +36,7 @@
 		<module>eip-core-spring-lockedoperation</module>
 		<module>eip-core-spring-scheduling</module>
 		<module>eip-core-model-analysis</module>
+		<module>eip-core-sftp</module>
 	</modules>
 
 	<organization>
