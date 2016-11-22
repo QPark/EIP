@@ -7,7 +7,9 @@
 package com.qpark.maven.xmlbeans;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
@@ -45,7 +47,7 @@ public class ComplexType implements Comparable<ComplexType> {
 						.contains("default")
 				&& schemaType.getElementProperties() != null
 				&& schemaType.getElementProperties().length == 1) {
-			SchemaProperty defaultProperty = schemaType
+			final SchemaProperty defaultProperty = schemaType
 					.getElementProperties()[0];
 			if (defaultProperty.getType().isSimpleType()
 					&& defaultProperty.getType().getEnumerationValues() != null
@@ -104,9 +106,9 @@ public class ComplexType implements Comparable<ComplexType> {
 	private static void setServiceRequestResponseDetection(
 			final XsdsUtil config, final ComplexType ct) {
 		if (ct.getClassName() != null) {
-			int indexRequest = ct.getClassName()
+			final int indexRequest = ct.getClassName()
 					.lastIndexOf(config.getServiceRequestSuffix());
-			int indexResponse = ct.getClassName()
+			final int indexResponse = ct.getClassName()
 					.lastIndexOf(config.getServiceResponseSuffix());
 			if (indexRequest > 0 && indexResponse > 0) {
 				if (indexRequest > indexResponse) {
@@ -155,7 +157,7 @@ public class ComplexType implements Comparable<ComplexType> {
 		this.parent = parent;
 		if (parent == null && XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI
 				.equals(type.getName().getNamespaceURI())) {
-			Class<?> c = XsdsUtil.getBuildInJavaClass(type.getName());
+			final Class<?> c = XsdsUtil.getBuildInJavaClass(type.getName());
 			if (c.isPrimitive()) {
 				this.javaPrimitive = true;
 			} else if (c.isArray()) {
@@ -175,7 +177,8 @@ public class ComplexType implements Comparable<ComplexType> {
 			if (buildInBase.isSimpleType()) {
 				buildInBase = XsdsUtil.getBuildInBaseType(buildInBase);
 			}
-			Class<?> c = XsdsUtil.getBuildInJavaClass(buildInBase.getName());
+			final Class<?> c = XsdsUtil
+					.getBuildInJavaClass(buildInBase.getName());
 			if (c.isPrimitive()) {
 				this.javaPrimitive = true;
 			} else if (c.isArray()) {
@@ -191,7 +194,7 @@ public class ComplexType implements Comparable<ComplexType> {
 			this.classNameFq = c.getName();
 		} else {
 			if (parent == null) {
-				String pn = config.getPackageName(this.type.getName());
+				final String pn = config.getPackageName(this.type.getName());
 				this.packageName = pn == null || pn.trim().length() == 0 ? ""
 						: pn;
 			} else {
@@ -211,7 +214,7 @@ public class ComplexType implements Comparable<ComplexType> {
 											? "" : ".")
 							.append(this.className).toString();
 				} else {
-					String name = Util.getXjcClassName(
+					final String name = Util.getXjcClassName(
 							type.getContainerField().getName().getLocalPart());
 					this.className = new StringBuffer(128)
 							.append(parent.getClassName()).append(".")
@@ -225,7 +228,7 @@ public class ComplexType implements Comparable<ComplexType> {
 				}
 			} else {
 				this.classNameFq = this.type.getFullJavaName();
-				int index = this.classNameFq.lastIndexOf('.');
+				final int index = this.classNameFq.lastIndexOf('.');
 				if (index > 0) {
 					this.className = this.classNameFq.substring(index + 1);
 				} else {
@@ -237,7 +240,7 @@ public class ComplexType implements Comparable<ComplexType> {
 			}
 			setServiceRequestResponseDetection(config, this);
 
-			for (SchemaProperty o : type.getElementProperties()) {
+			for (final SchemaProperty o : type.getElementProperties()) {
 				if (!o.getType().isSimpleType()
 						&& !o.getType().isPrimitiveType()
 						&& o.getType().getName() == null
@@ -249,10 +252,11 @@ public class ComplexType implements Comparable<ComplexType> {
 		if (this.type.getAnnotation() != null
 				&& this.type.getAnnotation().getUserInformation() != null
 				&& this.type.getAnnotation().getUserInformation().length > 0) {
-			StringBuffer sb = new StringBuffer(124);
-			for (XmlObject u : this.type.getAnnotation().getUserInformation()) {
+			final StringBuffer sb = new StringBuffer(124);
+			for (final XmlObject u : this.type.getAnnotation()
+					.getUserInformation()) {
 				if (u.getDomNode() != null) {
-					NodeList nl = u.getDomNode().getChildNodes();
+					final NodeList nl = u.getDomNode().getChildNodes();
 					for (int i = 0; i < nl.getLength(); i++) {
 						if (i > 0 && sb.length() > 0) {
 							sb.append(" ");
@@ -306,7 +310,7 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	void initDescent(final XsdsUtil config) {
-		SchemaType st = this.type.getBaseType();
+		final SchemaType st = this.type.getBaseType();
 		if (Objects.nonNull(st) && Objects.nonNull(st.getName())) {
 			this.baseComplexType = config.getComplexType(st.getName());
 			if (Objects.nonNull(this.baseComplexType) && this.baseComplexType
@@ -317,7 +321,8 @@ public class ComplexType implements Comparable<ComplexType> {
 		if (Objects.isNull(this.baseComplexType) && this.type.isSimpleType()
 				&& (this.type.getEnumerationValues() == null
 						|| this.type.getEnumerationValues().length == 0)) {
-			SchemaType buildInBase = XsdsUtil.getBuildInBaseType(this.type);
+			final SchemaType buildInBase = XsdsUtil
+					.getBuildInBaseType(this.type);
 			if (Objects.nonNull(buildInBase)
 					&& Objects.nonNull(buildInBase.getName())) {
 				this.baseComplexType = config
@@ -350,7 +355,7 @@ public class ComplexType implements Comparable<ComplexType> {
 
 	private boolean containsChildName(final String childName) {
 		boolean contains = false;
-		for (ComplexTypeChild child : this.getChildren()) {
+		for (final ComplexTypeChild child : this.getChildren()) {
 			if (child.getChildName().equals(childName)) {
 				contains = true;
 				break;
@@ -390,7 +395,7 @@ public class ComplexType implements Comparable<ComplexType> {
 	public ComplexTypeChild getChild(final String propertyName) {
 		ComplexTypeChild c = null;
 		if (propertyName != null) {
-			for (ComplexTypeChild child : this.getChildren()) {
+			for (final ComplexTypeChild child : this.getChildren()) {
 				if (child.getChildName().equals(propertyName)) {
 					c = child;
 					break;
@@ -408,6 +413,16 @@ public class ComplexType implements Comparable<ComplexType> {
 			this.children = new ArrayList<ComplexTypeChild>();
 		}
 		return this.children;
+	}
+
+	/**
+	 * @return a map of children name with the {@link ComplexTypeChild}s.
+	 */
+	public Map<String, ComplexTypeChild> getChildrenMap() {
+		final Map<String, ComplexTypeChild> value = new HashMap<>();
+		this.getChildren().stream()
+				.forEach(ctc -> value.put(ctc.getChildName(), ctc));
+		return value;
 	}
 
 	/**
@@ -435,12 +450,13 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	public Set<String> getJavaImportClasses() {
-		TreeSet<String> ts = new TreeSet<String>(new JavaImportComparator());
+		final TreeSet<String> ts = new TreeSet<String>(
+				new JavaImportComparator());
 		if (!this.isJavaPrimitive() && !this.isJavaArray()
 				&& !this.getPackageName().startsWith("org.apache.xmlbeans")) {
 			ts.add(this.getClassNameFullQualified());
 		}
-		for (ComplexTypeChild child : this.getChildren()) {
+		for (final ComplexTypeChild child : this.getChildren()) {
 			if (!child.getJavaPackage().startsWith("java.lang")
 					&& !child.getJavaPackage().startsWith("org.apache.xmlbeans")
 					&& !child.isJavaPrimitive() && !child.isJavaArray()) {
@@ -510,7 +526,7 @@ public class ComplexType implements Comparable<ComplexType> {
 		ComplexTypeChild child = null;
 		QName childType = null;
 		String childName;
-		for (SchemaProperty o : this.getType().getElementProperties()) {
+		for (final SchemaProperty o : this.getType().getElementProperties()) {
 			if (o.getName() != null && o.getType() != null
 					&& o.getType().getName() != null) {
 				childType = o.getType().getName();
@@ -524,7 +540,7 @@ public class ComplexType implements Comparable<ComplexType> {
 								o.getDefaultValue());
 						this.getChildren().add(child);
 					} else {
-						ComplexType c = config.getComplexType(childType);
+						final ComplexType c = config.getComplexType(childType);
 						if (c != null) {
 							child = new ComplexTypeChild(childName, c,
 									o.getMinOccurs(), o.getMaxOccurs(),
@@ -568,7 +584,7 @@ public class ComplexType implements Comparable<ComplexType> {
 	public String getDefaultValue() {
 		String defaultValue = null;
 		if (this.isDefaultMappingType()) {
-			SchemaProperty defaultProperty = this.getType()
+			final SchemaProperty defaultProperty = this.getType()
 					.getElementProperties()[0];
 			if (defaultProperty.getType().isSimpleType()
 					&& defaultProperty.getType().getEnumerationValues() != null
@@ -679,7 +695,7 @@ public class ComplexType implements Comparable<ComplexType> {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		sb.append(this.classNameFq).append("[").append(this.isAbstractType())
 				.append("/").append(this.isEnumType()).append("/")
 				.append(this.isSimpleType()).append("]");

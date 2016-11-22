@@ -75,7 +75,7 @@ public class XsdsUtil {
 	private static String getSampleCodingNamespaceAbbreviation(final String xml,
 			final String targetNamespace) {
 		String prefix = "";
-		int index = xml.indexOf(targetNamespace);
+		final int index = xml.indexOf(targetNamespace);
 		if (index > 0) {
 			if (xml.charAt(index - 1) == '"' && xml.charAt(index - 2) == '=') {
 				int i = 0;
@@ -111,10 +111,10 @@ public class XsdsUtil {
 			final Set<ComplexType> complexTypes, final XsdsUtil config) {
 		ComplexType request = null;
 		if (response.isResponseType()) {
-			int index = response.getClassName()
+			final int index = response.getClassName()
 					.lastIndexOf(config.getServiceResponseSuffix());
-			String baseName = response.getClassName().substring(0, index);
-			for (ComplexType complexType : complexTypes) {
+			final String baseName = response.getClassName().substring(0, index);
+			for (final ComplexType complexType : complexTypes) {
 				if (complexType.isRequestType()
 						&& complexType.getPackageName()
 								.equals(response.getPackageName())
@@ -142,10 +142,10 @@ public class XsdsUtil {
 			final Set<ComplexType> complexTypes, final XsdsUtil config) {
 		ComplexType response = null;
 		if (request.isRequestType()) {
-			int index = request.getClassName()
+			final int index = request.getClassName()
 					.lastIndexOf(config.getServiceRequestSuffix());
-			String baseName = request.getClassName().substring(0, index);
-			for (ComplexType complexType : complexTypes) {
+			final String baseName = request.getClassName().substring(0, index);
+			for (final ComplexType complexType : complexTypes) {
 				if (complexType.isResponseType()
 						&& complexType.getPackageName()
 								.equals(request.getPackageName())
@@ -172,13 +172,13 @@ public class XsdsUtil {
 	public static ElementType findResponse(final ElementType request,
 			final Set<ElementType> elementTypes, final XsdsUtil config) {
 		ElementType response = null;
-		int index = request.getClassNameObject()
+		final int index = request.getClassNameObject()
 				.lastIndexOf(config.getServiceRequestSuffix());
 		if (index > 0) {
-			String responseName = new StringBuffer()
+			final String responseName = new StringBuffer()
 					.append(request.getClassNameObject().substring(0, index))
 					.append(config.getServiceResponseSuffix()).toString();
-			for (ElementType elementType : elementTypes) {
+			for (final ElementType elementType : elementTypes) {
 				if (elementType.getClassNameObject().equals(responseName)
 						&& elementType.getPackageName()
 								.equals(request.getPackageName())) {
@@ -236,7 +236,7 @@ public class XsdsUtil {
 			final SchemaType schemaType) {
 		Class<?> c = getBuildInBaseTypeClassInternal(schemaType);
 		if (c == null) {
-			SchemaType baseSchemaType = getBuildInBaseType(schemaType);
+			final SchemaType baseSchemaType = getBuildInBaseType(schemaType);
 			c = getBuildInBaseTypeClassInternal(baseSchemaType);
 		}
 		if (c == null) {
@@ -310,7 +310,7 @@ public class XsdsUtil {
 
 	public static String getBuildInBaseTypeFormat(final SchemaType schemaType) {
 		String s = "";
-		SchemaType base = getBuildInBaseType(schemaType);
+		final SchemaType base = getBuildInBaseType(schemaType);
 		if (base.getName().getLocalPart().equals("dateTime")) {
 			s = "@DateTimeFormat(pattern = \"yyyyMMdd\")";
 		} else if (base.getName().getLocalPart().equals("time")) {
@@ -332,7 +332,7 @@ public class XsdsUtil {
 		Class<?> javaType = null;
 		if (qName != null && QNAME_BASE_SCHEMA_NAMESPACE_URI
 				.equals(qName.getNamespaceURI())) {
-			String typeName = qName.getLocalPart();
+			final String typeName = qName.getLocalPart();
 			if (typeName.equals("anyType")) {
 				javaType = org.apache.xmlbeans.XmlObject.class;
 			} else if (typeName.equals("anySimpleType")) {
@@ -443,16 +443,17 @@ public class XsdsUtil {
 	public static Map<String, String> getNotImportedModels(
 			final Map<String, XsdContainer> xsds,
 			final String messagePackageNameSuffix) {
-		TreeMap<String, String> notImportedModels = new TreeMap<String, String>();
-		for (Entry<String, XsdContainer> entry : xsds.entrySet()) {
+		final TreeMap<String, String> notImportedModels = new TreeMap<String, String>();
+		for (final Entry<String, XsdContainer> entry : xsds.entrySet()) {
 			if (!isMessagePackageName(entry.getValue().getPackageName(),
 					messagePackageNameSuffix)) {
 				notImportedModels.put(entry.getKey(),
 						entry.getValue().getFile().getAbsolutePath());
 			}
 		}
-		for (Entry<String, XsdContainer> entry : xsds.entrySet()) {
-			for (String imp : entry.getValue().getImportedTargetNamespaces()) {
+		for (final Entry<String, XsdContainer> entry : xsds.entrySet()) {
+			for (final String imp : entry.getValue()
+					.getImportedTargetNamespaces()) {
 				notImportedModels.remove(imp);
 			}
 		}
@@ -471,7 +472,7 @@ public class XsdsUtil {
 	 */
 	public static Map<String, String> getNotImportedModels(final XsdsUtil xsds,
 			final String messagePackageNameSuffix) {
-		Map<String, String> notImportedModels = getNotImportedModels(
+		final Map<String, String> notImportedModels = getNotImportedModels(
 				xsds.getXsdContainerMap(), messagePackageNameSuffix);
 		return notImportedModels;
 	}
@@ -482,7 +483,7 @@ public class XsdsUtil {
 	 * @return the {@link Comparator}.
 	 */
 	public static Comparator<QName> getQNameComparator() {
-		Comparator<QName> comparator = (o1, o2) -> {
+		final Comparator<QName> comparator = (o1, o2) -> {
 			if (o1 == o2) {
 				return 0;
 			} else if (o2 == null) {
@@ -510,30 +511,28 @@ public class XsdsUtil {
 		String xml = SampleXmlUtil.createSampleForType(schemaType);
 		if (schemaType.getName() != null
 				&& schemaType.getName().getNamespaceURI() != null) {
-			String prefix = getSampleCodingNamespaceAbbreviation(xml,
+			final String prefix = getSampleCodingNamespaceAbbreviation(xml,
 					schemaType.getName().getNamespaceURI());
 			if (prefix.length() > 0) {
 				xml = xml.replace("xml-fragment",
 						new StringBuffer(32).append(prefix).append(":")
 								.append(elementName).toString());
 			} else {
-				xml = xml
-						.replace("<xml-fragment",
-								new StringBuffer(32).append("<")
-										.append(elementName).append(" xmlns=\"")
-										.append(schemaType.getName()
-												.getNamespaceURI())
-										.append("\"").toString());
+				xml = xml.replace("<xml-fragment",
+						new StringBuffer(32).append("<").append(elementName)
+								.append(" xmlns=\"")
+								.append(schemaType.getName().getNamespaceURI())
+								.append("\"").toString());
 				xml = xml.replace("</xml-fragment", new StringBuffer(32)
 						.append("</").append(elementName).toString());
 			}
 		}
 		xml = xml.replace("<severity>ERROR</severity>",
 				"<severity>WARNING</severity>");
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		sb.append("\t\tStringBuffer sb = new StringBuffer();\n");
-		String[] ss = xml.split("\\n");
-		for (String string : ss) {
+		final String[] ss = xml.split("\\n");
+		for (final String string : ss) {
 			if (!string.contains("<!--Optional:-->")
 					&& !string.contains("<!--Zero or more repetitions:-->")) {
 				sb.append("\t\tsb.append(\"");
@@ -558,21 +557,21 @@ public class XsdsUtil {
 	public static SchemaTypeSystem getSchemaTypeSystem(final File file,
 			final EntityResolver entityResolver) {
 		SchemaTypeSystem sts = null;
-		ArrayList<XmlObject> parsedMessages = new ArrayList<XmlObject>();
-		XmlOptions xopt = new XmlOptions();
+		final ArrayList<XmlObject> parsedMessages = new ArrayList<XmlObject>();
+		final XmlOptions xopt = new XmlOptions();
 		xopt.setLoadLineNumbers();
 		xopt.setLoadMessageDigest();
-		XmlOptions compileOptions = new XmlOptions();
+		final XmlOptions compileOptions = new XmlOptions();
 		compileOptions.setCompileDownloadUrls();
 		compileOptions.setEntityResolver(entityResolver);
 
 		try {
 			parsedMessages.add(XmlObject.Factory.parse(file, xopt));
-			XmlObject[] schemas = parsedMessages
+			final XmlObject[] schemas = parsedMessages
 					.toArray(new XmlObject[parsedMessages.size()]);
 			sts = XmlBeans.compileXsd(schemas, XmlBeans.getBuiltinTypeSystem(),
 					compileOptions);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return sts;
@@ -580,7 +579,7 @@ public class XsdsUtil {
 
 	public static String getXmlObjectAsSetterParam(final String objAndSetter,
 			final XmlAnySimpleType obj) {
-		StringBuffer sb = new StringBuffer(32);
+		final StringBuffer sb = new StringBuffer(32);
 		if (XmlString.class.isInstance(obj)
 				|| XmlAnyURI.class.isInstance(obj)) {
 			sb.append(objAndSetter).append("(\"").append(obj.getStringValue())
@@ -627,14 +626,14 @@ public class XsdsUtil {
 	private static XsdContainer getXsdContainer(final File f,
 			final File baseDirectory) throws IOException {
 		XsdContainer xsdContainer = null;
-		String text = Util.readFile(f);
+		final String text = Util.readFile(f);
 		String targetNameSpace = null;
 		String annotationDocumentation = null;
 		String packageName = null;
 		int index0 = text.indexOf("targetNamespace=\"");
 		if (index0 > 0) {
 			index0 += "targetNamespace=\"".length();
-			int index1 = text.substring(index0).indexOf("\"");
+			final int index1 = text.substring(index0).indexOf("\"");
 			targetNameSpace = text.substring(index0, index0 + index1);
 		}
 		index0 = text.indexOf("schemaBindings");
@@ -644,21 +643,21 @@ public class XsdsUtil {
 				index0 = text.indexOf("name=\"");
 				if (index0 > 0) {
 					index0 += "name=\"".length();
-					int index1 = text.substring(index0).indexOf("\"");
+					final int index1 = text.substring(index0).indexOf("\"");
 					packageName = text.substring(index0, index0 + index1);
 				}
 			}
 		}
 		if (packageName != null) {
 			index0 = text.indexOf("<documentation>");
-			int index1 = text.indexOf("</documentation>");
+			final int index1 = text.indexOf("</documentation>");
 			if (index0 > 0 && index1 > index0) {
 				index0 += "<documentation>".length();
 				annotationDocumentation = text.substring(index0, index1).trim();
 			}
 		}
 
-		TreeMap<String, String> imports = new TreeMap<String, String>();
+		final TreeMap<String, String> imports = new TreeMap<String, String>();
 		index0 = text.indexOf("<import");
 		String namespace = null;
 		String location = null;
@@ -703,14 +702,14 @@ public class XsdsUtil {
 			}
 		}
 
-		TreeMap<String, String> xmlnss = new TreeMap<String, String>();
-		TreeSet<String> usedXmlnss = new TreeSet<String>();
+		final TreeMap<String, String> xmlnss = new TreeMap<String, String>();
+		final TreeSet<String> usedXmlnss = new TreeSet<String>();
 		String namespaceToken;
 		index0 = text.indexOf("xmlns:");
 		while (index0 > 0) {
 			index0 += "xmlns:".length();
-			int index1 = text.indexOf("=\"", index0);
-			int index2 = text.indexOf('"', index1 + "=\"".length());
+			final int index1 = text.indexOf("=\"", index0);
+			final int index2 = text.indexOf('"', index1 + "=\"".length());
 			if (index1 > 0 && index2 > 0) {
 				namespaceToken = text.substring(index0, index1);
 				namespace = text.substring(index1 + "=\"".length(), index2);
@@ -735,7 +734,7 @@ public class XsdsUtil {
 				index0 = 0;
 			}
 		}
-		for (String xmlnsNamespaceToken : xmlnss.keySet()) {
+		for (final String xmlnsNamespaceToken : xmlnss.keySet()) {
 			index0 = text.indexOf(new StringBuffer(16)
 					.append(xmlnsNamespaceToken).append(":").toString());
 			if (index0 > 0) {
@@ -757,7 +756,7 @@ public class XsdsUtil {
 	}
 
 	public static List<File> getXsdFiles(final File baseDirectory) {
-		List<File> xsdFiles = new ArrayList<File>();
+		final List<File> xsdFiles = new ArrayList<File>();
 		scanForXsds(baseDirectory, xsdFiles);
 		return xsdFiles;
 	}
@@ -773,14 +772,14 @@ public class XsdsUtil {
 			final String... messagePackageNameSuffixes) {
 		boolean isMessagePackageName = false;
 		if (packageName != null) {
-			TreeSet<String> packages = new TreeSet<String>();
+			final TreeSet<String> packages = new TreeSet<String>();
 			if (messagePackageNameSuffixes != null) {
-				for (String messagePackageNameSuffix : messagePackageNameSuffixes) {
+				for (final String messagePackageNameSuffix : messagePackageNameSuffixes) {
 					if (messagePackageNameSuffix != null
 							&& messagePackageNameSuffix.trim().length() > 0) {
-						String[] suffixes = messagePackageNameSuffix
+						final String[] suffixes = messagePackageNameSuffix
 								.replaceAll(",", " ").split(" ");
-						for (String suffix : suffixes) {
+						for (final String suffix : suffixes) {
 							if (suffix != null && suffix.trim().length() > 0) {
 								packages.add(
 										new StringBuffer(suffix.length() + 1)
@@ -792,7 +791,7 @@ public class XsdsUtil {
 					}
 				}
 			}
-			for (String string : packages) {
+			for (final String string : packages) {
 				if (packageName.contains(string)) {
 					isMessagePackageName = true;
 					break;
@@ -818,9 +817,9 @@ public class XsdsUtil {
 	 *            the list of xsd files.
 	 */
 	private static void scanForXsds(final File f, final List<File> xsdFiles) {
-		File[] cs = f.listFiles();
+		final File[] cs = f.listFiles();
 		if (cs != null && cs.length > 0) {
-			for (File c : cs) {
+			for (final File c : cs) {
 				if (c.isDirectory()) {
 					scanForXsds(c, xsdFiles);
 				} else if (c.getName().endsWith(".xsd")) {
@@ -833,7 +832,7 @@ public class XsdsUtil {
 	public static void setupComplexTypeChildrenDocumentation(
 			final XsdContainer xsd,
 			final Map<String, ComplexType> complexTypeMap) throws IOException {
-		String text = Util.readFile(xsd.getFile());
+		final String text = Util.readFile(xsd.getFile());
 		try (Scanner scct = new Scanner(text);) {
 			scct.useDelimiter("<complexType");
 			String sct;
@@ -864,7 +863,7 @@ public class XsdsUtil {
 										if (index < 0) {
 											index = se.indexOf("</");
 										} else {
-											int x = se.indexOf("</");
+											final int x = se.indexOf("</");
 											if (x > 0 && x < index) {
 												index = x;
 											}
@@ -888,8 +887,8 @@ public class XsdsUtil {
 
 	private static Map<String, XsdContainer> setupXsdContainers(
 			final List<File> xsdFiles, final File baseDirectory) {
-		Map<String, XsdContainer> xsdContainerMap = new ConcurrentHashMap<String, XsdContainer>();
-		for (File f : xsdFiles) {
+		final Map<String, XsdContainer> xsdContainerMap = new ConcurrentHashMap<String, XsdContainer>();
+		for (final File f : xsdFiles) {
 			XsdContainer xsdContainer;
 			try {
 				xsdContainer = getXsdContainer(f, baseDirectory);
@@ -897,35 +896,33 @@ public class XsdsUtil {
 						&& xsdContainer.getTargetNamespace() != null) {
 					if (xsdContainerMap
 							.containsKey(xsdContainer.getTargetNamespace())) {
-						throw new RuntimeException(
-								new StringBuffer(256)
-										.append("Target namespace \"")
-										.append(xsdContainer
-												.getTargetNamespace())
+						throw new RuntimeException(new StringBuffer(256)
+								.append("Target namespace \"")
+								.append(xsdContainer.getTargetNamespace())
 								.append("\" defined in file ")
 								.append(xsdContainerMap
 										.get(xsdContainer.getTargetNamespace())
 										.getFile().getAbsolutePath())
 								.append(" and ")
 								.append(xsdContainer.getFile()
-										.getAbsolutePath()).append("!")
-								.toString());
+										.getAbsolutePath())
+								.append("!").toString());
 					} else {
 						xsdContainerMap.put(xsdContainer.getTargetNamespace(),
 								xsdContainer);
 					}
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
-		for (XsdContainer container : xsdContainerMap.values()) {
+		for (final XsdContainer container : xsdContainerMap.values()) {
 			logger.debug("setup totat imports  container  {}{}",
 					container.getTargetNamespace(),
 					container.getFile().getAbsolutePath());
 			setupXsdContainerTotalImports(container, xsdContainerMap);
 		}
-		TreeMap<String, XsdContainer> value = new TreeMap<String, XsdContainer>();
+		final TreeMap<String, XsdContainer> value = new TreeMap<String, XsdContainer>();
 		value.putAll(xsdContainerMap);
 		return value;
 	}
@@ -933,7 +930,7 @@ public class XsdsUtil {
 	private static void setupXsdContainerTotalImports(
 			final XsdContainer container, final Map<String, XsdContainer> map) {
 		XsdContainer child;
-		for (String importedTargetNamespace : container
+		for (final String importedTargetNamespace : container
 				.getImportedTargetNamespaces()) {
 			if (!container.getTotalImportedTargetNamespaces()
 					.contains(importedTargetNamespace)) {
@@ -998,8 +995,9 @@ public class XsdsUtil {
 	/** The {@link EntityResolver} for the local xsds. */
 	private final EntityResolver entityResolver = (publicId, systemId) -> {
 		if (XsdsUtil.this.getXsdContainerMap().containsKey(publicId)) {
-			InputSource is = new InputSource(new FileInputStream(XsdsUtil.this
-					.getXsdContainerMap().get(publicId).getFile()));
+			final InputSource is = new InputSource(
+					new FileInputStream(XsdsUtil.this.getXsdContainerMap()
+							.get(publicId).getFile()));
 			return is;
 		} else {
 			return null;
@@ -1091,7 +1089,7 @@ public class XsdsUtil {
 		if (isSame(instance0, baseDirectory, basePackageName,
 				messagePackageNameSuffix, deltaPackageNameSuffix,
 				serviceRequestSuffix, serviceResponseSuffix)) {
-			
+
 			reused++;
 			value = instance0;
 			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
@@ -1116,7 +1114,7 @@ public class XsdsUtil {
 			value = new XsdsUtil(baseDirectory, basePackageName,
 					messagePackageNameSuffix, deltaPackageNameSuffix,
 					serviceRequestSuffix, serviceResponseSuffix);
-			
+
 			logger.info("{}", String.format("XsdsUtil creating %s at %s",
 					value.getBasePackageName(), value.getBaseDirectory()));
 
@@ -1148,7 +1146,7 @@ public class XsdsUtil {
 		return value;
 	}
 
-	private long start;
+	private final long start;
 
 	private XsdsUtil(final File baseDirectory, final String basePackageName,
 			final String messagePackageNameSuffix,
@@ -1200,13 +1198,14 @@ public class XsdsUtil {
 				this.serviceIdRegistry.getAllServiceIds());
 
 		startX = System.currentTimeMillis();
-		List<ComplexType> synchronizedComplexTypeList = Collections
+		final List<ComplexType> synchronizedComplexTypeList = Collections
 				.synchronizedList(new ArrayList<ComplexType>());
-		List<ElementType> synchronizedElementTypeList = Collections
+		final List<ElementType> synchronizedElementTypeList = Collections
 				.synchronizedList(new ArrayList<ElementType>());
 		this.xsdFiles.parallelStream().parallel().forEach(f -> {
-			long startf = System.currentTimeMillis();
-			SchemaTypeSystem sts = getSchemaTypeSystem(f, this.entityResolver);
+			final long startf = System.currentTimeMillis();
+			final SchemaTypeSystem sts = getSchemaTypeSystem(f,
+					this.entityResolver);
 			if (sts == null) {
 				throw new IllegalStateException(String.format(
 						"Could not parse a valid SchemaTypeSystem from file %s",
@@ -1218,7 +1217,7 @@ public class XsdsUtil {
 			Arrays.asList(sts.globalTypes()).stream().forEach(type -> {
 				if (!this.complexTypeMap
 						.containsKey(String.valueOf(type.getName()))) {
-					ComplexType ct = new ComplexType(type, this);
+					final ComplexType ct = new ComplexType(type, this);
 					this.complexTypeMap
 							.put(String.valueOf(ct.getType().getName()), ct);
 					this.setupComplexTypes(ct, synchronizedComplexTypeList);
@@ -1239,8 +1238,8 @@ public class XsdsUtil {
 		startX = System.currentTimeMillis();
 		this.complexTypes.stream().parallel()
 				.forEach(ct -> ct.initDescent(this));
-		this.complexTypes.stream().parallel().filter(ct -> Objects.nonNull(ct.getType()))
-				.forEach(ct -> {
+		this.complexTypes.stream().parallel()
+				.filter(ct -> Objects.nonNull(ct.getType())).forEach(ct -> {
 					ct.initChildren(this);
 					this.complexTypeMap
 							.put(String.valueOf(ct.getType().getName()), ct);
@@ -1264,9 +1263,12 @@ public class XsdsUtil {
 			try {
 				setupComplexTypeChildrenDocumentation(xsdContainer,
 						this.complexTypeMap);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
+		});
+		this.complexTypeMap.values().stream().forEach(ct -> {
+			this.setupBaseComplexTypeFieldDocumentation(ct);
 		});
 		logger.debug("{} to setup complexType children documentation",
 				Util.getDuration(System.currentTimeMillis() - startX));
@@ -1276,10 +1278,28 @@ public class XsdsUtil {
 				this.serviceIdRegistry.getAllServiceIds());
 	}
 
-	private ServiceIdRegistry serviceIdRegistry;
+	private final ServiceIdRegistry serviceIdRegistry;
 
 	public ServiceIdRegistry getServiceIdRegistry() {
 		return this.serviceIdRegistry;
+	}
+
+	private void setupBaseComplexTypeFieldDocumentation(final ComplexType ct) {
+		final ComplexType base = ct.getBaseComplexType();
+		if (Objects.nonNull(base)) {
+			final Map<String, ComplexTypeChild> baseChildren = base
+					.getChildrenMap();
+			final Map<String, ComplexTypeChild> childrenMap = ct
+					.getChildrenMap();
+			baseChildren.keySet().stream().forEach(baseName -> {
+				final ComplexTypeChild child = childrenMap.get(baseName);
+				if (child.getAnnotationDocumentation().equals("")) {
+					child.setAnnotationDocumentation(baseChildren.get(baseName)
+							.getAnnotationDocumentation());
+				}
+			});
+			this.setupBaseComplexTypeFieldDocumentation(base);
+		}
 	}
 
 	/**
@@ -1341,7 +1361,7 @@ public class XsdsUtil {
 
 	public String getPackageName(final String targetNamespace) {
 		String packageName = null;
-		XsdContainer xc = this.xsdContainerMap.get(targetNamespace);
+		final XsdContainer xc = this.xsdContainerMap.get(targetNamespace);
 		if (xc != null) {
 			packageName = this.xsdContainerMap.get(targetNamespace)
 					.getPackageName();
@@ -1394,7 +1414,7 @@ public class XsdsUtil {
 	private void setupComplexTypes(final ComplexType ct,
 			final List<ComplexType> complexTypeList) {
 		complexTypeList.add(ct);
-		for (ComplexType ctx : ct.getInnerTypeDefs()) {
+		for (final ComplexType ctx : ct.getInnerTypeDefs()) {
 			this.setupComplexTypes(ctx, complexTypeList);
 		}
 	}
