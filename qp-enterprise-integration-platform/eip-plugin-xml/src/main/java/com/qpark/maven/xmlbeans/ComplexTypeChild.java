@@ -16,51 +16,24 @@ import com.qpark.maven.Util;
  * @author bhausen
  */
 public class ComplexTypeChild {
-	private final ComplexType ct;
-	private final String childName;
-	private final String javaChildName;
-	private String getterName;
-	private final String setterName;
-	private final BigInteger minOccurs;
-	private final BigInteger maxOccurs;
-	private final boolean optional;
-	private final boolean list;
-	private final XmlAnySimpleType defaultValue;
 	private String annotationDocumentation;
-
-	/**
-	 * @return the annotationDocumentation
-	 */
-	public String getAnnotationDocumentationNormalised() {
-		return this.getAnnotationDocumentation().replaceAll("\\n", " ")
-				.replaceAll("\\r", " ").replaceAll("(\\t)+", " ")
-				.replaceAll("( )+", " ");
-	}
-
-	/**
-	 * @return the annotationDocumentation
-	 */
-	public String getAnnotationDocumentation() {
-		return this.annotationDocumentation == null ? ""
-				: this.annotationDocumentation;
-	}
-
-	/**
-	 * Set the annotationDocumentation.
-	 *
-	 * @param the
-	 *            annotationDocumentation
-	 */
-	public void setAnnotationDocumentation(
-			final String annotationDocumentation) {
-		this.annotationDocumentation = annotationDocumentation;
-	}
+	private final String childName;
+	private final ComplexType ct;
+	private final XmlAnySimpleType defaultValue;
+	private String getterName;
+	private final String javaChildName;
+	private final boolean list;
+	private final BigInteger maxOccurs;
+	private final BigInteger minOccurs;
+	private final boolean optional;
+	private final String setterName;
 
 	/**
 	 * @param childName
 	 * @param ct
 	 * @param minOccurs
 	 * @param maxOccurs
+	 * @param defaultValue
 	 */
 	public ComplexTypeChild(final String childName, final ComplexType ct,
 			final BigInteger minOccurs, final BigInteger maxOccurs,
@@ -83,64 +56,21 @@ public class ComplexTypeChild {
 		this.setterName = Util.getXjcSetterName(childName);
 	}
 
-	public String getJavaImportClass() {
-		return this.getComplexType().getClassNameFullQualified();
+	/**
+	 * @return the annotationDocumentation - never <code>null</code>.
+	 */
+	public String getAnnotationDocumentation() {
+		return this.annotationDocumentation == null ? ""
+				: this.annotationDocumentation;
 	}
 
-	public String getJavaPackage() {
-		return this.getComplexType().getPackageName();
-	}
-
-	public boolean isJavaPrimitive() {
-		return this.getComplexType().isJavaPrimitive();
-	}
-
-	public boolean isJavaArray() {
-		return this.getComplexType().isJavaArray();
-	}
-
-	public String getJavaDefaultValue() {
-		String s = "null";
-		if (this.defaultValue != null) {
-			s = this.defaultValue.getStringValue();
-		} else if (this.isJavaPrimitive()) {
-			if (this.ct.getClassName().equals("boolean")) {
-				s = "false";
-			} else {
-				s = "0";
-			}
-		}
-		return s;
-	}
-
-	public String getJavaVarDefinition() {
-		StringBuffer sb = new StringBuffer(32);
-		if (this.isList()) {
-			sb.append("List<");
-		}
-		sb.append(this.getComplexType().getClassName());
-		if (this.isList()) {
-			sb.append(">");
-		}
-
-		sb.append(" ");
-		sb.append(this.javaChildName);
-		return sb.toString();
-	}
-
-	public String getJavaVarDefinitionFullQualified() {
-		StringBuffer sb = new StringBuffer(32);
-		if (this.isList()) {
-			sb.append("List<");
-		}
-		sb.append(this.getComplexType().getClassNameFullQualified());
-		if (this.isList()) {
-			sb.append(">");
-		}
-
-		sb.append(" ");
-		sb.append(this.javaChildName);
-		return sb.toString();
+	/**
+	 * @return the annotationDocumentation
+	 */
+	public String getAnnotationDocumentationNormalised() {
+		return this.getAnnotationDocumentation().replaceAll("\\n", " ")
+				.replaceAll("\\r", " ").replaceAll("(\\t)+", " ")
+				.replaceAll("( )+", " ");
 	}
 
 	/**
@@ -149,32 +79,13 @@ public class ComplexTypeChild {
 	 * @return the cardinality as string.
 	 */
 	public String getCardinality() {
-		StringBuffer sb = new StringBuffer(8);
+		final StringBuffer sb = new StringBuffer(8);
 		sb.append("[");
 		sb.append(this.minOccurs);
 		sb.append("..");
 		sb.append(this.maxOccurs == null ? "*" : this.maxOccurs);
 		sb.append("]");
 		return sb.toString();
-	}
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer(128);
-		sb.append(this.getChildName());
-		sb.append(this.getCardinality());
-		sb.append(this.getComplexType().toQNameString());
-		return sb.toString();
-	}
-
-	/**
-	 * @return the ct
-	 */
-	public ComplexType getComplexType() {
-		return this.ct;
 	}
 
 	/**
@@ -185,31 +96,10 @@ public class ComplexTypeChild {
 	}
 
 	/**
-	 * @return the isOptional
+	 * @return the {@link ComplexType}.
 	 */
-	public boolean isOptional() {
-		return this.optional;
-	}
-
-	/**
-	 * @return the isList
-	 */
-	public boolean isList() {
-		return this.list;
-	}
-
-	/**
-	 * @return the minOccurs
-	 */
-	public BigInteger getMinOccurs() {
-		return this.minOccurs;
-	}
-
-	/**
-	 * @return the maxOccurs
-	 */
-	public BigInteger getMaxOccurs() {
-		return this.maxOccurs;
+	public ComplexType getComplexType() {
+		return this.ct;
 	}
 
 	/**
@@ -227,6 +117,96 @@ public class ComplexTypeChild {
 	}
 
 	/**
+	 * @return the javaChildName
+	 */
+	public String getJavaChildName() {
+		return this.javaChildName;
+	}
+
+	/**
+	 * @return the default value defined in the XSDs. If nothing specified the
+	 *         value is the {@link String} <i>"null"</i>.
+	 */
+	public String getJavaDefaultValue() {
+		String s = "null";
+		if (this.defaultValue != null) {
+			s = this.defaultValue.getStringValue();
+		} else if (this.isJavaPrimitive()) {
+			if (this.ct.getClassName().equals("boolean")) {
+				s = "false";
+			} else {
+				s = "0";
+			}
+		}
+		return s;
+	}
+
+	/**
+	 * @return the java class name.
+	 */
+	public String getJavaImportClass() {
+		return this.getComplexType().getClassNameFullQualified();
+	}
+
+	/**
+	 * @return the java package name.
+	 */
+	public String getJavaPackage() {
+		return this.getComplexType().getPackageName();
+	}
+
+	/**
+	 * @return the java variable definition (after the <i>=</i> sign).
+	 */
+	public String getJavaVarDefinition() {
+		final StringBuffer sb = new StringBuffer(32);
+		if (this.isList()) {
+			sb.append("List<");
+		}
+		sb.append(this.getComplexType().getClassName());
+		if (this.isList()) {
+			sb.append(">");
+		}
+
+		sb.append(" ");
+		sb.append(this.javaChildName);
+		return sb.toString();
+	}
+
+	/**
+	 * @return the java variable definition (after the <i>=</i> sign) with the
+	 *         {@link ComplexType} full qualified class name.
+	 */
+	public String getJavaVarDefinitionFullQualified() {
+		final StringBuffer sb = new StringBuffer(32);
+		if (this.isList()) {
+			sb.append("List<");
+		}
+		sb.append(this.getComplexType().getClassNameFullQualified());
+		if (this.isList()) {
+			sb.append(">");
+		}
+
+		sb.append(" ");
+		sb.append(this.javaChildName);
+		return sb.toString();
+	}
+
+	/**
+	 * @return the maxOccurs
+	 */
+	public BigInteger getMaxOccurs() {
+		return this.maxOccurs;
+	}
+
+	/**
+	 * @return the minOccurs
+	 */
+	public BigInteger getMinOccurs() {
+		return this.minOccurs;
+	}
+
+	/**
 	 * @return the setterName
 	 */
 	public String getSetterName() {
@@ -234,9 +214,52 @@ public class ComplexTypeChild {
 	}
 
 	/**
-	 * @return the javaChildName
+	 * @return is java array.
 	 */
-	public String getJavaChildName() {
-		return this.javaChildName;
+	public boolean isJavaArray() {
+		return this.getComplexType().isJavaArray();
+	}
+
+	/**
+	 * @return is java primitive
+	 */
+	public boolean isJavaPrimitive() {
+		return this.getComplexType().isJavaPrimitive();
+	}
+
+	/**
+	 * @return is list
+	 */
+	public boolean isList() {
+		return this.list;
+	}
+
+	/**
+	 * @return is optional
+	 */
+	public boolean isOptional() {
+		return this.optional;
+	}
+
+	/**
+	 * Set the annotationDocumentation.
+	 *
+	 * @param annotationDocumentation
+	 */
+	public void setAnnotationDocumentation(
+			final String annotationDocumentation) {
+		this.annotationDocumentation = annotationDocumentation;
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer(128);
+		sb.append(this.getChildName());
+		sb.append(this.getCardinality());
+		sb.append(this.getComplexType().toQNameString());
+		return sb.toString();
 	}
 }

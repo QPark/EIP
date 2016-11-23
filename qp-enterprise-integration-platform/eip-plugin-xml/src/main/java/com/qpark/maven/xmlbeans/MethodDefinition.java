@@ -19,17 +19,32 @@ public class MethodDefinition {
 	private ComplexType out;
 	private boolean outList = false;
 
+	/** Ctor. */
 	public MethodDefinition() {
 	}
 
+	/**
+	 * @param out
+	 *            the return {@link ComplexType}.
+	 */
 	public MethodDefinition(final ComplexType out) {
 		this.out = out;
 	}
 
+	/**
+	 * @param in
+	 *            the input {@link ComplexType}.
+	 */
 	public MethodDefinition(final ComplexTypeChild in) {
 		this.input.add(in);
 	}
 
+	/**
+	 * @param in
+	 *            the input {@link ComplexType}.
+	 * @param out
+	 *            the return {@link ComplexType}.
+	 */
 	public MethodDefinition(final ComplexTypeChild in, final ComplexType out) {
 		this.input.add(in);
 		this.out = out;

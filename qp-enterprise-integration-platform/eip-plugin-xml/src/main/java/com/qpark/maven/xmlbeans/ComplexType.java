@@ -131,8 +131,8 @@ public class ComplexType implements Comparable<ComplexType> {
 	private final String classNameFq;
 	private final boolean complexMappingType;
 	private final boolean complexUUIDMappingType;
-	private final boolean directMappingType;
 	private final boolean defaultMappingType;
+	private final boolean directMappingType;
 	private boolean flowInputType;
 	private boolean flowOutputType;
 	private List<ComplexType> innerTypeDefs;
@@ -149,7 +149,8 @@ public class ComplexType implements Comparable<ComplexType> {
 
 	/**
 	 * @param type
-	 * @param packageName
+	 * @param parent
+	 * @param config
 	 */
 	public ComplexType(final SchemaType type, final ComplexType parent,
 			final XsdsUtil config) {
@@ -309,41 +310,17 @@ public class ComplexType implements Comparable<ComplexType> {
 		this.mapResponseType = isMapResponseType(type);
 	}
 
-	void initDescent(final XsdsUtil config) {
-		final SchemaType st = this.type.getBaseType();
-		if (Objects.nonNull(st) && Objects.nonNull(st.getName())) {
-			this.baseComplexType = config.getComplexType(st.getName());
-			if (Objects.nonNull(this.baseComplexType) && this.baseComplexType
-					.toQNameString().equals(this.toQNameString())) {
-				this.baseComplexType = null;
-			}
-		}
-		if (Objects.isNull(this.baseComplexType) && this.type.isSimpleType()
-				&& (this.type.getEnumerationValues() == null
-						|| this.type.getEnumerationValues().length == 0)) {
-			final SchemaType buildInBase = XsdsUtil
-					.getBuildInBaseType(this.type);
-			if (Objects.nonNull(buildInBase)
-					&& Objects.nonNull(buildInBase.getName())) {
-				this.baseComplexType = config
-						.getComplexType(buildInBase.getName());
-				if (Objects.nonNull(this.baseComplexType)
-						&& this.baseComplexType.toQNameString()
-								.equals(this.toQNameString())) {
-					this.baseComplexType = null;
-				}
-			}
-		}
-	}
-
 	/**
 	 * @param type
-	 * @param packageName
+	 * @param config
 	 */
 	public ComplexType(final SchemaType type, final XsdsUtil config) {
 		this(type, null, config);
 	}
 
+	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final ComplexType o) {
 		int value = this.getTargetNamespace().compareTo(o.getTargetNamespace());
@@ -353,6 +330,14 @@ public class ComplexType implements Comparable<ComplexType> {
 		return value;
 	}
 
+	/**
+	 * Checks, if one of the children has the name.
+	 *
+	 * @param childName
+	 *            the name to check.
+	 * @return <code>true</code>, if one of the children has the name, else
+	 *         <code>false</code>.
+	 */
 	private boolean containsChildName(final String childName) {
 		boolean contains = false;
 		for (final ComplexTypeChild child : this.getChildren()) {
@@ -365,6 +350,14 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
+	 * @return the annotationDocumentation (never <code>null</code>).
+	 */
+	public String getAnnotationDocumentation() {
+		return this.annotationDocumentation == null ? ""
+				: this.annotationDocumentation;
+	}
+
+	/**
 	 * @return the annotationDocumentation
 	 */
 	public String getAnnotationDocumentationNormalised() {
@@ -374,13 +367,8 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
-	 * @return the annotationDocumentation
+	 * @return the base {@link ComplexType} - the ancestor - if any.
 	 */
-	public String getAnnotationDocumentation() {
-		return this.annotationDocumentation == null ? ""
-				: this.annotationDocumentation;
-	}
-
 	public ComplexType getBaseComplexType() {
 		return this.baseComplexType;
 	}
@@ -440,6 +428,29 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
+	 * Get the default value if {@link #isDefaultMappingType()}.
+	 *
+	 * @return the default value or <code>null</code>.
+	 */
+	public String getDefaultValue() {
+		String defaultValue = null;
+		if (this.isDefaultMappingType()) {
+			final SchemaProperty defaultProperty = this.getType()
+					.getElementProperties()[0];
+			if (defaultProperty.getType().isSimpleType()
+					&& defaultProperty.getType().getEnumerationValues() != null
+					&& defaultProperty.getType()
+							.getEnumerationValues().length == 1) {
+				defaultValue = defaultProperty.getType()
+						.getEnumerationValues()[0].getStringValue();
+			} else {
+				defaultValue = defaultProperty.getDefaultText();
+			}
+		}
+		return defaultValue;
+	}
+
+	/**
 	 * @return the innerTypeDefs
 	 */
 	public List<ComplexType> getInnerTypeDefs() {
@@ -449,6 +460,10 @@ public class ComplexType implements Comparable<ComplexType> {
 		return this.innerTypeDefs;
 	}
 
+	/**
+	 * @return the set containing the names the JAX impl need as import to be
+	 *         work with.
+	 */
 	public Set<String> getJavaImportClasses() {
 		final TreeSet<String> ts = new TreeSet<String>(
 				new JavaImportComparator());
@@ -484,7 +499,19 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
-	 * @return
+	 * @return the name of the type without the target name space.
+	 */
+	public String getQNameLocalPart() {
+		String localpart = "";
+		if (Objects.nonNull(this.type.getName())
+				&& Objects.nonNull(this.type.getName().getLocalPart())) {
+			localpart = this.type.getName().getLocalPart();
+		}
+		return localpart;
+	}
+
+	/**
+	 * @return the target name space.
 	 */
 	public String getTargetNamespace() {
 		String targetNamespace = "";
@@ -499,19 +526,7 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
-	 * @return
-	 */
-	public String getQNameLocalPart() {
-		String localpart = "";
-		if (Objects.nonNull(this.type.getName())
-				&& Objects.nonNull(this.type.getName().getLocalPart())) {
-			localpart = this.type.getName().getLocalPart();
-		}
-		return localpart;
-	}
-
-	/**
-	 * @return the type
+	 * @return the {@link SchemaType}.
 	 */
 	public SchemaType getType() {
 		return this.type;
@@ -553,6 +568,33 @@ public class ComplexType implements Comparable<ComplexType> {
 		}
 	}
 
+	void initDescent(final XsdsUtil config) {
+		final SchemaType st = this.type.getBaseType();
+		if (Objects.nonNull(st) && Objects.nonNull(st.getName())) {
+			this.baseComplexType = config.getComplexType(st.getName());
+			if (Objects.nonNull(this.baseComplexType) && this.baseComplexType
+					.toQNameString().equals(this.toQNameString())) {
+				this.baseComplexType = null;
+			}
+		}
+		if (Objects.isNull(this.baseComplexType) && this.type.isSimpleType()
+				&& (this.type.getEnumerationValues() == null
+						|| this.type.getEnumerationValues().length == 0)) {
+			final SchemaType buildInBase = XsdsUtil
+					.getBuildInBaseType(this.type);
+			if (Objects.nonNull(buildInBase)
+					&& Objects.nonNull(buildInBase.getName())) {
+				this.baseComplexType = config
+						.getComplexType(buildInBase.getName());
+				if (Objects.nonNull(this.baseComplexType)
+						&& this.baseComplexType.toQNameString()
+								.equals(this.toQNameString())) {
+					this.baseComplexType = null;
+				}
+			}
+		}
+	}
+
 	/**
 	 * @return is abstract type
 	 */
@@ -560,47 +602,36 @@ public class ComplexType implements Comparable<ComplexType> {
 		return this.type.isAbstract();
 	}
 
+	/**
+	 * @return is complex mapping type
+	 */
 	public boolean isComplexMappingType() {
 		return this.complexMappingType;
 	}
 
+	/**
+	 * @return is complex UUID mapping type
+	 */
 	public boolean isComplexUUIDMappingType() {
 		return this.complexUUIDMappingType;
 	}
 
-	public boolean isDirectMappingType() {
-		return this.directMappingType;
-	}
-
+	/**
+	 * @return is default mapping type
+	 */
 	public boolean isDefaultMappingType() {
 		return this.defaultMappingType;
 	}
 
 	/**
-	 * Get the default value if {@link #isDefaultMappingType()}.
-	 *
-	 * @return the default value or <code>null</code>.
+	 * @return is direct mapping type
 	 */
-	public String getDefaultValue() {
-		String defaultValue = null;
-		if (this.isDefaultMappingType()) {
-			final SchemaProperty defaultProperty = this.getType()
-					.getElementProperties()[0];
-			if (defaultProperty.getType().isSimpleType()
-					&& defaultProperty.getType().getEnumerationValues() != null
-					&& defaultProperty.getType()
-							.getEnumerationValues().length == 1) {
-				defaultValue = defaultProperty.getType()
-						.getEnumerationValues()[0].getStringValue();
-			} else {
-				defaultValue = defaultProperty.getDefaultText();
-			}
-		}
-		return defaultValue;
+	public boolean isDirectMappingType() {
+		return this.directMappingType;
 	}
 
 	/**
-	 * @return is enum type
+	 * @return is XSD enum type
 	 */
 	public boolean isEnumType() {
 		return this.type.hasStringEnumValues();
@@ -628,28 +659,37 @@ public class ComplexType implements Comparable<ComplexType> {
 		return this.parent != null;
 	}
 
+	/**
+	 * @return is interface mapping type
+	 */
 	public boolean isInterfaceMappingType() {
 		return this.interfaceMappingType;
 	}
 
 	/**
-	 * @return the javaPrimitive
+	 * @return is java array
 	 */
 	public boolean isJavaArray() {
 		return this.javaArray;
 	}
 
 	/**
-	 * @return the javaPrimitive
+	 * @return is java primitive
 	 */
 	public boolean isJavaPrimitive() {
 		return this.javaPrimitive;
 	}
 
+	/**
+	 * @return is map request type
+	 */
 	public boolean isMapRequestType() {
 		return this.mapRequestType;
 	}
 
+	/**
+	 * @return is map response type
+	 */
 	public boolean isMapResponseType() {
 		return this.mapResponseType;
 	}
@@ -662,14 +702,14 @@ public class ComplexType implements Comparable<ComplexType> {
 	}
 
 	/**
-	 * @return the requestType
+	 * @return is request type
 	 */
 	public boolean isRequestType() {
 		return this.requestType;
 	}
 
 	/**
-	 * @return the responseType
+	 * @return is response type
 	 */
 	public boolean isResponseType() {
 		return this.responseType;
@@ -682,6 +722,9 @@ public class ComplexType implements Comparable<ComplexType> {
 		return this.type.isSimpleType();
 	}
 
+	/**
+	 * @return the {@link QName} string representation.
+	 */
 	public String toQNameString() {
 		if (this.type.getName() == null) {
 			return String.valueOf(this.type);
@@ -701,5 +744,4 @@ public class ComplexType implements Comparable<ComplexType> {
 				.append(this.isSimpleType()).append("]");
 		return sb.toString();
 	}
-
 }

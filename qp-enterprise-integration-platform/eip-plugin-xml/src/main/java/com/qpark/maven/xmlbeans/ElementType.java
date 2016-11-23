@@ -6,6 +6,8 @@
  ******************************************************************************/
 package com.qpark.maven.xmlbeans;
 
+import javax.xml.namespace.QName;
+
 import org.apache.xmlbeans.SchemaGlobalElement;
 import org.apache.xmlbeans.XmlObject;
 import org.w3c.dom.NodeList;
@@ -14,25 +16,30 @@ import org.w3c.dom.NodeList;
  * @author bhausen
  */
 public class ElementType {
-	public static final String WEB_SERVICE_CHANNEL_NAME_PREFIX = "eip";
+	/** Fixed value for web service channel name definition. */
 	public static final String WEB_SERVICE_CHANNEL_NAME_CONTENT = "WsChannel";
+	/** Fixed value for web service channel name prefix. */
+	public static final String WEB_SERVICE_CHANNEL_NAME_PREFIX = "eip";
+	/** Fixed value for web service channel name request suffix. */
 	public static final String WEB_SERVICE_CHANNEL_NAME_REQUEST_SUFFIX = "Request";
+	/** Fixed value for web service channel name response suffix. */
 	public static final String WEB_SERVICE_CHANNEL_NAME_RESPONSE_SUFFIX = "Response";
+	private final String annotationDocumentation;
 	private final String beanIdMockOperationProvider;
 	private final String beanIdOperationProvider;
 	private final String beanIdWsInboundGateway;
 	private final String channelNameWsRequest;
-	private final String channelSecurityPatternService;
-	private final String channelSecurityPatternOperation;
 	private final String channelNameWsResponse;
+	private final String channelSecurityPatternOperation;
+	private final String channelSecurityPatternService;
 	private final String classNameFqGateway;
 	private final String classNameFqObject;
 	private final String classNameFullQualifiedMockOperationProvider;
 	private final String classNameGateway;
 	private final String classNameMockOperationProvider;
 	private final String classNameObject;
-	private final SchemaGlobalElement element;
 	private ComplexType complexType;
+	private final SchemaGlobalElement element;
 	private final boolean isRequest;
 	private final String methodName;
 	private final String operationName;
@@ -40,8 +47,11 @@ public class ElementType {
 	private final String packageNameGateway;
 	private final String packageNameMockOperationProvider;
 	private final String serviceId;
-	private final String annotationDocumentation;
 
+	/**
+	 * @param elem
+	 * @param config
+	 */
 	public ElementType(final SchemaGlobalElement elem, final XsdsUtil config) {
 		this.element = elem;
 		/* Object definition. */
@@ -89,10 +99,10 @@ public class ElementType {
 					.append("MockOperation").toString();
 		}
 		if (this.packageName.contains(config.getMessagePackageNameSuffix())) {
-			this.packageNameMockOperationProvider = this.packageName
-					.substring(0,
-							this.packageName.length() - config
-									.getMessagePackageNameSuffix().length()
+			this.packageNameMockOperationProvider = this.packageName.substring(
+					0,
+					this.packageName.length()
+							- config.getMessagePackageNameSuffix().length()
 							- 1);
 		} else {
 			this.packageNameMockOperationProvider = this.packageName;
@@ -114,7 +124,7 @@ public class ElementType {
 					.append(this.packageName.substring(0,
 							this.packageName.length() - config
 									.getMessagePackageNameSuffix().length()
-							- 1))
+									- 1))
 					.append(".gateway").toString();
 		} else {
 			this.packageNameGateway = new StringBuffer(128)
@@ -124,11 +134,11 @@ public class ElementType {
 				&& this.element.getAnnotation().getUserInformation() != null
 				&& this.element.getAnnotation()
 						.getUserInformation().length > 0) {
-			StringBuffer sb = new StringBuffer(124);
-			for (XmlObject u : this.element.getAnnotation()
+			final StringBuffer sb = new StringBuffer(124);
+			for (final XmlObject u : this.element.getAnnotation()
 					.getUserInformation()) {
 				if (u.getDomNode() != null) {
-					NodeList nl = u.getDomNode().getChildNodes();
+					final NodeList nl = u.getDomNode().getChildNodes();
 					for (int i = 0; i < nl.getLength(); i++) {
 						if (i > 0 && sb.length() > 0) {
 							sb.append(" ");
@@ -165,11 +175,11 @@ public class ElementType {
 						.append(this.beanIdOperationProvider).append("Mock")
 						.toString();
 
-		String serviceChannelNameStart = new StringBuffer(16)
+		final String serviceChannelNameStart = new StringBuffer(16)
 				.append(WEB_SERVICE_CHANNEL_NAME_PREFIX)
 				.append(ServiceIdRegistry.capitalize(this.serviceId))
 				.toString();
-		String operationChannelNameStart = new StringBuffer(64)
+		final String operationChannelNameStart = new StringBuffer(64)
 				.append(serviceChannelNameStart).append(this.operationName)
 				.append(WEB_SERVICE_CHANNEL_NAME_CONTENT).toString();
 
@@ -192,8 +202,12 @@ public class ElementType {
 				.append("WsInboundGateway").toString();
 	}
 
+	/**
+	 * @return the annotationDocumentation - never <code>null</code>.
+	 */
 	public String getAnnotationDocumentation() {
-		return this.annotationDocumentation;
+		return this.annotationDocumentation == null ? ""
+				: this.annotationDocumentation;
 	}
 
 	/**
@@ -287,6 +301,9 @@ public class ElementType {
 		return this.classNameObject;
 	}
 
+	/**
+	 * @return the defining {@link ComplexType}.
+	 */
 	public ComplexType getComplexType() {
 		return this.complexType;
 	}
@@ -341,7 +358,7 @@ public class ElementType {
 	}
 
 	/**
-	 * @return the target namespace of the element.
+	 * @return the target name space of the element.
 	 */
 	public String getTargetNamespace() {
 		return this.element.getName().getNamespaceURI();
@@ -354,10 +371,19 @@ public class ElementType {
 		return this.isRequest;
 	}
 
+	/**
+	 * Set the defining {@link ComplexType}.
+	 *
+	 * @param complexType
+	 *            the {@link ComplexType}.
+	 */
 	public void setComplexType(final ComplexType complexType) {
 		this.complexType = complexType;
 	}
 
+	/**
+	 * @return the {@link QName} string representation.
+	 */
 	public String toQNameString() {
 		if (this.element.getName() == null) {
 			return String.valueOf(this.element);
