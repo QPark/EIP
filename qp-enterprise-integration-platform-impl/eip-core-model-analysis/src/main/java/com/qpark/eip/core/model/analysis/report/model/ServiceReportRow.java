@@ -26,8 +26,8 @@ public class ServiceReportRow {
 	private boolean isRequest;
 	/** The name of the operation. */
 	private String operationName;
-	/** The name of the service. */
-	private String serviceName;
+	/** The id of the service. */
+	private String serviceId;
 
 	/**
 	 * @return the description
@@ -61,10 +61,10 @@ public class ServiceReportRow {
 	}
 
 	/**
-	 * @return the serviceName
+	 * @return the serviceId
 	 */
-	public String getServiceName() {
-		return this.serviceName;
+	public String getServiceId() {
+		return this.serviceId;
 	}
 
 	/**
@@ -115,10 +115,10 @@ public class ServiceReportRow {
 	}
 
 	/**
-	 * @param serviceName
-	 *            the serviceName to set
+	 * @param serviceId
+	 *            the serviceId to set
 	 */
-	public void setServiceName(final String serviceName) {
-		this.serviceName = serviceName;
+	public void setServiceId(final String serviceId) {
+		this.serviceId = serviceId;
 	}
 }

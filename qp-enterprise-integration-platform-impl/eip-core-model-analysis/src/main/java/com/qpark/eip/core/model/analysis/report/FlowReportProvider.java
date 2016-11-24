@@ -46,15 +46,15 @@ public class FlowReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param flowPattern
+	 * @param flowNamePattern
 	 *            the pattern the flow names need to match.
 	 * @param ctIds
 	 *            the set of used complex type ids.
 	 * @return the list of {@link FlowReportRow}s.
 	 */
 	public List<FlowReportRow> getReportRows(
-			final DataProviderModelAnalysis dataProvider, final String flowPattern,
-			final Set<String> ctIds) {
+			final DataProviderModelAnalysis dataProvider,
+			final String flowNamePattern, final Set<String> ctIds) {
 		this.logger.debug("+getReportRows");
 		List<FlowReportRow> value = new ArrayList<>();
 		this.logger.debug("-getReportRows");

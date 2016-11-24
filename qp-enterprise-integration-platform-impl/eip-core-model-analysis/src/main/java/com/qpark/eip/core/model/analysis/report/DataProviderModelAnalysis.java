@@ -14,11 +14,15 @@ import java.util.Optional;
 import com.qpark.eip.model.docmodel.ComplexType;
 import com.qpark.eip.model.docmodel.DataType;
 import com.qpark.eip.model.docmodel.ElementType;
+import com.qpark.eip.model.docmodel.FieldMappingType;
+import com.qpark.eip.model.docmodel.FlowType;
+import com.qpark.eip.model.docmodel.InterfaceMappingType;
 import com.qpark.eip.model.docmodel.ServiceType;
+
 /**
  * Provides data of model analysis.
- * @author bhausen
  *
+ * @author bhausen
  */
 public interface DataProviderModelAnalysis {
 	/**
@@ -63,6 +67,34 @@ public interface DataProviderModelAnalysis {
 	 * @return the {@link ElementType}.
 	 */
 	Optional<ElementType> getElement(String elementId);
+
+	/**
+	 * Get the {@link FieldMappingType} of the id.
+	 * 
+	 * @param id
+	 *            the id of the
+	 * @return the {@link FieldMappingType}.
+	 */
+	Optional<FieldMappingType> getFieldMapping(String id);
+
+	/**
+	 * Get the list of {@link FlowType}s which names matching the pattern.
+	 *
+	 * @param flowNamePattern
+	 *            the flow name pattern.
+	 * @return the list of {@link FlowType}s.
+	 */
+	List<FlowType> getFlows(String flowNamePattern);
+
+	/**
+	 * Get the list of {@link InterfaceMappingType}s of the flow with the given
+	 * id.
+	 *
+	 * @param flowId
+	 *            the id of the flow.
+	 * @return the list of {@link InterfaceMappingType}s.
+	 */
+	List<InterfaceMappingType> getInterfaceMappings(String flowId);
 
 	/**
 	 * Get the {@link ServiceType} by service id.

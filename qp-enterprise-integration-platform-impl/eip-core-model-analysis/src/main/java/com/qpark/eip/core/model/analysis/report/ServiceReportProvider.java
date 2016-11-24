@@ -43,7 +43,7 @@ public class ServiceReportProvider extends AbstractReportProvider {
 			final OperationType o, final boolean isRequest,
 			final ComplexType ct, final Set<String> ctIds) {
 		final ServiceReportRow value = new ServiceReportRow();
-		value.setServiceName(s.getName());
+		value.setServiceId(s.getName());
 		value.setOperationName(o.getShortName());
 		value.setRequest(isRequest);
 		value.setDescription(o.getRequestFieldDescription());
