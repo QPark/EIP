@@ -47,7 +47,7 @@ public class ServiceReportProvider extends AbstractReportProvider {
 		value.setOperationName(o.getShortName());
 		value.setRequest(isRequest);
 		value.setDescription(o.getRequestFieldDescription());
-		value.setFields(getFieldList(dataProvider, ct));
+		value.setFields(getComplexTypeFieldElements(dataProvider, ct));
 		// Currently Flow links are not supported.
 		// value.setFlowLinks(flowLinks);
 

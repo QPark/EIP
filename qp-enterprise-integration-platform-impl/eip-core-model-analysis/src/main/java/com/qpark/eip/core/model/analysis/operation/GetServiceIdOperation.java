@@ -37,7 +37,7 @@ public class GetServiceIdOperation implements GetServiceId {
 	private final ObjectFactory of = new ObjectFactory();
 
 	/**
-	 * @param request
+	 * @param message
 	 *            the {@link JAXBElement} containing a
 	 *            {@link GetServiceIdRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetServiceIdResponseType}.
@@ -46,10 +46,10 @@ public class GetServiceIdOperation implements GetServiceId {
 	public final JAXBElement<GetServiceIdResponseType> invoke(
 			final JAXBElement<GetServiceIdRequestType> message) {
 		this.logger.debug("+getServiceId");
-		GetServiceIdRequestType request = message.getValue();
-		GetServiceIdResponseType response = this.of
+		final GetServiceIdRequestType request = message.getValue();
+		final GetServiceIdResponseType response = this.of
 				.createGetServiceIdResponseType();
-		long start = System.currentTimeMillis();
+		final long start = System.currentTimeMillis();
 		try {
 			String modelVersion = request.getRevision();
 			if (Objects.isNull(modelVersion)
@@ -58,7 +58,7 @@ public class GetServiceIdOperation implements GetServiceId {
 			}
 			response.getServiceId()
 					.addAll(this.dao.getServiceIds(modelVersion));
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			/* Add a not covered error to the response. */
 			this.logger.error(e.getMessage(), e);
 		} finally {

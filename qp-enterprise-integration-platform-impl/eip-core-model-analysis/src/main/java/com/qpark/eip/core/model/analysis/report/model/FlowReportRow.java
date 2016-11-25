@@ -12,12 +12,12 @@ import java.util.Objects;
 
 /**
  * One row in the flow report.
- * 
+ *
  * @author bhausen
  */
 public class FlowReportRow {
-	/** The description of the request or response. */
-	private String description;
+	/** The stepDescription of the request or response. */
+	private String stepDescription;
 	/** The name of the flow. */
 	private String flowName;
 	/** The input/output type. */
@@ -32,10 +32,10 @@ public class FlowReportRow {
 	private String processingStepType;
 
 	/**
-	 * @return the description
+	 * @return the stepDescription
 	 */
-	public String getDescription() {
-		return this.description;
+	public String getStepDescription() {
+		return this.stepDescription;
 	}
 
 	/**
@@ -84,11 +84,11 @@ public class FlowReportRow {
 	}
 
 	/**
-	 * @param description
-	 *            the description to set
+	 * @param stepDescription
+	 *            the stepDescription to set
 	 */
-	public void setDescription(final String description) {
-		this.description = description;
+	public void setStepDescription(final String stepDescription) {
+		this.stepDescription = stepDescription;
 	}
 
 	/**

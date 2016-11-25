@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.qpark.eip.model.docmodel.ComplexType;
@@ -25,6 +27,8 @@ import com.qpark.eip.model.docmodel.FieldType;
  * @author bhausen
  */
 public abstract class AbstractReportProvider {
+	protected static final boolean WITH_HEADER = true;
+
 	/**
 	 * Get the {@link ComplexType} of the {@link ElementType} with id.
 	 *
@@ -38,11 +42,87 @@ public abstract class AbstractReportProvider {
 			final DataProviderModelAnalysis dataProvider,
 			final String elementId) {
 		Optional<ComplexType> value = Optional.empty();
-		Optional<ElementType> element = dataProvider.getElement(elementId);
+		final Optional<ElementType> element = dataProvider
+				.getElement(elementId);
 		if (element.isPresent()) {
 			value = dataProvider
 					.getComplexType(element.get().getComplexTypeId());
 		}
+		return value;
+	}
+
+	/**
+	 * Get a description of all field of a ComplexType
+	 *
+	 * @param dataProvider
+	 *            the {@link DataProviderModelAnalysis}.
+	 * @param ct
+	 *            ComplexType
+	 * @return (name: type cardinality)
+	 */
+	protected static String getComplexTypeFieldElements(
+			final DataProviderModelAnalysis dataProvider,
+			final ComplexType ct) {
+		final String value = getComplexTypeFieldElements(dataProvider, ct,
+				!WITH_HEADER);
+		return value;
+	}
+
+	protected static String getComplexTypeFieldElements(
+			final DataProviderModelAnalysis dataProvider, final ComplexType ct,
+			final boolean withHeader) {
+		final StringBuffer value = new StringBuffer(256);
+		if (Objects.nonNull(ct)) {
+			if (withHeader) {
+				value.append(getRealShortName(ct)).append("\n");
+			}
+			dataProvider.getDataTypes(ct.getField().stream()
+					.map(f -> f.getFieldTypeDefinitionId())
+					.collect(Collectors.toList()));
+			ct.getField().stream().forEach(f -> {
+				final Optional<DataType> dt = dataProvider
+						.getDataType(f.getFieldTypeDefinitionId());
+				if (dt.isPresent()) {
+					value.append(String.format("%s(%s:%s%s)\n",
+							withHeader ? "\t" : "", f.getName(),
+							getRealShortName(dt.get()), f.getCardinality()));
+				} else {
+					value.append(String.format("%s(%s:Type?%s)\n",
+							withHeader ? "\t" : "", f.getName(),
+							f.getCardinality()));
+				}
+			});
+		}
+		return value.toString();
+	}
+
+	protected static String getComplexTypeInOutFieldElements(
+			final DataProviderModelAnalysis dataProvider,
+			final Optional<ComplexType> in, final Optional<ComplexType> out) {
+		final StringBuffer value = new StringBuffer(256);
+		if (in.isPresent() && out.isPresent()) {
+			value.append(getComplexTypeFieldElements(dataProvider, in.get(),
+					WITH_HEADER));
+			value.append("\n");
+			value.append(getComplexTypeFieldElements(dataProvider, out.get(),
+					WITH_HEADER));
+		} else if (in.isPresent()) {
+			value.append(getComplexTypeFieldElements(dataProvider, in.get(),
+					WITH_HEADER));
+		} else if (out.isPresent()) {
+			value.append(getComplexTypeFieldElements(dataProvider, out.get(),
+					WITH_HEADER));
+		}
+		return value.toString();
+	}
+
+	protected static Set<String> getComplexTypeNames(
+			final DataProviderModelAnalysis dataProvider,
+			final List<String> ctIds) {
+		final Set<String> value = new TreeSet<>();
+		dataProvider.getDataTypes(ctIds).stream().forEach(ct -> value.add(String
+				.format("%s{%s}\n", getRealShortName(ct), ct.getNamespace())
+				.toString()));
 		return value;
 	}
 
@@ -83,52 +163,21 @@ public abstract class AbstractReportProvider {
 	protected static List<String> getFieldDataTypeIds(
 			final DataProviderModelAnalysis dataProvider,
 			final ComplexType ct) {
-		List<String> value = new ArrayList<>();
-		List<FieldType> fields = ct.getField();
-		Map<String, DataType> dataTypeMap = new HashMap<>();
+		final List<String> value = new ArrayList<>();
+		final List<FieldType> fields = ct.getField();
+		final Map<String, DataType> dataTypeMap = new HashMap<>();
 		dataProvider
 				.getDataTypes(
 						fields.stream().map(f -> f.getFieldTypeDefinitionId())
 								.collect(Collectors.toList()))
 				.stream().forEach(dt -> dataTypeMap.put(dt.getId(), dt));
 		fields.stream().forEach(f -> {
-			DataType dt = dataTypeMap.get(f.getFieldTypeDefinitionId());
+			final DataType dt = dataTypeMap.get(f.getFieldTypeDefinitionId());
 			if (Objects.nonNull(dt)) {
 				value.add(dt.getId());
 			}
 		});
 		return value;
-	}
-
-	/**
-	 * Get a description of all field of a ComplexType
-	 *
-	 * @param dataProvider
-	 *            the {@link DataProviderModelAnalysis}.
-	 * @param ct
-	 *            ComplexType
-	 * @return (name: type cardinality)
-	 */
-	protected static String getFieldList(
-			final DataProviderModelAnalysis dataProvider,
-			final ComplexType ct) {
-		StringBuffer value = new StringBuffer();
-		List<FieldType> fields = ct.getField();
-		dataProvider.getDataTypes(
-				fields.stream().map(f -> f.getFieldTypeDefinitionId())
-						.collect(Collectors.toList()));
-		fields.stream().forEach(f -> {
-			Optional<DataType> dt = dataProvider
-					.getDataType(f.getFieldTypeDefinitionId());
-			if (dt.isPresent()) {
-				value.append(String.format("(%s:%s%s)\n", f.getName(),
-						getRealShortName(dt.get()), f.getCardinality()));
-			} else {
-				value.append(String.format("(%s:Type?%s)\n", f.getName(),
-						f.getCardinality()));
-			}
-		});
-		return value.toString();
 	}
 
 	/**

@@ -9,6 +9,7 @@
 package com.qpark.eip.core.model.analysis;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qpark.eip.core.EagerLoader;
 import com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig;
+import com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis;
 import com.qpark.eip.model.docmodel.ClusterType;
 import com.qpark.eip.model.docmodel.ClusterType_;
 import com.qpark.eip.model.docmodel.ComplexType;
@@ -57,29 +59,12 @@ import com.qpark.eip.model.docmodel.ServiceType_;
  *
  * @author bhausen
  */
-public class AnalysisDao {
+public class AnalysisDao implements DataProviderModelAnalysis {
 	/** The {@link EntityManager}. */
 	@PersistenceContext(
 			unitName = EipModelAnalysisPersistenceConfig.PERSISTENCE_UNIT_NAME,
 			name = EipModelAnalysisPersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
 	private EntityManager em;
-
-	/**
-	 * Get the list of all {@link EnterpriseType}s.
-	 *
-	 * @return the list of all {@link EnterpriseType}s.
-	 */
-	@Transactional(
-			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
-	public List<EnterpriseType> getEnterprises() {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<EnterpriseType> q = cb.createQuery(EnterpriseType.class);
-		q.from(EnterpriseType.class);
-		TypedQuery<EnterpriseType> typedQuery = this.em.createQuery(q);
-		List<EnterpriseType> value = typedQuery.getResultList();
-		return value;
-	}
 
 	/**
 	 * Check if the {@link EnterpriseType} with given name and modelVersion
@@ -98,35 +83,22 @@ public class AnalysisDao {
 			final String modelVersion) {
 		boolean value = false;
 
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<Long> q = cb.createQuery(Long.class);
-		Root<EnterpriseType> f = q.from(EnterpriseType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<Long> q = cb.createQuery(Long.class);
+		final Root<EnterpriseType> f = q.from(EnterpriseType.class);
 		q.select(f.<Long> get(EnterpriseType_.hjid));
 		q.where(cb.equal(f.<String> get(EnterpriseType_.name), name), cb.equal(
 				f.<String> get(EnterpriseType_.modelVersion), modelVersion));
-		TypedQuery<Long> typedQuery = this.em.createQuery(q);
+		final TypedQuery<Long> typedQuery = this.em.createQuery(q);
 		try {
-			Long l = typedQuery.getSingleResult();
+			final Long l = typedQuery.getSingleResult();
 			if (l != null && l.longValue() != 0) {
 				value = true;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			value = false;
 		}
 		return value;
-	}
-
-	/**
-	 * Save the {@link EnterpriseType}.
-	 *
-	 * @param value
-	 *            the {@link EnterpriseType}.
-	 */
-	@Transactional(
-			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
-	public void saveEnterprise(final EnterpriseType value) {
-		this.em.merge(value);
 	}
 
 	/**
@@ -145,18 +117,34 @@ public class AnalysisDao {
 	public ClusterType getClusterByTargetNamespace(final String modelVersion,
 			final String targetNamespace) {
 		ClusterType value = null;
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<ClusterType> q = cb.createQuery(ClusterType.class);
-		Root<ClusterType> f = q.from(ClusterType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<ClusterType> q = cb.createQuery(ClusterType.class);
+		final Root<ClusterType> f = q.from(ClusterType.class);
 		q.where(cb.equal(f.<String> get(ClusterType_.modelVersion),
 				modelVersion),
 				cb.equal(f.<String> get(ClusterType_.name), targetNamespace));
-		TypedQuery<ClusterType> typedQuery = this.em.createQuery(q);
-		List<ClusterType> list = typedQuery.getResultList();
+		final TypedQuery<ClusterType> typedQuery = this.em.createQuery(q);
+		final List<ClusterType> list = typedQuery.getResultList();
 		if (Objects.nonNull(list) && list.size() != 1) {
 			value = list.get(0);
 			EagerLoader.load(value);
 		}
+		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getComplexType(java.lang.String)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public Optional<ComplexType> getComplexType(final String complexTypeId) {
+		final Optional<ComplexType> value = this
+				.getDataTypes(Arrays.asList(complexTypeId)).stream()
+				.filter(dt -> Objects.nonNull(dt)
+						&& ComplexType.class.isInstance(dt))
+				.map(dt -> (ComplexType) dt).findFirst();
 		return value;
 	}
 
@@ -175,18 +163,29 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public List<ComplexType> getComplexTypesById(final String modelVersion,
 			final List<String> ids) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<ComplexType> q = cb.createQuery(ComplexType.class);
-		Root<ComplexType> f = q.from(ComplexType.class);
-		Predicate orIds = cb.disjunction();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<ComplexType> q = cb.createQuery(ComplexType.class);
+		final Root<ComplexType> f = q.from(ComplexType.class);
+		final Predicate orIds = cb.disjunction();
 		ids.stream().forEach(id -> orIds.getExpressions()
 				.add(cb.equal(f.<String> get(ComplexType_.id), id)));
 		q.where(cb.equal(f.<String> get(ComplexType_.modelVersion),
 				modelVersion), orIds);
-		TypedQuery<ComplexType> typedQuery = this.em.createQuery(q);
-		List<ComplexType> value = typedQuery.getResultList();
+		final TypedQuery<ComplexType> typedQuery = this.em.createQuery(q);
+		final List<ComplexType> value = typedQuery.getResultList();
 		value.stream().forEach(ct -> EagerLoader.load(ct));
 		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getDataTypes(java.util.List)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<DataType> getDataTypes(final List<String> ids) {
+		return this.getDataTypesById(this.getLastModelVersion(), ids);
 	}
 
 	/**
@@ -204,20 +203,34 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public List<DataType> getDataTypesById(final String modelVersion,
 			final List<String> ids) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<DataType> q = cb.createQuery(DataType.class);
-		Root<DataType> f = q.from(DataType.class);
-		Predicate orIds = cb.disjunction();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<DataType> q = cb.createQuery(DataType.class);
+		final Root<DataType> f = q.from(DataType.class);
+		final Predicate orIds = cb.disjunction();
 		ids.stream().forEach(id -> orIds.getExpressions()
 				.add(cb.equal(f.<String> get(DataType_.id), id)));
 		q.where(cb.equal(f.<String> get(DataType_.modelVersion), modelVersion),
 				orIds);
 		q.orderBy(cb.asc(f.<String> get(DataType_.name)),
 				cb.asc(f.<String> get(DataType_.id)));
-		TypedQuery<DataType> typedQuery = this.em.createQuery(q);
-		List<DataType> value = typedQuery.getResultList();
+		final TypedQuery<DataType> typedQuery = this.em.createQuery(q);
+		final List<DataType> value = typedQuery.getResultList();
 		value.stream().forEach(dt -> EagerLoader.load(dt));
 		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getElement(java.lang.String)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public Optional<ElementType> getElement(final String elementId) {
+		return this
+				.getElementTypesById(this.getLastModelVersion(),
+						Arrays.asList(elementId))
+				.stream().filter(e -> Objects.nonNull(e)).findFirst();
 	}
 
 	/**
@@ -235,17 +248,76 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public List<ElementType> getElementTypesById(final String modelVersion,
 			final List<String> ids) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<ElementType> q = cb.createQuery(ElementType.class);
-		Root<ElementType> f = q.from(ElementType.class);
-		Predicate orIds = cb.disjunction();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<ElementType> q = cb.createQuery(ElementType.class);
+		final Root<ElementType> f = q.from(ElementType.class);
+		final Predicate orIds = cb.disjunction();
 		ids.stream().forEach(id -> orIds.getExpressions()
 				.add(cb.equal(f.<String> get(ElementType_.id), id)));
 		q.where(cb.equal(f.<String> get(ElementType_.modelVersion),
 				modelVersion), orIds);
-		TypedQuery<ElementType> typedQuery = this.em.createQuery(q);
-		List<ElementType> value = typedQuery.getResultList();
+		final TypedQuery<ElementType> typedQuery = this.em.createQuery(q);
+		final List<ElementType> value = typedQuery.getResultList();
 		value.stream().forEach(ct -> EagerLoader.load(ct));
+		return value;
+	}
+
+	/**
+	 * Get the list of all {@link EnterpriseType}s.
+	 *
+	 * @return the list of all {@link EnterpriseType}s.
+	 */
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<EnterpriseType> getEnterprises() {
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<EnterpriseType> q = cb
+				.createQuery(EnterpriseType.class);
+		q.from(EnterpriseType.class);
+		final TypedQuery<EnterpriseType> typedQuery = this.em.createQuery(q);
+		final List<EnterpriseType> value = typedQuery.getResultList();
+		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getFieldMapping(java.lang.String)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public Optional<FieldMappingType> getFieldMapping(final String id) {
+		return this.getFieldMappingTypeById(this.getLastModelVersion(), id);
+	}
+
+	/**
+	 * Get the {@link FieldMappingType} with the id.
+	 *
+	 * @param modelVersion
+	 *            the model version.
+	 * @param id
+	 *            the id to return.
+	 * @return the {@link FieldMappingType}.
+	 * @since 3.5.1
+	 */
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public Optional<FieldMappingType> getFieldMappingTypeById(
+			final String modelVersion, final String id) {
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<FieldMappingType> q = cb
+				.createQuery(FieldMappingType.class);
+		final Root<FieldMappingType> f = q.from(FieldMappingType.class);
+		q.where(cb.equal(f.<String> get(FieldMappingType_.modelVersion),
+				modelVersion),
+				cb.equal(f.<String> get(FieldMappingType_.id), id));
+		final TypedQuery<FieldMappingType> typedQuery = this.em.createQuery(q);
+		final List<FieldMappingType> list = typedQuery.getResultList();
+
+		final Optional<FieldMappingType> value = list.stream().findFirst();
+		value.ifPresent(ct -> EagerLoader.load(ct));
 		return value;
 	}
 
@@ -264,48 +336,18 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public List<FieldMappingType> getFieldMappingTypesById(
 			final String modelVersion, final List<String> ids) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<FieldMappingType> q = cb
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<FieldMappingType> q = cb
 				.createQuery(FieldMappingType.class);
-		Root<FieldMappingType> f = q.from(FieldMappingType.class);
-		Predicate orIds = cb.disjunction();
+		final Root<FieldMappingType> f = q.from(FieldMappingType.class);
+		final Predicate orIds = cb.disjunction();
 		ids.stream().forEach(id -> orIds.getExpressions()
 				.add(cb.equal(f.<String> get(FieldMappingType_.id), id)));
 		q.where(cb.equal(f.<String> get(FieldMappingType_.modelVersion),
 				modelVersion), orIds);
-		TypedQuery<FieldMappingType> typedQuery = this.em.createQuery(q);
-		List<FieldMappingType> value = typedQuery.getResultList();
+		final TypedQuery<FieldMappingType> typedQuery = this.em.createQuery(q);
+		final List<FieldMappingType> value = typedQuery.getResultList();
 		value.stream().forEach(ct -> EagerLoader.load(ct));
-		return value;
-	}
-
-	/**
-	 * Get the list of {@link FieldMappingType} with the ids.
-	 *
-	 * @param modelVersion
-	 *            the model version.
-	 * @param ids
-	 *            the list of ids to return.
-	 * @return the list of {@link FieldMappingType}.
-	 * @since 3.5.1
-	 */
-	@Transactional(
-			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
-	public Optional<FieldMappingType> getFieldMappingTypeById(
-			final String modelVersion, final String id) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<FieldMappingType> q = cb
-				.createQuery(FieldMappingType.class);
-		Root<FieldMappingType> f = q.from(FieldMappingType.class);
-		q.where(cb.equal(f.<String> get(FieldMappingType_.modelVersion),
-				modelVersion),
-				cb.equal(f.<String> get(FieldMappingType_.id), id));
-		TypedQuery<FieldMappingType> typedQuery = this.em.createQuery(q);
-		List<FieldMappingType> list = typedQuery.getResultList();
-
-		Optional<FieldMappingType> value = list.stream().findFirst();
-		value.ifPresent(ct -> EagerLoader.load(ct));
 		return value;
 	}
 
@@ -324,13 +366,13 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public List<FlowType> getFlowByNamePattern(final String modelVersion,
 			final String namePattern) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<FlowType> q = cb.createQuery(FlowType.class);
-		Root<FlowType> f = q.from(FlowType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<FlowType> q = cb.createQuery(FlowType.class);
+		final Root<FlowType> f = q.from(FlowType.class);
 		q.where(cb.equal(f.<String> get(FlowType_.modelVersion), modelVersion),
 				cb.like(f.<String> get(FlowType_.name), namePattern));
-		TypedQuery<FlowType> typedQuery = this.em.createQuery(q);
-		List<FlowType> value = typedQuery.getResultList();
+		final TypedQuery<FlowType> typedQuery = this.em.createQuery(q);
+		final List<FlowType> value = typedQuery.getResultList();
 		value.stream().forEach(ft -> EagerLoader.load(ft));
 		return value;
 	}
@@ -350,18 +392,18 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public List<InterfaceMappingType> getFlowInterfaceMappingTypes(
 			final String modelVersion, final String flowId) {
-		List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
-		List<String> flowProcessTypeIds = this
+		final List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
+		final List<String> flowProcessTypeIds = this
 				.getFlowProcessTypeIds(modelVersion, flowId);
-		List<String> flowMappingInterfaceMappingTypeIds = this
+		final List<String> flowMappingInterfaceMappingTypeIds = this
 				.getFlowMappingInterfaceMappingTypeIds(modelVersion,
 						flowProcessTypeIds);
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<InterfaceMappingType> q = cb
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<InterfaceMappingType> q = cb
 				.createQuery(InterfaceMappingType.class);
-		Root<InterfaceMappingType> f = q.from(InterfaceMappingType.class);
+		final Root<InterfaceMappingType> f = q.from(InterfaceMappingType.class);
 
-		Predicate orIds = cb.disjunction();
+		final Predicate orIds = cb.disjunction();
 		flowMappingInterfaceMappingTypeIds.stream().forEach(id -> orIds
 				.getExpressions()
 				.add(cb.equal(f.<String> get(InterfaceMappingType_.id), id)));
@@ -369,11 +411,12 @@ public class AnalysisDao {
 		q.where(cb.equal(f.<String> get(InterfaceMappingType_.modelVersion),
 				modelVersion), orIds);
 
-		TypedQuery<InterfaceMappingType> typedQuery = this.em.createQuery(q);
+		final TypedQuery<InterfaceMappingType> typedQuery = this.em
+				.createQuery(q);
 		value.addAll(typedQuery.getResultList());
 
-		List<String> interfaceMappingIds = value.stream().map(i -> i.getId())
-				.collect(Collectors.toList());
+		final List<String> interfaceMappingIds = value.stream()
+				.map(i -> i.getId()).collect(Collectors.toList());
 		this.getInterfaceMappingInheritents(modelVersion, interfaceMappingIds,
 				value);
 		value.stream().forEach(im -> EagerLoader.load(im));
@@ -382,12 +425,12 @@ public class AnalysisDao {
 
 	private List<String> getFlowMappingInterfaceMappingTypeIds(
 			final String modelVersion, final List<String> flowProcessTypeIds) {
-		List<String> value = new ArrayList<String>();
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<Long> q = cb.createQuery(Long.class);
-		Root<FlowMapInOutType> f = q.from(FlowMapInOutType.class);
+		final List<String> value = new ArrayList<String>();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<Long> q = cb.createQuery(Long.class);
+		final Root<FlowMapInOutType> f = q.from(FlowMapInOutType.class);
 
-		Predicate orParentIds = cb.disjunction();
+		final Predicate orParentIds = cb.disjunction();
 		flowProcessTypeIds.stream().forEach(id -> orParentIds.getExpressions()
 				.add(cb.equal(f.<String> get(FlowMapInOutType_.parentId), id)));
 
@@ -395,7 +438,7 @@ public class AnalysisDao {
 		q.where(cb.equal(f.<String> get(FlowMapInOutType_.modelVersion),
 				modelVersion), orParentIds);
 
-		TypedQuery<Long> typedQuery = this.em.createQuery(q);
+		final TypedQuery<Long> typedQuery = this.em.createQuery(q);
 		typedQuery.getResultList().stream().forEach(hjid -> {
 			value.addAll(this.em.getReference(FlowMapInOutType.class, hjid)
 					.getInterfaceMappingId());
@@ -406,35 +449,47 @@ public class AnalysisDao {
 
 	private List<String> getFlowProcessTypeIds(final String modelVersion,
 			final String flowId) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<String> q = cb.createQuery(String.class);
-		Root<FlowProcessType> f = q.from(FlowProcessType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<String> q = cb.createQuery(String.class);
+		final Root<FlowProcessType> f = q.from(FlowProcessType.class);
 
 		q.select(f.<String> get(FlowProcessType_.id));
 		q.where(cb.equal(f.<String> get(FlowProcessType_.modelVersion),
 				modelVersion),
 				cb.equal(f.<String> get(FlowProcessType_.parentId), flowId));
 		q.orderBy(cb.asc(f.<Long> get(FlowProcessType_.hjid)));
-		TypedQuery<String> typedQuery = this.em.createQuery(q);
-		List<String> value = typedQuery.getResultList();
+		final TypedQuery<String> typedQuery = this.em.createQuery(q);
+		final List<String> value = typedQuery.getResultList();
 		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getFlows(java.lang.String)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<FlowType> getFlows(final String flowNamePattern) {
+		return this.getFlowByNamePattern(this.getLastModelVersion(),
+				flowNamePattern);
 	}
 
 	private List<String> getInterfaceMappingFieldDefinitionIds(
 			final String modelVersion, final List<String> interfaceMappingIds) {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<String> q = cb.createQuery(String.class);
-		Root<FieldType> f = q.from(FieldType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<String> q = cb.createQuery(String.class);
+		final Root<FieldType> f = q.from(FieldType.class);
 
-		Predicate orParentIds = cb.disjunction();
+		final Predicate orParentIds = cb.disjunction();
 		interfaceMappingIds.stream().forEach(id -> orParentIds.getExpressions()
 				.add(cb.equal(f.<String> get(FieldType_.parentId), id)));
 
 		q.select(f.<String> get(FieldType_.fieldTypeDefinitionId));
 		q.where(cb.equal(f.<String> get(FieldType_.modelVersion), modelVersion),
 				orParentIds);
-		TypedQuery<String> typedQuery = this.em.createQuery(q);
-		List<String> value = typedQuery.getResultList();
+		final TypedQuery<String> typedQuery = this.em.createQuery(q);
+		final List<String> value = typedQuery.getResultList();
 		return value;
 	}
 
@@ -443,36 +498,46 @@ public class AnalysisDao {
 			final List<InterfaceMappingType> interfaceMappings) {
 		if (interfaceMappingIds.size() > 0) {
 			List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
-			List<String> fieldDefinitionIds = this
+			final List<String> fieldDefinitionIds = this
 					.getInterfaceMappingFieldDefinitionIds(modelVersion,
 							interfaceMappingIds);
 
-			CriteriaBuilder cb = this.em.getCriteriaBuilder();
-			CriteriaQuery<InterfaceMappingType> q = cb
+			final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+			final CriteriaQuery<InterfaceMappingType> q = cb
 					.createQuery(InterfaceMappingType.class);
-			Root<InterfaceMappingType> f = q.from(InterfaceMappingType.class);
+			final Root<InterfaceMappingType> f = q
+					.from(InterfaceMappingType.class);
 
-			Predicate orIds = cb.disjunction();
+			final Predicate orIds = cb.disjunction();
 			fieldDefinitionIds.stream()
-					.forEach(
-							id -> orIds.getExpressions()
-									.add(cb.equal(
-											f.<String> get(
-													InterfaceMappingType_.id),
-											id)));
+					.forEach(id -> orIds.getExpressions().add(cb.equal(
+							f.<String> get(InterfaceMappingType_.id), id)));
 
 			q.where(cb.equal(f.<String> get(InterfaceMappingType_.modelVersion),
 					modelVersion), orIds);
 
-			TypedQuery<InterfaceMappingType> typedQuery = this.em
+			final TypedQuery<InterfaceMappingType> typedQuery = this.em
 					.createQuery(q);
 			value = typedQuery.getResultList();
 			interfaceMappings.addAll(value);
-			List<String> foundIds = value.stream().map(i -> i.getId())
+			final List<String> foundIds = value.stream().map(i -> i.getId())
 					.collect(Collectors.toList());
 			this.getInterfaceMappingInheritents(modelVersion, foundIds,
 					interfaceMappings);
 		}
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getInterfaceMappings(java.lang.String)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<InterfaceMappingType> getInterfaceMappings(
+			final String flowId) {
+		return this.getFlowInterfaceMappingTypes(this.getLastModelVersion(),
+				flowId);
 	}
 
 	/**
@@ -486,16 +551,51 @@ public class AnalysisDao {
 			propagation = Propagation.REQUIRED)
 	public String getLastModelVersion() {
 		String value = null;
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<String> q = cb.createQuery(String.class);
-		Root<EnterpriseType> f = q.from(EnterpriseType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<String> q = cb.createQuery(String.class);
+		final Root<EnterpriseType> f = q.from(EnterpriseType.class);
 		q.select(f.<String> get(EnterpriseType_.modelVersion));
 		q.orderBy(cb.desc(f.<String> get(EnterpriseType_.modelVersion)));
-		TypedQuery<String> typedQuery = this.em.createQuery(q);
-		List<String> list = typedQuery.getResultList();
+		final TypedQuery<String> typedQuery = this.em.createQuery(q);
+		final List<String> list = typedQuery.getResultList();
 		if (Objects.nonNull(list) && list.size() > 0) {
 			value = list.get(0);
 		}
+		return value;
+	}
+
+	/**
+	 * Get the list of serviceIds available.
+	 *
+	 * @param modelVersion
+	 *            the model version.
+	 * @return the list of serviceIds available.
+	 * @since 3.5.1
+	 */
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public List<String> getRevisions() {
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<String> q = cb.createQuery(String.class);
+		final Root<EnterpriseType> f = q.from(EnterpriseType.class);
+		q.select(f.<String> get(EnterpriseType_.modelVersion));
+		q.orderBy(cb.asc(f.<String> get(EnterpriseType_.modelVersion)));
+		final TypedQuery<String> typedQuery = this.em.createQuery(q);
+		final List<String> value = typedQuery.getResultList();
+		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getService(java.lang.String)
+	 */
+	@Override
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public Optional<ServiceType> getService(final String serviceId) {
+		final Optional<ServiceType> value = Optional.ofNullable(this
+				.getServiceByServiceId(this.getLastModelVersion(), serviceId));
 		return value;
 	}
 
@@ -515,14 +615,14 @@ public class AnalysisDao {
 	public ServiceType getServiceByServiceId(final String modelVersion,
 			final String serviceId) {
 		ServiceType value = null;
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<ServiceType> q = cb.createQuery(ServiceType.class);
-		Root<ServiceType> f = q.from(ServiceType.class);
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<ServiceType> q = cb.createQuery(ServiceType.class);
+		final Root<ServiceType> f = q.from(ServiceType.class);
 		q.where(cb.equal(f.<String> get(ServiceType_.modelVersion),
 				modelVersion),
 				cb.equal(f.<String> get(ServiceType_.serviceId), serviceId));
-		TypedQuery<ServiceType> typedQuery = this.em.createQuery(q);
-		List<ServiceType> list = typedQuery.getResultList();
+		final TypedQuery<ServiceType> typedQuery = this.em.createQuery(q);
+		final List<ServiceType> list = typedQuery.getResultList();
 		if (Objects.nonNull(list) && list.size() == 1) {
 			value = list.get(0);
 			EagerLoader.load(value);
@@ -542,40 +642,18 @@ public class AnalysisDao {
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<String> getServiceIds(final String modelVersion) {
-		List<String> value = new ArrayList<String>();
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<ServiceType> q = cb.createQuery(ServiceType.class);
-		Root<ServiceType> f = q.from(ServiceType.class);
+		final List<String> value = new ArrayList<String>();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<ServiceType> q = cb.createQuery(ServiceType.class);
+		final Root<ServiceType> f = q.from(ServiceType.class);
 		q.where(cb.equal(f.<String> get(ServiceType_.modelVersion),
 				modelVersion));
 		q.orderBy(cb.asc(f.<String> get(ServiceType_.serviceId)),
 				cb.asc(f.<String> get(ServiceType_.namespace)));
-		TypedQuery<ServiceType> typedQuery = this.em.createQuery(q);
-		List<ServiceType> services = typedQuery.getResultList();
+		final TypedQuery<ServiceType> typedQuery = this.em.createQuery(q);
+		final List<ServiceType> services = typedQuery.getResultList();
 		services.stream().filter(s -> Objects.nonNull(s.getServiceId()))
 				.forEach(s -> value.add(s.getServiceId()));
-		return value;
-	}
-
-	/**
-	 * Get the list of serviceIds available.
-	 *
-	 * @param modelVersion
-	 *            the model version.
-	 * @return the list of serviceIds available.
-	 * @since 3.5.1
-	 */
-	@Transactional(
-			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
-	public List<String> getRevisions() {
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<String> q = cb.createQuery(String.class);
-		Root<EnterpriseType> f = q.from(EnterpriseType.class);
-		q.select(f.<String> get(EnterpriseType_.modelVersion));
-		q.orderBy(cb.asc(f.<String> get(EnterpriseType_.modelVersion)));
-		TypedQuery<String> typedQuery = this.em.createQuery(q);
-		List<String> value = typedQuery.getResultList();
 		return value;
 	}
 
@@ -591,19 +669,31 @@ public class AnalysisDao {
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<String> getTargetNamespaces(final String modelVersion) {
-		List<String> value = new ArrayList<String>();
-		CriteriaBuilder cb = this.em.getCriteriaBuilder();
-		CriteriaQuery<ClusterType> q = cb.createQuery(ClusterType.class);
-		Root<ClusterType> f = q.from(ClusterType.class);
+		final List<String> value = new ArrayList<String>();
+		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
+		final CriteriaQuery<ClusterType> q = cb.createQuery(ClusterType.class);
+		final Root<ClusterType> f = q.from(ClusterType.class);
 		q.where(cb.equal(f.<String> get(ClusterType_.modelVersion),
 				modelVersion));
 		q.orderBy(cb.asc(f.<String> get(ClusterType_.name)),
 				cb.asc(f.<String> get(ClusterType_.id)));
-		TypedQuery<ClusterType> typedQuery = this.em.createQuery(q);
-		List<ClusterType> cluster = typedQuery.getResultList();
+		final TypedQuery<ClusterType> typedQuery = this.em.createQuery(q);
+		final List<ClusterType> cluster = typedQuery.getResultList();
 		cluster.stream().filter(c -> Objects.nonNull(c.getName()))
 				.forEach(c -> value.add(c.getName()));
 		return value;
 	}
 
+	/**
+	 * Save the {@link EnterpriseType}.
+	 *
+	 * @param value
+	 *            the {@link EnterpriseType}.
+	 */
+	@Transactional(
+			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
+	public void saveEnterprise(final EnterpriseType value) {
+		this.em.merge(value);
+	}
 }
