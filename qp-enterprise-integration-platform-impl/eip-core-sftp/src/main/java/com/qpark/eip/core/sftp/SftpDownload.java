@@ -22,8 +22,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author bhausen
  */
 public class SftpDownload {
+	/**
+	 * Random object used by random method. This has to be not local to the
+	 * random method so as to not return the same value in the same millisecond.
+	 */
+	private static final Random RANDOM = new Random();
+	private static int nextRandomInt(final int startInclusive,
+			final int endExclusive) {
+		return startInclusive + RANDOM.nextInt(endExclusive - startInclusive);
+	}
+
 	/** The {@link org.slf4j.Logger}. */
 	private final Logger logger = LoggerFactory.getLogger(SftpDownload.class);
+
 	/** The {@link SftpGateway}. */
 	@Autowired
 	private SftpGateway sftpGateway;
@@ -47,17 +58,6 @@ public class SftpDownload {
 			// The file was eventually read by another thread.
 		}
 		return value;
-	}
-
-	/**
-	 * Random object used by random method. This has to be not local to the
-	 * random method so as to not return the same value in the same millisecond.
-	 */
-	private static final Random RANDOM = new Random();
-
-	private static int nextRandomInt(final int startInclusive,
-			final int endExclusive) {
-		return startInclusive + RANDOM.nextInt(endExclusive - startInclusive);
 	}
 
 	/**
