@@ -8,12 +8,12 @@ import java.util.Optional;
  *
  * @author bhausen
  */
-public interface TypeFactory<T> {
+public abstract class TypeFactory<T> {
 	/**
 	 * @param bytes
 	 *            the byte array.
 	 * @return get the list of Ts form the byte array.
 	 * @throws Exception
 	 */
-	List<T> create(Optional<byte[]> bytes) throws Exception;
+	public abstract List<T> create(Optional<byte[]> bytes) throws Exception;
 }

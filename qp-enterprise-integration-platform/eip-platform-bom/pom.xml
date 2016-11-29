@@ -158,6 +158,11 @@
 				<artifactId>eip-core-spring-lockedoperation</artifactId>
 				<version>3.7.0</version><!--qpark-eip-version-->
 			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-sftp</artifactId>
+				<version>3.7.0</version><!--qpark-eip-version-->
+			</dependency>
 
 			<dependency>
 				<groupId>javax</groupId>

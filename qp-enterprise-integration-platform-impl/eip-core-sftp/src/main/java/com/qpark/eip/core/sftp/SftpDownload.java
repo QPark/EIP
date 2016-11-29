@@ -27,6 +27,7 @@ public class SftpDownload {
 	 * random method so as to not return the same value in the same millisecond.
 	 */
 	private static final Random RANDOM = new Random();
+
 	private static int nextRandomInt(final int startInclusive,
 			final int endExclusive) {
 		return startInclusive + RANDOM.nextInt(endExclusive - startInclusive);
