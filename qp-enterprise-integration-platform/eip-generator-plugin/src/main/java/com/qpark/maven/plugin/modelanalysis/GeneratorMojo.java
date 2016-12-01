@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -58,6 +59,12 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "serviceRequestSuffix", defaultValue = "Request")
 	private String serviceRequestSuffix;
+	/** The name of the service id to generate. If empty use all. */
+	@Parameter(property = "serviceId", defaultValue = "")
+	private String serviceId;
+	/** The pattern matching the flow name. Defaults to <i>.*</i> */
+	@Parameter(property = "flowNamePattern", defaultValue = ".*")
+	private String flowNamePattern;
 	/**
 	 * The service response name need to end with this suffix (Default
 	 * <code>Response</code>).
@@ -99,50 +106,52 @@ public class GeneratorMojo extends AbstractMojo {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
 
-		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
+		final XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
 				this.basePackageName, this.messagePackageNameSuffix,
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
 				this.serviceResponseSuffix);
 		this.eipVersion = this.getEipVersion();
-
+		final List<String> serviceIds = xsds.getServiceIdRegistry()
+				.splitServiceIds(this.serviceId);
 		if (this.enterpriseName == null
 				|| this.enterpriseName.trim().length() == 0) {
 			this.enterpriseName = this.basePackageName;
 		}
 		if (this.modelVersion == null
 				|| this.modelVersion.trim().length() == 0) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+			final SimpleDateFormat sdf = new SimpleDateFormat(
+					"yyyyMMdd-HHmmss");
 			this.modelVersion = String.format("%s#%s",
 					this.project.getArtifact().getVersion(),
 					sdf.format(new Date()));
 		}
-		Analysis a = new AnalysisProvider()
+		final Analysis a = new AnalysisProvider()
 				.createEnterprise(this.enterpriseName, this.modelVersion, xsds);
 
 		try {
-			ObjectFactory of = new ObjectFactory();
-			JAXBElement<EnterpriseType> enterprise = of
+			final ObjectFactory of = new ObjectFactory();
+			final JAXBElement<EnterpriseType> enterprise = of
 					.createEnterprise(a.getEnterprise());
-			JAXBContext context = JAXBContext
+			final JAXBContext context = JAXBContext
 					.newInstance(ObjectFactory.class.getPackage().getName());
-			Marshaller marshaller = context.createMarshaller();
+			final Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			StringWriter sw = new StringWriter();
+			final StringWriter sw = new StringWriter();
 			marshaller.marshal(enterprise, sw);
 
-			File f = Util.getFile(this.outputDirectory,
+			final File f = Util.getFile(this.outputDirectory,
 					new StringBuffer(64).append(this.enterpriseName)
 							.append("-ModelAnalysis.xml").toString());
 			this.getLog().info(new StringBuffer().append("Write ")
 					.append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sw.toString());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				this.getLog().error(e.getMessage());
 				e.printStackTrace();
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
