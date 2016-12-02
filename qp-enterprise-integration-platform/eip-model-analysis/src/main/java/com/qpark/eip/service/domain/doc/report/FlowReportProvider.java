@@ -7,6 +7,7 @@
 package com.qpark.eip.service.domain.doc.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -210,14 +211,14 @@ public class FlowReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param flowPattern
+	 * @param flowNameParts
 	 *            the pattern the flow names need to match.
 	 * @return the list of {@link FlowReportRow}s.
 	 */
 	public List<FlowReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final String flowPattern) {
-		return this.getReportRows(dataProvider, flowPattern,
+			final Collection<String> flowNameParts) {
+		return this.getReportRows(dataProvider, flowNameParts,
 				new TreeSet<String>());
 	}
 
@@ -226,7 +227,7 @@ public class FlowReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param flowNamePattern
+	 * @param flowNameParts
 	 *            the pattern the flow names need to match.
 	 * @param ctIds
 	 *            the set of used complex type ids.
@@ -234,11 +235,11 @@ public class FlowReportProvider extends AbstractReportProvider {
 	 */
 	public List<FlowReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final String flowNamePattern, final Set<String> ctIds) {
+			final Collection<String> flowNameParts, final Set<String> ctIds) {
 		final List<FlowReportRow> value = new ArrayList<>();
-		dataProvider.getFlows(flowNamePattern).stream()
-				.filter(f -> Objects
-						.nonNull(f))
+		dataProvider.getFlows(flowNameParts)
+				.stream().filter(
+						f -> Objects.nonNull(f))
 				.sorted(Comparator
 						.comparing(FlowType::getName,
 								Comparator.nullsLast(Comparator.naturalOrder()))

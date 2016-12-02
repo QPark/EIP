@@ -6,7 +6,9 @@
  ******************************************************************************/
 package com.qpark.eip.model.docmodelreport;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * One row in the mapping report.
@@ -159,6 +161,9 @@ public class MappingReportRow {
 	 * @return the mappingTypeInputTypes
 	 */
 	public List<String> getMappingTypeInputTypes() {
+		if (Objects.isNull(this.mappingTypeInputTypes)) {
+			this.mappingTypeInputTypes = new ArrayList<>();
+		}
 		return this.mappingTypeInputTypes;
 	}
 

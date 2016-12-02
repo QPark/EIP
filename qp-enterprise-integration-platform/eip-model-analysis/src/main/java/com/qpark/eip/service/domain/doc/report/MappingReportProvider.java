@@ -7,6 +7,7 @@
 package com.qpark.eip.service.domain.doc.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -28,14 +29,14 @@ public class MappingReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param MappingPattern
-	 *            the pattern the Mapping names need to match.
+	 * @param flowNameParts
+	 *            the pattern the flows names need to match.
 	 * @return the list of {@link MappingReportRow}s.
 	 */
 	public List<MappingReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final String MappingPattern) {
-		return this.getReportRows(dataProvider, MappingPattern,
+			final Collection<String> flowNameParts) {
+		return this.getReportRows(dataProvider, flowNameParts,
 				new TreeSet<String>());
 	}
 
@@ -44,7 +45,7 @@ public class MappingReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param flowNamePattern
+	 * @param flowNameParts
 	 *            the pattern the flow names need to match.
 	 * @param ctIds
 	 *            the set of used complex type ids.
@@ -52,11 +53,11 @@ public class MappingReportProvider extends AbstractReportProvider {
 	 */
 	public List<MappingReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final String flowNamePattern, final Set<String> ctIds) {
-		List<MappingReportRow> value = new ArrayList<>();
-		dataProvider.getFlows(flowNamePattern).stream()
-				.filter(f -> Objects
-						.nonNull(f))
+			final Collection<String> flowNameParts, final Set<String> ctIds) {
+		final List<MappingReportRow> value = new ArrayList<>();
+		dataProvider.getFlows(flowNameParts)
+				.stream().filter(
+						f -> Objects.nonNull(f))
 				.sorted(Comparator
 						.comparing(FlowType::getName,
 								Comparator.nullsLast(Comparator.naturalOrder()))
@@ -74,7 +75,7 @@ public class MappingReportProvider extends AbstractReportProvider {
 												f1.getSequenceNumber(), f2
 														.getSequenceNumber()))
 										.forEach(f -> {
-											MappingReportRow m = new MappingReportRow();
+											final MappingReportRow m = new MappingReportRow();
 											value.add(m);
 											m.setFlowName(f.getName());
 											m.setInterfaceName(i.getName());

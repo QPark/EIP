@@ -11,6 +11,7 @@ package com.qpark.maven.plugin.modelanalysis;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,8 @@ import com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis;
 import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
+
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicBoolean;
 
 public class AnalysisProvider implements DataProviderModelAnalysis {
 	private static class RequestResponseDataFieldContainer {
@@ -442,11 +445,11 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 					}
 				});
 		this.analysis.getDataTypes().stream().parallel()
-				.filter(dt -> (dt.getJavaPackageName().isEmpty()
+				.filter(dt -> ComplexType.class.isInstance(dt))
+				.filter(dt -> !dt.getNamespace()
+						.equals("http://www.w3.org/2001/XMLSchema"))
+				.filter(dt -> dt.getJavaPackageName().isEmpty()
 						|| dt.getJavaPackageName().startsWith("java"))
-						&& !dt.getNamespace()
-								.equals("http://www.w3.org/2001/XMLSchema")
-						&& ComplexType.class.isInstance(dt))
 				.forEach(dt -> {
 					this.analysis.getDataTypes().stream()
 							.filter(dtx -> dtx.getNamespace()
@@ -756,13 +759,13 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 					.get(cluster.getParentId());
 			service = this.of.createServiceType();
 			service.setName(serviceId);
+			service.setServiceId(serviceId);
 			service.setModelVersion(cluster.getModelVersion());
 			this.uuidProvider.setUUID(service);
 			service.setClusterId(cluster.getId());
 			service.setDescription(cluster.getDescription());
 			service.setNamespace(cluster.getName());
 			service.setPackageName(cluster.getPackageName());
-			service.setServiceId(serviceId);
 			service.setSecurityRoleName(
 					String.format("ROLE_%s", serviceId.toUpperCase()));
 
@@ -1078,31 +1081,103 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 		return value;
 	}
 
+	public Optional<InterfaceMappingType> getInterfaceMappingType(
+			final String id) {
+		Optional<InterfaceMappingType> value = Optional.empty();
+		final DataType dt = this.analysis.getDataTypeById(id);
+		if (Objects.nonNull(dt) && InterfaceMappingType.class.isInstance(dt)) {
+			value = Optional.of((InterfaceMappingType) dt);
+		}
+		return value;
+	}
+
 	@Override
-	public List<FlowType> getFlows(final String flowNamePattern) {
+	public List<FlowType> getFlows(final Collection<String> flowNameParts) {
 		List<FlowType> value = new ArrayList<>();
-		if (Objects.nonNull(flowNamePattern)) {
+		if (Objects.nonNull(flowNameParts)) {
 			value = this.enterprise.getFlows().stream()
 					.filter(f -> Objects.nonNull(f)
 							&& Objects.nonNull(f.getName())
-							&& f.getName().matches(flowNamePattern))
+							&& flowMatches(flowNameParts, f.getName()))
 					.collect(Collectors.toList());
 		}
 		return value;
+	}
+
+	private static boolean flowMatches(final Collection<String> flowNameParts,
+			final String flowName) {
+		final AtomicBoolean value = new AtomicBoolean(false);
+		flowNameParts.stream().filter(f -> flowName.contains(f)).findFirst()
+				.ifPresent(f -> value.set(true));
+		return value.get();
 	}
 
 	@Override
 	public List<InterfaceMappingType> getInterfaceMappings(
 			final String flowId) {
 		final List<InterfaceMappingType> value = new ArrayList<>();
-		// TODO Auto-generated method stub
+		this.getInterfaceMappingIds(flowId)
+				.forEach(iftId -> this.getInterfaceMappingType(iftId)
+						.ifPresent(ift -> value.add(ift)));
+		final Set<String> foundIds = new TreeSet<>();
+		value.stream().forEach(ift -> foundIds.add(ift.getId()));
+		this.getInterfaceMappingInheritents(foundIds, value);
+		return value;
+	}
+
+	private void getInterfaceMappingInheritents(
+			final Set<String> interfaceMappingIds,
+			final List<InterfaceMappingType> interfaceMappings) {
+		if (interfaceMappingIds.size() > 0) {
+			final Set<String> allIftIds = interfaceMappings.stream()
+					.map(ift -> ift.getId()).collect(Collectors.toSet());
+			final List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
+			final Set<String> fieldDefinitionIds = new TreeSet<>();
+			interfaceMappings.stream().forEach(ift -> {
+				ift.getFieldMappings().stream().forEach(fm -> {
+					fieldDefinitionIds.add(fm.getFieldTypeDefinitionId());
+				});
+			});
+
+			fieldDefinitionIds.stream().filter(
+					fdid -> Objects.nonNull(fdid) && !allIftIds.contains(fdid))
+					.forEach(fdid -> {
+						this.getInterfaceMappingType(fdid)
+								.ifPresent(ift -> value.add(ift));
+					});
+			interfaceMappings.addAll(value);
+			final Set<String> foundIds = value.stream().map(ift -> ift.getId())
+					.collect(Collectors.toSet());
+			this.getInterfaceMappingInheritents(foundIds, interfaceMappings);
+		}
+	}
+
+	private List<String> getInterfaceMappingIds(final String flowId) {
+		final List<String> value = new ArrayList<>();
+		if (Objects.nonNull(flowId)) {
+			final List<FlowMapInOutType> flowMapInOuts = new ArrayList<>();
+			this.enterprise.getFlows().stream()
+					.filter(f -> Objects.nonNull(f) && f.getId().equals(flowId))
+					.findFirst().ifPresent(f -> {
+						if (Objects.nonNull(f.getExecuteRequest())) {
+							flowMapInOuts.addAll(
+									f.getExecuteRequest().getMapInOut());
+						}
+						if (Objects.nonNull(f.getProcessResponse())) {
+							flowMapInOuts.addAll(
+									f.getProcessResponse().getMapInOut());
+						}
+					});
+			flowMapInOuts.stream()
+					.forEach(fm -> value.addAll(fm.getInterfaceMappingId()));
+		}
 		return value;
 	}
 
 	@Override
 	public Optional<ServiceType> getService(final String serviceId) {
 		Optional<ServiceType> value = Optional.empty();
-		final ServiceType service = this.analysis.getServiceType(serviceId);
+		final ServiceType service = this.analysis.getServiceTypeById(serviceId);
 		if (Objects.nonNull(service)) {
 			value = Optional.of(service);
 		}

@@ -29,6 +29,8 @@ public class Analysis {
 	private Map<String, ClusterType> clusterMap = new TreeMap<>();
 	/** The {@link Map} of names with their {@link ServiceType}. */
 	private Map<String, ServiceType> serviceMap = new TreeMap<>();
+	/** The {@link Map} of names with their {@link ServiceType}. */
+	private Map<String, ServiceType> serviceIdMap = new TreeMap<>();
 	/** The {@link Map} of names with their {@link ElementType}. */
 	private Map<String, ElementType> elementMap = new TreeMap<>();
 	/** The {@link Map} of names with their {@link DataType}. */
@@ -48,8 +50,12 @@ public class Analysis {
 			this.clusterMap.put(((ClusterType) o).getName(), (ClusterType) o);
 		} else if (ServiceType.class.isInstance(o)) {
 			this.serviceMap.put(((ServiceType) o).getName(), (ServiceType) o);
+			this.serviceIdMap.put(((ServiceType) o).getServiceId(),
+					(ServiceType) o);
 		} else if (ElementType.class.isInstance(o)) {
 			this.elementMap.put(((ElementType) o).getName(), (ElementType) o);
+			this.dataTypeMap.put(((ElementType) o).getName(), (ElementType) o);
+			this.dataTypeIdMap.put(((ElementType) o).getId(), (ElementType) o);
 		} else if (DataType.class.isInstance(o)) {
 			this.dataTypeMap.put(((DataType) o).getName(), (DataType) o);
 			this.dataTypeIdMap.put(((DataType) o).getId(), (DataType) o);
@@ -72,7 +78,7 @@ public class Analysis {
 	}
 
 	/**
-	 * Get the {@link DataType} according to the QName of the complexType.
+	 * Get the {@link DataType} according to the QName.
 	 *
 	 * @param name
 	 *            the QName of the {@link DataType}.
@@ -83,10 +89,10 @@ public class Analysis {
 	}
 
 	/**
-	 * Get the {@link DataType} according to the QName of the complexType.
+	 * Get the {@link DataType} according to the id.
 	 *
 	 * @param id
-	 *            the id Name of the {@link DataType}.
+	 *            the id of the {@link DataType}.
 	 * @return the {@link DataType} or <code>null</code> .
 	 */
 	public DataType getDataTypeById(final String id) {
@@ -131,11 +137,22 @@ public class Analysis {
 	/**
 	 * Get the {@link ServiceType} according to the service id.
 	 *
+	 * @param serviceName
+	 *            the service id.
+	 * @return the {@link ServiceType} or <code>null</code> .
+	 */
+	public ServiceType getServiceType(final String serviceName) {
+		return this.serviceMap.get(serviceName);
+	}
+
+	/**
+	 * Get the {@link ServiceType} according to the service id.
+	 *
 	 * @param serviceId
 	 *            the service id.
 	 * @return the {@link ServiceType} or <code>null</code> .
 	 */
-	public ServiceType getServiceType(final String serviceId) {
-		return this.serviceMap.get(serviceId);
+	public ServiceType getServiceTypeById(final String serviceId) {
+		return this.serviceIdMap.get(serviceId);
 	}
 }

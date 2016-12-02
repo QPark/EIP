@@ -14,7 +14,6 @@
 	<artifactId>eip-model-analysis</artifactId>
 	<version>3.7.0</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
-	<name>eip-generator-plugin</name>
 	<description>Generate the classes and configurations needed by the bus.</description>
 
 	<properties>
@@ -34,6 +33,17 @@
 			<groupId>org.jvnet.jaxb2_commons</groupId>
 			<artifactId>jaxb2-basics-runtime</artifactId>
 			<version>0.9.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.12</version>
+			<scope>test</scope>
 		</dependency>
  	</dependencies>
 

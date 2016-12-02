@@ -10,6 +10,7 @@ package com.qpark.eip.core.model.analysis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qpark.eip.core.EagerLoader;
 import com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig;
-import com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis;
 import com.qpark.eip.model.docmodel.ClusterType;
 import com.qpark.eip.model.docmodel.ClusterType_;
 import com.qpark.eip.model.docmodel.ComplexType;
@@ -53,6 +53,7 @@ import com.qpark.eip.model.docmodel.InterfaceMappingType;
 import com.qpark.eip.model.docmodel.InterfaceMappingType_;
 import com.qpark.eip.model.docmodel.ServiceType;
 import com.qpark.eip.model.docmodel.ServiceType_;
+import com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis;
 
 /**
  * The dao of the domain model analysis.
@@ -365,12 +366,19 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<FlowType> getFlowByNamePattern(final String modelVersion,
-			final String namePattern) {
+			final Collection<String> namePattern) {
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaQuery<FlowType> q = cb.createQuery(FlowType.class);
 		final Root<FlowType> f = q.from(FlowType.class);
-		q.where(cb.equal(f.<String> get(FlowType_.modelVersion), modelVersion),
-				cb.like(f.<String> get(FlowType_.name), namePattern));
+
+		final Predicate or = cb.disjunction();
+		namePattern.stream().forEach(id -> or.getExpressions()
+				.add(cb.like(f.<String> get(FlowType_.name), "%" + id + "%")));
+		final Predicate and = cb.conjunction();
+		and.getExpressions().add(
+				cb.equal(f.<String> get(FlowType_.modelVersion), modelVersion));
+		and.getExpressions().add(or);
+		q.where(and);
 		final TypedQuery<FlowType> typedQuery = this.em.createQuery(q);
 		final List<FlowType> value = typedQuery.getResultList();
 		value.stream().forEach(ft -> EagerLoader.load(ft));
@@ -470,7 +478,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
-	public List<FlowType> getFlows(final String flowNamePattern) {
+	public List<FlowType> getFlows(final Collection<String> flowNamePattern) {
 		return this.getFlowByNamePattern(this.getLastModelVersion(),
 				flowNamePattern);
 	}

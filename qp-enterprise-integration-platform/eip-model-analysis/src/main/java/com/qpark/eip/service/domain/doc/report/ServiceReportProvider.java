@@ -7,10 +7,14 @@
 package com.qpark.eip.service.domain.doc.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.qpark.eip.model.docmodel.ComplexType;
 import com.qpark.eip.model.docmodel.OperationType;
@@ -67,6 +71,8 @@ public class ServiceReportProvider extends AbstractReportProvider {
 				|| operationShortName.matches(operationNamePattern)) {
 			value = true;
 		}
+		logger.info("isValidOperation {} - {}: {}", operationNamePattern,
+				operationShortName, value);
 		return value;
 	}
 
@@ -84,10 +90,15 @@ public class ServiceReportProvider extends AbstractReportProvider {
 	 */
 	public List<ServiceReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final List<String> serviceIds, final String operationNamePattern) {
+			final Collection<String> serviceIds,
+			final String operationNamePattern) {
 		return this.getReportRows(dataProvider, serviceIds,
 				operationNamePattern, new TreeSet<String>());
 	}
+
+	/** The {@link org.slf4j.Logger}. */
+	private static Logger logger = LoggerFactory
+			.getLogger(ServiceReportProvider.class);
 
 	/**
 	 * Get the list of {@link ServiceReportRow}s of the given services and
@@ -105,13 +116,14 @@ public class ServiceReportProvider extends AbstractReportProvider {
 	 */
 	public List<ServiceReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final List<String> serviceIds, final String operationNamePattern,
-			final Set<String> ctIds) {
+			final Collection<String> serviceIds,
+			final String operationNamePattern, final Set<String> ctIds) {
 		final List<ServiceReportRow> value = new ArrayList<>();
 		serviceIds.stream().filter(serviceId -> Objects.nonNull(serviceId))
 				.map(serviceId -> dataProvider.getService(serviceId))
 				.forEach(os -> os.ifPresent(s -> {
 					/* Service. */
+					logger.debug("getReportRows {}", s.getName());
 					s.getOperation().stream()
 							.filter(o -> Objects.nonNull(o.getRequestResponse())
 									&& Objects.nonNull(o.getShortName())
@@ -119,6 +131,8 @@ public class ServiceReportProvider extends AbstractReportProvider {
 											o.getShortName()))
 							.forEach(o -> {
 								/* Operation. */
+								logger.debug("getReportRows {} - {}",
+										s.getName(), o.getName());
 								final RequestResponseDataType rr = o
 										.getRequestResponse();
 								/* Request. */

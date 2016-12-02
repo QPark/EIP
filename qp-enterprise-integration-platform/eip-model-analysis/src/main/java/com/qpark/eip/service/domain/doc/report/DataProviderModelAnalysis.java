@@ -7,6 +7,7 @@
 package com.qpark.eip.service.domain.doc.report;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -70,7 +71,7 @@ public interface DataProviderModelAnalysis {
 
 	/**
 	 * Get the {@link FieldMappingType} of the id.
-	 * 
+	 *
 	 * @param id
 	 *            the id of the
 	 * @return the {@link FieldMappingType}.
@@ -80,11 +81,11 @@ public interface DataProviderModelAnalysis {
 	/**
 	 * Get the list of {@link FlowType}s which names matching the pattern.
 	 *
-	 * @param flowNamePattern
-	 *            the flow name pattern.
+	 * @param flowNameParts
+	 *            the flow name parts.
 	 * @return the list of {@link FlowType}s.
 	 */
-	List<FlowType> getFlows(String flowNamePattern);
+	List<FlowType> getFlows(Collection<String> flowNameParts);
 
 	/**
 	 * Get the list of {@link InterfaceMappingType}s of the flow with the given

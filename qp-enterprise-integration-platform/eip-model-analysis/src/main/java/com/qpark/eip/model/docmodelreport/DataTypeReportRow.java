@@ -6,7 +6,9 @@
  ******************************************************************************/
 package com.qpark.eip.model.docmodelreport;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * One row in the data type report.
@@ -78,6 +80,9 @@ public class DataTypeReportRow {
 	 * @return the inheritedFrom
 	 */
 	public List<String> getInheritedFrom() {
+		if (Objects.isNull(this.inheritedFrom)) {
+			this.inheritedFrom = new ArrayList<>();
+		}
 		return this.inheritedFrom;
 	}
 

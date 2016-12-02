@@ -25,15 +25,12 @@ public class DataTypeReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param DataTypePattern
-	 *            the pattern the DataType names need to match.
 	 * @return the list of {@link DataTypeReportRow}s.
 	 */
 	public List<DataTypeReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
 			final String DataTypePattern) {
-		return this.getReportRows(dataProvider, DataTypePattern,
-				new TreeSet<String>());
+		return this.getReportRows(dataProvider, new TreeSet<String>());
 	}
 
 	/**
@@ -41,15 +38,13 @@ public class DataTypeReportProvider extends AbstractReportProvider {
 	 *
 	 * @param dataProvider
 	 *            the {@link DataProviderModelAnalysis}.
-	 * @param DataTypePattern
-	 *            the pattern the DataType names need to match.
 	 * @param ctIds
 	 *            the set of used complex type ids.
 	 * @return the list of {@link DataTypeReportRow}s.
 	 */
 	public List<DataTypeReportRow> getReportRows(
 			final DataProviderModelAnalysis dataProvider,
-			final String DataTypePattern, final Set<String> ctIds) {
+			 final Set<String> ctIds) {
 		List<DataTypeReportRow> value = new ArrayList<>();
 		ctIds.stream().map(ctid -> dataProvider.getComplexType(ctid))
 				.filter(oct -> oct.isPresent()).map(oct -> oct.get())

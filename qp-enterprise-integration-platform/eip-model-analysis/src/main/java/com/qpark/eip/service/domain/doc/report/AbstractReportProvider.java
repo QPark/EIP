@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.qpark.eip.model.docmodel.ComplexType;
 import com.qpark.eip.model.docmodel.DataType;
 import com.qpark.eip.model.docmodel.ElementType;
@@ -27,6 +30,9 @@ import com.qpark.eip.model.docmodel.FieldType;
  * @author bhausen
  */
 public abstract class AbstractReportProvider {
+	/** The {@link org.slf4j.Logger}. */
+	private static Logger logger = LoggerFactory
+			.getLogger(AbstractReportProvider.class);
 	protected static final boolean WITH_HEADER = true;
 
 	/**
@@ -48,6 +54,8 @@ public abstract class AbstractReportProvider {
 			value = dataProvider
 					.getComplexType(element.get().getComplexTypeId());
 		}
+		logger.debug("getComplexTypeByElementId {}: element={}, complexType={}",
+				elementId, element.isPresent(), value.isPresent());
 		return value;
 	}
 
