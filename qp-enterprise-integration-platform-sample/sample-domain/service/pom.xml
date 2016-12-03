@@ -28,4 +28,35 @@
 		<name>QPark Consulting s.a r.l</name>
 		<url>http://www.qpark-consulting.com</url>
 	</organization>
+	
+ <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+					<attach>true</attach>
+          <!--make it available for jar/war classpath resource -->
+          <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
+          <outputName>domain-build.properties</outputName>	
+          <revisionOnScmFailure>SCM version not detectable</revisionOnScmFailure>
+					<doCheck>true</doCheck>
+          <doUpdate>false</doUpdate>
+					<providerImplementations>
+            <svn>javasvn</svn>
+          </providerImplementations>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>	
+
 </project>

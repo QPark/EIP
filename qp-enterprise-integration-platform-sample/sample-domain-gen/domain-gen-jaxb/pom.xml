@@ -87,6 +87,7 @@ Additionally to that a human readable version of the xsds is generated.
 							<baseDirectory>${model.dir}</baseDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
 							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+							<modelVersion>${revision}</modelVersion>
 							<outputDirectory>${java.gen.dir}</outputDirectory>
 						</configuration>
 					</execution>
@@ -186,6 +187,24 @@ https://java.net/jira/browse/JAXB-486
 					</execution>
 				</executions>
 			</plugin>
+     <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${model.dir}/domain-build.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
