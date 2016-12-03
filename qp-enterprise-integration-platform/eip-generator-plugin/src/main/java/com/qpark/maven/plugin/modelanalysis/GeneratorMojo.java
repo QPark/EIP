@@ -99,6 +99,7 @@ public class GeneratorMojo extends AbstractMojo {
 	@Parameter(property = "enterpriseName")
 	private String enterpriseName;
 	/** The version of the model. Defaults to artefact version. */
+	@Parameter(property = "modelVersion")
 	private String modelVersion;
 	/** The eip version to insert into generated tag. */
 	private String eipVersion;
