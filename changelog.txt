@@ -1,0 +1,110 @@
+Changelog:
+
+3.8.0 20161202
+DomainDoc: Report generation at maven build
+
+3.7.0 20161129
+DomainDoc: Added report generation
+Core: Finished SFTP gateway
+
+3.6.0 20161118
+Core: Added SFTP gateway
+Persistence: Bulk delete per JPA
+Flow: TabularMapper default return handling
+Flow: Several minor bug fixes
+
+3.5.5 20161024
+DomainDoc: Added GetRevision operation
+
+3.5.4 20161024
+DomainDoc: Fixed parsing
+XsdsUtil: Fixed parsing
+
+3.5.3 20161006
+DomainDoc: Added service to sample
+Sample: Fixed template deployment
+
+3.5.2 20161004
+DomainDoc: Added interfaceType fieldMappingInputTypes
+Flow: Fixed interfaceName bug
+Flow: Added default mapping types in sample
+Sample: Updated XSD documentation
+Sample: Java - W3C DataTypeMapping
+
+3.5.1 20160921
+XsdUtil: Fixed chaching bug
+Plugins: Condense service schema
+DDLGenerator: Defaults sql now to target directory
+DomainDoc: Added service
+DomainDoc: Added xsds assembly
+DomainDoc: Prepared operation implementation
+DomainDoc: Fixed parsing
+DomainDoc: Fixed persistence
+
+3.5.0 20160914
+DomainDoc: Model update
+Flow: ComplexMapper prepared implementation made more usable
+Flow: Documentation enhanced
+Flow: Error message fixed
+Flow: MappingOperation logging added
+Flow: Rule definition added
+Flow: TabularMapper generator fixed with boolean values
+Generators: Using the right EIP version to display
+Impl: Created EipHttpsClientHttpRequestFactory to provide HTTPs for a RestTemplate
+InterationConfig: outbound gateway URI default set to http://localhost:8080/
+XJC: Logging
+XJC: Provide error details in maven log
+XJC: Provide error details in maven log
+Xsd detection: Added access to ComplexType definition of the ElementType
+Xsd detection: Fixed parallel handling of XSDs
+Xsd detection: Reusing of XsdsUtil instances
+
+3.4.3 20160525
+Flow: Reporting enhanced
+Flow: Fixed Complex UUID mapper providing UUID or Name
+Flow: Reporting enhanced
+Flow: ComplexUUIDReferenceDataMappingTypeGenerator defaults only optional
+DDLGenerator: logging info
+
+3.4.2 20160427
+DDLGenerator: Added package name whitelisting and logging info
+Impl: StatisticsEraser does not fail at parallel deletions
+Flow: Fixed DirectMapper with primitive types
+
+3.4.1 20160414
+Xsds: Moved handling to streams
+Flow: Created direct mapper xsd generator preparation
+Xsd detection: ComplexType request/response detection fixed
+Bom: Fixed maven site depedency error
+
+3.4.0 20160330
+FlowGenerator: TabularMappingType implementation
+
+3.3.6 20160322
+FlowGenerator: Fixed in and output of flows with List types
+
+3.3.5 20160309
+Flows: Generation of all mapper interfaces
+ModelAnalysis: Fixed model analysis respecting all not direct, default or complexUUID mappers as ComplexMappers
+ModelAnalysis: Fixed model analysis missing InterfaceReferenceType
+Router generation: Adapted router xml generation to use a NoOperationTransformer
+
+3.3.4 20160229
+LockedOperation: unlockOnStartup with ApplicationListener ConextRefreshEvent
+Added initial setup of eip-core-spring-scheduling
+Updated sample CoreSpringConfig to use ApplicationListener
+Fixed model analysis missing InterfaceReferenceType
+
+3.3.3 Issos Keilerei 20160220
+DDLGeneration: Enhanced core persistence DDL generation for databases other than Oracle
+DDLGeneration: Fixed sampe/platform-domain-model-service DDL generation
+ModelAnalysis: Fixed model analysis element reference to complexType reference
+ModelAnalysis: Added sequenceNumber to FieldTypes, changed direct connection of OperationType to ElementType to ID reference
+Added general eclipse setting
+
+3.3.2 20160209
+Model analysis enhanced with modelVersion, fixed documentation, added meta model
+
+3.3.1 20160204
+Fixed Flow interface generation parameters with same class name and different packages
+Fixed doc analysis names of Flow parts
