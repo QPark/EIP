@@ -6,7 +6,8 @@
  ******************************************************************************/
 package com.qpark.eip.core.model.analysis.operation;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,15 +78,19 @@ public class GetFlowOperation implements GetFlow {
 				.createGetFlowResponseType();
 		final long start = System.currentTimeMillis();
 		try {
-			translateNamePattern(request.getNamePattern()).ifPresent(s -> {
+			final List<String> namePattern = new ArrayList<>();
+			request.getNamePattern().stream()
+					.forEach(s -> translateNamePattern(s).ifPresent(
+							translated -> namePattern.add(translated)));
+			if (!namePattern.isEmpty()) {
 				String modelVersion = request.getRevision();
 				if (Objects.isNull(modelVersion)
 						|| modelVersion.trim().length() == 0) {
 					modelVersion = this.dao.getLastModelVersion();
 				}
 				response.getFlow().addAll(this.dao
-						.getFlowByNamePattern(modelVersion, Arrays.asList(s)));
-			});
+						.getFlowByNamePattern(modelVersion, namePattern));
+			}
 		} catch (final Throwable e) {
 			/* Add a not covered error to the response. */
 			this.logger.error(e.getMessage(), e);

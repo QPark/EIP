@@ -8,6 +8,9 @@
 
 package com.qpark.eip.service.domain.doc.msg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -45,7 +48,7 @@ public class GetFlowRequestType
 
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
-    protected String namePattern;
+    protected List<String> namePattern;
 
     /**
      * Gets the value of the namePattern property.
@@ -55,7 +58,8 @@ public class GetFlowRequestType
      *     {@link String }
      *     
      */
-    public String getNamePattern() {
+    public List<String> getNamePattern() {
+    	if (namePattern==null) namePattern = new ArrayList<>();
         return namePattern;
     }
 
@@ -67,7 +71,7 @@ public class GetFlowRequestType
      *     {@link String }
      *     
      */
-    public void setNamePattern(String value) {
+    public void setNamePattern(List<String> value) {
         this.namePattern = value;
     }
 
