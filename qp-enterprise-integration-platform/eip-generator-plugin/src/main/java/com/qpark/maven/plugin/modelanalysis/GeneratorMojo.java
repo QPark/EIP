@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -118,50 +119,57 @@ public class GeneratorMojo extends AbstractMojo {
 		return this.execution.getVersion();
 	}
 
-	private String getReportHtmlHeaderInformation() {
+	static final class ReportHeader {
+		String eipVersion;
+		String mavenGroupId;
+		String mavenArtefactId;
+		String mavenVersion;
+		String modelVersion;
+		String buildTimestamp;
+	}
+
+	private String getReportHtmlHeaderInformation(final ReportHeader rh) {
 		final StringBuffer sb = new StringBuffer();
 		sb.append(
 				"<table class=\"portletlrborder\" stype=\"margin-top:0px;\" >\n");
 		sb.append("<tr class=\"tablerowheader\">\n");
 		sb.append("<th>EIP version</th>");
 		sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
-		sb.append(this.eipVersion);
+		sb.append(rh.eipVersion);
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("<tr class=\"tablerowheader\">\n");
 		sb.append("<th>Maven GroupId</th>");
 		sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
-		sb.append(this.project.getGroupId());
+		sb.append(rh.mavenGroupId);
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("<tr class=\"tablerowheader\">\n");
 		sb.append("<th>Maven ArtefactId</th>");
 		sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
-		sb.append(this.project.getArtifactId());
+		sb.append(rh.mavenArtefactId);
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("<tr class=\"tablerowheader\">\n");
 		sb.append("<th>Maven Version</th>");
 		sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
-		sb.append(this.project.getVersion());
+		sb.append(rh.mavenVersion);
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
-		if (Objects.nonNull(this.modelVersion)
-				&& this.modelVersion.trim().length() > 0) {
+		if (Objects.nonNull(rh.modelVersion)
+				&& rh.modelVersion.trim().length() > 0) {
 			sb.append("<tr class=\"tablerowheader\">\n");
 			sb.append("<th>Model Version</th>");
 			sb.append(
 					"<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
-			sb.append(this.modelVersion);
+			sb.append(rh.modelVersion);
 			sb.append("</td>\n");
 			sb.append("</tr>\n");
 		}
-		final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
 		sb.append("<tr class=\"tablerowheader\">\n");
 		sb.append("<th>Build time (UTC)</th>");
 		sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
-		sb.append(sdf.format(
-				Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant())));
+		sb.append(rh.buildTimestamp);
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
 		sb.append("</table>\n");
@@ -208,15 +216,23 @@ public class GeneratorMojo extends AbstractMojo {
 				flowNames.add("*");
 			}
 		}
-		final String htmlHeader = this.getReportHtmlHeaderInformation();
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		final ReportHeader reportHeader = new ReportHeader();
+		reportHeader.eipVersion = this.eipVersion;
+		reportHeader.mavenArtefactId = this.project.getArtifactId();
+		reportHeader.mavenGroupId = this.project.getGroupId();
+		reportHeader.mavenVersion = this.project.getVersion();
+		reportHeader.modelVersion = this.modelVersion;
+		reportHeader.buildTimestamp = sdf.format(
+				Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()));
+		final String htmlHeader = this
+				.getReportHtmlHeaderInformation(reportHeader);
 		if (this.enterpriseName == null
 				|| this.enterpriseName.trim().length() == 0) {
 			this.enterpriseName = this.basePackageName;
 		}
 		if (this.modelVersion == null
 				|| this.modelVersion.trim().length() == 0) {
-			final SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyyMMdd-HHmmss");
 			this.modelVersion = String.format("%s#%s",
 					this.project.getArtifact().getVersion(),
 					sdf.format(new Date()));
@@ -249,6 +265,11 @@ public class GeneratorMojo extends AbstractMojo {
 			this.getLog().info("DataTypeReportProvider found "
 					+ dataTypeReportRows.size());
 
+			try {
+				this.writeHeaderJson(
+						this.objectMapper.writeValueAsString(reportHeader));
+			} catch (final JsonProcessingException e) {
+			}
 			this.writeReport("service-description",
 					Report.getServiceReport(serviceReportRows, htmlHeader),
 					Report.getJson(serviceReportRows, this.objectMapper));
@@ -288,6 +309,24 @@ public class GeneratorMojo extends AbstractMojo {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void writeHeaderJson(final String json) {
+		try {
+			final File f = Util.getFile(this.outputDirectory,
+					"header-description.json");
+			this.getLog().info(new StringBuffer().append("Write ")
+					.append(f.getAbsolutePath()));
+			try {
+				Util.writeToFile(f, json);
+			} catch (final Exception e) {
+				this.getLog().error(e.getMessage());
+				e.printStackTrace();
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void writeReport(final String name, final String html,
