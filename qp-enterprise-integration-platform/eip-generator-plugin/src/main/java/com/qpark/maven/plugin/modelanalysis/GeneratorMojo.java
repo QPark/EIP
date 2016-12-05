@@ -82,8 +82,8 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The name of the service id to generate. If empty use all. */
 	@Parameter(property = "serviceId", defaultValue = "")
 	private String serviceId;
-	/** The pattern matching the flow name. Defaults to <i>.*</i> */
-	@Parameter(property = "flowNameParts", defaultValue = ".*")
+	/** The pattern matching the flow name. Defaults to empty string . */
+	@Parameter(property = "flowNameParts", defaultValue = "")
 	private String flowNameParts;
 	/**
 	 * The service response name need to end with this suffix (Default
@@ -204,6 +204,9 @@ public class GeneratorMojo extends AbstractMojo {
 				"ServiceIds: " + this.serviceId + " " + serviceIds.size());
 		if (serviceIds.isEmpty()) {
 			serviceIds = xsds.getServiceIdRegistry().getAllServiceIds();
+			if (this.flowNameParts.isEmpty()) {
+				flowNames.add("*");
+			}
 		}
 		final String htmlHeader = this.getReportHtmlHeaderInformation();
 		if (this.enterpriseName == null

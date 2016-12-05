@@ -1095,11 +1095,17 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 	public List<FlowType> getFlows(final Collection<String> flowNameParts) {
 		List<FlowType> value = new ArrayList<>();
 		if (Objects.nonNull(flowNameParts)) {
-			value = this.enterprise.getFlows().stream()
-					.filter(f -> Objects.nonNull(f)
-							&& Objects.nonNull(f.getName())
-							&& flowMatches(flowNameParts, f.getName()))
-					.collect(Collectors.toList());
+			if (flowNameParts.size() == 1 && flowNameParts.stream()
+					.filter(f -> Objects.nonNull(f) && f.equals("*"))
+					.findFirst().isPresent()) {
+				value.addAll(this.enterprise.getFlows());
+			} else {
+				value = this.enterprise.getFlows().stream()
+						.filter(f -> Objects.nonNull(f)
+								&& Objects.nonNull(f.getName())
+								&& flowMatches(flowNameParts, f.getName()))
+						.collect(Collectors.toList());
+			}
 		}
 		return value;
 	}
