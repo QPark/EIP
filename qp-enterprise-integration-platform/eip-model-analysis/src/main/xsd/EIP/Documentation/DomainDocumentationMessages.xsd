@@ -180,7 +180,7 @@
 		<complexContent>
 			<extension base="DomainDocMsg:RequestMessage">
 				<sequence>
-					<element name="namePattern" type="normalizedString" minOccurs="0" >
+					<element name="namePattern" type="normalizedString" minOccurs="0" maxOccurs="unbounded" >
 						<annotation><documentation>A name pattern criteria.</documentation></annotation>
 					</element>
 				</sequence>
