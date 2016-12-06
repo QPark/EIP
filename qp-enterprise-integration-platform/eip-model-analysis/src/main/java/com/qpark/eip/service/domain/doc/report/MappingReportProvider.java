@@ -33,11 +33,9 @@ public class MappingReportProvider extends AbstractReportProvider {
 	 *            the pattern the flows names need to match.
 	 * @return the list of {@link MappingReportRow}s.
 	 */
-	public List<MappingReportRow> getReportRows(
-			final DataProviderModelAnalysis dataProvider,
+	public List<MappingReportRow> getReportRows(final DataProviderModelAnalysis dataProvider,
 			final Collection<String> flowNameParts) {
-		return this.getReportRows(dataProvider, flowNameParts,
-				new TreeSet<String>());
+		return this.getReportRows(dataProvider, flowNameParts, new TreeSet<String>());
 	}
 
 	/**
@@ -51,57 +49,42 @@ public class MappingReportProvider extends AbstractReportProvider {
 	 *            the set of used complex type ids.
 	 * @return the list of {@link MappingReportRow}s.
 	 */
-	public List<MappingReportRow> getReportRows(
-			final DataProviderModelAnalysis dataProvider,
+	public List<MappingReportRow> getReportRows(final DataProviderModelAnalysis dataProvider,
 			final Collection<String> flowNameParts, final Set<String> ctIds) {
 		final List<MappingReportRow> value = new ArrayList<>();
-		dataProvider.getFlows(flowNameParts)
-				.stream().filter(
-						f -> Objects.nonNull(f))
-				.sorted(Comparator
-						.comparing(FlowType::getName,
-								Comparator.nullsLast(Comparator.naturalOrder()))
+		dataProvider.getFlows(flowNameParts).stream().filter(f -> Objects.nonNull(f))
+				.sorted(Comparator.comparing(FlowType::getName, Comparator.nullsLast(Comparator.naturalOrder()))
 						.thenComparing(FlowType::getName))
 				.forEach(flow -> {
 					dataProvider.getInterfaceMappings(flow.getId()).stream()
-							.filter(i -> Objects.nonNull(i)
-									&& Objects.nonNull(i.getName()))
-							.sorted(Comparator
-									.comparing(InterfaceMappingType::getName))
-							.forEach(i -> {
-								i.getFieldMappings().stream()
-										.filter(f -> Objects.nonNull(f))
-										.sorted((f1, f2) -> Integer.compare(
-												f1.getSequenceNumber(), f2
-														.getSequenceNumber()))
+							.filter(i -> Objects.nonNull(i) && Objects.nonNull(i.getName()))
+							.sorted(Comparator.comparing(InterfaceMappingType::getName)).forEach(i -> {
+								i.getFieldMappings().stream().filter(f -> Objects.nonNull(f)).sorted(
+										(f1, f2) -> Integer.compare(f1.getSequenceNumber(), f2.getSequenceNumber()))
 										.forEach(f -> {
 											final MappingReportRow m = new MappingReportRow();
 											value.add(m);
 											m.setFlowName(f.getName());
 											m.setInterfaceName(i.getName());
-											m.setInterfaceFieldName(
-													f.getName());
-											m.setInterfaceFieldCardinality(
-													f.getCardinality());
-											m.setInterfaceFieldDescription(
-													f.getDescription());
-											dataProvider
-													.getFieldMapping(
-															f.getFieldTypeDefinitionId())
-													.ifPresent(fm -> {
-														m.setMappingTypeName(fm
-																.getShortName());
-														m.setMappingTypeType(fm
-																.getMappingType());
-														m.setMappingTypeDescription(
-																fm.getDescription());
-														m.getMappingTypeInputTypes()
-																.addAll(fm
-																		.getFieldMappingInputType());
-													});
+											m.setInterfaceFieldName(f.getName());
+											m.setInterfaceFieldCardinality(f.getCardinality());
+											m.setInterfaceFieldDescription(f.getDescription());
+											dataProvider.getFieldMapping(f.getFieldTypeDefinitionId()).ifPresent(fm -> {
+												m.setMappingTypeName(fm.getShortName());
+												m.setMappingTypeType(fm.getMappingType());
+												m.setMappingTypeDescription(fm.getDescription());
+												m.getMappingTypeInputTypes().addAll(fm.getFieldMappingInputType());
+											});
 										});
 							});
 				});
+		value.stream().forEach(m -> {
+			List<String> names = new ArrayList<>();
+			m.getMappingTypeInputTypes().stream()
+					.forEach(id -> dataProvider.getDataType(id).ifPresent(dt -> names.add(dt.getName())));
+			m.getMappingTypeInputTypes().clear();
+			m.getMappingTypeInputTypes().addAll(names);
+		});
 		return value;
 	}
 }

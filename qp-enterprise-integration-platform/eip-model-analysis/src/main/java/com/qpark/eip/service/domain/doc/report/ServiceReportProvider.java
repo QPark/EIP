@@ -39,10 +39,9 @@ public class ServiceReportProvider extends AbstractReportProvider {
 	 * @param ctIds
 	 * @return the {@link ServiceReportRow}.
 	 */
-	private static ServiceReportRow getServiceReportRow(
-			final DataProviderModelAnalysis dataProvider, final ServiceType s,
-			final OperationType o, final boolean isRequest,
-			final ComplexType ct, final Set<String> ctIds) {
+	private static ServiceReportRow getServiceReportRow(final DataProviderModelAnalysis dataProvider,
+			final ServiceType s, final OperationType o, final boolean isRequest, final ComplexType ct,
+			final Set<String> ctIds) {
 		final ServiceReportRow value = new ServiceReportRow();
 		value.setServiceId(s.getName());
 		value.setOperationName(o.getShortName());
@@ -63,16 +62,13 @@ public class ServiceReportProvider extends AbstractReportProvider {
 	 * @return <code>true</code>, if no operationNamePattern is provided or it
 	 *         matches the operation short name.
 	 */
-	private static boolean isValidOperation(final String operationNamePattern,
-			final String operationShortName) {
+	private static boolean isValidOperation(final String operationNamePattern, final String operationShortName) {
 		boolean value = false;
-		if (Objects.isNull(operationNamePattern)
-				|| operationNamePattern.trim().equals("")
+		if (Objects.isNull(operationNamePattern) || operationNamePattern.trim().equals("")
 				|| operationShortName.matches(operationNamePattern)) {
 			value = true;
 		}
-		logger.info("isValidOperation {} - {}: {}", operationNamePattern,
-				operationShortName, value);
+		logger.debug("isValidOperation {} - {}: {}", operationNamePattern, operationShortName, value);
 		return value;
 	}
 
@@ -88,17 +84,13 @@ public class ServiceReportProvider extends AbstractReportProvider {
 	 *            the pattern of the operation names to match.
 	 * @return the list of {@link ServiceReportRow}s.
 	 */
-	public List<ServiceReportRow> getReportRows(
-			final DataProviderModelAnalysis dataProvider,
-			final Collection<String> serviceIds,
-			final String operationNamePattern) {
-		return this.getReportRows(dataProvider, serviceIds,
-				operationNamePattern, new TreeSet<String>());
+	public List<ServiceReportRow> getReportRows(final DataProviderModelAnalysis dataProvider,
+			final Collection<String> serviceIds, final String operationNamePattern) {
+		return this.getReportRows(dataProvider, serviceIds, operationNamePattern, new TreeSet<String>());
 	}
 
 	/** The {@link org.slf4j.Logger}. */
-	private static Logger logger = LoggerFactory
-			.getLogger(ServiceReportProvider.class);
+	private static Logger logger = LoggerFactory.getLogger(ServiceReportProvider.class);
 
 	/**
 	 * Get the list of {@link ServiceReportRow}s of the given services and
@@ -114,39 +106,26 @@ public class ServiceReportProvider extends AbstractReportProvider {
 	 *            the set of used complex type ids.
 	 * @return the list of {@link ServiceReportRow}s.
 	 */
-	public List<ServiceReportRow> getReportRows(
-			final DataProviderModelAnalysis dataProvider,
-			final Collection<String> serviceIds,
-			final String operationNamePattern, final Set<String> ctIds) {
+	public List<ServiceReportRow> getReportRows(final DataProviderModelAnalysis dataProvider,
+			final Collection<String> serviceIds, final String operationNamePattern, final Set<String> ctIds) {
 		final List<ServiceReportRow> value = new ArrayList<>();
 		serviceIds.stream().filter(serviceId -> Objects.nonNull(serviceId))
-				.map(serviceId -> dataProvider.getService(serviceId))
-				.forEach(os -> os.ifPresent(s -> {
+				.map(serviceId -> dataProvider.getService(serviceId)).forEach(os -> os.ifPresent(s -> {
 					/* Service. */
 					logger.debug("getReportRows {}", s.getName());
 					s.getOperation().stream()
-							.filter(o -> Objects.nonNull(o.getRequestResponse())
-									&& Objects.nonNull(o.getShortName())
-									&& isValidOperation(operationNamePattern,
-											o.getShortName()))
+							.filter(o -> Objects.nonNull(o.getRequestResponse()) && Objects.nonNull(o.getShortName())
+									&& isValidOperation(operationNamePattern, o.getShortName()))
 							.forEach(o -> {
 								/* Operation. */
-								logger.debug("getReportRows {} - {}",
-										s.getName(), o.getName());
-								final RequestResponseDataType rr = o
-										.getRequestResponse();
+								logger.debug("getReportRows {} - {}", s.getName(), o.getName());
+								final RequestResponseDataType rr = o.getRequestResponse();
 								/* Request. */
-								getComplexTypeByElementId(dataProvider,
-										rr.getRequestId()).ifPresent(ct -> value
-												.add(getServiceReportRow(
-														dataProvider, s, o,
-														true, ct, ctIds)));
+								getComplexTypeByElementId(dataProvider, rr.getRequestId()).ifPresent(
+										ct -> value.add(getServiceReportRow(dataProvider, s, o, true, ct, ctIds)));
 								/* Response. */
-								getComplexTypeByElementId(dataProvider, rr
-										.getResponseId()).ifPresent(ct -> value
-												.add(getServiceReportRow(
-														dataProvider, s, o,
-														false, ct, ctIds)));
+								getComplexTypeByElementId(dataProvider, rr.getResponseId()).ifPresent(
+										ct -> value.add(getServiceReportRow(dataProvider, s, o, false, ct, ctIds)));
 
 							});
 				}));

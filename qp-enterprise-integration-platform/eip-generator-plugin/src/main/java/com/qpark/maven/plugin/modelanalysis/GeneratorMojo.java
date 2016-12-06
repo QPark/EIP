@@ -52,12 +52,10 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-model-analysis",
-		defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+@Mojo(name = "generate-model-analysis", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base package name where to place the object factories. */
 	@Parameter(property = "basePackageName", defaultValue = "")
@@ -93,8 +91,7 @@ public class GeneratorMojo extends AbstractMojo {
 	@Parameter(property = "serviceResponseSuffix", defaultValue = "Response")
 	private String serviceResponseSuffix;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/** The name of the enterprise (Defaults to the basePackageName). */
 	@Parameter(property = "enterpriseName")
@@ -126,12 +123,53 @@ public class GeneratorMojo extends AbstractMojo {
 		String mavenVersion;
 		String modelVersion;
 		String buildTimestamp;
+
+		/**
+		 * @return the eipVersion
+		 */
+		public String getEipVersion() {
+			return this.eipVersion;
+		}
+
+		/**
+		 * @return the mavenGroupId
+		 */
+		public String getMavenGroupId() {
+			return this.mavenGroupId;
+		}
+
+		/**
+		 * @return the mavenArtefactId
+		 */
+		public String getMavenArtefactId() {
+			return this.mavenArtefactId;
+		}
+
+		/**
+		 * @return the mavenVersion
+		 */
+		public String getMavenVersion() {
+			return this.mavenVersion;
+		}
+
+		/**
+		 * @return the modelVersion
+		 */
+		public String getModelVersion() {
+			return this.modelVersion;
+		}
+
+		/**
+		 * @return the buildTimestamp
+		 */
+		public String getBuildTimestamp() {
+			return this.buildTimestamp;
+		}
 	}
 
 	private String getReportHtmlHeaderInformation(final ReportHeader rh) {
 		final StringBuffer sb = new StringBuffer();
-		sb.append(
-				"<table class=\"portletlrborder\" stype=\"margin-top:0px;\" >\n");
+		sb.append("<table class=\"portletlrborder\" stype=\"margin-top:0px;\" >\n");
 		sb.append("<tr class=\"tablerowheader\">\n");
 		sb.append("<th>EIP version</th>");
 		sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
@@ -156,12 +194,10 @@ public class GeneratorMojo extends AbstractMojo {
 		sb.append(rh.mavenVersion);
 		sb.append("</td>\n");
 		sb.append("</tr>\n");
-		if (Objects.nonNull(rh.modelVersion)
-				&& rh.modelVersion.trim().length() > 0) {
+		if (Objects.nonNull(rh.modelVersion) && rh.modelVersion.trim().length() > 0) {
 			sb.append("<tr class=\"tablerowheader\">\n");
 			sb.append("<th>Model Version</th>");
-			sb.append(
-					"<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
+			sb.append("<td style=\"background-color: #EBF2F9;color: #3B73AF;\">");
 			sb.append(rh.modelVersion);
 			sb.append("</td>\n");
 			sb.append("</tr>\n");
@@ -187,29 +223,19 @@ public class GeneratorMojo extends AbstractMojo {
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
 		this.objectMapper.configure(Feature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-		this.objectMapper.configure(SerializationFeature.CLOSE_CLOSEABLE,
-				false);
+		this.objectMapper.configure(SerializationFeature.CLOSE_CLOSEABLE, false);
 		this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		this.objectMapper.configure(
-				DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT,
-				true);
-		this.objectMapper.configure(
-				DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		this.objectMapper
-				.setAnnotationIntrospector(new JaxbAnnotationIntrospector(
-						this.objectMapper.getTypeFactory()));
+		this.objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+		this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.objectMapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector(this.objectMapper.getTypeFactory()));
 
-		final XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
-				this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
+		final XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName,
+				this.messagePackageNameSuffix, this.deltaPackageNameSuffix, this.serviceRequestSuffix,
 				this.serviceResponseSuffix);
 		this.eipVersion = this.getEipVersion();
-		Collection<String> serviceIds = ServiceIdRegistry
-				.splitServiceIds(this.serviceId);
-		final Collection<String> flowNames = ServiceIdRegistry
-				.splitServiceIds(this.flowNameParts);
-		this.getLog().info(
-				"ServiceIds: " + this.serviceId + " " + serviceIds.size());
+		Collection<String> serviceIds = ServiceIdRegistry.splitServiceIds(this.serviceId);
+		final Collection<String> flowNames = ServiceIdRegistry.splitServiceIds(this.flowNameParts);
+		this.getLog().info("ServiceIds: " + this.serviceId + " " + serviceIds.size());
 		if (serviceIds.isEmpty()) {
 			serviceIds = xsds.getServiceIdRegistry().getAllServiceIds();
 			if (flowNames.isEmpty()) {
@@ -223,82 +249,58 @@ public class GeneratorMojo extends AbstractMojo {
 		reportHeader.mavenGroupId = this.project.getGroupId();
 		reportHeader.mavenVersion = this.project.getVersion();
 		reportHeader.modelVersion = this.modelVersion;
-		reportHeader.buildTimestamp = sdf.format(
-				Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()));
-		final String htmlHeader = this
-				.getReportHtmlHeaderInformation(reportHeader);
-		if (this.enterpriseName == null
-				|| this.enterpriseName.trim().length() == 0) {
+		reportHeader.buildTimestamp = sdf.format(Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()));
+		final String htmlHeader = this.getReportHtmlHeaderInformation(reportHeader);
+		if (this.enterpriseName == null || this.enterpriseName.trim().length() == 0) {
 			this.enterpriseName = this.basePackageName;
 		}
-		if (this.modelVersion == null
-				|| this.modelVersion.trim().length() == 0) {
-			this.modelVersion = String.format("%s#%s",
-					this.project.getArtifact().getVersion(),
-					sdf.format(new Date()));
+		if (this.modelVersion == null || this.modelVersion.trim().length() == 0) {
+			this.modelVersion = String.format("%s#%s", this.project.getArtifact().getVersion(), sdf.format(new Date()));
 		}
 		final AnalysisProvider ap = new AnalysisProvider();
-		final Analysis a = ap.createEnterprise(this.enterpriseName,
-				this.modelVersion, xsds);
-		this.getLog().info("AnalysisProvider: " + a.getEnterprise() + " "
-				+ xsds.getComplexTypes().size());
+		final Analysis a = ap.createEnterprise(this.enterpriseName, this.modelVersion, xsds);
+		this.getLog().info("AnalysisProvider: " + a.getEnterprise() + " " + xsds.getComplexTypes().size());
 		if (!serviceIds.isEmpty()) {
 			final Set<String> ctIds = new TreeSet<>();
 			final ServiceReportProvider srp = new ServiceReportProvider();
-			final List<ServiceReportRow> serviceReportRows = srp
-					.getReportRows(ap, serviceIds, ".*", ctIds);
-			this.getLog().info(
-					"ServiceReportProvider found " + serviceReportRows.size());
+			final List<ServiceReportRow> serviceReportRows = srp.getReportRows(ap, serviceIds, ".*", ctIds);
+			this.getLog().info("ServiceReportProvider found " + serviceReportRows.size());
 			final FlowReportProvider frp = new FlowReportProvider();
-			final List<FlowReportRow> flowReportRows = frp.getReportRows(ap,
-					flowNames, ctIds);
-			this.getLog()
-					.info("FlowReportProvider found " + flowReportRows.size());
+			final List<FlowReportRow> flowReportRows = frp.getReportRows(ap, flowNames, ctIds);
+			this.getLog().info("FlowReportProvider found " + flowReportRows.size());
 			final MappingReportProvider mrp = new MappingReportProvider();
-			final List<MappingReportRow> mappingReportRows = mrp
-					.getReportRows(ap, flowNames, ctIds);
-			this.getLog().info(
-					"MappingReportProvider found " + mappingReportRows.size());
+			final List<MappingReportRow> mappingReportRows = mrp.getReportRows(ap, flowNames, ctIds);
+			this.getLog().info("MappingReportProvider found " + mappingReportRows.size());
 			final DataTypeReportProvider drp = new DataTypeReportProvider();
-			final List<DataTypeReportRow> dataTypeReportRows = drp
-					.getReportRows(ap, ctIds);
-			this.getLog().info("DataTypeReportProvider found "
-					+ dataTypeReportRows.size());
+			final List<DataTypeReportRow> dataTypeReportRows = drp.getReportRows(ap, ctIds);
+			this.getLog().info("DataTypeReportProvider found " + dataTypeReportRows.size());
 
 			try {
-				this.writeHeaderJson(
-						this.objectMapper.writeValueAsString(reportHeader));
+				this.writeHeaderJson(this.objectMapper.writeValueAsString(reportHeader));
 			} catch (final JsonProcessingException e) {
+				this.getLog().error(e.getMessage());
 			}
-			this.writeReport("service-description",
-					Report.getServiceReport(serviceReportRows, htmlHeader),
+			this.writeReport("service-description", Report.getServiceReport(serviceReportRows, htmlHeader),
 					Report.getJson(serviceReportRows, this.objectMapper));
-			this.writeReport("flow-description",
-					Report.getFlowReport(flowReportRows, htmlHeader),
+			this.writeReport("flow-description", Report.getFlowReport(flowReportRows, htmlHeader),
 					Report.getJson(flowReportRows, this.objectMapper));
-			this.writeReport("mapping-description",
-					Report.getMappingReport(mappingReportRows, htmlHeader),
+			this.writeReport("mapping-description", Report.getMappingReport(mappingReportRows, htmlHeader),
 					Report.getJson(mappingReportRows, this.objectMapper));
-			this.writeReport("datatype-description",
-					Report.getDataTypeReport(dataTypeReportRows, htmlHeader),
+			this.writeReport("datatype-description", Report.getDataTypeReport(dataTypeReportRows, htmlHeader),
 					Report.getJson(dataTypeReportRows, this.objectMapper));
 		}
 		try {
 			final ObjectFactory of = new ObjectFactory();
-			final JAXBElement<EnterpriseType> enterprise = of
-					.createEnterprise(a.getEnterprise());
-			final JAXBContext context = JAXBContext
-					.newInstance(ObjectFactory.class.getPackage().getName());
+			final JAXBElement<EnterpriseType> enterprise = of.createEnterprise(a.getEnterprise());
+			final JAXBContext context = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName());
 			final Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			final StringWriter sw = new StringWriter();
 			marshaller.marshal(enterprise, sw);
 
 			final File f = Util.getFile(this.outputDirectory,
-					new StringBuffer(64).append(this.enterpriseName)
-							.append("-ModelAnalysis.xml").toString());
-			this.getLog().info(new StringBuffer().append("Write ")
-					.append(f.getAbsolutePath()));
+					new StringBuffer(64).append(this.enterpriseName).append("-ModelAnalysis.xml").toString());
+			this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sw.toString());
 			} catch (final Exception e) {
@@ -313,10 +315,8 @@ public class GeneratorMojo extends AbstractMojo {
 
 	private void writeHeaderJson(final String json) {
 		try {
-			final File f = Util.getFile(this.outputDirectory,
-					"header-description.json");
-			this.getLog().info(new StringBuffer().append("Write ")
-					.append(f.getAbsolutePath()));
+			final File f = Util.getFile(this.outputDirectory, "header-description.json");
+			this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, json);
 			} catch (final Exception e) {
@@ -329,13 +329,10 @@ public class GeneratorMojo extends AbstractMojo {
 
 	}
 
-	private void writeReport(final String name, final String html,
-			final String json) {
+	private void writeReport(final String name, final String html, final String json) {
 		try {
-			final File f = Util.getFile(this.outputDirectory,
-					String.format("%s.html", name));
-			this.getLog().info(new StringBuffer().append("Write ")
-					.append(f.getAbsolutePath()));
+			final File f = Util.getFile(this.outputDirectory, String.format("%s.html", name));
+			this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, html);
 			} catch (final Exception e) {
@@ -346,10 +343,8 @@ public class GeneratorMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 		try {
-			final File f = Util.getFile(this.outputDirectory,
-					String.format("%s.json", name));
-			this.getLog().info(new StringBuffer().append("Write ")
-					.append(f.getAbsolutePath()));
+			final File f = Util.getFile(this.outputDirectory, String.format("%s.json", name));
+			this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, json);
 			} catch (final Exception e) {

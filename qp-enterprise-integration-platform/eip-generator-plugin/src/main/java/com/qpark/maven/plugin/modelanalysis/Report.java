@@ -31,20 +31,15 @@ public class Report {
 				"body,p,td,th,option,input,textarea,select {color: #3B73AF;font-family: arial, sans-serif;font-size: 11px;padding-left: 6px;padding-right: 6px;}\n");
 		sb.append("th, td {white-space: nowrap;}\n");
 		sb.append("select {border: 1px solid gray;}\n");
-		sb.append(
-				"a:hover {color: #3B73AF;font-weight: 700;text-decoration: underline;}\n");
-		sb.append(
-				"a.notbold:hover,.dropdown a:hover {color: #3B73AF;font-weight: 400;text-decoration: underline;}\n");
-		sb.append(
-				".captiontext {color: #000;font-size: 10px;font-weight: 400;}\n");
-		sb.append(
-				".searchtext {color: #666;font-size: 11px;font-weight: 700;}\n");
+		sb.append("a:hover {color: #3B73AF;font-weight: 700;text-decoration: underline;}\n");
+		sb.append("a.notbold:hover,.dropdown a:hover {color: #3B73AF;font-weight: 400;text-decoration: underline;}\n");
+		sb.append(".captiontext {color: #000;font-size: 10px;font-weight: 400;}\n");
+		sb.append(".searchtext {color: #666;font-size: 11px;font-weight: 700;}\n");
 		sb.append(".textselected {color: #630;}ö\n");
 		sb.append(".buttoncaptiontext {color: #999;font-size: 11px;}\n");
 		sb.append(".normaltext {color: #000;font-weight: 400;}\n");
 		sb.append(".boldtext {font-weight: 700;}\n");
-		sb.append(
-				".button {background-repeat: repeat-x;font-weight: 700;height: 20px;}\n");
+		sb.append(".button {background-repeat: repeat-x;font-weight: 700;height: 20px;}\n");
 		sb.append(".button a:hover {color: #C6CFE5;text-decoration: none;}\n");
 		sb.append(
 				"input.compactbutton,input.compactbuttoninactive {background-color: #fff;color: #366CD9;font-family: arial, sans-serif;font-size: 9px;font-weight: 700;padding: 2px 3px 0;}\n");
@@ -64,18 +59,14 @@ public class Report {
 		sb.append(".blocksubtitle {font-size: 11px;font-weight: 400}\n");
 		sb.append(".blockbottomline {height: 1px;padding: 0}\n");
 		sb.append(".tablebottomline {border-bottom: 1px solid #D5D8DE}\n");
-		sb.append(
-				"#escalationslist .tablebottomline {border-bottom: 0 solid #D5D8DE}\n");
+		sb.append("#escalationslist .tablebottomline {border-bottom: 0 solid #D5D8DE}\n");
 		sb.append(".blockcontent {background-color: #FFF;padding: 3px}\n");
-		sb.append(
-				".blockcontentnopadding {background-color: #FFF;padding: 0}\n");
-		sb.append(
-				".blocklabel {background-color: #FFF;font-weight: 700;padding: 3px;text-align: right}\n");
+		sb.append(".blockcontentnopadding {background-color: #FFF;padding: 0}\n");
+		sb.append(".blocklabel {background-color: #FFF;font-weight: 700;padding: 3px;text-align: right}\n");
 		sb.append(
 				".blockcheckboxlabel,.blockleftalignlabel {background-color: #FFF;font-weight: 700;padding: 3px;text-align: left}\n");
 		sb.append(".blockbg {background-color: #FFF}\n");
-		sb.append(
-				"a.listheaderlink:hover {color: #004680;text-decoration: underline}\n");
+		sb.append("a.listheaderlink:hover {color: #004680;text-decoration: underline}\n");
 		sb.append(
 				".tablecellheader {border-bottom: 1px solid #D5D8DE;border-top: 1px solid #ABB1C7;border-width: 1px;color: #004680;font-weight: 700;padding: 3px;text-align: left}\n");
 		sb.append(
@@ -106,36 +97,27 @@ public class Report {
 				".listheaderinactivecenter { background-color: #DBE3F5; border-bottom: solid #C6CFE5; border-top: solid #ABB1C7; border-width: 1px; font-weight: 700; padding: 3px; text-align: center }\n");
 		sb.append(".listrow,.lineitem { background-color: #EBF2F9; }\n");
 		sb.append(".tableroweven { background-color: #FFF }\n");
-		sb.append(
-				".listrowselected,.tablerowaction { background-color: #EBEDF2; text-align: left }\n");
+		sb.append(".listrowselected,.tablerowaction { background-color: #EBEDF2; text-align: left }\n");
 		sb.append(".tablerowodd { background-color: #F4FAFA }\n");
 		sb.append(
 				".listcell,.listcellselected,.tablecell,.redtablecell { border-bottom: solid #D5D8DE; border-width: 1px; padding: 3px; vertical-align: middle }\n");
-		sb.append(
-				".listcellsmall8 { border-bottom: 1px solid #D5D8DE; font-size: 8px; padding: 3px }\n");
-		sb.append(
-				".listcellsmall10 { border-bottom: 1px solid #D5D8DE; font-size: 10px; padding: 3px }\n");
-		sb.append(
-				".listcellsmall12 { border-bottom: 1px solid #D5D8DE; font-size: 12px; padding: 3px }\n");
-		sb.append(
-				".listcellnopadding { border-bottom: 1px solid #D5D8DE; padding: 1px }\n");
+		sb.append(".listcellsmall8 { border-bottom: 1px solid #D5D8DE; font-size: 8px; padding: 3px }\n");
+		sb.append(".listcellsmall10 { border-bottom: 1px solid #D5D8DE; font-size: 10px; padding: 3px }\n");
+		sb.append(".listcellsmall12 { border-bottom: 1px solid #D5D8DE; font-size: 12px; padding: 3px }\n");
+		sb.append(".listcellnopadding { border-bottom: 1px solid #D5D8DE; padding: 1px }\n");
 		sb.append(
 				".listcellcheckbox { border-bottom: 1px solid #D5D8DE; padding: 0; text-align: center; vertical-align: middle }\n");
 		sb.append(
 				".listcellcheckboxselected { background-color: #E6EEFF; border-bottom: solid #D5D8DE; border-width: 1px; padding: 0 }\n");
-		sb.append(
-				".listcellselected,.tablecellaction { background-color: #E6EEFF }\n");
-		sb.append(
-				".listcellcheckall { font-size: 11px; font-weight: 700; padding: 3px }\n");
-		sb.append(
-				".listcelllineempty { background-color: #FFF; padding: 0 }\n");
+		sb.append(".listcellselected,.tablecellaction { background-color: #E6EEFF }\n");
+		sb.append(".listcellcheckall { font-size: 11px; font-weight: 700; padding: 3px }\n");
+		sb.append(".listcelllineempty { background-color: #FFF; padding: 0 }\n");
 		sb.append(
 				".listcellprimary { border-bottom: solid #D5D8DE; border-width: 1px; font-weight: 700; padding: 3px }\n");
 		sb.append(
 				".linkbox,.dropdown { background-color: #EDF0F8; border: 1px solid; border-color: #BDCEF0 #477DDF #477DDF #BDCEF0; color: #039; font-weight: 700; padding: 3px; text-decoration: none }\n");
 		sb.append(".linkbox { white-space: nowrap }\n");
-		sb.append(
-				".dropdown { border-color: #f7faff #99a #99a #f7faff; font-size: 11px; z-index: 3000 }\n");
+		sb.append(".dropdown { border-color: #f7faff #99a #99a #f7faff; font-size: 11px; z-index: 3000 }\n");
 		sb.append(".listheaderlight { background-color: #DBE3F5 }\n");
 		sb.append(".listheaderdark { background-color: #C6CFE5 }\n");
 		sb.append(
@@ -152,14 +134,10 @@ public class Report {
 				".listcellleftline { border-bottom: solid #DBE3F5; border-left: solid #C6CFE5; border-width: 1px; padding: 3px }\n");
 		sb.append(
 				".listcellleftlinenopadding { border-bottom: solid #DBE3F5; border-left: solid #C6CFE5; border-width: 1px }\n");
-		sb.append(
-				".metricred { background-color: #F7DEE7; text-align: right; width: 100% }\n");
-		sb.append(
-				".metricgreen { background-color: #CEEFDE; text-align: right; width: 100% }\n");
-		sb.append(
-				".metricyellow { background-color: #FFF1B3; text-align: right; width: 100% }\n");
-		sb.append(
-				".metricgray { background-color: #D5D8DE; text-align: right; width: 100% }\n");
+		sb.append(".metricred { background-color: #F7DEE7; text-align: right; width: 100% }\n");
+		sb.append(".metricgreen { background-color: #CEEFDE; text-align: right; width: 100% }\n");
+		sb.append(".metricyellow { background-color: #FFF1B3; text-align: right; width: 100% }\n");
+		sb.append(".metricgray { background-color: #D5D8DE; text-align: right; width: 100% }\n");
 		sb.append(
 				".listcellright { border-bottom: solid #D5D8DE; border-left: solid #D5D8DE; border-width: 1px; padding: 3px; text-align: right }\n");
 		sb.append(
@@ -176,31 +154,25 @@ public class Report {
 				".configpropheaderhelp { background-color: #FFF; border: solid #ABB1C7; border-width: 1px; font-size: 14px; font-weight: 700; padding: 3px 3px 3px 15px }\n");
 		sb.append(
 				".guidetitle { background-color: #CCC; color: #F35E0C; font-size: 18px; font-weight: 700; padding: 6px }\n");
-		sb.append(
-				"a.guidelink:hover { color: #039; font-size: 16px; font-weight: 700; text-decoration: underline }\n");
+		sb.append("a.guidelink:hover { color: #039; font-size: 16px; font-weight: 700; text-decoration: underline }\n");
 		sb.append(".guidetext { color: #000; font-size: 13px }\n");
 		sb.append(".guidetextsmall { color: #000; font-size: 11px }\n");
 		sb.append(".toolbarline { background-color: #F35E0C }\n");
 		sb.append(".errorfield { background-color: #FFFD99; padding: 3px }\n");
-		sb.append(
-				".errorfieldcontent { font-size: 10px; font-style: italic }\n");
+		sb.append(".errorfieldcontent { font-size: 10px; font-style: italic }\n");
 		sb.append(
 				".errorblock { background-color: #FFFD99; border-top: solid #FF9C15; border-width: 1px; color: #000; padding: 2px }\n");
 		sb.append(
 				".confirmationblock { background-color: #BFF1B5; border-top: solid #00AC3D; border-width: 1px; color: #000; padding: 2px }\n");
 		sb.append(".tabcell { border-bottom: 1px solid gray }\n");
-		sb.append(
-				".subtabcell { background-color: #FFF; border-left: 1px solid gray }\n");
-		sb.append(
-				"#SubTabTarget.subtabcell { border-left: 0px solid gray; border-right: 1px solid gray }\n");
+		sb.append(".subtabcell { background-color: #FFF; border-left: 1px solid gray }\n");
+		sb.append("#SubTabTarget.subtabcell { border-left: 0px solid gray; border-right: 1px solid gray }\n");
 		sb.append(".dashtabs { margin-bottom: 4px }\n");
-		sb.append(
-				".headrightwrapper { height: 60px; margin-left: 225px; position: relative; white-space: nowrap }\n");
+		sb.append(".headrightwrapper { height: 60px; margin-left: 225px; position: relative; white-space: nowrap }\n");
 		sb.append(".headtopnav { height: 41px; width: 100% }\n");
 		sb.append(
 				"#headusrname { background-color: #f1f1f1; border-bottom: 1px solid #999; border-left: 1px solid #999; color: #333; font-weight: 700; padding: 5px 10px; position: absolute; right: 0; text-align: center; top: 0; white-space: nowrap; z-index: 2 }\n");
-		sb.append(
-				"#headusrname a { color: #039; font-size: 10px; font-weight: 700; text-decoration: none }\n");
+		sb.append("#headusrname a { color: #039; font-size: 10px; font-weight: 700; text-decoration: none }\n");
 		sb.append("#namehead a { font-size: 11px; font-style: oblique }\n");
 		sb.append(
 				".headalertwrapper { color: #FFF; font-weight: 700; height: 38px; overflow: hidden; position: absolute; top: 0; width: 360px; padding-left: 72px; z-index: 1 }\n");
@@ -209,78 +181,54 @@ public class Report {
 		sb.append("#hb { bottom: 0; right: 26px }\n");
 		sb.append(
 				".mainnavtext { color: #062b7a; font-family: Helvetica, sans-serif; font-size: 11px; font-weight: 700; white-space: nowrap }\n");
-		sb.append(
-				".recenttext { display: inline; float: left; padding-top: 5px; width: 80px; }\n");
+		sb.append(".recenttext { display: inline; float: left; padding-top: 5px; width: 80px; }\n");
 		sb.append(
 				"#recentalerts { color: #FFF; font-size: 11px; font-weight: 700; padding: 4px 0 0 75px; position: absolute; top: 0; white-space: nowrap }\n");
 		sb.append("#recent a { color: #fff; font-weight: 700 }\n");
-		sb.append(
-				"#recent li { display: block; list-style: none; margin: 0; padding: 0; white-space: nowrap }\n");
-		sb.append(
-				".headerwrapper { background-repeat: repeat-x; border-top: 1px solid #eee; height: 60px }\n");
+		sb.append("#recent li { display: block; list-style: none; margin: 0; padding: 0; white-space: nowrap }\n");
+		sb.append(".headerwrapper { background-repeat: repeat-x; border-top: 1px solid #eee; height: 60px }\n");
 		sb.append(".mastheadcontent a { font-size: 11px }\n");
-		sb.append(
-				".footersmall { font-size: 8px; font-weight: 400; padding: 3px }\n");
+		sb.append(".footersmall { font-size: 8px; font-weight: 400; padding: 3px }\n");
 		sb.append(
 				".dashboardcontrolactionscontainer { background-color: #EBEDF2; border-bottom: 1px solid #D5D8DE; border-left: 1px solid #D5D8DE; border-right: 1px solid #D5D8DE; padding: 10px }\n");
 		sb.append(".formlabel { font-weight: 700; text-align: left }\n");
 		sb.append(".formlabelright { font-weight: 700; text-align: right }\n");
 		sb.append(
 				".subhead { background-color: #CCC; color: #F35E0C; font-weight: 700; padding: 3px; text-align: left }\n");
-		sb.append(
-				"a.dashlink:hover { color: #039; font-size: 11px; font-weight: 700; text-decoration: underline }\n");
-		sb.append(
-				".filterlabeltext { background-color: #D5D8DE; font-size: 11px; font-weight: 700; padding: 5px }\n");
-		sb.append(
-				".filternonboldtext { background-color: #D5D8DE; font-size: 11px; padding: 5px }\n");
-		sb.append(
-				".filterformtext { color: #000; font-size: 11px; font-weight: 400 }\n");
+		sb.append("a.dashlink:hover { color: #039; font-size: 11px; font-weight: 700; text-decoration: underline }\n");
+		sb.append(".filterlabeltext { background-color: #D5D8DE; font-size: 11px; font-weight: 700; padding: 5px }\n");
+		sb.append(".filternonboldtext { background-color: #D5D8DE; font-size: 11px; padding: 5px }\n");
+		sb.append(".filterformtext { color: #000; font-size: 11px; font-weight: 400 }\n");
 		sb.append(".filterline { background-color: #ABB1C7 }\n");
-		sb.append(
-				".filteremptycellright { background-color: #D5D8DE; border-left: solid #FFF; border-width: 5px }\n");
-		sb.append(
-				".filterlineleft { background-color: #ABB1C7; border-right: solid #FFF; border-right-width: 5px }\n");
-		sb.append(
-				".filterlineright { background-color: #ABB1C7; border-left: solid #FFF; border-left-width: 5px }\n");
+		sb.append(".filteremptycellright { background-color: #D5D8DE; border-left: solid #FFF; border-width: 5px }\n");
+		sb.append(".filterlineleft { background-color: #ABB1C7; border-right: solid #FFF; border-right-width: 5px }\n");
+		sb.append(".filterlineright { background-color: #ABB1C7; border-left: solid #FFF; border-left-width: 5px }\n");
 		sb.append(".filterimage { padding-left: 1px; padding-right: 1px }\n");
 		sb.append(
 				".displaylabel { background-color: #EBEDF2; color: #000; font-size: 11px; font-weight: 700; padding: 3px }\n");
-		sb.append(
-				".displaysubhead { background-color: #EBEDF2; color: #F35E0C; font-weight: 700; padding: 3px }\n");
-		sb.append(
-				"a.displaylink:hover { color: #039; font-size: 11px; text-decoration: underline }\n");
+		sb.append(".displaysubhead { background-color: #EBEDF2; color: #F35E0C; font-weight: 700; padding: 3px }\n");
+		sb.append("a.displaylink:hover { color: #039; font-size: 11px; text-decoration: underline }\n");
 		sb.append(
 				".monitorblockcontainer { background-color: #FFF; border-left: 1px solid gray; border-right: 1px solid gray; border-bottom: 1px solid gray; padding-top: 10px; }\n");
-		sb.append(
-				".monitorblocktopline { border-top: solid #949CBD; border-width: 1px }\n");
-		sb.append(
-				".monitortoolbar { background-color: #D5D8DE; border-top: solid #ABB1C7; border-width: 1px 0 0 }\n");
-		sb.append(
-				".monitormetricsbaseline { color: #039; font-weight: 700 }\n");
+		sb.append(".monitorblocktopline { border-top: solid #949CBD; border-width: 1px }\n");
+		sb.append(".monitortoolbar { background-color: #D5D8DE; border-top: solid #ABB1C7; border-width: 1px 0 0 }\n");
+		sb.append(".monitormetricsbaseline { color: #039; font-weight: 700 }\n");
 		sb.append(".monitormetricsvalue { color: #000; font-weight: 700 }\n");
 		sb.append(
 				".monitormetricsselected { background-color: #FFEEA1; color: #000; font-weight: 700; width: 100% }\n");
-		sb.append(
-				".monitorcurrenthealthchartheader { background-color: #EFEFF7; font-weight: 700; padding: 3px }\n");
-		sb.append(
-				".monitorcurrenthealthchartcell { background-color: #FFF; padding: 3px }\n");
-		sb.append(
-				".monitorservicelist { font-weight: 700; padding: 3px 3px 3px 10px }\n");
-		sb.append(
-				".monitorchartcell { background-color: #FFF; padding: 10px }\n");
-		sb.append(
-				".monitorchartblockpadding { background-color: #FFF; padding: 5px }\n");
+		sb.append(".monitorcurrenthealthchartheader { background-color: #EFEFF7; font-weight: 700; padding: 3px }\n");
+		sb.append(".monitorcurrenthealthchartcell { background-color: #FFF; padding: 3px }\n");
+		sb.append(".monitorservicelist { font-weight: 700; padding: 3px 3px 3px 10px }\n");
+		sb.append(".monitorchartcell { background-color: #FFF; padding: 10px }\n");
+		sb.append(".monitorchartblockpadding { background-color: #FFF; padding: 5px }\n");
 		sb.append(".selectwid { width: 225px }\n");
 		sb.append(
 				".minitabon { background-color: #D9D9D9; border-top: solid #F35E0C; border-width: 1px; color: #F35E0C; font-size: 12px; font-weight: 700; padding: 0 }\n");
 		sb.append(
 				".minitaboff { background-color: #C3CEE5; border-bottom: solid #F35E0C; border-width: 1px; color: #039; font-size: 12px; font-weight: 700; padding: 0; text-decoration: none }\n");
-		sb.append(
-				".minitabempty { border-bottom: 1px solid #F35E0C; border-width: 1px; padding: 0 }\n");
-		sb.append(
-				".subminitab { background-color: #D9D9D9; color: #F35E0C; font-weight: 700; padding: 3px }\n");
-		sb.append(
-				".controlblockcontainer { background-color: #EFEFF7; padding: 20px }\n");
+		sb.append(".minitabempty { border-bottom: 1px solid #F35E0C; border-width: 1px; padding: 0 }\n");
+		sb.append(".subminitab { background-color: #D9D9D9; color: #F35E0C; font-weight: 700; padding: 3px }\n");
+		sb.append(".controlblockcontainer { background-color: #EFEFF7; padding: 20px }\n");
 		sb.append(".calbody { padding: 5px 10px 0 }\n");
 		sb.append(
 				".calheader { background-color: #EBEDF2; border-bottom: solid #D5D8DE; border-top: solid #F35E0C; border-width: 2px 0 1px; padding: 3px }\n");
@@ -307,8 +255,7 @@ public class Report {
 				".addremovefilterlabeltextright { background-color: #D5D8DE; border-left: solid #FFF 5px; font-size: 11px; font-weight: 700; padding: 5px }\n");
 		sb.append(
 				".minichartheader { color: #004680; font-size: 11px; font-weight: 700; padding: 2px; text-align: left; vertical-align: middle }\n");
-		sb.append(
-				".minicharttitle { background-color: #EBEDF2; color: #004680; font-size: 10px; padding: 3px }\n");
+		sb.append(".minicharttitle { background-color: #EBEDF2; color: #004680; font-size: 10px; padding: 3px }\n");
 		sb.append(".metricresourcetype {\n");
 		sb.append("font-size: 9px;\n");
 		sb.append("font-weight: 400;\n");
@@ -405,8 +352,7 @@ public class Report {
 		sb.append("position: relative;\n");
 		sb.append("z-index: 25\n");
 		sb.append("}\n");
-		sb.append(
-				"a.listcellpopup4:hover span,a.listcellpopup5:hover span,span.spanpopup1:hover span {\n");
+		sb.append("a.listcellpopup4:hover span,a.listcellpopup5:hover span,span.spanpopup1:hover span {\n");
 		sb.append("background-color: #E6E6E6;\n");
 		sb.append("border: 1px solid;\n");
 		sb.append("border-color: #000;\n");
@@ -603,15 +549,13 @@ public class Report {
 		sb.append("height: 19px\n");
 		sb.append("}\n");
 		sb.append(".dialog_sizer {\n");
-		sb.append(
-				"background: transparent url(default/sizer.gif) no-repeat 0 0;\n");
+		sb.append("background: transparent url(default/sizer.gif) no-repeat 0 0;\n");
 		sb.append("cursor: se-resize;\n");
 		sb.append("height: 19px;\n");
 		sb.append("width: 9px\n");
 		sb.append("}\n");
 		sb.append(".dialog_close {\n");
-		sb.append(
-				"background: transparent url(default/close.gif) no-repeat 0 0;\n");
+		sb.append("background: transparent url(default/close.gif) no-repeat 0 0;\n");
 		sb.append("cursor: pointer;\n");
 		sb.append("height: 14px;\n");
 		sb.append("left: 8px;\n");
@@ -621,8 +565,7 @@ public class Report {
 		sb.append("z-index: 2000\n");
 		sb.append("}\n");
 		sb.append(".dialog_minimize {\n");
-		sb.append(
-				"background: transparent url(default/minimize.gif) no-repeat 0 0;\n");
+		sb.append("background: transparent url(default/minimize.gif) no-repeat 0 0;\n");
 		sb.append("cursor: pointer;\n");
 		sb.append("height: 15px;\n");
 		sb.append("left: 28px;\n");
@@ -632,8 +575,7 @@ public class Report {
 		sb.append("z-index: 2000\n");
 		sb.append("}\n");
 		sb.append(".dialog_maximize {\n");
-		sb.append(
-				"background: transparent url(default/maximize.gif) no-repeat 0 0;\n");
+		sb.append("background: transparent url(default/maximize.gif) no-repeat 0 0;\n");
 		sb.append("cursor: pointer;\n");
 		sb.append("height: 15px;\n");
 		sb.append("left: 49px;\n");
@@ -691,16 +633,14 @@ public class Report {
 		sb.append("padding: 0;\n");
 		sb.append("width: 100%\n");
 		sb.append("}\n");
-		sb.append(
-				".dialog table.table_window td,.dialog table.table_window th {\n");
+		sb.append(".dialog table.table_window td,.dialog table.table_window th {\n");
 		sb.append("padding: 0\n");
 		sb.append("}\n");
 		sb.append(".dialog .title_window {\n");
 		sb.append("-moz-user-select: none\n");
 		sb.append("}\n");
 		sb.append(".accordiontabtitlebar {\n");
-		sb.append(
-				"background: #fff url(/images/4.0/backgrounds/panel_gray.jpg) repeat-x scroll 0% 50%;\n");
+		sb.append("background: #fff url(/images/4.0/backgrounds/panel_gray.jpg) repeat-x scroll 0% 50%;\n");
 		sb.append("border-bottom-color: #666;\n");
 		sb.append("border-style: solid none;\n");
 		sb.append("border-top-color: #DDD;\n");
@@ -939,8 +879,7 @@ public class Report {
 		sb.append("color: #444444;\n");
 		sb.append("font-size: 17px;\n");
 		sb.append("}\n");
-		sb.append(
-				"blk,.black,#usersconfigwindow .blockcontent,#rolesconfigwindow .blockcontent {\n");
+		sb.append("blk,.black,#usersconfigwindow .blockcontent,#rolesconfigwindow .blockcontent {\n");
 		sb.append("color: #000\n");
 		sb.append("}\n");
 		sb.append("a:link,a:visited {\n");
@@ -948,8 +887,7 @@ public class Report {
 		sb.append("text-decoration: none;\n");
 		sb.append("color: rgba(21, 70, 122, 1);\n");
 		sb.append("}\n");
-		sb.append(
-				"a.notbold:link,.dropdown a:link,a.notbold:visited,.dropdown a:visited {\n");
+		sb.append("a.notbold:link,.dropdown a:link,a.notbold:visited,.dropdown a:visited {\n");
 		sb.append("color: #039;\n");
 		sb.append("font-weight: 400;\n");
 		sb.append("text-decoration: none\n");
@@ -965,8 +903,7 @@ public class Report {
 		sb.append("z-index: 1;\n");
 		sb.append("position: relative;\n");
 		sb.append("}\n");
-		sb.append(
-				".pagetitlesmalltext,a.listcellpopup5:link,a.listcellpopup5:visited {\n");
+		sb.append(".pagetitlesmalltext,a.listcellpopup5:link,a.listcellpopup5:visited {\n");
 		sb.append("color: #555;\n");
 		sb.append("font-size: 11px;\n");
 		sb.append("line-height: 14px\n");
@@ -1041,8 +978,7 @@ public class Report {
 				"a.listcellpopup1 span,a.listcellpopup2 span,a.listcellpopup3 span,a.listcellpopup4 span,a.listcellpopup5 span,span.spanpopup1 span {\n");
 		sb.append("display: none\n");
 		sb.append("}\n");
-		sb.append(
-				"a.listcellpopup1:hover span,a.listcellpopup3:hover span {\n");
+		sb.append("a.listcellpopup1:hover span,a.listcellpopup3:hover span {\n");
 		sb.append("background-color: #DBE3F5;\n");
 		sb.append("border: 2px solid;\n");
 		sb.append("border-color: #f7faff #99a #99a #f7faff;\n");
@@ -1068,8 +1004,7 @@ public class Report {
 		sb.append("text-decoration: none;\n");
 		sb.append("z-index: 24\n");
 		sb.append("}\n");
-		sb.append(
-				"span.spanpopup1:hover,#deletebtn a:hover,a:link,a:visited {\n");
+		sb.append("span.spanpopup1:hover,#deletebtn a:hover,a:link,a:visited {\n");
 		sb.append("text-decoration: none\n");
 		sb.append("}\n");
 		sb.append("a.red:link,a.red:visited {\n");
@@ -1125,10 +1060,8 @@ public class Report {
 		sb.append("padding: 0;\n");
 		sb.append("width: 100%\n");
 		sb.append("}\n");
-		sb.append(
-				"#narrowlist_true .blocktitle,#displayselaction .blocktitle {\n");
-		sb.append(
-				"background: transparent url(/images/4.0/backgrounds/panel_gray.jpg) repeat-x scroll 0%;\n");
+		sb.append("#narrowlist_true .blocktitle,#displayselaction .blocktitle {\n");
+		sb.append("background: transparent url(/images/4.0/backgrounds/panel_gray.jpg) repeat-x scroll 0%;\n");
 		sb.append("color: #fff;\n");
 		sb.append("font-weight: 700\n");
 		sb.append("}\n");
@@ -1184,13 +1117,11 @@ public class Report {
 		sb.append(".infoIcon {\n");
 		sb.append("height: 32px;\n");
 		sb.append("width: 32px;\n");
-		sb.append(
-				"background: url(\"/images/icon_info_small.gif\") no-repeat;\n");
+		sb.append("background: url(\"/images/icon_info_small.gif\") no-repeat;\n");
 		sb.append("float: left;\n");
 		sb.append("}\n");
 		sb.append(".dashboard {\n");
-		sb.append(
-				"background:transparent url(/images/4.0/backgrounds/titlebar_bg.png) repeat-x scroll 0 0;\n");
+		sb.append("background:transparent url(/images/4.0/backgrounds/titlebar_bg.png) repeat-x scroll 0 0;\n");
 		sb.append("border:1px solid gray;\n");
 		sb.append("font-size:12px;\n");
 		sb.append("margin:0 0 6px;\n");
@@ -1201,8 +1132,7 @@ public class Report {
 		sb.append("padding:1px;\n");
 		sb.append("border:1px solid #ddd;\n");
 		sb.append("}\n");
-		sb.append(
-				".info { border: 1px solid red; background-color: #FFFD99; } .warning {}\n");
+		sb.append(".info { border: 1px solid red; background-color: #FFFD99; } .warning {}\n");
 		sb.append(
 				".error { border: 1px solid red; } .hidden { display: none; } .dojoDialog { -moz-border-radius: 6px; -webkit-border-radius: 6px; background-color: #FFFFFF; border: 1px solid #AAAAAA; height: 240px; width: 300px; } .dojoDialogTitle { background: transparent url(/images/4.0/backgrounds/titlebar_bg.png) repeat-x scroll 0 0; padding: 4px; font-size:1.2em; font-weight:bold } .dojoDialogBody { padding-left: 15px; } .DashboardSelectBoxLabel { vertical-align: top; display: block; padding: 3px; } .dojoDialogFooter { height: 26px; bottom: 0; position: absolute; width: 294px; padding: 5px 3px 0; }\n");
 		sb.append(
@@ -1210,8 +1140,7 @@ public class Report {
 		sb.append(".select { }\n");
 		sb.append(
 				".pagetitle .pagetitle, .PortletTitle { color: #444444; font-family: arial,sans-serif; font-size: 1.1em; font-weight: 700; }\n");
-		sb.append(
-				".buttonTable { background-color: #fff; margin-top: -4px; }\n");
+		sb.append(".buttonTable { background-color: #fff; margin-top: -4px; }\n");
 		sb.append(
 				".wait { background: #000 url('/images/widget_bg.jpg') repeat-x; color: #fff; padding: 5px; position: absolute; line-height: 12pt; }\n");
 		sb.append("th, td {white-space: normal;}\n");
@@ -1219,11 +1148,9 @@ public class Report {
 		return sb.toString();
 	}
 
-	public static String getDataTypeReport(final List<DataTypeReportRow> rows,
-			final String htmlHeader) {
+	public static String getDataTypeReport(final List<DataTypeReportRow> rows, final String htmlHeader) {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
 		sb.append(Report.getCss());
 		sb.append("\n</style>\n</head>\n<body>\n");
 
@@ -1258,8 +1185,7 @@ public class Report {
 			if (r.getInheritedFrom().isEmpty()) {
 				sb.append("[]");
 			} else {
-				r.getInheritedFrom().stream()
-						.forEach(fl -> sb.append(fl).append("<br/>"));
+				r.getInheritedFrom().stream().forEach(fl -> sb.append(fl).append("<br/>"));
 			}
 			sb.append("</td>\n");
 			sb.append("<td>\n");
@@ -1279,11 +1205,9 @@ public class Report {
 		return sb.toString();
 	}
 
-	public static String getFlowReport(final List<FlowReportRow> rows,
-			final String htmlHeader) {
+	public static String getFlowReport(final List<FlowReportRow> rows, final String htmlHeader) {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
 		sb.append(Report.getCss());
 		sb.append("\n</style>\n</head>\n<body>\n");
 
@@ -1327,8 +1251,7 @@ public class Report {
 			if (r.getMappingInputType().isEmpty()) {
 				sb.append("[]");
 			} else {
-				r.getMappingInputType().stream()
-						.forEach(fl -> sb.append(fl).append("<br/>"));
+				r.getMappingInputType().stream().forEach(fl -> sb.append(fl).append("<br/>"));
 			}
 			sb.append("</td>\n");
 			sb.append("</tr>\n");
@@ -1339,8 +1262,7 @@ public class Report {
 		return sb.toString();
 	}
 
-	public static String getJson(final List<?> rows,
-			final ObjectMapper mapper) {
+	public static String getJson(final List<?> rows, final ObjectMapper mapper) {
 		StringBuffer sb = new StringBuffer(1024);
 		rows.stream().forEach(r -> {
 			try {
@@ -1351,11 +1273,9 @@ public class Report {
 		return sb.toString();
 	}
 
-	public static String getMappingReport(final List<MappingReportRow> rows,
-			final String htmlHeader) {
+	public static String getMappingReport(final List<MappingReportRow> rows, final String htmlHeader) {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
 		sb.append(Report.getCss());
 		sb.append("\n</style>\n</head>\n<body>\n");
 
@@ -1372,11 +1292,10 @@ public class Report {
 		sb.append("<th width=\"6%\">Field</th>\n");
 		sb.append("<th width=\"3%\">Cardinality</th>\n");
 		sb.append("<th width=\"15%\">Field Description</th>\n");
-		sb.append("<th width=\"10%\">Description</th>\n");
-		sb.append("<th width=\"3%\">Mapping</th>\n");
+		sb.append("<th width=\"10%\">Mapping</th>\n");
 		sb.append("<th width=\"3%\">Mapping Type</th>\n");
-		sb.append("<th width=\"15%\">Description</th>\n");
-		sb.append("<th width=\"28%\">Mapping Input Types</th>\n");
+		sb.append("<th width=\"3%\">Description</th>\n");
+		sb.append("<th width=\"15%\">Mapping Input Types</th>\n");
 		sb.append("</tr>\n");
 		rows.stream().forEach(r -> {
 			sb.append("<tr class=\"ListRow\">\n");
@@ -1408,8 +1327,7 @@ public class Report {
 			if (r.getMappingTypeInputTypes().isEmpty()) {
 				sb.append("[]");
 			} else {
-				r.getMappingTypeInputTypes().stream()
-						.forEach(fl -> sb.append(fl).append("<br/>"));
+				r.getMappingTypeInputTypes().stream().forEach(fl -> sb.append(fl).append("<br/>"));
 			}
 			sb.append("</td>\n");
 			sb.append("</tr>\n");
@@ -1420,11 +1338,9 @@ public class Report {
 		return sb.toString();
 	}
 
-	public static String getServiceReport(final List<ServiceReportRow> rows,
-			final String htmlHeader) {
+	public static String getServiceReport(final List<ServiceReportRow> rows, final String htmlHeader) {
 		StringBuffer sb = new StringBuffer(1024);
-		sb.append(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
 		sb.append(Report.getCss());
 		sb.append("\n</style>\n</head>\n<body>\n");
 
@@ -1464,8 +1380,7 @@ public class Report {
 			if (r.getFlowLinks().isEmpty()) {
 				sb.append("[]");
 			} else {
-				r.getFlowLinks().stream()
-						.forEach(fl -> sb.append(fl).append("<br/>"));
+				r.getFlowLinks().stream().forEach(fl -> sb.append(fl).append("<br/>"));
 			}
 			sb.append("</td>\n");
 			sb.append("</tr>\n");
