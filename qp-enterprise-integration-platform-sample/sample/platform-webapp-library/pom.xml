@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.8.0</version><!--qpark-eip-version-->
+		<version>3.8.1</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -127,7 +127,7 @@ WEB-INF/lib/xws-security-3.0.jar
 								<artifactItem>
 									<groupId>com.qpark.maven</groupId>
 									<artifactId>eip-model-analysis</artifactId>
-									<version>3.8.0</version><!--qpark-eip-version-->
+									<version>3.8.1</version><!--qpark-eip-version-->
 									<classifier>xsds</classifier>
 									<type>zip</type>
 									<outputDirectory>${model.dir}</outputDirectory>
@@ -266,6 +266,21 @@ WEB-INF/lib/xws-security-3.0.jar
 							<channelPatternsUpdate>${security.channel.pattern.update}</channelPatternsUpdate>
 							<channelPatternsDelete>${security.channel.pattern.delete}</channelPatternsDelete>
 							<userProviderBeanName>ComSamplesIssLibraryUserProvider</userProviderBeanName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate model analysis description</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate-model-analysis</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${project.build.directory}/${service.final.name}/WEB-INF/classes</outputDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<serviceId>${eip.service.ids}</serviceId>
+							<modelVersion>${project.version}</modelVersion>
+							<flowNameParts>flow</flowNameParts>
 						</configuration>
 					</execution>
 				</executions>
