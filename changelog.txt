@@ -1,5 +1,8 @@
 Changelog:
 
+3.8.1 20170111
+Impl: Fixed sync LockableOperation releasing lock to early
+
 3.8.0 20161202
 DomainDoc: Report generation at maven build
 

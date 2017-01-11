@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013 - 2017 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.lockedoperation;
@@ -13,6 +13,12 @@ import org.slf4j.Logger;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationEventEnumType;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationStateEnumType;
 
+/**
+ * Definition of an operation, which prevents multiple simultaneously executions
+ * of it.
+ *
+ * @author bhausen
+ */
 public interface LockableOperation {
 	/**
 	 * @return the Logger of the operation.

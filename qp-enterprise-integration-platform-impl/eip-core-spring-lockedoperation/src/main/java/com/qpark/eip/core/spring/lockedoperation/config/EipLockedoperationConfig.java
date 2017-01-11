@@ -75,8 +75,7 @@ public class EipLockedoperationConfig {
 	 */
 	@Bean
 	public LockableOperationDao getLockedOperationDao() {
-		LockableOperationDao bean = new LockedOperationDaoImpl();
-		return bean;
+		return new LockedOperationDaoImpl();
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class EipLockedoperationConfig {
 
 	/**
 	 * Get the {@link AbstractJpaVendorAdapter} out of the property
-	 * {@link #jpaVendorAdapterClassName}.
+	 * {@value EipJpaVendorAdapterConfiguration#jpaVendorAdapterClassName}.
 	 *
 	 * @return the {@link AbstractJpaVendorAdapter} .
 	 */

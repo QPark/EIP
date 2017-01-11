@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 <!--
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013 - 2017 QPark Consulting  S.a r.l.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0.
@@ -14,17 +14,9 @@
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%contextName][%-5level][%c] %msg%n%ex</pattern>
 		</encoder>
 	</appender>
-	<appender name="FILE_SQL" class="ch.qos.logback.core.FileAppender">
-		<file>model-analysis.sql</file>
-		<append>false</append>
-		<encoder><pattern>${logfile.pattern}</pattern></encoder>
-	</appender>
-		<logger name="org.hibernate.SQL" level="TRACE" >
-			<appender ref="FILE_SQL"/>
-		</logger>
-	
+	<logger name="com.qpark" level="TRACE" />
 	<root>
-		<level value="INFO" />
+		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

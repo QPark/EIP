@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.lockedoperation;
@@ -65,12 +65,15 @@ public abstract class AbstractLockableOperation implements LockableOperation {
 			 * A new lock for the operation was created. Now it is time to run
 			 * the operation.
 			 */
-			this.invokeOperation(context);
-			if (this.isAsync()) {
+			try {
 				state = OperationStateEnumType.STARTED;
-			} else {
-				this.lockedOperationDao.unlockOperation(this);
-				state = OperationStateEnumType.IDLE;
+				this.invokeOperation(context);
+			} finally {
+				if (!this.isAsync()) {
+					/* Only synchronous operations need to be unlocked again. */
+					this.lockedOperationDao.unlockOperation(this);
+					state = OperationStateEnumType.IDLE;
+				}
 			}
 		} else {
 			/*
@@ -102,7 +105,8 @@ public abstract class AbstractLockableOperation implements LockableOperation {
 	 *            the {@link OperationEventEnumType}.
 	 * @return <code>true</code> if asking to check the state.
 	 */
-	private boolean isEventCheckState(final OperationEventEnumType event) {
+	private static boolean isEventCheckState(
+			final OperationEventEnumType event) {
 		boolean value = false;
 		if (event != null && event.value()
 				.equals(OperationEventEnumType.CHECK_STATE.value())) {
@@ -118,7 +122,7 @@ public abstract class AbstractLockableOperation implements LockableOperation {
 	 *            the {@link OperationEventEnumType}.
 	 * @return <code>true</code> if asking to run the operation.
 	 */
-	private boolean isEventStart(final OperationEventEnumType event) {
+	private static boolean isEventStart(final OperationEventEnumType event) {
 		boolean value = false;
 		if (event != null
 				&& event.value().equals(OperationEventEnumType.START.value())) {
@@ -167,20 +171,12 @@ public abstract class AbstractLockableOperation implements LockableOperation {
 			 */
 			this.getLogger().debug("Found operation {} ({})",
 					new Object[] { this.getName(), this.getUUID() });
-			try {
-				if (this.isEventCheckState(event)) {
-					/* Check the state. */
-					state = this.handleEventCheckState(context);
-				} else if (this.isEventStart(event)) {
-					/* Start the operation. */
-					this.handleEventStart(context);
-				}
-			} finally {
-				/* After finishing the request do an unlock. */
-				if (!this.isAsync() && this.isEventStart(event)) {
-					this.lockedOperationDao.unlockOperation(this);
-					state = OperationStateEnumType.IDLE;
-				}
+			if (isEventCheckState(event)) {
+				/* Check the state. */
+				state = this.handleEventCheckState(context);
+			} else if (isEventStart(event)) {
+				/* Start the operation. */
+				state = this.handleEventStart(context);
 			}
 		}
 		return state;

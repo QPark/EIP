@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013 - 2017 QPark Consulting  S.a r.l.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0.
@@ -22,6 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.slf4j.Logger;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,11 @@ import com.qpark.eip.core.spring.lockedoperation.LockableOperation;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationLockControllType;
 
+/**
+ * Implementation of the {@link LockableOperationDao}.
+ *
+ * @author bhausen
+ */
 public class LockedOperationDaoImpl implements LockableOperationDao {
 	/**
 	 * @param operation

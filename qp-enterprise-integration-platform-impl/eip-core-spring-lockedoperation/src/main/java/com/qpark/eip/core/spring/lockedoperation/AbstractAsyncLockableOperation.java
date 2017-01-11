@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ * Copyright (c) 2013 - 2017 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.lockedoperation;
@@ -36,7 +36,9 @@ public abstract class AbstractAsyncLockableOperation
 	static class AsyncLockableOperationRunner implements Callable<Void> {
 		/** The {@link LockableOperationContext}. */
 		private LockableOperationContext context;
-		/** The {@link LockedOperationDaoImpl} to lock and unlock the operation. */
+		/**
+		 * The {@link LockedOperationDaoImpl} to lock and unlock the operation.
+		 */
 		@Autowired
 		private LockableOperationDao lockedOperationDao;
 		/** The operation to start. */
@@ -76,8 +78,8 @@ public abstract class AbstractAsyncLockableOperation
 		/**
 		 * Set the {@link LockableOperationContext} to run.
 		 *
-		 * @param operation
-		 *            the operation.
+		 * @param context
+		 *            the {@link LockableOperationContext}.
 		 */
 		public void setContext(final LockableOperationContext context) {
 			this.context = context;
