@@ -280,14 +280,16 @@ public class GeneratorMojo extends AbstractMojo {
 			} catch (final JsonProcessingException e) {
 				this.getLog().error(e.getMessage());
 			}
-			this.writeReport("service-description", Report.getServiceReport(serviceReportRows, htmlHeader),
+			this.writeReport("description-service", Report.getServiceReport(serviceReportRows, htmlHeader),
 					Report.getJson(serviceReportRows, this.objectMapper));
-			this.writeReport("flow-description", Report.getFlowReport(flowReportRows, htmlHeader),
+			this.writeReport("description-flow", Report.getFlowReport(flowReportRows, htmlHeader),
 					Report.getJson(flowReportRows, this.objectMapper));
-			this.writeReport("mapping-description", Report.getMappingReport(mappingReportRows, htmlHeader),
+			this.writeReport("description-mapping", Report.getMappingReport(mappingReportRows, htmlHeader),
 					Report.getJson(mappingReportRows, this.objectMapper));
-			this.writeReport("datatype-description", Report.getDataTypeReport(dataTypeReportRows, htmlHeader),
+			this.writeReport("description-datatype", Report.getDataTypeReport(dataTypeReportRows, htmlHeader),
 					Report.getJson(dataTypeReportRows, this.objectMapper));
+			this.writeReport("description-overview", Report.getReportLinkPage(htmlHeader, "description-service",
+					"description-flow", "description-mapping", "description-datatype"), null);
 		}
 		try {
 			final ObjectFactory of = new ObjectFactory();
@@ -342,17 +344,19 @@ public class GeneratorMojo extends AbstractMojo {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		try {
-			final File f = Util.getFile(this.outputDirectory, String.format("%s.json", name));
-			this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+		if (Objects.nonNull(json)) {
 			try {
-				Util.writeToFile(f, json);
+				final File f = Util.getFile(this.outputDirectory, String.format("%s.json", name));
+				this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
+				try {
+					Util.writeToFile(f, json);
+				} catch (final Exception e) {
+					this.getLog().error(e.getMessage());
+					e.printStackTrace();
+				}
 			} catch (final Exception e) {
-				this.getLog().error(e.getMessage());
 				e.printStackTrace();
 			}
-		} catch (final Exception e) {
-			e.printStackTrace();
 		}
 	}
 }

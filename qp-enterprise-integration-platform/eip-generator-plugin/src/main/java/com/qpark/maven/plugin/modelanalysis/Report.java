@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.qpark.maven.plugin.modelanalysis;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -1197,6 +1198,44 @@ public class Report {
 			sb.append("<td>\n");
 			sb.append(getString(r.getFieldDescription()));
 			sb.append("</td>\n");
+			sb.append("</tr>\n");
+		});
+		sb.append("</table>\n");
+
+		sb.append("\n</body>\n</html>\n");
+		return sb.toString();
+	}
+
+	public static String getReportLinkPage(final String htmlHeader, final String... reportNames) {
+		StringBuffer sb = new StringBuffer(1024);
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html>\n<head>\n<style>\n");
+		sb.append(Report.getCss());
+		sb.append("\n</style>\n</head>\n<body>\n");
+
+		sb.append("<h2>Build environment overview</h2>\n");
+		sb.append(htmlHeader);
+		sb.append("</p>");
+
+		sb.append("<h2>Service, Flow and mapping overview</h2>\n");
+
+		sb.append("<table class=\"portletlrborder\">\n");
+		sb.append("<tr class=\"tablerowheader\">\n");
+		sb.append("<th >Name</th>\n");
+		sb.append("<th >HTML</th>\n");
+		sb.append("<th >JSON</th>\n");
+		sb.append("</tr>\n");
+		Arrays.asList(reportNames).stream().forEach(name -> {
+			sb.append("<tr class=\"ListRow\">\n");
+			sb.append("<td>\n");
+			sb.append(name);
+			sb.append("</td>\n");
+			sb.append("<td>\n");
+			sb.append(String.format("<a href=\"%s.html\">%s.html</a>", name, name));
+			sb.append("</td>\n");
+			sb.append("<td>\n");
+			sb.append(String.format("<a href=\"%s.json\">%s.json</a>", name, name));
+			sb.append("</td>\n");
+			sb.append("<td>\n");
 			sb.append("</tr>\n");
 		});
 		sb.append("</table>\n");
