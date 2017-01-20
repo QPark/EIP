@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * Copyright (c) 2017 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
@@ -29,8 +29,6 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public class WsServletXmlGenerator {
-	// private static final String PAYLOAD_LOGGER =
-	// "com.qpark.eip.core.spring.PayloadLogger";
 	private static final String PAYLOAD_LOGGER = "com.qpark.eip.core.spring.PayloadLogger";
 	private final Log log;
 	private final XsdsUtil config;
@@ -45,9 +43,9 @@ public class WsServletXmlGenerator {
 	private final String eipVersion;
 
 	public static void main(final String[] args) {
-		String s = "<bean id=\"\neins\" lkajsdfid=\"zwei\"kljadf";
-		String[] ss = s.split("id=\\\"");
-		for (String string : ss) {
+		final String s = "<bean id=\"\neins\" lkajsdfid=\"zwei\"kljadf";
+		final String[] ss = s.split("id=\\\"");
+		for (final String string : ss) {
 			if (string.indexOf('"') > 0) {
 				System.out.println(string.substring(0, string.indexOf('"'))
 						.replaceAll("\\\n", "").replaceAll("\\\r", ""));
@@ -56,11 +54,11 @@ public class WsServletXmlGenerator {
 	}
 
 	private List<String> getAdditionalWebservicePayloadInterceptors() {
-		List<String> beanIds = new ArrayList<String>();
+		final List<String> beanIds = new ArrayList<String>();
 		if (this.additionalWebservicePayloadInterceptors != null) {
-			String[] ss = this.additionalWebservicePayloadInterceptors
+			final String[] ss = this.additionalWebservicePayloadInterceptors
 					.split("id=\\\"");
-			for (String s : ss) {
+			for (final String s : ss) {
 				if (s.indexOf('"') > 0) {
 					beanIds.add(s.substring(0, s.indexOf('"'))
 							.replaceAll("\\\n", "").replaceAll("\\\r", ""));
@@ -106,7 +104,7 @@ public class WsServletXmlGenerator {
 
 	public void generate() {
 		this.log.debug("+generate");
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 
 		sb.append(this.getXmlDefinition());
 		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
@@ -127,13 +125,13 @@ public class WsServletXmlGenerator {
 		sb.append(this.getEndPointMappings());
 		sb.append("</beans>\n");
 
-		File f = Util.getFile(this.outputDirectory, "", "ws-servlet.xml");
+		final File f = Util.getFile(this.outputDirectory, "", "ws-servlet.xml");
 		this.log.info(new StringBuffer().append("Write ")
 				.append(f.getAbsolutePath()));
 
 		try {
 			Util.writeToFile(f, sb.toString());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			this.log.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -141,7 +139,7 @@ public class WsServletXmlGenerator {
 	}
 
 	private String getEndPointMappings() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		if (this.additionalWebservicePayloadInterceptors != null
 				&& this.additionalWebservicePayloadInterceptors.length() > 0) {
 			sb.append(
@@ -165,9 +163,9 @@ public class WsServletXmlGenerator {
 			sb.append(
 					"\t\t\t\t<ref bean=\"payloadValidatingInterceptor\" />\n");
 		}
-		List<String> beanIds = this
+		final List<String> beanIds = this
 				.getAdditionalWebservicePayloadInterceptors();
-		for (String beanId : beanIds) {
+		for (final String beanId : beanIds) {
 			sb.append("\t\t\t\t<ref bean=\"");
 			sb.append(beanId);
 			sb.append("\" />\n");
@@ -178,13 +176,13 @@ public class WsServletXmlGenerator {
 		sb.append("\t\t<property name=\"mappings\">\n");
 		sb.append("\t\t\t<props>\n");
 		String targetNamespace = null;
-		for (ElementType element : this.elementTypes) {
+		for (final ElementType element : this.elementTypes) {
 			if (element.isRequest() && this.config.getServiceIdRegistry()
 					.isValidServiceId(element.getServiceId(), this.serviceId)) {
-				ElementType elementResponse = XsdsUtil.findResponse(element,
-						this.config.getElementTypes(), this.config);
+				final ElementType elementResponse = XsdsUtil.findResponse(
+						element, this.config.getElementTypes(), this.config);
 				if (elementResponse != null) {
-					ComplexType ctResponse = new ComplexType(
+					final ComplexType ctResponse = new ComplexType(
 							elementResponse.getElement().getType(),
 							this.config);
 					if (ctResponse != null && !ctResponse.isSimpleType()
@@ -216,35 +214,45 @@ public class WsServletXmlGenerator {
 	}
 
 	private String getPayloadLoggingInterceptor() {
-		StringBuffer sb = new StringBuffer(1024);
-
-		// TreeSet<String> packageNames = new TreeSet<String>();
-		// for (ElementType element : this.elementTypes) {
-		// if (element.isRequest()
-		// && ServiceIdRegistry.isValidServiceId(
-		// element.getServiceId(), this.serviceId)) {
-		// packageNames.add(element.getPackageName());
-		// }
-		// }
+		final StringBuffer sb = new StringBuffer(1024);
 
 		sb.append("\t<!-- Payload logging interceptor -->\n");
+		sb.append(
+				"\t<bean id=\"payloadLoggingInterceptorMarshaller\" class=\"org.springframework.oxm.jaxb.Jaxb2Marshaller\">\n");
+		sb.append("\t\t<property name=\"packagesToScan\">\n");
+		sb.append("\t\t\t<list>\n");
+		final List<String> sids = ServiceIdRegistry
+				.splitServiceIds(this.serviceId);
+		if (sids.isEmpty()) {
+			sids.addAll(this.config.getServiceIdRegistry().getAllServiceIds());
+		}
+		sids.stream().map(sid -> this.config.getServiceIdRegistry()
+				.getServiceIdEntry(sid)).forEach(side -> {
+					sb.append("\t\t\t\t<value>");
+					sb.append(side.getPackageName());
+					sb.append("</value>\n");
+				});
+		sb.append("\t\t\t</list>\n");
+		sb.append("\t\t</property>\n");
+
+		sb.append("\t</bean>\n");
+
 		sb.append("\t<bean id=\"payloadLoggingInterceptor\" class=\"");
 		sb.append(this.webservicePayloadLoggerImplementation);
 		sb.append("\">\n");
 		sb.append("\t\t<property name=\"loggerName\" value=\"");
 		sb.append(this.basePackageName);
 		sb.append(".messages.incoming\"/>\n");
-		sb.append("\t\t<property name=\"contextPath\" value=\"");
-		// sb.append(Util.getContextPath(packageNames));
-		sb.append(this.config.getServiceIdRegistry()
-				.getCombinedMarshallerContextPath(this.serviceId));
-		sb.append("\"/>\n");
+		sb.append("\t\t<property name=\"jaxb2Marshaller\">\n");
+		sb.append(
+				"\t\t\t<ref bean=\"payloadLoggingInterceptorMarshaller\"/>\n");
+		sb.append("\t\t</property>\n");
 		sb.append("\t</bean>\n");
 		return sb.toString();
 	}
 
 	private String getPayloadValidatingInterceptor() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append("\t<!-- Payload validation interceptor -->\n");
 		sb.append(
 				"\t<bean id=\"payloadValidatingInterceptor\" class=\"org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor\">\n");
@@ -257,10 +265,10 @@ public class WsServletXmlGenerator {
 				serviceIds = this.config.getServiceIdRegistry()
 						.getAllServiceIds();
 			}
-			for (String sid : serviceIds) {
-				ServiceIdEntry entry = this.config.getServiceIdRegistry()
+			for (final String sid : serviceIds) {
+				final ServiceIdEntry entry = this.config.getServiceIdRegistry()
 						.getServiceIdEntry(sid);
-				XsdContainer xc = this.config
+				final XsdContainer xc = this.config
 						.getXsdContainer(entry.getTargetNamespace());
 				sb.append("\t\t\t\t<value>/WEB-INF/classes");
 				sb.append(Util.getRelativePathTranslated(
@@ -268,7 +276,7 @@ public class WsServletXmlGenerator {
 				sb.append("</value>\n");
 			}
 		} else {
-			for (File f : this.config.getXsdFiles()) {
+			for (final File f : this.config.getXsdFiles()) {
 				sb.append("\t\t\t\t<value>/WEB-INF/classes");
 				sb.append(Util.getRelativePathTranslated(
 						this.config.getBaseDirectory(), f));
@@ -288,7 +296,7 @@ public class WsServletXmlGenerator {
 	}
 
 	private String getProperties() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append("\t<!-- The properties -->\n");
 		sb.append("\t<import resource=\"classpath:/");
 		sb.append(this.basePackageName);
@@ -297,7 +305,7 @@ public class WsServletXmlGenerator {
 	}
 
 	private String getSoapDefaults() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append(
 				"\t<!-- Web service message factory to support SOAP 1.2  -->\n");
 		sb.append(
@@ -306,16 +314,6 @@ public class WsServletXmlGenerator {
 		sb.append(
 				"\t\t\t<util:constant static-field=\"org.springframework.ws.soap.SoapVersion.SOAP_12\" />\n");
 		sb.append("\t\t</property>\n");
-		// sb.append("\t\t<property name=\"messageFactory\">\n");
-		// sb.append("\t\t\t<bean
-		// class=\"org.apache.axis2.saaj.MessageFactoryImpl\">\n");
-		// sb.append("\t\t\t\t<property name=\"SOAPVersion\">\n");
-		// sb.append("\t\t\t\t\t<util:constant
-		// static-field=\"javax.xml.soap.SOAPConstants.SOAP_1_2_PROTOCOL\"
-		// />\n");
-		// sb.append("\t\t\t\t</property>\n");
-		// sb.append("\t\t\t</bean>\n");
-		// sb.append("\t\t</property>\n");
 		sb.append("\t</bean>\n");
 		sb.append("\t<!-- SOAP fault defaults. -->\n");
 		sb.append(
@@ -323,38 +321,11 @@ public class WsServletXmlGenerator {
 		sb.append(
 				"\t<bean id=\"eipSoapFaultDefinitionExceptionResolver\" class=\"com.qpark.eip.core.spring.EipSoapFaultDefinitionExceptionResolver\"/>\n");
 
-		// sb.append("\t<bean
-		// class=\"org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver\">\n");
-		// sb.append("\t\t<description> This exception resolver maps other
-		// exceptions to SOAP Faults. Both UnmarshallingException and
-		// ValidationFailureException are mapped to a SOAP Fault with a
-		// &quot;Client&quot; fault code. All other exceptions are mapped to a
-		// &quot;Server&quot; error code, the default. The message shall contain
-		// the causing exception.</description>\n");
-		// sb.append("\t\t<property name=\"defaultFault\" value=\"SERVER, BUS
-		// error\" />\n");
-		// sb.append("\t\t<property name=\"exceptionMappings\">\n");
-		// sb.append("\t\t\t<props>\n");
-		// sb.append("\t\t\t\t<prop
-		// key=\"org.springframework.oxm.UnmarshallingFailureException\">
-		// CLIENT, BUS: Invalid request received
-		// (org.springframework.oxm.UnmarshallingFailureException)</prop>\n");
-		// sb.append("\t\t\t\t<prop
-		// key=\"org.springframework.oxm.ValidationFailureException\"> CLIENT,
-		// BUS: Invalid request received
-		// (org.springframework.oxm.ValidationFailureException)</prop>\n");
-		// sb.append("\t\t\t\t<prop
-		// key=\"org.springframework.security.access.AccessDeniedException\">
-		// SERVER, BUS: Service Access not Granted
-		// (org.springframework.security.access.AccessDeniedException)</prop>\n");
-		// sb.append("\t\t\t</props>\n");
-		// sb.append("\t\t</property>\n");
-		// sb.append("\t</bean>\n");
 		return sb.toString();
 	}
 
 	private String getWsSecurityInterceptor() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append("\t<!-- Web service security interceptor -->\n");
 		sb.append(
 				"\t<bean id=\"wsSecurityInterceptor\" class=\"org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor\">\n");
@@ -378,7 +349,7 @@ public class WsServletXmlGenerator {
 	}
 
 	private String getXmlDefinition() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append(
 				"<beans xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");

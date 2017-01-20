@@ -1,5 +1,9 @@
 Changelog:
 
+3.8.2 20170120
+Generators: Marshaller and Unmarshaller based on packages
+Impl: Marshaller and Unmarshaller based on packages
+
 3.8.1 20170111
 Impl: Fixed sync LockableOperation releasing lock to early
 DomainDoc: Report generation with overview page

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l. This program and the
+ * Copyright (c) 2017 QPark Consulting S.a r.l. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
@@ -7,6 +7,7 @@
 package com.qpark.maven.plugin.springintegration;
 
 import java.io.File;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.logging.Log;
@@ -47,13 +48,13 @@ public class SpringIntegrationConfigGenerator {
 
 	public void generate() {
 		this.log.debug("+generate");
-		TreeSet<String> serviceIds = new TreeSet<String>();
-		for (ElementType element : this.config.getElementTypes()) {
+		final TreeSet<String> serviceIds = new TreeSet<String>();
+		for (final ElementType element : this.config.getElementTypes()) {
 			if (element.isRequest()) {
 				serviceIds.add(element.getServiceId());
 			}
 		}
-		for (String serviceId : serviceIds) {
+		for (final String serviceId : serviceIds) {
 			this.generateService(serviceId);
 		}
 		this.log.debug("-generate");
@@ -61,24 +62,24 @@ public class SpringIntegrationConfigGenerator {
 
 	public void generateService(final String serviceId) {
 		this.log.debug("+generateService");
-		String capitalizeName = new StringBuffer(
+		final String capitalizeName = new StringBuffer(
 				Util.capitalizePackageName(this.basePackageName))
 						.append(ServiceIdRegistry.capitalize(serviceId))
 						.toString();
-		String servicePackageName = new StringBuffer(this.basePackageName)
+		final String servicePackageName = new StringBuffer(this.basePackageName)
 				.append(".").append(serviceId).toString();
-		String fileName = new StringBuffer(64).append(servicePackageName)
+		final String fileName = new StringBuffer(64).append(servicePackageName)
 				.append("-integration-spring-config.xml").toString();
 		XsdContainer messageDefinitionXsdContainer = null;
 
-		TreeSet<String> packageNames = new TreeSet<String>();
-		for (ElementType element : this.config.getElementTypes()) {
+		final TreeSet<String> packageNames = new TreeSet<String>();
+		for (final ElementType element : this.config.getElementTypes()) {
 			if (element.isRequest()
 					&& element.getServiceId().equals(serviceId)) {
 				packageNames.add(element.getPackageName());
 			}
 		}
-		for (ElementType element : this.config.getElementTypes()) {
+		for (final ElementType element : this.config.getElementTypes()) {
 			if (element.getServiceId().equals(serviceId)) {
 				messageDefinitionXsdContainer = this.config
 						.getXsdContainer(element.getTargetNamespace());
@@ -86,9 +87,9 @@ public class SpringIntegrationConfigGenerator {
 			}
 		}
 
-		StringBuffer xml = new StringBuffer();
-		StringBuffer sb = new StringBuffer();
-		StringBuffer properties = new StringBuffer();
+		final StringBuffer xml = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
+		final StringBuffer properties = new StringBuffer();
 
 		xml.append(this.getXmlDefinition());
 		sb.append(Util.getGeneratedAtXmlComment(this.getClass(),
@@ -157,18 +158,31 @@ public class SpringIntegrationConfigGenerator {
 		sb.append("\t</util:list>\n");
 
 		sb.append("\t<!-- Marshaller of services -->\n");
-		sb.append("\t<oxm:jaxb2-marshaller id=\"eipCaller")
-				.append(capitalizeName).append("Marshaller\" \n");
-		sb.append("\t\tcontext-path=\"");
-		// sb.append(Util.getContextPath(packageNames));
-		sb.append(this.config.getServiceIdRegistry()
-				.getCombinedMarshallerContextPath(serviceId));
-		sb.append("\"\n\t/>\n");
+		sb.append("\t<bean id=\"eipCaller").append(capitalizeName)
+				.append("Marshaller\"");
+		sb.append(" class=\"org.springframework.oxm.jaxb.Jaxb2Marshaller\">\n");
+
+		sb.append("\t\t<property name=\"packagesToScan\">\n");
+		sb.append("\t\t\t<list>\n");
+		final List<String> sids = ServiceIdRegistry.splitServiceIds(serviceId);
+		if (sids.isEmpty()) {
+			sids.addAll(this.config.getServiceIdRegistry().getAllServiceIds());
+		}
+		sids.stream().map(sid -> this.config.getServiceIdRegistry()
+				.getServiceIdEntry(sid)).forEach(side -> {
+					sb.append("\t\t\t\t<value>");
+					sb.append(side.getPackageName());
+					sb.append("</value>\n");
+				});
+		sb.append("\t\t\t</list>\n");
+		sb.append("\t\t</property>\n");
+
+		sb.append("\t</bean>\n");
 
 		sb.append("\n");
-		StringBuffer channels = new StringBuffer();
-		StringBuffer gateways = new StringBuffer();
-		StringBuffer router = new StringBuffer();
+		final StringBuffer channels = new StringBuffer();
+		final StringBuffer gateways = new StringBuffer();
+		final StringBuffer router = new StringBuffer();
 		channels.append("\t<!-- Channel definitions of service ")
 				.append(serviceId).append(" -->\n");
 		channels.append("\t<int:channel id=\"internalEipCaller")
@@ -188,12 +202,12 @@ public class SpringIntegrationConfigGenerator {
 		router.append("\t\t<property name=\"channelMappings\">\n");
 		router.append("\t\t\t<map>\n");
 
-		for (ElementType element : this.config.getElementTypes()) {
+		for (final ElementType element : this.config.getElementTypes()) {
 			if (element.getServiceId().equals(serviceId)) {
-				ElementType elementResponse = XsdsUtil.findResponse(element,
-						this.config.getElementTypes(), this.config);
+				final ElementType elementResponse = XsdsUtil.findResponse(
+						element, this.config.getElementTypes(), this.config);
 				if (element.isRequest() && elementResponse != null) {
-					ComplexType ctResponse = new ComplexType(
+					final ComplexType ctResponse = new ComplexType(
 							elementResponse.getElement().getType(),
 							this.config);
 					if (ctResponse != null && !ctResponse.isSimpleType()
@@ -286,12 +300,12 @@ public class SpringIntegrationConfigGenerator {
 
 		xml.append(properties);
 		xml.append(sb);
-		File f = Util.getFile(this.outputDirectory, "", fileName);
+		final File f = Util.getFile(this.outputDirectory, "", fileName);
 		this.log.info(new StringBuffer().append("Write ")
 				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, xml.toString());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			this.log.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -299,7 +313,7 @@ public class SpringIntegrationConfigGenerator {
 	}
 
 	private String getXmlDefinition() {
-		StringBuffer sb = new StringBuffer(1024);
+		final StringBuffer sb = new StringBuffer(1024);
 		sb.append(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n");
 		sb.append(
@@ -352,5 +366,4 @@ public class SpringIntegrationConfigGenerator {
 		sb.append("\t\"\n>\n");
 		return sb.toString();
 	}
-
 }
