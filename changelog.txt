@@ -1,5 +1,9 @@
 Changelog:
 
+3.8.3 20170323
+Generators: XJC plugin to add element defaults with argument name eip-xsd-default-value
+Sample: Use new XJC plugin with argument eip-xsd-default-value
+
 3.8.2 20170120
 Generators: Marshaller and Unmarshaller based on packages
 Impl: Marshaller and Unmarshaller based on packages

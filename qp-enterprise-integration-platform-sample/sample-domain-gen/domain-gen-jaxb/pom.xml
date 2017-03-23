@@ -64,6 +64,10 @@ Additionally to that a human readable version of the xsds is generated.
 							<!-- 
 							<verbose>false</verbose>
 							 -->
+							<arguments>
+							        <!-- supports jaxb object defaults -->
+							        <argument>-Xeip-xsd-default-value</argument>
+							</arguments>
 						</configuration>
 					</execution>
 					<execution>
