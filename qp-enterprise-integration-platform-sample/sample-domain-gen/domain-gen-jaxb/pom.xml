@@ -13,13 +13,13 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>3.8.3</version><!--qpark-eip-version-->
+		<version>3.8.4</version><!--qpark-eip-version-->
 		<relativePath/>
 	</parent>
 
 	<groupId>com.samples.domain.gen</groupId>
 	<artifactId>domain-gen-jaxb</artifactId>
-	<version>3.8.3</version><!--qpark-eip-version-->
+	<version>3.8.4</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<name>domain-gen-jaxb</name>
 	<description>
