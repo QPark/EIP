@@ -52,6 +52,9 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The base package name where to place the object factories. */
 	@Parameter(property = "basePackageName", defaultValue = "")
 	private String basePackageName;
+	/** The url pattern of the mvc (if any). */
+	@Parameter(property = "mvcUrlPattern", defaultValue = "")
+	private String mvcUrlPattern;
 	/** The name of the war file. */
 	@Parameter(property = "warName", defaultValue = "bus.war")
 	private String warName;
@@ -133,8 +136,8 @@ public class GeneratorMojo extends AbstractMojo {
 
 		WebXmlGenerator wx = new WebXmlGenerator(xsds, this.serviceId,
 				this.serviceVersion, this.revisionNumber, this.warName,
-				this.additionalWebappFilter, this.outputDirectory, eipVersion,
-				this.getLog());
+				this.mvcUrlPattern, this.additionalWebappFilter,
+				this.outputDirectory, eipVersion, this.getLog());
 		wx.generate();
 
 		WsServletXmlGenerator wsx = new WsServletXmlGenerator(xsds,

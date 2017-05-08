@@ -216,6 +216,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<serviceId>${eip.service.ids}</serviceId>
 							<serviceVersion>${project.version}</serviceVersion>
 							<warName>${service.war.name}</warName>
+							<mvcUrlPattern>/restservices/*</mvcUrlPattern>
 							<revisionNumber>${buildNumber}</revisionNumber>
 						</configuration>
 					</execution>

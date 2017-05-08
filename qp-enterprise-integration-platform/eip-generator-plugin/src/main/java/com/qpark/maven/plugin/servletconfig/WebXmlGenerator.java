@@ -8,6 +8,7 @@ package com.qpark.maven.plugin.servletconfig;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Objects;
 
 import org.apache.maven.plugin.logging.Log;
 
@@ -28,6 +29,7 @@ public class WebXmlGenerator {
 	private final File outputDirectory;
 	private final String serviceId;
 	private final String warName;
+	private final String mvcUrlPattern;
 	private final String revisionNumber;
 	private final Date d = new Date();
 	private final String eipVersion;
@@ -38,15 +40,16 @@ public class WebXmlGenerator {
 	 */
 	public WebXmlGenerator(final XsdsUtil config, final String serviceId,
 			final String serviceVersion, final String revisionNumber,
-			final String warName, final String additionalWebappFilter,
-			final File outputDirectory, final String eipVersion,
-			final Log log) {
+			final String warName, final String mvcUrlPattern,
+			final String additionalWebappFilter, final File outputDirectory,
+			final String eipVersion, final Log log) {
 		this.config = config;
 		this.serviceId = serviceId == null ? ""
 				: serviceId.replace(',', '-').replaceAll(" ", "");
 		this.serviceVersion = serviceVersion;
 		this.revisionNumber = revisionNumber;
 		this.warName = warName;
+		this.mvcUrlPattern = mvcUrlPattern;
 		this.additionalWebappFilter = additionalWebappFilter == null ? ""
 				: additionalWebappFilter;
 		this.outputDirectory = outputDirectory;
@@ -231,6 +234,15 @@ public class WebXmlGenerator {
 		sb.append("\t\t\t</init-param>\n");
 
 		sb.append("\t</servlet>\n");
+		if (Objects.nonNull(this.mvcUrlPattern)
+				&& this.mvcUrlPattern.trim().length() > 0) {
+			sb.append("\t<servlet>\n");
+			sb.append("\t\t<servlet-name>mvc</servlet-name>\n");
+			sb.append(
+					"\t\t<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>\n");
+			sb.append("\t\t<load-on-startup>1</load-on-startup>\n");
+			sb.append("\t</servlet>\n");
+		}
 		sb.append("\t<servlet-mapping>\n");
 		sb.append("\t\t<servlet-name>ws</servlet-name>\n");
 		sb.append("\t\t<url-pattern>/");
@@ -245,15 +257,28 @@ public class WebXmlGenerator {
 		sb.append("\t\t<url-pattern>*.wsdl</url-pattern>\n");
 		sb.append("\t</servlet-mapping>\n");
 
-		sb.append("\t<filter>\n");
-		sb.append("\t\t<filter-name>httpMethodFilter</filter-name>\n");
-		sb.append(
-				"\t\t	<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>\n");
-		sb.append("\t</filter>\n");
-		sb.append("\t<filter-mapping>\n");
-		sb.append("\t\t<filter-name>httpMethodFilter</filter-name>\n");
-		sb.append("\t\t<servlet-name>dispatcher</servlet-name>\n");
-		sb.append("\t</filter-mapping>\n");
+		if (Objects.nonNull(this.mvcUrlPattern)
+				&& this.mvcUrlPattern.trim().length() > 0) {
+			sb.append("\t<servlet-mapping>\n");
+			sb.append("\t\t<servlet-name>mvc</servlet-name>\n");
+			sb.append("\t\t<url-pattern>");
+			sb.append(this.mvcUrlPattern);
+			sb.append("</url-pattern>\n");
+			sb.append("\t</servlet-mapping>\n");
+		}
+
+		if (Objects.nonNull(this.mvcUrlPattern)
+				&& this.mvcUrlPattern.trim().length() > 0) {
+			sb.append("\t<filter>\n");
+			sb.append("\t\t<filter-name>httpMethodFilter</filter-name>\n");
+			sb.append(
+					"\t\t\t<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>\n");
+			sb.append("\t</filter>\n");
+			sb.append("\t<filter-mapping>\n");
+			sb.append("\t\t<filter-name>httpMethodFilter</filter-name>\n");
+			sb.append("\t\t<servlet-name>mvc</servlet-name>\n");
+			sb.append("\t</filter-mapping>\n");
+		}
 
 		sb.append("\t<error-page>\n");
 		sb.append("\t\t<exception-type>java.lang.Throwable</exception-type>\n");
