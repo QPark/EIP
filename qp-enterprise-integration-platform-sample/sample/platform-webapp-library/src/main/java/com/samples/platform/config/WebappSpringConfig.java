@@ -14,6 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.samples.platform.core.flow.SystemUserLogFlowGateway;
 import com.samples.platform.util.AggregatorGetReferenceData;
@@ -35,9 +39,30 @@ import com.samples.platform.util.SystemUserLogFlowGatewayImpl;
 
 })
 @ComponentScan("com.samples.platform.service")
+@EnableWebMvc
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class WebappSpringConfig {
+public class WebappSpringConfig extends WebMvcConfigurerAdapter {
+	/**
+	 * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter#configureDefaultServletHandling(org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer)
+	 */
+	@Override
+	public void configureDefaultServletHandling(
+			final DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+
+	/**
+	 * @return the {@link InternalResourceViewResolver}.
+	 */
+	@Bean
+	public InternalResourceViewResolver getInternalResourceViewResolver() {
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setPrefix("/WEB-INF/pages/");
+		resolver.setSuffix(".jsp");
+		return resolver;
+	}
+
 	/**
 	 * Get the {@link ServiceExecutionLogAspect} bean.
 	 *
