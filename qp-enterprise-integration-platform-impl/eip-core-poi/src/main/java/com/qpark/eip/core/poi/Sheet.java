@@ -32,8 +32,9 @@ public interface Sheet<SheetData> {
 	/** Finalize the {@link HSSFSheet}. */
 	void finish();
 
-	/**
-	 * @return the title of the sheet.
-	 */
+	/** @return the {@link HSSFSheet}. */
+	HSSFSheet getSheet();
+
+	/** @return the title of the sheet. */
 	String getSheetTitle();
 }

@@ -216,7 +216,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<serviceId>${eip.service.ids}</serviceId>
 							<serviceVersion>${project.version}</serviceVersion>
 							<warName>${service.war.name}</warName>
-							<mvcUrlPattern>/restservices/*</mvcUrlPattern>
+							<!-- mvcUrlPattern>/restservices/*</mvcUrlPattern-->
 							<revisionNumber>${buildNumber}</revisionNumber>
 						</configuration>
 					</execution>
@@ -416,6 +416,20 @@ WEB-INF/lib/xws-security-3.0.jar
 			<groupId>com.sun.xml.wss</groupId>
 			<artifactId>xws-security</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>

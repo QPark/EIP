@@ -6,9 +6,11 @@
  ******************************************************************************/
 package com.qpark.eip.core.poi.impl;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -57,6 +59,63 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 	}
 
 	/**
+	 * Create the sheet and add the header.
+	 *
+	 * @param excelFile
+	 *            the {@link ExcelFile} to create the {@link Sheet} for.
+	 * @param type
+	 *            the class of the {@link Sheet}.
+	 * @return the {@link Sheet} object.
+	 */
+	public static <S extends AbstractSheetProvider<?>> Optional<S> createInstance(
+			final ExcelFile excelFile, final Class<S> type) {
+		Optional<S> value = Optional.empty();
+		try {
+			Constructor<S> constructor = type.getConstructor(ExcelFile.class);
+			S sheet = constructor.newInstance(excelFile);
+			sheet.createHeader();
+			value = Optional.of(sheet);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return value;
+	}
+
+	/** The {@link ExcelFile}. */
+	protected final ExcelFile excel;
+	/** Flag indicating the header is created or not. */
+	private boolean headerCreated = false;
+	/** The {@link HSSFSheet}. */
+	protected final HSSFSheet sheet;
+	/** The number of rows above the normal header of the columns. */
+	private int superHeaderRowSize = 0;
+
+	/**
+	 * @param excelFile
+	 *            the {@link ExcelFile}.
+	 */
+	protected AbstractSheetProvider(final ExcelFile excelFile) {
+		this.excel = excelFile;
+		this.sheet = this.excel.createSheet(this.getSheetTitle());
+	}
+
+	/**
+	 * @see com.qpark.eip.core.poi.Sheet#createHeader()
+	 */
+	@Override
+	public void createHeader() {
+		if (!this.headerCreated) {
+			this.headerCreated = true;
+			this.superHeaderRowSize = this.createSuperHeaderRows();
+			HSSFRow headerRow = this.sheet.createRow(this.superHeaderRowSize);
+			AtomicInteger ai = new AtomicInteger(0);
+			this.getColumnDefinition().stream()
+					.forEach(cd -> this.excel.createHeaderCell(headerRow,
+							ai.getAndIncrement(), cd.getHeader()));
+		}
+	}
+
+	/**
 	 * @param row
 	 *            the {@link HSSFRow}
 	 * @param header
@@ -82,35 +141,6 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 		return cell;
 	}
 
-	/** The {@link ExcelFile}. */
-	protected final ExcelFile excel;
-	/** The {@link HSSFSheet}. */
-	protected final HSSFSheet sheet;
-	/** The number of rows above the normal header of the columns. */
-	private int superHeaderRowSize = 0;
-
-	/**
-	 * @param excelFile
-	 *            the {@link ExcelFile}.
-	 */
-	protected AbstractSheetProvider(final ExcelFile excelFile) {
-		this.excel = excelFile;
-		this.sheet = this.excel.createSheet(this.getSheetTitle());
-	}
-
-	/**
-	 * @see com.qpark.eip.core.poi.Sheet#createHeader()
-	 */
-	@Override
-	public void createHeader() {
-		this.superHeaderRowSize = this.createSuperHeaderRows();
-		HSSFRow headerRow = this.sheet.createRow(this.superHeaderRowSize);
-		AtomicInteger ai = new AtomicInteger(0);
-		this.getColumnDefinition().stream()
-				.forEach(cd -> this.excel.createHeaderCell(headerRow,
-						ai.getAndIncrement(), cd.getHeader()));
-	}
-
 	/**
 	 * Create rows at top of the header row.
 	 *
@@ -133,10 +163,14 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 		this.sheet.createFreezePane(this.getFreezedColumns(),
 				this.superHeaderRowSize + 1, this.getFreezedColumns() + 1,
 				this.superHeaderRowSize + 1);
-		this.sheet.setAutoFilter(new CellRangeAddress(this.superHeaderRowSize,
-				this.sheet.getRow(this.sheet.getLastRowNum()).getRowNum(), 0,
-				this.sheet.getRow(this.superHeaderRowSize).getLastCellNum()
-						- 1));
+		if (Objects.nonNull(this.sheet.getRow(this.superHeaderRowSize))) {
+			this.sheet.setAutoFilter(new CellRangeAddress(
+					this.superHeaderRowSize,
+					this.sheet.getRow(this.sheet.getLastRowNum()).getRowNum(),
+					0,
+					this.sheet.getRow(this.superHeaderRowSize).getLastCellNum()
+							- 1));
+		}
 	}
 
 	/**
@@ -153,4 +187,12 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 
 	/** The {@link org.slf4j.Logger}. */
 	protected abstract Logger getLogger();
+
+	/**
+	 * @see com.qpark.eip.core.poi.Sheet#getSheet()
+	 */
+	@Override
+	public HSSFSheet getSheet() {
+		return this.sheet;
+	}
 }
