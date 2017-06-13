@@ -108,6 +108,99 @@ public abstract class AbstractGenerator {
 		System.out.println(source);
 	}
 
+	/**
+	 * @param target
+	 *            the {@link ComplexTypeChild} defining the value to set the
+	 *            default to.
+	 * @param returnValueChild
+	 *            {@link ComplexTypeChild} to defining the return value.
+	 * @param defaultString
+	 *            the default value as string.
+	 * @return the constructor string of the default value.
+	 */
+	public static String getStringConstructor(final ComplexTypeChild target,
+			final ComplexTypeChild returnValueChild,
+			final String defaultString) {
+		StringBuffer sb = new StringBuffer(128);
+		if (Objects.nonNull(target) && Objects.nonNull(target.getComplexType())
+				&& Objects.nonNull(
+						target.getComplexType().getClassNameFullQualified())
+				&& Objects.nonNull(returnValueChild)
+				&& Objects.nonNull(defaultString)) {
+			if (target.getComplexType().getClassNameFullQualified()
+					.equals("java.lang.String")) {
+				sb.append("\"");
+				sb.append(defaultString);
+				sb.append("\"");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("java.math.BigDecimal")) {
+				sb.append("BigDecimal.valueOf(Double.valueOf(");
+				sb.append(defaultString.trim());
+				sb.append("))");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("java.math.BigInteger")) {
+				sb.append("BigInteger.valueOf(Long.valueOf(");
+				sb.append(defaultString.trim());
+				sb.append("))");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("boolean")
+					|| target.getComplexType().getClassNameFullQualified()
+							.equals("java.lang.Boolean")) {
+				sb.append("Boolean.valueOf(\"");
+				sb.append(defaultString.trim());
+				sb.append("\")");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("double")
+					|| target.getComplexType().getClassNameFullQualified()
+							.equals("java.lang.Double")) {
+				sb.append("Double.valueOf(");
+				sb.append(defaultString.trim());
+				sb.append(")");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("float")
+					|| target.getComplexType().getClassNameFullQualified()
+							.equals("java.lang.Float")) {
+				sb.append("Float.valueOf(");
+				sb.append(defaultString.trim());
+				sb.append(")");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("int")
+					|| target.getComplexType().getClassNameFullQualified()
+							.equals("java.lang.Integer")) {
+				sb.append("Integer.valueOf(");
+				sb.append(defaultString.trim());
+				sb.append(")");
+			} else if (target.getComplexType().getClassNameFullQualified()
+					.equals("short")
+					|| target.getComplexType().getClassNameFullQualified()
+							.equals("java.lang.Short")) {
+				sb.append("Short.valueOf(");
+				sb.append(defaultString.trim());
+				sb.append(")");
+			}
+		}
+		if (sb.length() == 0) {
+			sb.append(target.getJavaDefaultValue());
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * @param returnValueChild
+	 *            the {@link ComplexTypeChild} defining the default value.
+	 * @return the default value as String.
+	 */
+	public static String getReturnDefaultString(
+			final ComplexTypeChild returnValueChild) {
+		String value = null;
+		if (Objects.nonNull(returnValueChild)
+				&& Objects.nonNull(returnValueChild.getDefaultValue())) {
+			value = returnValueChild.getDefaultValue().getStringValue();
+		}
+		return value;
+	}
+
 	public static String toJavadocHeader(final String documentation) {
 		final int lenght = 77;
 		String s = documentation.replaceAll("\\t", " ").replaceAll("\\n", " ")

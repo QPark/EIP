@@ -9,6 +9,7 @@ package com.qpark.maven.plugin.flowmapper;
 import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.maven.plugin.logging.Log;
@@ -59,6 +60,7 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		String returnValueClassName = this.getReturnValueClassName();
 		boolean returnValueIsList = this.isReturnValueList();
+		ComplexTypeChild returnValueChild = this.getReturnChild();
 
 		List<ComplexTypeChild> children = this.getChildren();
 
@@ -74,22 +76,19 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		if (children.isEmpty()) {
 			String msg = new StringBuffer(132)
 					.append(this.complexType.toQNameString())
-					.append(" does not contain any children!")
-					.toString();
+					.append(" does not contain any children!").toString();
 			this.log.error(msg);
 			throw new IllegalStateException(msg);
 		}
 
 		ctc = children.get(0);
-		for (int i = 0; i < propertyNames.length; i++) {
-			ctc = ctc.getComplexType().getChild(propertyNames[i]);
+		for (String propertyName : propertyNames) {
+			ctc = ctc.getComplexType().getChild(propertyName);
 			if (ctc == null) {
 				String msg = new StringBuffer(128)
 						.append(this.complexType.toQNameString())
 						.append(" does not contain a child ")
-						.append(propertyNames[i])
-						.append("!")
-						.toString();
+						.append(propertyName).append("!").toString();
 				this.log.error(msg);
 				throw new IllegalStateException(msg);
 			}
@@ -97,8 +96,8 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
 		ctc = children.get(0);
-		for (int i = 0; i < propertyNames.length; i++) {
-			ctc = ctc.getComplexType().getChild(propertyNames[i]);
+		for (String propertyName : propertyNames) {
+			ctc = ctc.getComplexType().getChild(propertyName);
 			importedClasses.addAll(ctc.getComplexType().getJavaImportClasses());
 		}
 		for (ComplexTypeChild child : children) {
@@ -211,15 +210,22 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		ctc = children.get(0);
 		String lastCascadedClassDefinition = null;
 		boolean lastCascadedIsList = false;
-		for (int i = 0; i < propertyNames.length; i++) {
-			ctc = ctc.getComplexType().getChild(propertyNames[i]);
+		String returnDefault = getReturnDefaultString(returnValueChild);
+		for (String propertyName : propertyNames) {
+			ctc = ctc.getComplexType().getChild(propertyName);
 			lastCascadedClassDefinition = ctc.getComplexType()
 					.getClassNameFullQualified();
 			lastCascadedIsList = ctc.isList();
 			sb.append("\t\t");
 			sb.append(ctc.getJavaVarDefinition());
 			sb.append(" = ");
-			sb.append(ctc.getJavaDefaultValue());
+			if (ctc.getChildName().equals(targetXjcPropertyName)
+					&& Objects.nonNull(returnDefault)) {
+				sb.append(getStringConstructor(ctc, returnValueChild,
+						returnDefault));
+			} else {
+				sb.append(ctc.getJavaDefaultValue());
+			}
 			sb.append(";\n");
 		}
 		sb.append(this.getProperty(children.get(0), 0, propertyNames));

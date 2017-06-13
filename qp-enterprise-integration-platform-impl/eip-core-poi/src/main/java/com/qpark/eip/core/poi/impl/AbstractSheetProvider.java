@@ -35,6 +35,29 @@ import com.qpark.eip.core.poi.Sheet;
  */
 public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 	/**
+	 * Create the sheet and add the header.
+	 *
+	 * @param excelFile
+	 *            the {@link ExcelFile} to create the {@link Sheet} for.
+	 * @param type
+	 *            the class of the {@link Sheet}.
+	 * @return the {@link Sheet} object.
+	 */
+	public static <S extends AbstractSheetProvider<?>> Optional<S> createInstance(
+			final ExcelFile excelFile, final Class<S> type) {
+		Optional<S> value = Optional.empty();
+		try {
+			Constructor<S> constructor = type.getConstructor(ExcelFile.class);
+			S sheet = constructor.newInstance(excelFile);
+			sheet.createHeader();
+			value = Optional.of(sheet);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return value;
+	}
+
+	/**
 	 * Get the merging {@link CellRangeAddress} for a or a list of
 	 * {@link Section}s.
 	 *
@@ -59,25 +82,20 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 	}
 
 	/**
-	 * Create the sheet and add the header.
+	 * Get the merging {@link CellRangeAddress}.
 	 *
-	 * @param excelFile
-	 *            the {@link ExcelFile} to create the {@link Sheet} for.
-	 * @param type
-	 *            the class of the {@link Sheet}.
-	 * @return the {@link Sheet} object.
+	 * @param row
+	 *            the row number the {@link CellRangeAddress} is merging.
+	 * @param start
+	 *            the starting column.
+	 * @param stop
+	 *            the stop column.
+	 * @return the {@link CellRangeAddress}.
 	 */
-	public static <S extends AbstractSheetProvider<?>> Optional<S> createInstance(
-			final ExcelFile excelFile, final Class<S> type) {
-		Optional<S> value = Optional.empty();
-		try {
-			Constructor<S> constructor = type.getConstructor(ExcelFile.class);
-			S sheet = constructor.newInstance(excelFile);
-			sheet.createHeader();
-			value = Optional.of(sheet);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static CellRangeAddress getMergedHeader(final int row,
+			final int start, final int stop) {
+		CellRangeAddress value = new CellRangeAddress(row, row, start,
+				stop - 1);
 		return value;
 	}
 
@@ -96,6 +114,7 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 	 */
 	protected AbstractSheetProvider(final ExcelFile excelFile) {
 		this.excel = excelFile;
+		this.excel.addSheet(this);
 		this.sheet = this.excel.createSheet(this.getSheetTitle());
 	}
 
@@ -109,9 +128,16 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 			this.superHeaderRowSize = this.createSuperHeaderRows();
 			HSSFRow headerRow = this.sheet.createRow(this.superHeaderRowSize);
 			AtomicInteger ai = new AtomicInteger(0);
-			this.getColumnDefinition().stream()
-					.forEach(cd -> this.excel.createHeaderCell(headerRow,
-							ai.getAndIncrement(), cd.getHeader()));
+			this.getColumnDefinition().stream().forEach(cd -> {
+				this.sheet.setColumnWidth(ai.get(), cd.getWidth() * 256);
+				ai.getAndIncrement();
+			});
+			ai.set(0);
+			this.getColumnDefinition().stream().forEach(cd -> {
+				this.excel.createHeaderCell(headerRow, ai.get(),
+						cd.getHeader());
+				ai.getAndIncrement();
+			});
 		}
 	}
 
@@ -153,16 +179,6 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 	 */
 	@Override
 	public void finish() {
-		AtomicInteger ai = new AtomicInteger(0);
-		this.getColumnDefinition().stream().forEach(cd -> {
-			if (cd.isAutoSize()) {
-				this.sheet.autoSizeColumn(ai.get());
-			}
-			ai.incrementAndGet();
-		});
-		this.sheet.createFreezePane(this.getFreezedColumns(),
-				this.superHeaderRowSize + 1, this.getFreezedColumns() + 1,
-				this.superHeaderRowSize + 1);
 		if (Objects.nonNull(this.sheet.getRow(this.superHeaderRowSize))) {
 			this.sheet.setAutoFilter(new CellRangeAddress(
 					this.superHeaderRowSize,
@@ -171,6 +187,19 @@ public abstract class AbstractSheetProvider<T> implements Sheet<T> {
 					this.sheet.getRow(this.superHeaderRowSize).getLastCellNum()
 							- 1));
 		}
+		this.sheet.createFreezePane(this.getFreezedColumns(),
+				this.superHeaderRowSize + 1, this.getFreezedColumns() + 1,
+				this.superHeaderRowSize + 1);
+		AtomicInteger ai = new AtomicInteger(0);
+		this.getColumnDefinition().stream().forEach(cd -> {
+			if (cd.isAutoSize()) {
+				this.sheet.autoSizeColumn(ai.get());
+				// } else {
+				// this.sheet.setColumnWidth(ai.get(), cd.getWidth());
+			}
+			ai.incrementAndGet();
+		});
+
 	}
 
 	/**

@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -59,6 +61,8 @@ public class ExcelFile {
 			cell.setCellValue(((Number) value).doubleValue());
 		} else if (String.class.isInstance(value)) {
 			cell.setCellValue(((String) value).trim());
+		} else {
+			cell.setCellValue((String.valueOf(value)));
 		}
 		cell.setCellStyle(style);
 		return cell;
@@ -84,6 +88,8 @@ public class ExcelFile {
 	private final Font boldArialFont;
 	/** The header style. */
 	private final HSSFCellStyle headerStyle;
+	/** The list of assigned sheets. */
+	private final List<Sheet<?>> sheets = new ArrayList<>();
 	/** The {@link HSSFWorkbook}. */
 	private final HSSFWorkbook workbook;
 
@@ -113,6 +119,14 @@ public class ExcelFile {
 
 		this.bodyStyleTextWrapped = this.workbook.createCellStyle();
 		this.bodyStyleTextWrapped.setWrapText(true);
+	}
+
+	/**
+	 * @param sheet
+	 *            the {@link Sheet} to add.
+	 */
+	public void addSheet(final Sheet<?> sheet) {
+		this.sheets.add(sheet);
 	}
 
 	/**
@@ -225,6 +239,8 @@ public class ExcelFile {
 	 */
 	public void writeWorkbook(final String baseName) {
 		String fileName = getFileName(baseName);
+		this.sheets.stream().filter(sheet -> Objects.nonNull(sheet))
+				.forEach(sheet -> sheet.finish());
 		try {
 			File f = new File(fileName);
 			if (!f.exists()) {

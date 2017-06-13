@@ -75,10 +75,9 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		String[] propertyNames = getDirectAccessProperties(
 				this.complexType.getType().getName().getLocalPart());
 		if (propertyNames == null || propertyNames.length == 0) {
-			throw new IllegalStateException(
-					new StringBuffer(128).append("ComplexUUIDMapperType ")
-							.append(this.complexType
-									.getClassNameFullQualified())
+			throw new IllegalStateException(new StringBuffer(128)
+					.append("ComplexUUIDMapperType ")
+					.append(this.complexType.getClassNameFullQualified())
 					.append(" defined in namespace ")
 					.append(this.complexType.getTargetNamespace())
 					.append(" does not define any parameters fields to get the UUID description.")
@@ -88,10 +87,9 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		List<ComplexTypeChild> children = this.getChildren();
 
 		if (children == null || children.size() == 0) {
-			throw new IllegalStateException(
-					new StringBuffer(128).append("ComplexUUIDMapperType ")
-							.append(this.complexType
-									.getClassNameFullQualified())
+			throw new IllegalStateException(new StringBuffer(128)
+					.append("ComplexUUIDMapperType ")
+					.append(this.complexType.getClassNameFullQualified())
 					.append(" defined in namespace ")
 					.append(this.complexType.getTargetNamespace())
 					.append(" does not define any parameters to get the UUID description.")
@@ -104,8 +102,8 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		if (propertyNames.length > 0 && children != null
 				&& children.size() > 0) {
 			ctc = children.get(0);
-			for (int i = 0; i < propertyNames.length; i++) {
-				ctc = ctc.getComplexType().getChild(propertyNames[i]);
+			for (String propertyName : propertyNames) {
+				ctc = ctc.getComplexType().getChild(propertyName);
 				if (ctc != null) {
 					importedClasses.addAll(
 							ctc.getComplexType().getJavaImportClasses());
@@ -161,10 +159,9 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		if (defaultDefinitions.length() > 0) {
 			sb.append(defaultDefinitions);
 		} else {
-			throw new IllegalStateException(
-					new StringBuffer(128).append("ComplexUUIDMapperType ")
-							.append(this.complexType
-									.getClassNameFullQualified())
+			throw new IllegalStateException(new StringBuffer(128)
+					.append("ComplexUUIDMapperType ")
+					.append(this.complexType.getClassNameFullQualified())
 					.append(" defined in namespace ")
 					.append(this.complexType.getTargetNamespace())
 					.append(" does not define any default.").toString());
@@ -221,8 +218,8 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		sb.append(uuidMappedPropertyName);
 		sb.append(" = null;\n");
 		ctc = children.get(0);
-		for (int i = 0; i < propertyNames.length; i++) {
-			ctc = ctc.getComplexType().getChild(propertyNames[i]);
+		for (String propertyName : propertyNames) {
+			ctc = ctc.getComplexType().getChild(propertyName);
 			if (ctc != null) {
 				sb.append("\t\t");
 				sb.append(ctc.getJavaVarDefinition());
@@ -230,7 +227,21 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				sb.append(ctc.getJavaDefaultValue());
 				sb.append(";\n");
 			} else {
-				break;
+				// throw new IllegalStateException(new StringBuffer(128)
+				// .append("ComplexUUIDMapperType ")
+				// .append(this.complexType.getClassNameFullQualified())
+				// .append(" defined in namespace ")
+				// .append(this.complexType.getTargetNamespace())
+				// .append(" child ").append(ctc.getChildName())
+				// .append(" does not have a property with name ")
+				// .append(propertyName).append(".").toString());
+				this.log.error(new StringBuffer(128)
+						.append("ComplexUUIDMapperType ")
+						.append(this.complexType.getClassNameFullQualified())
+						.append(" defined in namespace ")
+						.append(this.complexType.getTargetNamespace())
+						.append(" property name ").append(propertyName)
+						.append(" could not be found!").toString());
 			}
 		}
 		sb.append(this.getProperty(children.get(0), 0, propertyNames));
