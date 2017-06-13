@@ -70,8 +70,8 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
 		if (propertyNames.length > 0 && children.size() > 0) {
 			ctc = children.get(0);
-			for (int i = 0; i < propertyNames.length; i++) {
-				ctc = ctc.getComplexType().getChild(propertyNames[i]);
+			for (String propertyName : propertyNames) {
+				ctc = ctc.getComplexType().getChild(propertyName);
 				if (ctc != null) {
 					importedClasses.addAll(
 							ctc.getComplexType().getJavaImportClasses());
@@ -186,8 +186,8 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		if (propertyNames.length > 0 && children != null
 				&& children.size() > 0) {
 			ctc = children.get(0);
-			for (int i = 0; i < propertyNames.length; i++) {
-				ctc = ctc.getComplexType().getChild(propertyNames[i]);
+			for (String propertyName : propertyNames) {
+				ctc = ctc.getComplexType().getChild(propertyName);
 				if (ctc != null) {
 					propertiesValue = ctc.getChildName();
 					sb.append("\t\t");
@@ -244,7 +244,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		File f = Util.getFile(this.preparedSourceDirectory,
 				this.packageNameImpl, new StringBuffer().append(this.implName)
 						.append(".java").toString());
-		this.log.info(new StringBuffer().append("Write Impl ")
+		this.log.debug(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, s);

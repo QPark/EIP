@@ -200,7 +200,7 @@ public class MappingOperationGenerator
 		File f = Util.getFile(this.preparedSourceDirectory,
 				this.packageNameImpl, new StringBuffer().append(this.implName)
 						.append(".java").toString());
-		this.log.info(new StringBuffer().append("Write Impl ")
+		this.log.debug(new StringBuffer().append("Write Impl ")
 				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, source);
