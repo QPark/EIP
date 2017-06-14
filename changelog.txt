@@ -1,5 +1,8 @@
 Changelog:
 
+3.6.8 20170613
+Flow Generator: Handling Default values
+Impl POI: Minor enhancements
 Generators: Added mvc dispatch servlet to web.xml
 
 3.8.5 20170414
