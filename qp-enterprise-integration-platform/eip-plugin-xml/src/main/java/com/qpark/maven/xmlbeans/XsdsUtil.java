@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
@@ -443,7 +443,7 @@ public class XsdsUtil {
 	public static Map<String, String> getNotImportedModels(
 			final Map<String, XsdContainer> xsds,
 			final String messagePackageNameSuffix) {
-		final TreeMap<String, String> notImportedModels = new TreeMap<String, String>();
+		final TreeMap<String, String> notImportedModels = new TreeMap<>();
 		for (final Entry<String, XsdContainer> entry : xsds.entrySet()) {
 			if (!isMessagePackageName(entry.getValue().getPackageName(),
 					messagePackageNameSuffix)) {
@@ -557,7 +557,7 @@ public class XsdsUtil {
 	public static SchemaTypeSystem getSchemaTypeSystem(final File file,
 			final EntityResolver entityResolver) {
 		SchemaTypeSystem sts = null;
-		final ArrayList<XmlObject> parsedMessages = new ArrayList<XmlObject>();
+		final ArrayList<XmlObject> parsedMessages = new ArrayList<>();
 		final XmlOptions xopt = new XmlOptions();
 		xopt.setLoadLineNumbers();
 		xopt.setLoadMessageDigest();
@@ -611,8 +611,8 @@ public class XsdsUtil {
 				|| XmlDateTime.class.isInstance(obj)
 				|| XmlTime.class.isInstance(obj)) {
 			sb.append("try { ");
-			sb.append(objAndSetter)
-					.append("(javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar(\"")
+			sb.append(objAndSetter).append(
+					"(javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar(\"")
 					.append(obj.getStringValue()).append("\"));");
 			sb.append(
 					" } catch (javax.xml.datatype.DatatypeConfigurationException datatypeConfigurationException) { datatypeConfigurationException.printStackTrace(); }");
@@ -657,7 +657,7 @@ public class XsdsUtil {
 			}
 		}
 
-		final TreeMap<String, String> imports = new TreeMap<String, String>();
+		final TreeMap<String, String> imports = new TreeMap<>();
 		index0 = text.indexOf("<import");
 		String namespace = null;
 		String location = null;
@@ -702,8 +702,8 @@ public class XsdsUtil {
 			}
 		}
 
-		final TreeMap<String, String> xmlnss = new TreeMap<String, String>();
-		final TreeSet<String> usedXmlnss = new TreeSet<String>();
+		final TreeMap<String, String> xmlnss = new TreeMap<>();
+		final TreeSet<String> usedXmlnss = new TreeSet<>();
 		String namespaceToken;
 		index0 = text.indexOf("xmlns:");
 		while (index0 > 0) {
@@ -756,7 +756,7 @@ public class XsdsUtil {
 	}
 
 	public static List<File> getXsdFiles(final File baseDirectory) {
-		final List<File> xsdFiles = new ArrayList<File>();
+		final List<File> xsdFiles = new CopyOnWriteArrayList<>();
 		scanForXsds(baseDirectory, xsdFiles);
 		return xsdFiles;
 	}
@@ -772,7 +772,7 @@ public class XsdsUtil {
 			final String... messagePackageNameSuffixes) {
 		boolean isMessagePackageName = false;
 		if (packageName != null) {
-			final TreeSet<String> packages = new TreeSet<String>();
+			final TreeSet<String> packages = new TreeSet<>();
 			if (messagePackageNameSuffixes != null) {
 				for (final String messagePackageNameSuffix : messagePackageNameSuffixes) {
 					if (messagePackageNameSuffix != null
@@ -887,7 +887,7 @@ public class XsdsUtil {
 
 	private static Map<String, XsdContainer> setupXsdContainers(
 			final List<File> xsdFiles, final File baseDirectory) {
-		final Map<String, XsdContainer> xsdContainerMap = new ConcurrentHashMap<String, XsdContainer>();
+		final Map<String, XsdContainer> xsdContainerMap = new ConcurrentHashMap<>();
 		for (final File f : xsdFiles) {
 			XsdContainer xsdContainer;
 			try {
@@ -922,7 +922,7 @@ public class XsdsUtil {
 					container.getFile().getAbsolutePath());
 			setupXsdContainerTotalImports(container, xsdContainerMap);
 		}
-		final TreeMap<String, XsdContainer> value = new TreeMap<String, XsdContainer>();
+		final TreeMap<String, XsdContainer> value = new TreeMap<>();
 		value.putAll(xsdContainerMap);
 		return value;
 	}
@@ -954,10 +954,10 @@ public class XsdsUtil {
 	private final String basePackageName;
 
 	/** The map of {@link QName}s with their {@link ComplexType}s. */
-	private final Map<String, ComplexType> complexTypeMap = new ConcurrentHashMap<String, ComplexType>();
+	private final Map<String, ComplexType> complexTypeMap = new ConcurrentHashMap<>();
 
 	/** The {@link TreeSet} of {@link ComplexType}. */
-	private final TreeSet<ComplexType> complexTypes = new TreeSet<ComplexType>(
+	private final TreeSet<ComplexType> complexTypes = new TreeSet<>(
 			(o1, o2) -> {
 				if (o1 == o2) {
 					return 0;
@@ -977,7 +977,7 @@ public class XsdsUtil {
 	 */
 	private final String deltaPackageNameSuffix;
 	/** The {@link TreeSet} of {@link ElementType}. */
-	private final TreeSet<ElementType> elementTypes = new TreeSet<ElementType>(
+	private final TreeSet<ElementType> elementTypes = new TreeSet<>(
 			(o1, o2) -> {
 				if (o1 == o2) {
 					return 0;
@@ -1015,7 +1015,7 @@ public class XsdsUtil {
 	private final String messagePackageNameSuffix;
 
 	/** Package names contained in the xsds. */
-	private final TreeSet<String> packageNames = new TreeSet<String>();
+	private final TreeSet<String> packageNames = new TreeSet<>();
 
 	/**
 	 * The service request name need to end with this suffix (Default
@@ -1198,11 +1198,9 @@ public class XsdsUtil {
 				this.serviceIdRegistry.getAllServiceIds());
 
 		startX = System.currentTimeMillis();
-		final List<ComplexType> synchronizedComplexTypeList = Collections
-				.synchronizedList(new ArrayList<ComplexType>());
-		final List<ElementType> synchronizedElementTypeList = Collections
-				.synchronizedList(new ArrayList<ElementType>());
-		this.xsdFiles.parallelStream().parallel().forEach(f -> {
+		final List<ComplexType> synchronizedComplexTypeList = new CopyOnWriteArrayList<>();
+		final List<ElementType> synchronizedElementTypeList = new CopyOnWriteArrayList<>();
+		this.xsdFiles.stream().parallel().forEach(f -> {
 			final long startf = System.currentTimeMillis();
 			final SchemaTypeSystem sts = getSchemaTypeSystem(f,
 					this.entityResolver);

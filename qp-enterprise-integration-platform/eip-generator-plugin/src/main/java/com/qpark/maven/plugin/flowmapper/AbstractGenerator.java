@@ -32,12 +32,18 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public abstract class AbstractGenerator {
-	public static final void addImport(final String fqName,
-			final Set<String> imports, final Set<String> importClasses) {
-		final int index = fqName.lastIndexOf('.');
+	/**
+	 * Adds the {@link Class} of fqName to the list of imports.
+	 *
+	 * @param fqName
+	 * @param imports
+	 * @param importClasses
+	 */
+	public static void addImport(final String fqName, final Set<String> imports,
+			final Set<String> importClasses) {
+		int index = fqName.lastIndexOf('.');
 		if (index > 0) {
-			final String simpleName = fqName.substring(index + 1,
-					fqName.length());
+			String simpleName = fqName.substring(index + 1, fqName.length());
 			if (!importClasses.contains(simpleName)
 					&& !fqName.startsWith("java.lang")) {
 				imports.add(fqName);
@@ -46,43 +52,54 @@ public abstract class AbstractGenerator {
 		}
 	}
 
-	public static final boolean isChildListImport(
+	/**
+	 * @param children
+	 * @return <code>true</code>, if {@link List} needs to be imported, or
+	 *         <code>false</code>, if not.
+	 */
+	public static boolean isChildListImport(
 			final List<ComplexTypeChild> children) {
-		final boolean value = children.stream().filter(ctc -> ctc.isList())
+		boolean value = children.stream().filter(ctc -> ctc.isList())
 				.findFirst().isPresent();
 		return value;
 	}
 
-	public static final boolean isListImport(
+	/**
+	 * @param childrenTree
+	 * @return <code>true</code>, if {@link List} needs to be imported, or
+	 *         <code>false</code>, if not.
+	 */
+	public static boolean isListImport(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
-		final boolean value = childrenTree.stream()
+		boolean value = childrenTree.stream()
 				.filter(child -> child.getKey().isList()
 						|| isChildListImport(child.getValue()))
 				.findFirst().isPresent();
 		return value;
 	}
 
+	@SuppressWarnings("unused")
 	public static void main(final String[] args) {
-		final String basePackageName = "com.qpark.eip.inf";
-		final String xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
-		final File dif = new File(xsdPath);
-		final String messagePackageNameSuffix = "mapping flow";
-		final long start = System.currentTimeMillis();
-		final XsdsUtil xsds = XsdsUtil.getInstance(dif, "a.b.c.bus",
+		String basePackageName = "com.qpark.eip.inf";
+		String xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
+		File dif = new File(xsdPath);
+		String messagePackageNameSuffix = "mapping flow";
+		long start = System.currentTimeMillis();
+		XsdsUtil xsds = XsdsUtil.getInstance(dif, "a.b.c.bus",
 				messagePackageNameSuffix, "delta");
-		final ComplexContentList complexContentList = new ComplexContentList();
+		ComplexContentList complexContentList = new ComplexContentList();
 		complexContentList.setupComplexContentLists(xsds);
 		System.out
 				.println(Util.getDuration(System.currentTimeMillis() - start));
 
-		final String eipVersion = "eipVersion";
+		String eipVersion = "eipVersion";
 		String source = null;
 		ComplexType ct;
 		ComplexContent cc;
 		SchemaType type;
 		String ctNamespace;
 		String ctName;
-		final SystemStreamLog log = new org.apache.maven.plugin.logging.SystemStreamLog();
+		SystemStreamLog log = new org.apache.maven.plugin.logging.SystemStreamLog();
 
 		ctName = "ApplicationUserLog.networkLongToDoubleTabularMappingType";
 		ctNamespace = "http://www.samples.com/Interfaces/TechnicalSupportMappingTypes";
@@ -101,7 +118,7 @@ public abstract class AbstractGenerator {
 		type = ct.getType().getElementProperties()[0].getType();
 		cc = complexContentList.getComplexContent(ctNamespace, ctName);
 
-		final TabularMappingTypeGenerator directMapper = new TabularMappingTypeGenerator(
+		TabularMappingTypeGenerator directMapper = new TabularMappingTypeGenerator(
 				xsds, basePackageName, cc, complexContentList, ctName, dif, dif,
 				new org.apache.maven.plugin.logging.SystemStreamLog());
 		source = directMapper.generateImplContent();
@@ -202,12 +219,12 @@ public abstract class AbstractGenerator {
 	}
 
 	public static String toJavadocHeader(final String documentation) {
-		final int lenght = 77;
+		int lenght = 77;
 		String s = documentation.replaceAll("\\t", " ").replaceAll("\\n", " ")
 				.replaceAll("( )+", " ");
-		final StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		while (s.length() > 0) {
-			final int index = s.substring(0, Math.min(lenght, s.length()))
+			int index = s.substring(0, Math.min(lenght, s.length()))
 					.lastIndexOf(' ');
 			if (s.length() < lenght || index < 0) {
 				if (sb.length() > 0) {
@@ -237,9 +254,9 @@ public abstract class AbstractGenerator {
 
 	}
 
-	protected final ComplexContentList complexContentList;
-	protected final XsdsUtil config;
-	protected final Log log;
+	protected ComplexContentList complexContentList;
+	protected XsdsUtil config;
+	protected Log log;
 	protected String packageName;
 	protected String packageNameImpl;
 	protected File compileableSourceDirectory;
@@ -260,7 +277,7 @@ public abstract class AbstractGenerator {
 
 	public abstract void generateInterface();
 
-	protected final void getChildrenImports(
+	protected void getChildrenImports(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree,
 			final Set<String> imports, final Set<String> importClasses) {
 		childrenTree.stream().filter(
@@ -274,9 +291,8 @@ public abstract class AbstractGenerator {
 							.filter(grandchild -> !"interfaceName"
 									.equals(grandchild.getChildName()))
 							.forEach(grandchild -> {
-								final ComplexContent cc = this
-										.getMapperDefinition(
-												grandchild.getComplexType());
+								ComplexContent cc = this.getMapperDefinition(
+										grandchild.getComplexType());
 								if (Objects.nonNull(cc)) {
 									AbstractGenerator.addImport(
 											cc.getFQInterfaceName(), imports,
@@ -294,30 +310,30 @@ public abstract class AbstractGenerator {
 
 	protected List<ComplexTypeChild> getDefaultingChildren(
 			final ComplexType ct) {
-		final List<ComplexTypeChild> list = ct.getChildren().stream()
+		List<ComplexTypeChild> list = ct.getChildren().stream()
 				.filter(child -> child.getDefaultValue() != null)
 				.collect(Collectors.toList());
 		return list;
 	}
 
-	protected final String getFqImplName() {
+	protected String getFqImplName() {
 		return new StringBuffer(
 				this.packageNameImpl.length() + 1 + this.getImplName().length())
 						.append(this.packageNameImpl).append(".")
 						.append(this.getImplName()).toString();
 	}
 
-	protected final String getFqInterfaceName() {
+	protected String getFqInterfaceName() {
 		return new StringBuffer(this.packageName.length() + 1
 				+ this.getInterfaceName().length()).append(this.packageName)
 						.append(".").append(this.getInterfaceName()).toString();
 	}
 
-	protected final Set<String> getImplImports(
+	protected Set<String> getImplImports(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree,
 			final String... mandatoryImports) {
-		final Set<String> imports = new TreeSet<String>();
-		final Set<String> importClasses = new TreeSet<String>();
+		Set<String> imports = new TreeSet<String>();
+		Set<String> importClasses = new TreeSet<String>();
 
 		Stream.of(mandatoryImports)
 				.forEach(mandatoryImport -> addImport(mandatoryImport, imports,
@@ -334,16 +350,16 @@ public abstract class AbstractGenerator {
 		return imports;
 	}
 
-	protected final String getImplName() {
+	protected String getImplName() {
 		return new StringBuffer().append(this.getInterfaceName()).append("Impl")
 				.toString();
 	}
 
-	protected final Set<String> getInterfaceImports(
+	protected Set<String> getInterfaceImports(
 			final List<ComplexTypeChild> children,
 			final String... mandatoryImports) {
-		final Set<String> imports = new TreeSet<String>();
-		final Set<String> importClasses = new TreeSet<String>();
+		Set<String> imports = new TreeSet<String>();
+		Set<String> importClasses = new TreeSet<String>();
 
 		Stream.of(mandatoryImports)
 				.forEach(mandatoryImport -> addImport(mandatoryImport, imports,
@@ -362,8 +378,8 @@ public abstract class AbstractGenerator {
 
 	protected abstract String getInterfaceName();
 
-	protected final String getLoggerDefinition() {
-		final StringBuffer sb = new StringBuffer(256);
+	protected String getLoggerDefinition() {
+		StringBuffer sb = new StringBuffer(256);
 		sb.append("\t/** The {@link org.slf4j.Logger}. */\n");
 		sb.append("\tprivate Logger logger = LoggerFactory.getLogger(");
 		sb.append(this.getImplName());
@@ -371,7 +387,7 @@ public abstract class AbstractGenerator {
 		return sb.toString();
 	}
 
-	protected final ComplexContent getMapperDefinition(final ComplexType ct) {
+	protected ComplexContent getMapperDefinition(final ComplexType ct) {
 		ComplexContent cc = this.complexContentList.getComplexContent(
 				ct.getTargetNamespace(), ct.getQNameLocalPart());
 		if (Objects.nonNull(cc) && cc.isInterfaceType) {
@@ -383,17 +399,16 @@ public abstract class AbstractGenerator {
 	protected String getMapperDefinitions(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> children,
 			final Set<String> importedClasses) {
-		final StringBuffer sb = new StringBuffer(1024);
-		final TreeSet<String> usedInterfaces = new TreeSet<String>();
+		StringBuffer sb = new StringBuffer(1024);
+		TreeSet<String> usedInterfaces = new TreeSet<String>();
 		children.stream().forEach(
 				child -> child.getValue().stream().forEach(grandchild -> {
-					final ComplexContent cc = this
+					ComplexContent cc = this
 							.getMapperDefinition(grandchild.getComplexType());
 					if (cc != null && !usedInterfaces
 							.contains(cc.getFQInterfaceName())) {
 						usedInterfaces.add(cc.getFQInterfaceName());
-						final String varName = Util
-								.lowerize(cc.interfaceClassName);
+						String varName = Util.lowerize(cc.interfaceClassName);
 						String className = cc.getFQInterfaceName();
 						className = cc.getInterfaceName();
 						sb.append("\t/** The ");
@@ -415,8 +430,8 @@ public abstract class AbstractGenerator {
 	}
 
 	protected String getMethodArgs(final List<ComplexTypeChild> children) {
-		final StringBuffer sb = new StringBuffer(128);
-		final int i = 0;
+		StringBuffer sb = new StringBuffer(128);
+		int i = 0;
 		children.stream()
 				.filter(child -> Objects.isNull(child.getDefaultValue()))
 				.forEach(child -> {
@@ -428,7 +443,7 @@ public abstract class AbstractGenerator {
 		return sb.toString();
 	}
 
-	protected final String getPackageNameImpl() {
+	protected String getPackageNameImpl() {
 		return new StringBuffer(this.getPackageNameInterface()).append(".impl")
 				.toString();
 	}

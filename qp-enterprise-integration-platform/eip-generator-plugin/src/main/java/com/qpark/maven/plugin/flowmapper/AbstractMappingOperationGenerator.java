@@ -28,9 +28,9 @@ public abstract class AbstractMappingOperationGenerator
 		extends AbstractGenerator {
 	private static String getInterfaceName(final ComplexType ct) {
 		StringBuffer sb = new StringBuffer(128);
-		if (ct.getClassName().contains("MapRequestType")) {
+		if (ct.getClassName().contains("MapResponseType")) {
 			sb.append(Util.capitalizePackageName(ct.getClassName().substring(0,
-					ct.getClassName().length() - "MapRequestType".length())));
+					ct.getClassName().length() - "MapResponseType".length())));
 		} else {
 			sb.append(Util.capitalizePackageName(ct.getClassName()));
 		}
@@ -58,7 +58,7 @@ public abstract class AbstractMappingOperationGenerator
 		this.response = crr.response;
 		this.packageName = this.getPackageNameInterface();
 		this.packageNameImpl = this.getPackageNameImpl();
-		this.interfaceName = getInterfaceName(this.request);
+		this.interfaceName = getInterfaceName(this.response);
 		this.implName = this.getImplName();
 		this.eipVersion = eipVersion;
 		crr.packageName = this.packageName;
@@ -145,12 +145,13 @@ public abstract class AbstractMappingOperationGenerator
 		File f = Util.getFile(this.compileableSourceDirectory, this.packageName,
 				new StringBuffer().append(this.interfaceName).append(".java")
 						.toString());
-		this.log.info(new StringBuffer().append("Write Inf  ")
+		this.log.debug(new StringBuffer().append("Write Inf  ")
 				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
-			this.log.error(e.getMessage());
+			this.log.error(String.format("%s: %s", e.getClass().getName(),
+					e.getMessage()));
 			e.printStackTrace();
 		}
 		this.log.debug("-generateInterface");
@@ -158,20 +159,18 @@ public abstract class AbstractMappingOperationGenerator
 
 	@Override
 	protected List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> getChildrenTree() {
-		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> list = new ArrayList<Entry<ComplexTypeChild, List<ComplexTypeChild>>>();
+		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> list = new ArrayList<>();
 		Entry<ComplexTypeChild, List<ComplexTypeChild>> grandchild;
 		for (ComplexTypeChild child : GeneratorMapperMojo
 				.getValidChildren(this.request)) {
-			grandchild = new SimpleEntry<ComplexTypeChild, List<ComplexTypeChild>>(
-					child, GeneratorMapperMojo
-							.getValidChildren(child.getComplexType()));
+			grandchild = new SimpleEntry<>(child, GeneratorMapperMojo
+					.getValidChildren(child.getComplexType()));
 			list.add(grandchild);
 		}
 		for (ComplexTypeChild child : GeneratorMapperMojo
 				.getValidChildren(this.response)) {
-			grandchild = new SimpleEntry<ComplexTypeChild, List<ComplexTypeChild>>(
-					child, GeneratorMapperMojo
-							.getValidChildren(child.getComplexType()));
+			grandchild = new SimpleEntry<>(child, GeneratorMapperMojo
+					.getValidChildren(child.getComplexType()));
 			list.add(grandchild);
 		}
 		return list;
@@ -201,7 +200,7 @@ public abstract class AbstractMappingOperationGenerator
 			final Set<String> importedClasses) {
 		StringBuffer sb = new StringBuffer(1024);
 		ComplexContent cc = null;
-		TreeSet<String> usedInterfaces = new TreeSet<String>();
+		TreeSet<String> usedInterfaces = new TreeSet<>();
 		for (Entry<ComplexTypeChild, List<ComplexTypeChild>> child : children) {
 			for (ComplexTypeChild grandchild : child.getValue()) {
 				cc = this.getMapperDefinition(grandchild.getComplexType());
@@ -248,7 +247,7 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append(this.getMethodName());
 		sb.append("(");
 		sb.append(this.request.getClassNameFullQualified());
-		sb.append(")\n");
+		sb.append(", com.qpark.eip.inf.FlowContext)\n");
 		return sb.toString();
 	}
 

@@ -1,5 +1,11 @@
 Changelog:
 
+3.6.9 SNAPSHOT
+Flow: DirectMapper impl provides default values
+Flow: Log level of file creation set to trace
+Core: Persistence - scaled BigDecimal with RoundingMode
+Some tiny bugfixes and documentation
+
 3.6.8 20170613
 Flow Generator: Handling Default values
 Impl POI: Minor enhancements

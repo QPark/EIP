@@ -60,11 +60,14 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
 		String returnValueClassName = this.getReturnValueClassName();
 		boolean returnValueIsList = this.isReturnValueList();
-		ComplexTypeChild returnValueChild = this.getReturnChild();
-
-		List<ComplexTypeChild> children = this.getChildren();
 
 		ComplexTypeChild ctc;
+		List<ComplexTypeChild> children = this.getChildren();
+		ComplexTypeChild returnDefinitionChildCt = this.getReturnChild();
+
+		String returnDefault = getReturnDefaultString(returnDefinitionChildCt);
+		String targetPropertyName = Util
+				.getXjcPropertyName(propertyNames[propertyNames.length - 1]);
 
 		if (propertyNames.length == 0) {
 			String msg = new StringBuffer(132)
@@ -80,10 +83,11 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 			this.log.error(msg);
 			throw new IllegalStateException(msg);
 		}
-
+		ComplexTypeChild targetChildCt = children.get(0);
 		ctc = children.get(0);
 		for (String propertyName : propertyNames) {
 			ctc = ctc.getComplexType().getChild(propertyName);
+			targetChildCt = ctc;
 			if (ctc == null) {
 				String msg = new StringBuffer(128)
 						.append(this.complexType.toQNameString())
@@ -205,12 +209,10 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		sb.append(this.getSetterStatements("mappingType", children));
 		sb.append("\n");
 
-		String targetXjcPropertyName = Util
-				.getXjcPropertyName(propertyNames[propertyNames.length - 1]);
 		ctc = children.get(0);
 		String lastCascadedClassDefinition = null;
 		boolean lastCascadedIsList = false;
-		String returnDefault = getReturnDefaultString(returnValueChild);
+
 		for (String propertyName : propertyNames) {
 			ctc = ctc.getComplexType().getChild(propertyName);
 			lastCascadedClassDefinition = ctc.getComplexType()
@@ -219,35 +221,43 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 			sb.append("\t\t");
 			sb.append(ctc.getJavaVarDefinition());
 			sb.append(" = ");
-			if (ctc.getChildName().equals(targetXjcPropertyName)
-					&& Objects.nonNull(returnDefault)) {
-				sb.append(getStringConstructor(ctc, returnValueChild,
-						returnDefault));
-			} else {
-				sb.append(ctc.getJavaDefaultValue());
-			}
+			sb.append(ctc.getJavaDefaultValue());
 			sb.append(";\n");
 		}
 		sb.append(this.getProperty(children.get(0), 0, propertyNames));
 
+		if (Objects.nonNull(returnDefault)) {
+			sb.append("\t\tif (Objects.isNull(");
+			sb.append(targetPropertyName);
+			sb.append(")){\n");
+			sb.append("\t\t\t/* Set default value.*/\n");
+			sb.append("\t\t\t");
+			sb.append(targetPropertyName);
+			sb.append(" = ");
+			sb.append(getStringConstructor(targetChildCt,
+					returnDefinitionChildCt, returnDefault));
+			sb.append(";\n");
+			sb.append("\t\t}");
+		}
+
 		sb.append("\n\t\tmappingType.setValue(");
-		sb.append(targetXjcPropertyName);
+		sb.append(targetPropertyName);
 		sb.append(");\n");
 		if (returnValueClassName != null && lastCascadedClassDefinition != null
 				&& returnValueClassName.trim().length() > 0
 				&& returnValueClassName.equals(lastCascadedClassDefinition)
 				&& returnValueIsList == lastCascadedIsList) {
 			if (returnValueIsList) {
-				sb.append("\t\tif (");
-				sb.append(targetXjcPropertyName);
-				sb.append(" != null) {\n");
+				sb.append("\t\tif (Objects.nonNull(");
+				sb.append(targetPropertyName);
+				sb.append(")) {\n");
 				sb.append("\t\t\tmappingType.getReturn().addAll(");
-				sb.append(targetXjcPropertyName);
+				sb.append(targetPropertyName);
 				sb.append(");\n");
 				sb.append("\t\t}\n");
 			} else {
 				sb.append("\t\tmappingType.setReturn(");
-				sb.append(targetXjcPropertyName);
+				sb.append(targetPropertyName);
 				sb.append(");\n");
 			}
 		}
@@ -314,7 +324,8 @@ public class DirectMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		String optionalName = String.format("optional%s", tabs.length());
 
 		sb.append("").append(tabs);
-		sb.append("if (").append(object.getJavaChildName()).append(" != null");
+		sb.append("if (Objects.nonNull(").append(object.getJavaChildName())
+				.append(")");
 		if (object.isList()) {
 			sb.append(" && ").append(object.getJavaChildName())
 					.append(".size() > 0");

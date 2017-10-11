@@ -74,18 +74,10 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				.endsWith("NameMappingType");
 		String[] propertyNames = getDirectAccessProperties(
 				this.complexType.getType().getName().getLocalPart());
-		if (propertyNames == null || propertyNames.length == 0) {
-			throw new IllegalStateException(new StringBuffer(128)
-					.append("ComplexUUIDMapperType ")
-					.append(this.complexType.getClassNameFullQualified())
-					.append(" defined in namespace ")
-					.append(this.complexType.getTargetNamespace())
-					.append(" does not define any parameters fields to get the UUID description.")
-					.toString());
-		}
 
 		List<ComplexTypeChild> children = this.getChildren();
-
+		ComplexTypeChild targetChildCt = null;
+		ComplexTypeChild ctc;
 		if (children == null || children.size() == 0) {
 			throw new IllegalStateException(new StringBuffer(128)
 					.append("ComplexUUIDMapperType ")
@@ -96,26 +88,40 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 					.toString());
 		}
 
-		ComplexTypeChild ctc;
+		if (propertyNames == null || propertyNames.length == 0) {
+			throw new IllegalStateException(new StringBuffer(128)
+					.append("ComplexUUIDMapperType ")
+					.append(this.complexType.getClassNameFullQualified())
+					.append(" defined in namespace ")
+					.append(this.complexType.getTargetNamespace())
+					.append(" does not define any parameters fields to get the UUID description.")
+					.toString());
+		}
+		ctc = children.get(0);
+		for (String propertyName : propertyNames) {
+			ctc = ctc.getComplexType().getChild(propertyName);
+			targetChildCt = ctc;
+			if (ctc == null) {
+				String msg = new StringBuffer(128)
+						.append(this.complexType.toQNameString())
+						.append(" does not contain a child ")
+						.append(propertyName).append("!").toString();
+				this.log.error(msg);
+				throw new IllegalStateException(msg);
+			}
+		}
 
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
-		if (propertyNames.length > 0 && children != null
-				&& children.size() > 0) {
-			ctc = children.get(0);
-			for (String propertyName : propertyNames) {
-				ctc = ctc.getComplexType().getChild(propertyName);
-				if (ctc != null) {
-					importedClasses.addAll(
-							ctc.getComplexType().getJavaImportClasses());
-				} else {
-					break;
-				}
-			}
+		ctc = children.get(0);
+		for (String propertyName : propertyNames) {
+			ctc = ctc.getComplexType().getChild(propertyName);
+			importedClasses.addAll(ctc.getComplexType().getJavaImportClasses());
 		}
 		for (ComplexTypeChild child : children) {
 			importedClasses
 					.addAll(child.getComplexType().getJavaImportClasses());
 		}
+
 		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = this
 				.getChildrenTree();
 		importedClasses.addAll(this.getImplImports(childrenTree));
@@ -217,32 +223,16 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		sb.append("\t\tString ");
 		sb.append(uuidMappedPropertyName);
 		sb.append(" = null;\n");
+
 		ctc = children.get(0);
+
 		for (String propertyName : propertyNames) {
 			ctc = ctc.getComplexType().getChild(propertyName);
-			if (ctc != null) {
-				sb.append("\t\t");
-				sb.append(ctc.getJavaVarDefinition());
-				sb.append(" = ");
-				sb.append(ctc.getJavaDefaultValue());
-				sb.append(";\n");
-			} else {
-				// throw new IllegalStateException(new StringBuffer(128)
-				// .append("ComplexUUIDMapperType ")
-				// .append(this.complexType.getClassNameFullQualified())
-				// .append(" defined in namespace ")
-				// .append(this.complexType.getTargetNamespace())
-				// .append(" child ").append(ctc.getChildName())
-				// .append(" does not have a property with name ")
-				// .append(propertyName).append(".").toString());
-				this.log.error(new StringBuffer(128)
-						.append("ComplexUUIDMapperType ")
-						.append(this.complexType.getClassNameFullQualified())
-						.append(" defined in namespace ")
-						.append(this.complexType.getTargetNamespace())
-						.append(" property name ").append(propertyName)
-						.append(" could not be found!").toString());
-			}
+			sb.append("\t\t");
+			sb.append(ctc.getJavaVarDefinition());
+			sb.append(" = ");
+			sb.append(ctc.getJavaDefaultValue());
+			sb.append(";\n");
 		}
 		sb.append(this.getProperty(children.get(0), 0, propertyNames));
 
