@@ -156,12 +156,13 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		File f = Util.getFile(this.compileableSourceDirectory, this.packageName,
 				new StringBuffer().append(this.interfaceName).append(".java")
 						.toString());
-		this.log.info(new StringBuffer().append("Write Inf  ")
+		this.log.debug(new StringBuffer().append("Write Inf  ")
 				.append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
-			this.log.error(e.getMessage());
+			this.log.error(String.format("%s: %s", e.getClass().getName(),
+					e.getMessage()));
 			e.printStackTrace();
 		}
 		this.log.debug("-generateInterface");
@@ -189,7 +190,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 
 	protected String getChildrenImports(final List<ComplexTypeChild> children) {
 		StringBuffer sb = new StringBuffer(256);
-		TreeSet<String> imports = new TreeSet<String>();
+		TreeSet<String> imports = new TreeSet<>();
 		for (ComplexTypeChild child : children) {
 			if (!child.getComplexType().getClassNameFullQualified()
 					.startsWith("java.lang.")
@@ -213,7 +214,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	protected String getChildrenImporxts(
 			final List<ComplexTypeChild> children) {
 		StringBuffer sb = new StringBuffer(256);
-		TreeSet<String> imports = new TreeSet<String>();
+		TreeSet<String> imports = new TreeSet<>();
 		for (ComplexTypeChild child : children) {
 			if (!child.getComplexType().getClassNameFullQualified()
 					.startsWith("java.lang.")
@@ -236,13 +237,12 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 
 	@Override
 	protected List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> getChildrenTree() {
-		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> list = new ArrayList<Entry<ComplexTypeChild, List<ComplexTypeChild>>>();
+		List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> list = new ArrayList<>();
 		Entry<ComplexTypeChild, List<ComplexTypeChild>> grandchild;
 		for (ComplexTypeChild child : GeneratorMapperMojo
 				.getValidChildren(this.complexType)) {
-			grandchild = new SimpleEntry<ComplexTypeChild, List<ComplexTypeChild>>(
-					child, GeneratorMapperMojo
-							.getValidChildren(child.getComplexType()));
+			grandchild = new SimpleEntry<>(child, GeneratorMapperMojo
+					.getValidChildren(child.getComplexType()));
 			list.add(grandchild);
 		}
 		return list;
@@ -278,16 +278,14 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 
 	protected Set<String> getImplImports(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> children) {
-		Set<String> imports = this
-				.getImplImports(children, this.getFqInterfaceName(),
-						this.complexType.getClassNameFullQualified(),
-						new StringBuffer(64)
-								.append(this.complexType.getPackageName())
-								.append(".ObjectFactory").toString()
-								// ,"org.springframework.beans.factory.annotation.Autowired"
-								,
-						"org.springframework.stereotype.Component",
-						"java.util.Objects"
+		Set<String> imports = this.getImplImports(children,
+				this.getFqInterfaceName(),
+				this.complexType.getClassNameFullQualified(),
+				new StringBuffer(64).append(this.complexType.getPackageName())
+						.append(".ObjectFactory").toString()
+				// ,"org.springframework.beans.factory.annotation.Autowired"
+				, "org.springframework.stereotype.Component",
+				"java.util.Objects"
 		// ,"org.apache.commons.beanutils.PropertyUtils"
 		);
 		return imports;

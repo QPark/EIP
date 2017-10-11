@@ -11,11 +11,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -38,7 +40,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 public class GeneratorMapperMojo extends AbstractMojo {
 	public static List<ComplexTypeChild> getValidChildren(
 			final ComplexType complexType) {
-		List<ComplexTypeChild> list = new ArrayList<ComplexTypeChild>(
+		List<ComplexTypeChild> list = new ArrayList<>(
 				complexType.getChildren().size());
 		for (ComplexTypeChild child : complexType.getChildren()) {
 			if (!child.getComplexType().isSimpleType()
@@ -104,6 +106,8 @@ public class GeneratorMapperMojo extends AbstractMojo {
 	protected MavenProject project;
 	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
 	protected MojoExecution execution;
+	@Parameter(defaultValue = "${plugin}", readonly = true) // Maven 3 only
+	private PluginDescriptor plugin;
 
 	/**
 	 * Get the executing plugin version - the EIP version.
@@ -111,7 +115,7 @@ public class GeneratorMapperMojo extends AbstractMojo {
 	 * @return the EIP version.
 	 */
 	protected String getEipVersion() {
-		return this.execution.getVersion();
+		return this.plugin.getVersion();
 	}
 
 	/**
@@ -158,12 +162,24 @@ public class GeneratorMapperMojo extends AbstractMojo {
 							config, ct, eipVersion, this.getLog());
 					fig.generateInterface(this.outputInterfacesDirectory,
 							basicPackageName);
+					fig.getMappings().stream()
+							.filter(m -> Objects.nonNull(m)
+									&& Objects.nonNull(m.getIn())
+									&& Objects
+											.nonNull(m.getIn().getComplexType())
+									&& Objects.nonNull(m.getOut()))
+							.forEach(m -> {
+								complexContentList.getRequestResponses()
+										.add(new ComplexRequestResponse(
+												m.getIn().getComplexType(),
+												m.getOut()));
+							});
 					flows++;
 				}
 			}
 			this.generateReferenceDataTypeProvider(config, basicPackageName);
-			List<String> errorMessages = new ArrayList<String>();
-			List<AbstractGenerator> generators = new ArrayList<AbstractGenerator>();
+			List<String> errorMessages = new ArrayList<>();
+			List<AbstractGenerator> generators = new ArrayList<>();
 
 			for (ComplexContent cc : complexContentList.getDirectMappings()) {
 				try {
@@ -177,8 +193,13 @@ public class GeneratorMapperMojo extends AbstractMojo {
 						generators.add(mtg);
 						directMappers++;
 					}
+				} catch (IndexOutOfBoundsException e) {
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
+					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(e.getMessage());
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
 				}
 			}
 			for (ComplexContent cc : complexContentList.getDefaultMappings()) {
@@ -190,8 +211,13 @@ public class GeneratorMapperMojo extends AbstractMojo {
 					mtg.generateInterface();
 					generators.add(mtg);
 					defaultMappers++;
+				} catch (IndexOutOfBoundsException e) {
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
+					e.printStackTrace();
 				} catch (IllegalStateException e) {
-					errorMessages.add(e.getMessage());
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
 				}
 			}
 			for (ComplexContent cc : complexContentList
@@ -204,8 +230,13 @@ public class GeneratorMapperMojo extends AbstractMojo {
 					mtg.generateInterface();
 					generators.add(mtg);
 					complexUUIDMappers++;
+				} catch (IndexOutOfBoundsException e) {
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
+					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(e.getMessage());
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
 				}
 			}
 			for (ComplexContent cc : complexContentList.getComplexMappings()) {
@@ -217,8 +248,13 @@ public class GeneratorMapperMojo extends AbstractMojo {
 					mtg.generateInterface();
 					generators.add(mtg);
 					complexMappers++;
+				} catch (IndexOutOfBoundsException e) {
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
+					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(e.getMessage());
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
 				}
 			}
 			for (ComplexContent cc : complexContentList.getTabularMappings()) {
@@ -230,8 +266,13 @@ public class GeneratorMapperMojo extends AbstractMojo {
 					mtg.generateInterface();
 					generators.add(mtg);
 					tabularMappers++;
+				} catch (IndexOutOfBoundsException e) {
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
+					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(e.getMessage());
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
 				}
 			}
 			for (ComplexContent cc : complexContentList.getInterfaceTypes()) {
@@ -249,15 +290,22 @@ public class GeneratorMapperMojo extends AbstractMojo {
 						config, basicPackageName, crr, complexContentList,
 						eipVersion, this.outputInterfacesDirectory,
 						this.outputClassesDirectory, this.getLog());
-				mog.generateInterface();
-				generators.add(mog);
-				mappingOperations++;
+				if (!mog.getPackageNameInterface().startsWith("java.")) {
+					mog.generateInterface();
+					generators.add(mog);
+					mappingOperations++;
+				}
 			}
 			for (AbstractGenerator gen : generators) {
 				try {
 					gen.generateImpl();
+				} catch (IndexOutOfBoundsException e) {
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
+					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(e.getMessage());
+					errorMessages.add(String.format("%s: %s",
+							e.getClass().getName(), e.getMessage()));
 				}
 			}
 			for (String errorMessage : errorMessages) {

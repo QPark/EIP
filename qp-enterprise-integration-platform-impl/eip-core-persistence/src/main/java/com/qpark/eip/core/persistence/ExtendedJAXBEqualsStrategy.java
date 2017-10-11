@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.persistence;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -40,29 +40,26 @@ public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
 	 * @return a new instance of a list with the sorted entries.
 	 */
 	static List<?> getSortedByObjectHashCode(final List<?> list) {
-		ArrayList<Object> l = new ArrayList<Object>(list.size());
+		ArrayList<Object> l = new ArrayList<>(list.size());
 		l.addAll(list);
-		Collections.sort(l, new Comparator<Object>() {
-			@Override
-			public int compare(final Object o1, final Object o2) {
-				long ret = 0;
-				if (o1 != o2) {
-					if (o1 == null) {
-						ret = 1;
-					} else if (o2 == null) {
-						ret = -1;
-					} else {
-						ret = Long.valueOf(o1.hashCode())
-								- Long.valueOf(o2.hashCode());
-					}
-				}
-				if (ret > 0) {
+		Collections.sort(l, (o1, o2) -> {
+			long ret = 0;
+			if (o1 != o2) {
+				if (o1 == null) {
 					ret = 1;
-				} else if (ret < 0) {
+				} else if (o2 == null) {
 					ret = -1;
+				} else {
+					ret = Long.valueOf(o1.hashCode())
+							- Long.valueOf(o2.hashCode());
 				}
-				return (int) ret;
 			}
+			if (ret > 0) {
+				ret = 1;
+			} else if (ret < 0) {
+				ret = -1;
+			}
+			return (int) ret;
 		});
 		return l;
 	}
@@ -87,9 +84,11 @@ public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
 		if (left == right) {
 			equals = true;
 		} else if (left != null && right != null) {
-			int maxScale = Math.max(left.scale(), right.scale());
-			BigDecimal leftScaled = left.setScale(maxScale);
-			BigDecimal rightScaled = right.setScale(maxScale);
+			int maxScale = Math.max(left.scale(), right.scale()) + 1;
+			BigDecimal leftScaled = left.setScale(maxScale,
+					RoundingMode.HALF_UP);
+			BigDecimal rightScaled = right.setScale(maxScale,
+					RoundingMode.HALF_UP);
 			equals = leftScaled.equals(rightScaled);
 		}
 		return equals;

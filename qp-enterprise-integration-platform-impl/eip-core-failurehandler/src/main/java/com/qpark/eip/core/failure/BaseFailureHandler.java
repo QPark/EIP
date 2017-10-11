@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.net.ssl.SSLHandshakeException;
 import javax.xml.bind.JAXBException;
@@ -118,9 +119,9 @@ public abstract class BaseFailureHandler {
 		return s;
 	}
 
-	private static final HashMap<String, FailureMessageType> messages = new HashMap<String, FailureMessageType>();
+	private static final HashMap<String, FailureMessageType> messages = new HashMap<>();
 
-	private static final HashMap<String, String> phrases = new HashMap<String, String>();
+	private static final HashMap<String, String> phrases = new HashMap<>();
 
 	private static String format(final FailureMessagePhraseableType m,
 			final Object... data) {
@@ -300,18 +301,21 @@ public abstract class BaseFailureHandler {
 	public static FailureDescription handleException(final Throwable e,
 			final String defaultCode, final Logger log, final Object... data) {
 		FailureDescription fd = null;
-		if (InvocationTargetException.class.isInstance(e)) {
+		if (InvocationTargetException.class.isInstance(e) && Objects.nonNull(
+				((InvocationTargetException) e).getTargetException())) {
 			fd = handleException(
 					((InvocationTargetException) e).getTargetException(),
 					defaultCode, log, data);
-		} else if (MessageHandlingException.class.isInstance(e)) {
+		} else if (MessageHandlingException.class.isInstance(e)
+				&& Objects.nonNull(((MessagingException) e).getCause())) {
 			fd = handleException(((MessagingException) e).getCause(),
 					defaultCode, log, data);
-		} else if (MessagingException.class.isInstance(e)) {
+		} else if (MessagingException.class.isInstance(e)
+				&& Objects.nonNull(((MessagingException) e).getCause())) {
 			fd = handleException(((MessagingException) e).getCause(),
 					defaultCode, log, data);
 		} else if (SoapFaultClientException.class.isInstance(e)) {
-			ArrayList<Object> list = new ArrayList<Object>(
+			ArrayList<Object> list = new ArrayList<>(
 					data == null ? 1 : data.length + 1);
 			if (data != null) {
 				list.addAll(Arrays.asList(data));
@@ -330,7 +334,7 @@ public abstract class BaseFailureHandler {
 			fd = handleWebServiceIOException((WebServiceIOException) e,
 					defaultCode, log, data);
 		} else if (SoapFaultException.class.isInstance(e)) {
-			ArrayList<Object> list = new ArrayList<Object>(
+			ArrayList<Object> list = new ArrayList<>(
 					data == null ? 1 : data.length + 1);
 			if (data != null) {
 				list.addAll(Arrays.asList(data));
@@ -351,7 +355,7 @@ public abstract class BaseFailureHandler {
 		} else if (SQLException.class.isInstance(e)) {
 			fd = handleSQLException((SQLException) e, DEFAULT_DATABASE, log,
 					data);
-		} else if (e.getCause() != null) {
+		} else if (Objects.nonNull(e.getCause())) {
 			fd = handleException(e.getCause(), defaultCode, log, data);
 		} else {
 			fd = getFailure(defaultCode == null ? DEFAULT : defaultCode, e);
@@ -389,7 +393,7 @@ public abstract class BaseFailureHandler {
 	 * @param defaultCode
 	 * @param log
 	 * @param data
-	 * @return
+	 * @return the {@link FailureDescription}.
 	 */
 	public static FailureDescription handleSQLException(final SQLException e,
 			final String defaultCode, final Logger log, final Object... data) {
