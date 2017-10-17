@@ -1321,6 +1321,8 @@ public class XsdsUtil {
 				if (!this.complexTypeMap
 						.containsKey(String.valueOf(type.getName()))) {
 					ComplexType ct = new ComplexType(type, this);
+					this.getXsdContainer(ct.getTargetNamespace())
+							.addComplexType(ct);
 					this.complexTypeMap
 							.put(String.valueOf(ct.getType().getName()), ct);
 					this.setupComplexTypes(ct, synchronizedComplexTypeList);
@@ -1334,8 +1336,6 @@ public class XsdsUtil {
 		this.elementTypes.stream().parallel().forEach(et -> this
 				.getXsdContainer(et.getTargetNamespace()).addElementType(et));
 		this.complexTypes.addAll(synchronizedComplexTypeList);
-		this.complexTypes.stream().parallel().forEach(ct -> this
-				.getXsdContainer(ct.getTargetNamespace()).addComplexType(ct));
 		logger.info(
 				"{} to get {} complexTypes and {} elementTypes out of {} files",
 				Util.getDuration(System.currentTimeMillis() - startX),

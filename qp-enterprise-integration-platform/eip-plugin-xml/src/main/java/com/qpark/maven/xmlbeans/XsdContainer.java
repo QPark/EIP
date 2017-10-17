@@ -79,8 +79,13 @@ public class XsdContainer {
 	 * @param ct
 	 */
 	public synchronized void addComplexType(final ComplexType ct) {
-		if (Objects.nonNull(ct) && !this.complexType.contains(ct)) {
-			this.complexType.add(ct);
+		if (Objects.nonNull(ct)) {
+			if (!this.complexType.stream()
+					.filter(ctx -> ctx.getType().getName().toString()
+							.equals(ct.getType().getName().toString()))
+					.findFirst().isPresent()) {
+				this.complexType.add(ct);
+			}
 		}
 	}
 
