@@ -1,6 +1,7 @@
 Changelog:
 
 3.6.9 SNAPSHOT
+Added Complex- and ElementType to XsdContainer
 Flow: DirectMapper impl provides default values
 Flow: Log level of file creation set to trace
 Core: Persistence - scaled BigDecimal with RoundingMode

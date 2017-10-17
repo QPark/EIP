@@ -9,16 +9,20 @@ package com.qpark.maven.xmlbeans;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class XsdContainer {
 	private final String annotationDocumentation;
+	private final List<ComplexType> complexType = new ArrayList<>();
+	private final List<ElementType> elementType = new ArrayList<>();
 	private final File file;
+
 	private final Collection<String> importedTargetNamespaces;
 	private final TreeMap<String, String> imports;
-
 	private final String packageName;
 	private final String relativeName;
 	private final String targetNamespace;
@@ -71,8 +75,33 @@ public class XsdContainer {
 		}
 	}
 
+	/**
+	 * @param ct
+	 */
+	public synchronized void addComplexType(final ComplexType ct) {
+		if (Objects.nonNull(ct) && !this.complexType.contains(ct)) {
+			this.complexType.add(ct);
+		}
+	}
+
+	/**
+	 * @param et
+	 */
+	public synchronized void addElementType(final ElementType et) {
+		if (Objects.nonNull(et) && !this.elementType.contains(et)) {
+			this.elementType.add(et);
+		}
+	}
+
 	public String getAnnotationDocumentation() {
 		return this.annotationDocumentation;
+	}
+
+	/**
+	 * @return the complexType
+	 */
+	public List<ComplexType> getComplexType() {
+		return Collections.unmodifiableList(this.complexType);
 	}
 
 	/**
@@ -81,6 +110,13 @@ public class XsdContainer {
 	public String getDomainPathName() {
 		return this.relativeName.substring(0,
 				this.relativeName.lastIndexOf('/'));
+	}
+
+	/**
+	 * @return the elementType
+	 */
+	public List<ElementType> getElementType() {
+		return Collections.unmodifiableList(this.elementType);
 	}
 
 	/**
@@ -125,7 +161,7 @@ public class XsdContainer {
 
 	/**
 	 * Get the version. If no version is specified 1.0 is assumed.
-	 * 
+	 *
 	 * @return the version
 	 */
 	public String getVersion() {
@@ -178,5 +214,4 @@ public class XsdContainer {
 				.append(this.packageName);
 		return sb.toString();
 	}
-
 }
