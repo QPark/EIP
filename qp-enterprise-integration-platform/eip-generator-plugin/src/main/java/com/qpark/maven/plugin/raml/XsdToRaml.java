@@ -28,12 +28,11 @@ public class XsdToRaml {
 		return sb.toString();
 	}
 
-	private static String getChildrenDefinition(final XsdsUtil xsds,
-			final ComplexTypeChild ctc, final String usage) {
+	private static String getDeclarationChild(final ComplexTypeChild ctc,
+			final String usage, final XsdsUtil xsds) {
 		String name = ctc.getChildName();
 		String optional = ctc.isOptional() ? "?" : "";
-		String type = getChildComplexTypeTypeDeclaration(xsds,
-				ctc.getComplexType(), usage);
+		String type = getDefinitionChild(xsds, ctc.getComplexType(), usage);
 		String list = (ctc.isJavaArray() || ctc.isList()) ? "[]" : "";
 		String description = "";
 		if (ctc.getAnnotationDocumentationNormalised().trim().length() > 0) {
@@ -44,8 +43,8 @@ public class XsdToRaml {
 				description);
 	}
 
-	private static String getChildComplexTypeTypeDeclaration(
-			final XsdsUtil xsds, final ComplexType ct, final String usage) {
+	private static String getDefinitionChild(final XsdsUtil xsds,
+			final ComplexType ct, final String usage) {
 		String type = "object";
 		if (ct.getTargetNamespace()
 				.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
@@ -63,7 +62,7 @@ public class XsdToRaml {
 		return type;
 	}
 
-	private static String getTypeDeclaration(final ComplexType ct) {
+	private static String getDefinition(final ComplexType ct) {
 		String type = "object";
 		if (Objects.isNull(ct.getBaseComplexType())
 				&& ct.getType().isSimpleType()) {
@@ -117,11 +116,13 @@ public class XsdToRaml {
 
 	/**
 	 * @param xsd
+	 * @param flattenQueryParameters
 	 * @param xsds
 	 * @param eipVersion
 	 * @return the RAML of the specific XSD as Library or API
 	 */
-	public static String getRaml(final XsdContainer xsd, final XsdsUtil xsds,
+	public static String getRaml(final XsdContainer xsd,
+			final boolean flattenQueryParameters, final XsdsUtil xsds,
 			final String eipVersion) {
 		StringBuffer sb = new StringBuffer(512);
 
@@ -163,7 +164,7 @@ public class XsdToRaml {
 							.thenComparing(ComplexType::getQNameLocalPart))
 					.forEach(ct -> {
 						String name = ct.getQNameLocalPart();
-						String type = getTypeDeclaration(ct);
+						String type = getDefinition(ct);
 
 						sb.append(String.format("  %s: \n", name));
 						sb.append(String.format("    type: %s\n", type));
@@ -177,7 +178,7 @@ public class XsdToRaml {
 						if (ct.getChildren().size() > 0) {
 							sb.append("    properties: \n");
 							ct.getChildren().stream().forEach(ctc -> sb.append(
-									getChildrenDefinition(xsds, ctc, usage)));
+									getDeclarationChild(ctc, usage, xsds)));
 						}
 					});
 		}
@@ -187,16 +188,12 @@ public class XsdToRaml {
 				if (name.toLowerCase().startsWith("get")) {
 					sb.append(String.format("/%s:\n  get: \n",
 							name.substring(3, name.length())));
-					if (Objects.nonNull(et.getComplexType())) {
-						String type = getChildComplexTypeTypeDeclaration(xsds,
-								et.getComplexType(), usage);
-						sb.append("    queryParameters: \n");
-						sb.append(String.format("      type: %s\n", type));
-					}
+					sb.append(getDeclarationQueryParameter(et.getComplexType(),
+							flattenQueryParameters, usage, xsds));
 					ElementType response = XsdsUtil.findResponse(et,
 							xsds.getElementTypes(), xsds);
 					if (Objects.nonNull(response)) {
-						String type = getChildComplexTypeTypeDeclaration(xsds,
+						String type = getDefinitionChild(xsds,
 								response.getComplexType(), usage);
 						sb.append("    responses: \n");
 						sb.append("      200: \n");
@@ -207,6 +204,35 @@ public class XsdToRaml {
 					}
 				}
 			});
+		}
+		return sb.toString();
+	}
+
+	private static String getDeclarationQueryParameter(final ComplexType ct,
+			final boolean flattenQueryParameters, final String usage,
+			final XsdsUtil xsds) {
+		StringBuffer sb = new StringBuffer(512);
+		if (Objects.nonNull(ct) && !flattenQueryParameters) {
+			String type = getDefinitionChild(xsds, ct, usage);
+			sb.append("    queryParameters: \n");
+			sb.append(String.format("      type: %s\n", type));
+		} else if (Objects.nonNull(ct) && flattenQueryParameters) {
+			sb.append("    queryParameters: \n");
+			ct.getChildren().stream()
+					.filter(ctc -> ctc.getComplexType().getTargetNamespace()
+							.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
+							|| ctc.getComplexType().getType().isPrimitiveType()
+							|| ctc.getComplexType().isSimpleType())
+					.forEach(ctc -> sb
+							.append(getDeclarationChild(ctc, usage, xsds)));
+			ct.getChildren().stream()
+					.filter(ctc -> !ctc.getComplexType().getTargetNamespace()
+							.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
+							&& !ctc.getComplexType().getType().isPrimitiveType()
+							&& !ctc.getComplexType().isSimpleType())
+					.forEach(ctc -> ctc.getComplexType().getChildren().stream()
+							.forEach(ctcx -> sb.append(
+									getDeclarationChild(ctcx, usage, xsds))));
 		}
 		return sb.toString();
 	}
@@ -227,7 +253,7 @@ public class XsdToRaml {
 		xsdContainerMap.values().stream()
 				// .filter(xsd -> xsd.getPackageName().contains(".model."))
 				.forEach(xsd -> {
-					String raml = getRaml(xsd, xsds, "eipversion");
+					String raml = getRaml(xsd, true, xsds, "eipversion");
 					System.out.println(raml);
 					System.out.println(
 							xsd.getRelativeName().replace(".xsd", ".raml"));

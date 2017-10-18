@@ -13,11 +13,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
@@ -57,9 +52,6 @@ public class GeneratorMojo extends AbstractMojo {
 	/** The name of the service id to generate. If empty use all. */
 	@Parameter(property = "serviceId", defaultValue = "")
 	private String serviceId;
-	/** The pattern matching the flow name. Defaults to empty string . */
-	@Parameter(property = "flowNameParts", defaultValue = "")
-	private String flowNameParts;
 	/**
 	 * The service response name need to end with this suffix (Default
 	 * <code>Response</code>).
@@ -71,11 +63,8 @@ public class GeneratorMojo extends AbstractMojo {
 			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/** The name of the enterprise (Defaults to the basePackageName). */
-	@Parameter(property = "enterpriseName")
-	private String enterpriseName;
-	/** The version of the model. Defaults to artefact version. */
-	@Parameter(property = "modelVersion")
-	private String modelVersion;
+	@Parameter(property = "flattenQueryParameters", defaultValue = "true")
+	private boolean flattenQueryParameters;
 	/** The eip version to insert into generated tag. */
 	private String eipVersion;
 	/** The {@link MavenProject}. */
@@ -93,59 +82,6 @@ public class GeneratorMojo extends AbstractMojo {
 		return this.execution.getVersion();
 	}
 
-	static final class ReportHeader {
-		String eipVersion;
-		String mavenGroupId;
-		String mavenArtefactId;
-		String mavenVersion;
-		String modelVersion;
-		String buildTimestamp;
-
-		/**
-		 * @return the eipVersion
-		 */
-		public String getEipVersion() {
-			return this.eipVersion;
-		}
-
-		/**
-		 * @return the mavenGroupId
-		 */
-		public String getMavenGroupId() {
-			return this.mavenGroupId;
-		}
-
-		/**
-		 * @return the mavenArtefactId
-		 */
-		public String getMavenArtefactId() {
-			return this.mavenArtefactId;
-		}
-
-		/**
-		 * @return the mavenVersion
-		 */
-		public String getMavenVersion() {
-			return this.mavenVersion;
-		}
-
-		/**
-		 * @return the modelVersion
-		 */
-		public String getModelVersion() {
-			return this.modelVersion;
-		}
-
-		/**
-		 * @return the buildTimestamp
-		 */
-		public String getBuildTimestamp() {
-			return this.buildTimestamp;
-		}
-	}
-
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
 	 */
@@ -154,18 +90,6 @@ public class GeneratorMojo extends AbstractMojo {
 		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		this.objectMapper.configure(Feature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-		this.objectMapper.configure(SerializationFeature.CLOSE_CLOSEABLE,
-				false);
-		this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		this.objectMapper.configure(
-				DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT,
-				true);
-		this.objectMapper.configure(
-				DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		this.objectMapper
-				.setAnnotationIntrospector(new JaxbAnnotationIntrospector(
-						this.objectMapper.getTypeFactory()));
 
 		final XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
 				this.basePackageName, this.messagePackageNameSuffix,
@@ -175,7 +99,8 @@ public class GeneratorMojo extends AbstractMojo {
 		this.eipVersion = this.getEipVersion();
 		Map<String, XsdContainer> xsdContainerMap = xsds.getXsdContainerMap();
 		xsdContainerMap.values().stream().forEach(xsd -> {
-			String raml = XsdToRaml.getRaml(xsd, xsds, this.eipVersion);
+			String raml = XsdToRaml.getRaml(xsd, this.flattenQueryParameters,
+					xsds, this.eipVersion);
 			if (xsd.getElementType().size() > 0) {
 				this.writeRaml(raml,
 						xsd.getRelativeName().replace(".xsd", ".raml"));
