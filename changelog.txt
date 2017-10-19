@@ -1,6 +1,8 @@
 Changelog:
 
 3.6.9 SNAPSHOT
+Proven to work with maven 3.5.0
+Persistence: DDLGenerator fixed
 Generator: XSD to RAML
 Added Complex- and ElementType to XsdContainer
 Flow: DirectMapper impl provides default values
