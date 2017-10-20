@@ -19,7 +19,6 @@
 
 	<artifactId>platform-domain-model-persistence</artifactId>
 	<packaging>jar</packaging>
-	<name>platform-domain-model-persistence</name>
 	<description>Generates the java code of the JPA persistence layer via hyperjaxb3.</description>
 
 	<properties>
@@ -47,7 +46,6 @@
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
 									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Common/DataTypeMapping.xsd</includes>
-									<excludes>EIP/Documentation/**.xsd</excludes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -59,13 +57,27 @@
 				<artifactId>eip-generator-plugin</artifactId>
 				<executions>
 					<execution>
-					<phase>process-sources</phase>
+						<phase>process-sources</phase>
 						<goals>
 							<goal>generate-collected-schemas</goal>
 						</goals>
 						<configuration>
 							<baseDirectory>${model.dir}</baseDirectory>
 							<outputDirectory>${model.dir}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate persistence config</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>generate-persistence-config</goal>
+						</goals>
+						<configuration>
+							<basePackageName>${base.package.name}</basePackageName>
+							<persistenceUnitName>${persistence.unit.name}</persistenceUnitName>
+							<datasourceJndiName>${persistence.jndi.datasource.name}</datasourceJndiName>
+							<springJpaVendorAdapter>${persistence.jpa.vendor.adapter}</springJpaVendorAdapter>
+							<databasePlatform>${persistence.jpa.vendor.adapter.databasePlatform}</databasePlatform>
 						</configuration>
 					</execution>
 				</executions>
@@ -112,13 +124,20 @@
 						</configuration>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-jpamodelgen</artifactId>
+						<version>4.3.11.Final</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>handle-persistence-xml</id>
-						<phase>prepare-package</phase>
+						<phase>process-test-resources</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -152,6 +171,22 @@
 							</target>
 						</configuration>
 					</execution>
+					<execution>
+						<id>drop-unneccessary-classes</id>
+						<phase>process-test-classes</phase>
+						<goals><goal>run</goal></goals>
+						<configuration>
+							<target>
+								<!--delete verbose="true">
+									<fileset dir="${project.build.directory}/classes">
+										<exclude name="META-INF/**/*.*"/>
+										<exclude name="com/model-xyz/**/*.class"/>
+									</fileset>
+								</delete-->
+								<echo>Deleted</echo>
+							</target>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -173,6 +208,7 @@
 					<excludes>
 						<exclude>META-INF/persistence.xml</exclude>
 						<exclude>RoundtripTest.class</exclude>
+						<exclude>DDLGeneratorWhiteListedClassNames.txt</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -210,14 +246,27 @@
 			<artifactId>javax.persistence</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-jpamodelgen</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

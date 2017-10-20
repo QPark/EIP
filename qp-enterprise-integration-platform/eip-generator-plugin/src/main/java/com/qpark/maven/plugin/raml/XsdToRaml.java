@@ -132,6 +132,21 @@ public class XsdToRaml {
 		return sb.toString();
 	}
 
+	private static void getUses(final XsdsUtil xsds,
+			final String targetNameSpace, final String pathUp,
+			final Map<String, String> uses) {
+		if (Objects.nonNull(targetNameSpace)) {
+			XsdContainer xsd = xsds.getXsdContainer(targetNameSpace);
+			uses.put(
+					Util.capitalizePackageName(
+							xsds.getPackageName(targetNameSpace)),
+					String.format("%s%s", pathUp,
+							xsd.getRelativeName().replace(".xsd", ".raml")));
+			xsd.getImportedTargetNamespaces().stream()
+					.forEach(ns -> getUses(xsds, ns, pathUp, uses));
+		}
+	}
+
 	/**
 	 * @param xsd
 	 * @param flattenQueryParameters
@@ -151,20 +166,17 @@ public class XsdToRaml {
 		String usage = Util.capitalizePackageName(xsd.getPackageName());
 		Map<String, String> uses = new TreeMap<>();
 		xsd.getImportedTargetNamespaces().stream()
-				.forEach(ns -> uses.put(
-						Util.capitalizePackageName(xsds.getPackageName(ns)),
-						String.format("%s%s", pathUp, xsds.getXsdContainer(ns)
-								.getRelativeName().replace(".xsd", ".raml"))));
+				.forEach(ns -> getUses(xsds, ns, pathUp, uses));
 		if (isLibrary) {
 			sb.append("#%RAML 1.0 Library\n");
-			sb.append(String.format("#EIP version %s - %s\n", eipVersion,
-					Util.getGeneratedAt(new Date(), XsdToRaml.class)));
 		} else {
 			sb.append("#%RAML 1.0\n");
-			sb.append(String.format("#EIP version %s - %s\n", eipVersion,
-					Util.getGeneratedAt(new Date(), XsdToRaml.class)));
-			sb.append(String.format("title: %s\n", xsd.getTargetNamespace()));
+			sb.append(String.format("title: %s\n", xsd.getPackageName()));
 		}
+		sb.append(String.format("# EIP version %s - %s\n", eipVersion,
+				Util.getGeneratedAt(new Date(), XsdToRaml.class)));
+		sb.append(String.format("# target namespace %s\n",
+				xsd.getTargetNamespace()));
 		if (uses.size() > 0) {
 			sb.append("uses: \n");
 			uses.entrySet().stream().forEach(entry -> sb.append(String

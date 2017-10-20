@@ -286,24 +286,47 @@ WEB-INF/lib/xws-security-3.0.jar
 					</execution>
 				</executions>
 			</plugin>
-			<!--
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>buildnumber-first</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doUpdate>true</doUpdate>
-				</configuration>
-			</plugin>
-			-->
+                       <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>buildnumber-maven-plugin</artifactId>
+                                <executions>
+                                        <execution>
+                                                <id>buildnumber-create</id>
+                                                <phase>validate</phase>
+                                                <goals>
+                                                        <goal>create</goal>
+                                                </goals>
+                                        </execution>
+                                        <execution>
+                                                <id>buildmetadata</id>
+                                                <phase>validate</phase>
+                                                <goals>
+                                                        <goal>create-metadata</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                                <configuration>
+                                        <attach>true</attach>
+                                        <doUpdate>false</doUpdate>
+                                        <!--providerImplementations>
+                                                <svn>javasvn</svn>
+                                        </providerImplementations-->
+                                        <outputName>${base.package.name}.version.properties</outputName>
+                                        <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
+                                        <buildNumberPropertyName>application.revision</buildNumberPropertyName>
+                                        <revisionPropertyName>application.scm.revision</revisionPropertyName>
+                                        <applicationPropertyName>application.artefact.name</applicationPropertyName>
+                                        <versionPropertyName>application.version</versionPropertyName>
+                                        <scmBranchPropertyName>application.scm.branch</scmBranchPropertyName>
+                                        <properties>
+                                                <application.scm.branch>${application.scm.branch}</application.scm.branch>
+                                        </properties>
+                                        <timestampPropertyName>application.build.timestamp</timestampPropertyName>
+                                        <timezone>UTC</timezone>
+                                        <timestampFormat>yyyy-MM-dd'T'HH:mm:ss</timestampFormat>
+                                        <revisionOnScmFailure>SCM version not detectable</revisionOnScmFailure>
+                                </configuration>
+                        </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
