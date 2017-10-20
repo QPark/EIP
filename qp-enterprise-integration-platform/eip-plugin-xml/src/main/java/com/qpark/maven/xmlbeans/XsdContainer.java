@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -29,6 +30,7 @@ public class XsdContainer {
 	private final Collection<String> totalImportedTargetNamespaces = new TreeSet<String>();
 	private final TreeSet<String> usedXmlnss;
 	private final String version;
+	private String serviceId;
 
 	private final TreeMap<String, String> xmlnss;
 
@@ -95,7 +97,15 @@ public class XsdContainer {
 	public synchronized void addElementType(final ElementType et) {
 		if (Objects.nonNull(et) && !this.elementType.contains(et)) {
 			this.elementType.add(et);
+			this.serviceId = et.getServiceId();
 		}
+	}
+
+	/**
+	 * @return the serviceId, if any.
+	 */
+	public Optional<String> getServiceId() {
+		return Optional.ofNullable(this.serviceId);
 	}
 
 	public String getAnnotationDocumentation() {

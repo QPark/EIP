@@ -91,8 +91,8 @@ public class XsdToRaml {
 	 * @param eipVersion
 	 * @return the RAML API importing all other APIs.
 	 */
-	public static String getRamlApi(final XsdsUtil xsds,
-			final String eipVersion) {
+	public static String getRamlApi(final boolean flattenQueryParameters,
+			final XsdsUtil xsds, final String eipVersion) {
 		StringBuffer sb = new StringBuffer(512);
 
 		sb.append("#%RAML 1.0\n");
@@ -102,15 +102,33 @@ public class XsdToRaml {
 
 		Map<String, String> uses = new TreeMap<>();
 		xsds.getXsdContainerMap().values().stream()
-				.filter(xsd -> xsd.getElementType().size() > 0)
+				// .filter(xsd -> xsd.getElementType().size() > 0)
+				.filter(xsd -> !xsd.getFile().getName()
+						.endsWith("maven-4.0.0.xsd"))
 				.forEach(xsd -> uses.put(
-						Util.capitalizePackageName(xsd.getPackageName()), xsd
-								.getRelativeName().replace(".xsd", ".raml")));
+						Util.capitalizePackageName(xsd.getPackageName()),
+						xsd.getRelativeName().replace(".xsd", ".raml")));
 		if (uses.size() > 0) {
 			sb.append("uses: \n");
 			uses.entrySet().stream().forEach(entry -> sb.append(String
 					.format("  %s: %s\n", entry.getKey(), entry.getValue())));
 		}
+		xsds.getXsdContainerMap().values().stream()
+				// .filter(xsd -> xsd.getElementType().size() > 0)
+				.filter(xsd -> !xsd.getFile().getName()
+						.endsWith("maven-4.0.0.xsd"))
+				.forEach(xsd -> {
+					List<ElementType> ets = xsd.getElementType();
+					String usage = "API!";
+
+					if (ets.size() > 0) {
+						ets.stream().filter(et -> et.isRequest())
+								.forEach(et -> {
+									sb.append(getRamlOperation(et, usage,
+											flattenQueryParameters, xsds));
+								});
+					}
+				});
 		return sb.toString();
 	}
 
@@ -184,26 +202,34 @@ public class XsdToRaml {
 		}
 		if (ets.size() > 0) {
 			ets.stream().filter(et -> et.isRequest()).forEach(et -> {
-				String name = et.getOperationName();
-				if (name.toLowerCase().startsWith("get")) {
-					sb.append(String.format("/%s:\n  get: \n",
-							name.substring(3, name.length())));
-					sb.append(getDeclarationQueryParameter(et.getComplexType(),
-							flattenQueryParameters, usage, xsds));
-					ElementType response = XsdsUtil.findResponse(et,
-							xsds.getElementTypes(), xsds);
-					if (Objects.nonNull(response)) {
-						String type = getDefinitionChild(xsds,
-								response.getComplexType(), usage);
-						sb.append("    responses: \n");
-						sb.append("      200: \n");
-						sb.append("        body: \n");
-						sb.append("          application/json: \n");
-						sb.append(
-								String.format("            type: %s\n", type));
-					}
-				}
+				sb.append(getRamlOperation(et, usage, flattenQueryParameters,
+						xsds));
 			});
+		}
+		return sb.toString();
+	}
+
+	private static String getRamlOperation(final ElementType et,
+			final String usage, final boolean flattenQueryParameters,
+			final XsdsUtil xsds) {
+		StringBuffer sb = new StringBuffer(256);
+		String name = et.getOperationName();
+		if (name.toLowerCase().startsWith("get")) {
+			sb.append(String.format("/%s/%s:\n  get: \n", et.getServiceId(),
+					name.substring(3, name.length())));
+			sb.append(getDeclarationQueryParameter(et.getComplexType(),
+					flattenQueryParameters, usage, xsds));
+			ElementType response = XsdsUtil.findResponse(et,
+					xsds.getElementTypes(), xsds);
+			if (Objects.nonNull(response)) {
+				String type = getDefinitionChild(xsds,
+						response.getComplexType(), usage);
+				sb.append("    responses: \n");
+				sb.append("      200: \n");
+				sb.append("        body: \n");
+				sb.append("          application/json: \n");
+				sb.append(String.format("            type: %s\n", type));
+			}
 		}
 		return sb.toString();
 	}
@@ -245,7 +271,7 @@ public class XsdToRaml {
 		String basePackageName = "com.qpark.eip.inf";
 		String xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
 		File dif = new File(xsdPath);
-		String messagePackageNameSuffix = "mapping flow";
+		String messagePackageNameSuffix = "mapping flow msg";
 		long start = System.currentTimeMillis();
 		XsdsUtil xsds = XsdsUtil.getInstance(dif, "a.b.c.bus",
 				messagePackageNameSuffix, "delta");
@@ -260,5 +286,7 @@ public class XsdToRaml {
 					System.out.println();
 					System.out.println();
 				});
+
+		System.out.println(getRamlApi(true, xsds, "eipVersion"));
 	}
 }

@@ -98,18 +98,21 @@ public class GeneratorMojo extends AbstractMojo {
 
 		this.eipVersion = this.getEipVersion();
 		Map<String, XsdContainer> xsdContainerMap = xsds.getXsdContainerMap();
-		xsdContainerMap.values().stream().forEach(xsd -> {
-			String raml = XsdToRaml.getRaml(xsd, this.flattenQueryParameters,
-					xsds, this.eipVersion);
-			if (xsd.getElementType().size() > 0) {
-				this.writeRaml(raml,
-						xsd.getRelativeName().replace(".xsd", ".raml"));
-			} else {
-				this.writeRaml(raml,
-						xsd.getRelativeName().replace(".xsd", ".raml"));
-			}
-		});
-		String raml = XsdToRaml.getRamlApi(xsds, this.eipVersion);
+		xsdContainerMap.values().stream().filter(
+				xsd -> !xsd.getFile().getName().endsWith("maven-4.0.0.xsd"))
+				.forEach(xsd -> {
+					String raml = XsdToRaml.getRaml(xsd,
+							this.flattenQueryParameters, xsds, this.eipVersion);
+					if (xsd.getElementType().size() > 0) {
+						this.writeRaml(raml,
+								xsd.getRelativeName().replace(".xsd", ".raml"));
+					} else {
+						this.writeRaml(raml,
+								xsd.getRelativeName().replace(".xsd", ".raml"));
+					}
+				});
+		String raml = XsdToRaml.getRamlApi(this.flattenQueryParameters, xsds,
+				this.eipVersion);
 		this.writeRaml(raml, "api.raml");
 
 	}
