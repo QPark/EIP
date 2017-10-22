@@ -55,7 +55,7 @@ public class XsdToRaml {
 					.format("%s.%s",
 							Util.capitalizePackageName(xsds
 									.getPackageName(ct.getTargetNamespace())),
-							ct.getQNameLocalPart())
+							ct.getQNameLocalPart().replace(".", "_"))
 					.replace(String.format("%s.", usage), "")
 					.replace("JavaLang.", "");
 		}
@@ -71,12 +71,14 @@ public class XsdToRaml {
 		} else if (Objects.nonNull(ct.getBaseComplexType())) {
 			if (ct.getBaseComplexType().getTargetNamespace()
 					.equals(ct.getTargetNamespace())) {
-				type = ct.getBaseComplexType().getQNameLocalPart();
+				type = ct.getBaseComplexType().getQNameLocalPart().replace(".",
+						"_");
 			} else {
 				type = String.format("%s.%s",
 						Util.capitalizePackageName(
 								ct.getBaseComplexType().getPackageName()),
-						ct.getBaseComplexType().getQNameLocalPart());
+						ct.getBaseComplexType().getQNameLocalPart().replace(".",
+								"_"));
 			}
 		} else if (ct.getTargetNamespace()
 				.equals(XsdsUtil.QNAME_BASE_SCHEMA_NAMESPACE_URI)
@@ -162,6 +164,7 @@ public class XsdToRaml {
 		List<ElementType> ets = xsd.getElementType();
 		List<ComplexType> cts = xsd.getComplexType();
 		boolean isLibrary = ets.isEmpty();
+		isLibrary = true;
 		String pathUp = getPathUp(xsd.getRelativeName());
 		String usage = Util.capitalizePackageName(xsd.getPackageName());
 		Map<String, String> uses = new TreeMap<>();
@@ -212,7 +215,7 @@ public class XsdToRaml {
 						}
 					});
 		}
-		if (ets.size() > 0) {
+		if (!isLibrary) {
 			ets.stream().filter(et -> et.isRequest()).forEach(et -> {
 				sb.append(getRamlOperation(et, usage, flattenQueryParameters,
 						xsds));
