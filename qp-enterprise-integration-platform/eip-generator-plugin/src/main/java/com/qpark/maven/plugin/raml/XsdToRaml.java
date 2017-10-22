@@ -199,7 +199,8 @@ public class XsdToRaml {
 						String name = ct.getQNameLocalPart();
 						String type = getDefinition(ct);
 
-						sb.append(String.format("  %s: \n", name));
+						sb.append(String.format("  %s: \n",
+								name.replace(".", "_")));
 						sb.append(String.format("    type: %s\n", type));
 						if (ct.getAnnotationDocumentationNormalised() != null
 								&& ct.getAnnotationDocumentationNormalised()
