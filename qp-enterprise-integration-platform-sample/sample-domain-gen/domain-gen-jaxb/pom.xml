@@ -40,7 +40,6 @@ Additionally to that a human readable version of the xsds is generated.
 
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
-		<raml.gen.dir>${project.build.directory}/generated-raml-sources</raml.gen.dir>
 		<domain.schema.location.prefix>http://www.samples.com/model, http://www.qpark.com/model</domain.schema.location.prefix>
 	</properties>
 	<build>
@@ -80,20 +79,6 @@ Additionally to that a human readable version of the xsds is generated.
 						<configuration>
 							<baseDirectory>${model.dir}</baseDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate raml</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>generate-raml</goal>
-						</goals>
-						<configuration>
-							<baseDirectory>${model.dir}</baseDirectory>
-							<basePackageName>${base.package.name}</basePackageName>
-							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
-							<modelVersion>${revision}</modelVersion>
-							<outputDirectory>${raml.gen.dir}</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -237,7 +222,6 @@ https://java.net/jira/browse/JAXB-486
 				<configuration>
 					<descriptors>
 						<descriptor>assembly-generated-java-sources.xml</descriptor>
-						<descriptor>assembly-generated-raml-sources.xml</descriptor>
 						<descriptor>assembly-generated-html-doc.xml</descriptor>
 					</descriptors>
 				</configuration>

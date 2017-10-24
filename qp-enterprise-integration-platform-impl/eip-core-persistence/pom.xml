@@ -84,7 +84,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.9.1</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -103,7 +102,6 @@
 			<plugin>
 				<groupId>org.jvnet.hyperjaxb3</groupId>
 				<artifactId>maven-hyperjaxb3-plugin</artifactId>
-				<version>0.6.0</version>
 				<executions>
 					<execution>
 						<id>generate-hyperjaxb3-sources</id>
