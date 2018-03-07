@@ -554,7 +554,7 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 	private List<FieldType> getFieldTypes(final ClusterType cluster,
 			final com.qpark.maven.xmlbeans.ComplexType element,
 			final String parentId) {
-		final List<FieldType> value = new ArrayList<FieldType>();
+		final List<FieldType> value = new ArrayList<>();
 		int sequenceNumber = 0;
 		for (final ComplexTypeChild child : element.getChildren()) {
 			final DataType dt = this.parseDataType(cluster,
@@ -632,13 +632,13 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 	private List<RequestResponseDataFieldContainer> getFlowRequestResponse(
 			final ComplexType ct, final String prefixIn, final String prefixOut,
 			final String modelVersion) {
-		final List<RequestResponseDataFieldContainer> requestResponses = new ArrayList<RequestResponseDataFieldContainer>();
+		final List<RequestResponseDataFieldContainer> requestResponses = new ArrayList<>();
 		RequestResponseDataFieldContainer rrf;
 		RequestResponseDataType requestResponse = null;
 		DataType request = null;
 		DataType response = null;
 		String name;
-		final Set<String> inChildrenFound = new TreeSet<String>();
+		final Set<String> inChildrenFound = new TreeSet<>();
 		for (final FieldType childOut : ct.getField()) {
 			if (childOut.getName().startsWith(prefixOut)) {
 				name = getFlowMethodName(childOut.getName(), prefixOut);
@@ -821,10 +821,27 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 		return value;
 	}
 
+	/**
+	 * @param ct
+	 * @param cluster
+	 * @return the UUID string.
+	 */
+	private String getDataTypeUUID(
+			final com.qpark.maven.xmlbeans.ComplexType ct,
+			final ClusterType cluster) {
+		return this.uuidProvider.getDataTypeUUID(ct.toQNameString(),
+				cluster != null ? cluster.getModelVersion()
+						: ct.getTargetNamespace());
+	}
+
 	private DataType parseDataType(final ClusterType cluster,
 			final com.qpark.maven.xmlbeans.ComplexType ct) {
-		final String elemId = this.uuidProvider
-				.getDataTypeUUID(ct.toQNameString(), cluster.getModelVersion());
+		if (Objects.isNull(cluster)) {
+			this.logger.info("ComplexType cluster null {} tns {}",
+					ct.getQNameLocalPart(), ct.getTargetNamespace());
+		}
+
+		final String elemId = this.getDataTypeUUID(ct, cluster);
 		DataType value = (DataType) this.analysis.get(elemId);
 
 		if (value != null) {
@@ -834,7 +851,7 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 				&& this.analysis.getDataType(ct.toQNameString()) == null) {
 			final DataType dt = this.of.createDataType();
 			dt.setName(ct.toQNameString());
-			this.setDataType(cluster.getModelVersion(), ct, dt);
+			this.setDataType("1.0", ct, dt);
 			this.uuidProvider.setUUID(dt);
 			this.enterprise.getBasicDataTypes().add(dt);
 		} else if (ct.isDefaultMappingType()) {
@@ -1012,8 +1029,7 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 
 	private void setFieldTypes(final ClusterType cluster,
 			final com.qpark.maven.xmlbeans.ComplexType ct) {
-		final String elemId = this.uuidProvider
-				.getDataTypeUUID(ct.toQNameString(), cluster.getModelVersion());
+		final String elemId = this.getDataTypeUUID(ct, cluster);
 		final DataType dt = (DataType) this.analysis.get(elemId);
 
 		final List<FieldType> fields = this.getFieldTypes(cluster, ct, elemId);
@@ -1137,7 +1153,7 @@ public class AnalysisProvider implements DataProviderModelAnalysis {
 		if (interfaceMappingIds.size() > 0) {
 			final Set<String> allIftIds = interfaceMappings.stream()
 					.map(ift -> ift.getId()).collect(Collectors.toSet());
-			final List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
+			final List<InterfaceMappingType> value = new ArrayList<>();
 			final Set<String> fieldDefinitionIds = new TreeSet<>();
 			interfaceMappings.stream().forEach(ift -> {
 				ift.getFieldMappings().stream().forEach(fm -> {
