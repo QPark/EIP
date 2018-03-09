@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
+import org.apache.xmlbeans.SchemaGlobalElement;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
@@ -1304,11 +1305,11 @@ public class XsdsUtil {
 				this.serviceIdRegistry.getAllServiceIds());
 
 		startX = System.currentTimeMillis();
-		List<ComplexType> synchronizedComplexTypeList = new CopyOnWriteArrayList<>();
-		List<ElementType> synchronizedElementTypeList = new CopyOnWriteArrayList<>();
+		final List<ElementType> synchronizedElementTypeList = new CopyOnWriteArrayList<>();
 		this.xsdFiles.stream().parallel().forEach(f -> {
-			long startf = System.currentTimeMillis();
-			SchemaTypeSystem sts = getSchemaTypeSystem(f, this.entityResolver);
+			final long startf = System.currentTimeMillis();
+			final SchemaTypeSystem sts = getSchemaTypeSystem(f,
+					this.entityResolver);
 			if (sts == null) {
 				throw new IllegalStateException(String.format(
 						"Could not parse a valid SchemaTypeSystem from file %s",
@@ -1316,30 +1317,19 @@ public class XsdsUtil {
 			}
 			Arrays.asList(sts.globalElements()).stream()
 					.forEach(elem -> synchronizedElementTypeList
-							.add(new ElementType(elem, this)));
-			Arrays.asList(sts.globalTypes()).stream().forEach(type -> {
-				if (!this.complexTypeMap
-						.containsKey(String.valueOf(type.getName()))) {
-					ComplexType ct = new ComplexType(type, this);
-					this.getXsdContainer(ct.getTargetNamespace())
-							.addComplexType(ct);
-					this.complexTypeMap
-							.put(String.valueOf(ct.getType().getName()), ct);
-					this.setupComplexTypes(ct, synchronizedComplexTypeList);
-				}
-			});
+							.add(this.createElementType(elem)));
+			Arrays.asList(sts.globalTypes()).stream()
+					.forEach(type -> this.createComplexType(type));
 			logger.debug("{} to get elements and complex type of file {}",
 					Util.getDuration(System.currentTimeMillis() - startf),
 					f.getAbsolutePath());
 		});
 		this.elementTypes.addAll(synchronizedElementTypeList);
-		this.elementTypes.stream().parallel().forEach(et -> this
-				.getXsdContainer(et.getTargetNamespace()).addElementType(et));
-		this.complexTypes.addAll(synchronizedComplexTypeList);
+		this.complexTypes.addAll(this.complexTypeMap.values());
 		logger.info(
 				"{} to get {} complexTypes and {} elementTypes out of {} files",
 				Util.getDuration(System.currentTimeMillis() - startX),
-				this.complexTypes.size(), this.elementTypes.size(),
+				this.complexTypeMap.size(), this.elementTypes.size(),
 				this.xsdFiles.size());
 
 		startX = System.currentTimeMillis();
@@ -1348,8 +1338,8 @@ public class XsdsUtil {
 		this.complexTypes.stream().parallel()
 				.filter(ct -> Objects.nonNull(ct.getType())).forEach(ct -> {
 					ct.initChildren(this);
-					this.complexTypeMap
-							.put(String.valueOf(ct.getType().getName()), ct);
+					// this.complexTypeMap
+					// .put(String.valueOf(ct.getType().getName()), ct);
 				});
 		logger.debug("{} to init complexType children",
 				Util.getDuration(System.currentTimeMillis() - startX));
@@ -1405,6 +1395,37 @@ public class XsdsUtil {
 			});
 			this.setupBaseComplexTypeFieldDocumentation(base);
 		}
+	}
+
+	/**
+	 * Creates the {@link ComplexType}. First the parents, than itself.
+	 *
+	 * @param type
+	 *            the {@link SchemaType}.
+	 */
+	private void createComplexType(final SchemaType type) {
+		if (Objects.nonNull(type.getBaseType())
+				&& !type.getBaseType().isPrimitiveType()
+				&& !type.getBaseType().isSimpleType()
+				&& !this.complexTypeMap.containsKey(
+						String.valueOf(type.getBaseType().getName()))) {
+			this.createComplexType(type.getBaseType());
+		}
+		if (!this.complexTypeMap.containsKey(String.valueOf(type.getName()))) {
+			ComplexType ct = new ComplexType(type, this);
+			this.complexTypeMap.put(String.valueOf(ct.getType().getName()), ct);
+		}
+	}
+
+	/**
+	 * Creates the {@link ElementType}.
+	 *
+	 * @param elem
+	 *            SchemaGlobalElement
+	 * @return the {@link ElementType}.
+	 */
+	private ElementType createElementType(final SchemaGlobalElement elem) {
+		return new ElementType(elem, this);
 	}
 
 	/**
@@ -1514,13 +1535,5 @@ public class XsdsUtil {
 	 */
 	public List<File> getXsdFiles() {
 		return this.xsdFiles;
-	}
-
-	private void setupComplexTypes(final ComplexType ct,
-			final List<ComplexType> complexTypeList) {
-		complexTypeList.add(ct);
-		for (ComplexType ctx : ct.getInnerTypeDefs()) {
-			this.setupComplexTypes(ctx, complexTypeList);
-		}
 	}
 }
