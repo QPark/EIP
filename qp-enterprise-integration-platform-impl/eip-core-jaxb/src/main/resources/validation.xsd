@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+	xmlns:Validation="http://www.qpark.com/ValidationMessages-1.0"
+	targetNamespace="http://www.qpark.com/ValidationMessages-1.0"
+>
+	<import schemaLocation="collected-schemas.xsd"/>
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.core.jaxb.validation"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+	</annotation>
+
+	<complexType name="RootElementType">
+		<sequence>
+			<element name="element" type="anyType"></element>
+		</sequence>
+	</complexType>
+	<element name="RootElement" type="Validation:RootElementType"/>
+</schema>
