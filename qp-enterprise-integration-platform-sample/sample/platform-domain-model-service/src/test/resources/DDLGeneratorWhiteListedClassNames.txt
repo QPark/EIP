@@ -1,4 +1,0 @@
-com.qpark.eip.model.common.AssetType
-com.qpark.eip.model.common.EntityType
-com.samples.platform.model.library.BookType
-com.samples.platform.model.library.LibraryType

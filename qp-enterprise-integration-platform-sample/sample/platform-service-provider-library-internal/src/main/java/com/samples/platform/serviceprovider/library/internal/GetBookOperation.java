@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.samples.platform.serviceprovider.library.internal;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBElement;
@@ -53,7 +54,7 @@ public class GetBookOperation {
 		GetBookResponseType response = this.of.createGetBookResponseType();
 		long start = System.currentTimeMillis();
 		try {
-			if (request.getCriteria().isSetISBN()) {
+			if (Objects.nonNull(request.getCriteria().getISBN())) {
 				response.getBook().add(this.dao
 						.getBookByISBN(request.getCriteria().getISBN()));
 			} else if (request.getCriteria().getId().size() > 0) {
