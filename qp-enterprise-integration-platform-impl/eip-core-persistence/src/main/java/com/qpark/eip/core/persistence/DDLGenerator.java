@@ -1,11 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2013 - 2017 QPark Consulting  S.a r.l.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
- * http://www.eclipse.org/legal/epl-v10.html.
- ******************************************************************************/
 package com.qpark.eip.core.persistence;
 
 import java.io.File;
@@ -25,9 +17,6 @@ import javax.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author bhausen
- */
 public class DDLGenerator {
 	private static final String DEFAULT_PERSISTENCE_UNIT_NAME = "com.qpark.eip.core.persistence.ddl";
 
@@ -103,7 +92,7 @@ public class DDLGenerator {
 		}
 	}
 
-	private static String getPersistence21XmlBegin(
+	private static String getPersistenceXmlBegin(
 			final String resultingPersistenceUnitName) {
 		StringBuffer sb = new StringBuffer(1024);
 		sb.append(
@@ -118,29 +107,6 @@ public class DDLGenerator {
 				"\t\thttp://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd\n");
 		sb.append(
 				"\t\thttp://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd\n");
-		sb.append("\t\" \n");
-		sb.append(">\n");
-		sb.append("\t<persistence-unit name=\"");
-		sb.append(resultingPersistenceUnitName);
-		sb.append("\" transaction-type=\"RESOURCE_LOCAL\">\n");
-		return sb.toString();
-	}
-
-	private static String getPersistence20XmlBegin(
-			final String resultingPersistenceUnitName) {
-		StringBuffer sb = new StringBuffer(1024);
-		sb.append(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
-		sb.append(
-				"<persistence version=\"2.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-		sb.append("\txmlns=\"http://java.sun.com/xml/ns/persistence\" \n");
-		sb.append(
-				"\txmlns:orm=\"http://java.sun.com/xml/ns/persistence/orm\" \n");
-		sb.append("\txsi:schemaLocation=\"\n");
-		sb.append(
-				"\t\thttp://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd\n");
-		sb.append(
-				"\t\thttp://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd\n");
 		sb.append("\t\" \n");
 		sb.append(">\n");
 		sb.append("\t<persistence-unit name=\"");
@@ -201,7 +167,7 @@ public class DDLGenerator {
 		try (Scanner scanner = new Scanner(
 				DDLGenerator.class.getResourceAsStream(
 						"/DDLGeneratorWhiteListedClassNames.txt"));) {
-			List<String> whiteList = new ArrayList<>();
+			List<String> whiteList = new ArrayList<String>();
 			while (scanner.hasNextLine()) {
 				String content = scanner.nextLine();
 				if (content != null && content.trim().length() > 0) {
@@ -266,7 +232,7 @@ public class DDLGenerator {
 	private String resultingPersistenceUnitName = DEFAULT_PERSISTENCE_UNIT_NAME;
 
 	/** A list of classes, which should occur in the generated DDL. */
-	private final List<String> whiteList = new ArrayList<>();
+	private final List<String> whiteList = new ArrayList<String>();
 
 	public DDLGenerator() {
 	}
@@ -303,36 +269,7 @@ public class DDLGenerator {
 				}
 			}
 			if (sb.length() > 0) {
-				sb.insert(0, DDLGenerator.getPersistence21XmlBegin(
-						this.resultingPersistenceUnitName));
-				sb.append(DDLGenerator.getPersistenceXmlEnd());
-			}
-		}
-		return sb.toString();
-	}
-
-	public String createPersistence20Xml(final String... persistenceUnitNames) {
-		StringBuffer sb = new StringBuffer(1024);
-		if (persistenceUnitNames != null) {
-			String location;
-			String classes;
-			for (String persistenceXmlLocation : persistenceUnitNames) {
-				location = toPersistenceXmlLocation(persistenceXmlLocation);
-				logger.info("Search for {} (mapped from {})", location,
-						persistenceXmlLocation);
-				try (InputStream is = this.getClass()
-						.getResourceAsStream(location)) {
-					classes = DDLGenerator.getPersistenceXmlClasses(is,
-							this.whiteList);
-					sb.append(classes);
-				} catch (Exception e) {
-					logger.error("Searched for {}: ", location,
-							persistenceXmlLocation);
-					e.printStackTrace();
-				}
-			}
-			if (sb.length() > 0) {
-				sb.insert(0, DDLGenerator.getPersistence20XmlBegin(
+				sb.insert(0, DDLGenerator.getPersistenceXmlBegin(
 						this.resultingPersistenceUnitName));
 				sb.append(DDLGenerator.getPersistenceXmlEnd());
 			}
@@ -388,18 +325,13 @@ public class DDLGenerator {
 				"drop-and-create");
 		properties.setProperty(
 				"javax.persistence.schema-generation.scripts.drop-target",
-				d.getAbsolutePath());
+				c.getAbsolutePath());
 		properties.setProperty(
 				"javax.persistence.schema-generation.scripts.create-target",
-				c.getAbsolutePath());
+				d.getAbsolutePath());
 
 		// org.eclipse.persistence.config.PersistenceUnitProperties pup;
-
-		properties.setProperty(
-				"javax.persistence.schema-generation.create-source",
-				"script-then-metadata");
-		properties.setProperty("eclipselink.ddl-generation.index-foreign-keys",
-				"true");
+		properties.put("eclipselink.ddl-generation.index-foreign-keys", "true");
 
 		Persistence.generateSchema(this.resultingPersistenceUnitName,
 				properties);

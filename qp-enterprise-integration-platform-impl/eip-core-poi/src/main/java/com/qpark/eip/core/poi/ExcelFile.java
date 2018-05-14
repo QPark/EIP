@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * The excel file.
@@ -69,12 +70,43 @@ public class ExcelFile {
 	}
 
 	/**
+	 * Get the file of the excel.
+	 *
+	 * @param directoryName
+	 * @param baseName
+	 * @return <datetime>-<baseName>.xls
+	 */
+	public static File getFile(final String directoryName,
+			final String baseName) {
+		File f = new File(String.format("%s%s%s-%s.xls", directoryName,
+				File.separator,
+				new SimpleDateFormat("yyyyMMdd'-'HHmm").format(new Date()),
+				baseName));
+		if (!f.getParentFile().exists()) {
+			f.getParentFile().mkdirs();
+		}
+		return f;
+	}
+
+	/**
 	 * Get the file name of the excel file.
 	 *
 	 * @param baseName
 	 * @return <datetime>-<baseName>.xls
 	 */
 	public static String getFileName(final String baseName) {
+		return String.format("%s-%s.xls",
+				new SimpleDateFormat("yyyyMMdd'-'HHmm").format(new Date()),
+				baseName);
+	}
+
+	/**
+	 * Get the file name of the excel file.
+	 *
+	 * @param baseName
+	 * @return <datetime>-<baseName>.xls
+	 */
+	public static String getTargetFileName(final String baseName) {
 		return String.format("target%s%s-%s.xls", File.separator,
 				new SimpleDateFormat("yyyyMMdd'-'HHmm").format(new Date()),
 				baseName);
@@ -90,6 +122,7 @@ public class ExcelFile {
 	private final HSSFCellStyle headerStyle;
 	/** The list of assigned sheets. */
 	private final List<Sheet<?>> sheets = new ArrayList<>();
+
 	/** The {@link HSSFWorkbook}. */
 	private final HSSFWorkbook workbook;
 
@@ -118,6 +151,7 @@ public class ExcelFile {
 		this.bodyStyle.setBorderLeft(CellStyle.BORDER_THIN);
 
 		this.bodyStyleTextWrapped = this.workbook.createCellStyle();
+		this.bodyStyleTextWrapped.cloneStyleFrom(this.bodyStyle);
 		this.bodyStyleTextWrapped.setWrapText(true);
 	}
 
@@ -127,6 +161,33 @@ public class ExcelFile {
 	 */
 	public void addSheet(final Sheet<?> sheet) {
 		this.sheets.add(sheet);
+	}
+
+	/**
+	 * Clone the style of {@link #getBodyStyle()} and set wrapped text to true
+	 * for this one.
+	 *
+	 * @return the cloned {@link CellStyle}.
+	 */
+	public CellStyle cloneCellStyleWrappedText() {
+		CellStyle style = this.workbook.createCellStyle();
+		style.cloneStyleFrom(this.getBodyStyle());
+		style.setWrapText(true);
+		return style;
+	}
+
+	/**
+	 * Clone the given style and set wrapped text to true for this one.
+	 *
+	 * @param baseStyle
+	 *            the {@link CellStyle} to clone.
+	 * @return the cloned {@link CellStyle}.
+	 */
+	public CellStyle cloneCellStyleWrappedText(final CellStyle baseStyle) {
+		CellStyle style = this.workbook.createCellStyle();
+		style.cloneStyleFrom(baseStyle);
+		style.setWrapText(true);
+		return style;
 	}
 
 	/**
@@ -197,6 +258,12 @@ public class ExcelFile {
 		return this.workbook.createSheet(name);
 	}
 
+	/** Call {@link Sheet#finish()} on every {@link Sheet}. */
+	public void finishSheets() {
+		this.sheets.stream().filter(sheet -> Objects.nonNull(sheet))
+				.forEach(sheet -> sheet.finish());
+	}
+
 	/**
 	 * @return the bodyStyle {@link HSSFCellStyle}
 	 */
@@ -226,6 +293,13 @@ public class ExcelFile {
 	}
 
 	/**
+	 * @return the sheets.
+	 */
+	public List<Sheet<?>> getSheets() {
+		return this.sheets;
+	}
+
+	/**
 	 * @return the {@link HSSFWorkbook}
 	 */
 	public HSSFWorkbook getWorkbook() {
@@ -235,23 +309,35 @@ public class ExcelFile {
 	/**
 	 * Write workbook
 	 *
+	 * @param f
+	 *            the {@link File} to write the {@link Workbook} to.
+	 */
+	public void writeWorkbook(final File f) {
+		if (Objects.nonNull(f)) {
+			this.sheets.stream().filter(sheet -> Objects.nonNull(sheet))
+					.forEach(sheet -> sheet.finish());
+			try {
+				if (!f.exists()) {
+					f.getParentFile().mkdirs();
+					f.createNewFile();
+				}
+				try (FileOutputStream fis = new FileOutputStream(f)) {
+					this.workbook.write(fis);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Write workbook
+	 *
 	 * @param baseName
 	 */
 	public void writeWorkbook(final String baseName) {
 		String fileName = getFileName(baseName);
-		this.sheets.stream().filter(sheet -> Objects.nonNull(sheet))
-				.forEach(sheet -> sheet.finish());
-		try {
-			File f = new File(fileName);
-			if (!f.exists()) {
-				f.getParentFile().mkdirs();
-				f.createNewFile();
-			}
-			try (FileOutputStream fis = new FileOutputStream(f)) {
-				this.workbook.write(fis);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		File f = new File(fileName);
+		this.writeWorkbook(f);
 	}
 }
