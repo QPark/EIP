@@ -107,6 +107,14 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "additionalWebappFilter", defaultValue = "")
 	private String additionalWebappFilter;
+	/**
+	 * The location, where the xsds could be found. Defaults to
+	 * <code>/WEB-INF/classes</code>.
+	 */
+	@Parameter(property = "servletXsdLocation",
+			defaultValue = "/WEB-INF/classes")
+	private String servletXsdLocation;
+
 	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
 	protected MojoExecution execution;
 
@@ -145,7 +153,8 @@ public class GeneratorMojo extends AbstractMojo {
 				this.disableWebservicePayloadValidation,
 				this.webservicePayloadLoggerImplementation,
 				this.additionalWebservicePayloadInterceptors,
-				this.outputDirectory, this.project, eipVersion, this.getLog());
+				this.servletXsdLocation, this.outputDirectory, this.project,
+				eipVersion, this.getLog());
 		wsx.generate();
 
 		this.getLog().debug("-execute");

@@ -39,6 +39,7 @@ public class WsServletXmlGenerator {
 	private final String additionalWebservicePayloadInterceptors;
 	private final String webservicePayloadLoggerImplementation;
 	private final boolean disableWebservicePayloadValidation;
+	private final String servletXsdLocation;
 	private final MavenProject project;
 	private final String eipVersion;
 
@@ -54,7 +55,7 @@ public class WsServletXmlGenerator {
 	}
 
 	private List<String> getAdditionalWebservicePayloadInterceptors() {
-		final List<String> beanIds = new ArrayList<String>();
+		final List<String> beanIds = new ArrayList<>();
 		if (this.additionalWebservicePayloadInterceptors != null) {
 			final String[] ss = this.additionalWebservicePayloadInterceptors
 					.split("id=\\\"");
@@ -70,18 +71,31 @@ public class WsServletXmlGenerator {
 
 	/**
 	 * @param config
-	 * @param elementTypes
+	 * @param basePackageName
+	 * @param serviceId
+	 * @param disableWebservicePayloadValidation
+	 * @param webservicePayloadLoggerImplementation
+	 * @param additionalWebservicePayloadInterceptors
+	 * @param xsdLocation
+	 * @param outputDirectory
+	 * @param project
+	 * @param eipVersion
+	 * @param log
 	 */
 	public WsServletXmlGenerator(final XsdsUtil config,
 			final String basePackageName, final String serviceId,
 			final boolean disableWebservicePayloadValidation,
 			final String webservicePayloadLoggerImplementation,
 			final String additionalWebservicePayloadInterceptors,
-			final File outputDirectory, final MavenProject project,
-			final String eipVersion, final Log log) {
+			final String xsdLocation, final File outputDirectory,
+			final MavenProject project, final String eipVersion,
+			final Log log) {
 		this.config = config;
 		this.basePackageName = basePackageName;
 		this.serviceId = serviceId == null ? "" : serviceId;
+		this.servletXsdLocation = xsdLocation == null
+				|| xsdLocation.trim().length() == 0 ? "/WEB-INF/classes"
+						: xsdLocation;
 		this.outputDirectory = outputDirectory;
 		this.project = project;
 		this.log = log;
@@ -270,14 +284,16 @@ public class WsServletXmlGenerator {
 						.getServiceIdEntry(sid);
 				final XsdContainer xc = this.config
 						.getXsdContainer(entry.getTargetNamespace());
-				sb.append("\t\t\t\t<value>/WEB-INF/classes");
+				sb.append("\t\t\t\t<value>");
+				sb.append(this.servletXsdLocation);
 				sb.append(Util.getRelativePathTranslated(
 						this.config.getBaseDirectory(), xc.getFile()));
 				sb.append("</value>\n");
 			}
 		} else {
 			for (final File f : this.config.getXsdFiles()) {
-				sb.append("\t\t\t\t<value>/WEB-INF/classes");
+				sb.append("\t\t\t\t<value>");
+				sb.append(this.servletXsdLocation);
 				sb.append(Util.getRelativePathTranslated(
 						this.config.getBaseDirectory(), f));
 				sb.append("</value>\n");

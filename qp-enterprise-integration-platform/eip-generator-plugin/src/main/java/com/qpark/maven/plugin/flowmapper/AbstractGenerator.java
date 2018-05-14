@@ -9,6 +9,7 @@
 package com.qpark.maven.plugin.flowmapper;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -32,13 +33,6 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public abstract class AbstractGenerator {
-	/**
-	 * Adds the {@link Class} of fqName to the list of imports.
-	 *
-	 * @param fqName
-	 * @param imports
-	 * @param importClasses
-	 */
 	public static void addImport(final String fqName, final Set<String> imports,
 			final Set<String> importClasses) {
 		int index = fqName.lastIndexOf('.');
@@ -52,11 +46,6 @@ public abstract class AbstractGenerator {
 		}
 	}
 
-	/**
-	 * @param children
-	 * @return <code>true</code>, if {@link List} needs to be imported, or
-	 *         <code>false</code>, if not.
-	 */
 	public static boolean isChildListImport(
 			final List<ComplexTypeChild> children) {
 		boolean value = children.stream().filter(ctc -> ctc.isList())
@@ -64,11 +53,6 @@ public abstract class AbstractGenerator {
 		return value;
 	}
 
-	/**
-	 * @param childrenTree
-	 * @return <code>true</code>, if {@link List} needs to be imported, or
-	 *         <code>false</code>, if not.
-	 */
 	public static boolean isListImport(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
 		boolean value = childrenTree.stream()
@@ -78,17 +62,22 @@ public abstract class AbstractGenerator {
 		return value;
 	}
 
-	@SuppressWarnings("unused")
 	public static void main(final String[] args) {
-		String basePackageName = "com.qpark.eip.inf";
 		String xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\bus.app.cpo\\cpo-model-service\\target\\model";
 		File dif = new File(xsdPath);
-		String messagePackageNameSuffix = "mapping flow";
 		long start = System.currentTimeMillis();
-		XsdsUtil xsds = XsdsUtil.getInstance(dif, "a.b.c.bus",
-				messagePackageNameSuffix, "delta");
+		String basePackageName = "com.qpark.eip.inf";
+		String mappingPackageNameSuffixes = "map svc flow";
+		String mappingRequestSuffix = "Request";
+		String mappingResponseSuffix = "Response";
+
+		basePackageName = "com.ses.osp.bus";
+		XsdsUtil config = XsdsUtil.getInstance(dif, basePackageName,
+				mappingPackageNameSuffixes, null, mappingRequestSuffix,
+				mappingResponseSuffix);
 		ComplexContentList complexContentList = new ComplexContentList();
-		complexContentList.setupComplexContentLists(xsds);
+		complexContentList.setupComplexContentLists(config);
 		System.out
 				.println(Util.getDuration(System.currentTimeMillis() - start));
 
@@ -101,27 +90,31 @@ public abstract class AbstractGenerator {
 		String ctName;
 		SystemStreamLog log = new org.apache.maven.plugin.logging.SystemStreamLog();
 
-		ctName = "ApplicationUserLog.networkLongToDoubleTabularMappingType";
-		ctNamespace = "http://www.samples.com/Interfaces/TechnicalSupportMappingTypes";
+		ctName = "Beam.nameMappingType";
+		ctNamespace = "http://www.ses.com/Interfaces/SatelliteMappingTypes-2.0";
+		complexContentList.getDirectMappings().stream()
+				.sorted(Comparator.comparing(ComplexContent::getFQInterfaceName)
+						.thenComparing(ComplexContent::getInterfaceName))
+				.forEach(dm -> System.out.println(dm.qName.toString()));
+
+		ct = config.getComplexType(new QName(ctNamespace, ctName));
+		type = ct.getType().getElementProperties()[0].getType();
+		cc = complexContentList.getComplexContent(ctNamespace, ctName);
+		System.out.println(cc.ct.toQNameString());
+		DirectMappingTypeGenerator mapper = new DirectMappingTypeGenerator(
+				config, basePackageName, cc, complexContentList, eipVersion,
+				dif, dif, log);
+		source = mapper.generateImplContent();
 
 		// ct = xsds.getComplexType(new QName(ctNamespace, ctName));
 		// type = ct.getType().getElementProperties()[0].getType();
 		// cc = complexContentList.getComplexContent(ctNamespace, ctName);
 		//
-		// DirectMappingTypeGenerator mapper = new
-		// DirectMappingTypeGenerator(xsds,
-		// basePackageName, cc, complexContentList, eipVersion, dif, dif,
-		// log);
-		// source = mapper.generateImplContent();
-
-		ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-		cc = complexContentList.getComplexContent(ctNamespace, ctName);
-
-		TabularMappingTypeGenerator directMapper = new TabularMappingTypeGenerator(
-				xsds, basePackageName, cc, complexContentList, ctName, dif, dif,
-				new org.apache.maven.plugin.logging.SystemStreamLog());
-		source = directMapper.generateImplContent();
+		// TabularMappingTypeGenerator directMapper = new
+		// TabularMappingTypeGenerator(
+		// config, basePackageName, cc, complexContentList, ctName, dif, dif,
+		// new org.apache.maven.plugin.logging.SystemStreamLog());
+		// source = directMapper.generateImplContent();
 		System.out.println(source);
 	}
 
@@ -332,8 +325,8 @@ public abstract class AbstractGenerator {
 	protected Set<String> getImplImports(
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree,
 			final String... mandatoryImports) {
-		Set<String> imports = new TreeSet<String>();
-		Set<String> importClasses = new TreeSet<String>();
+		Set<String> imports = new TreeSet<>();
+		Set<String> importClasses = new TreeSet<>();
 
 		Stream.of(mandatoryImports)
 				.forEach(mandatoryImport -> addImport(mandatoryImport, imports,
@@ -358,8 +351,8 @@ public abstract class AbstractGenerator {
 	protected Set<String> getInterfaceImports(
 			final List<ComplexTypeChild> children,
 			final String... mandatoryImports) {
-		Set<String> imports = new TreeSet<String>();
-		Set<String> importClasses = new TreeSet<String>();
+		Set<String> imports = new TreeSet<>();
+		Set<String> importClasses = new TreeSet<>();
 
 		Stream.of(mandatoryImports)
 				.forEach(mandatoryImport -> addImport(mandatoryImport, imports,
@@ -400,7 +393,7 @@ public abstract class AbstractGenerator {
 			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> children,
 			final Set<String> importedClasses) {
 		StringBuffer sb = new StringBuffer(1024);
-		TreeSet<String> usedInterfaces = new TreeSet<String>();
+		TreeSet<String> usedInterfaces = new TreeSet<>();
 		children.stream().forEach(
 				child -> child.getValue().stream().forEach(grandchild -> {
 					ComplexContent cc = this
