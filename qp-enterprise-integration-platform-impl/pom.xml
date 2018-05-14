@@ -13,19 +13,20 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>3.8.6</version><!--qpark-eip-version-->
+		<version>3.9.0RC</version><!--qpark-eip-version-->
 		<relativePath/>
 	</parent>
 
 
 	<groupId>com.qpark.eip.core</groupId>
 	<artifactId>eip-base</artifactId>
-	<version>3.8.6</version><!--qpark-eip-version-->
+	<version>3.9.0RC</version><!--qpark-eip-version-->
 	<packaging>pom</packaging>
 	<name>eip-base</name>
 
 	<modules>
 		<module>eip-core</module>
+		<module>eip-core-jaxb</module>
 		<module>eip-core-failurehandler-model</module>
 		<module>eip-core-failurehandler</module>
 		<module>eip-core-logback</module>

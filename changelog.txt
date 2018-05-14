@@ -1,15 +1,16 @@
 Changelog:
 
-3.6.9 SNAPSHOT
+3.9.0 201805**
 Proven to work with maven 3.5.0
 Persistence: DDLGenerator fixed
 Added Complex- and ElementType to XsdContainer
+Added eip-core-jaxb
 Flow: DirectMapper impl provides default values
 Flow: Log level of file creation set to trace
 Core: Persistence - scaled BigDecimal with RoundingMode
 Some tiny bugfixes and documentation
 
-3.6.8 20170613
+3.8.6 20170613
 Flow Generator: Handling Default values
 Impl POI: Minor enhancements
 Generators: Added mvc dispatch servlet to web.xml

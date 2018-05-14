@@ -13,13 +13,13 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>3.8.6</version><!--qpark-eip-version-->
+		<version>3.9.0RC</version><!--qpark-eip-version-->
 		<relativePath/>
 	</parent>
 
 	<groupId>com.samples.domain.gen</groupId>
 	<artifactId>domain-gen-jaxb</artifactId>
-	<version>3.8.6</version><!--qpark-eip-version-->
+	<version>3.9.0RC</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<name>domain-gen-jaxb</name>
 	<description>
@@ -72,7 +72,7 @@ Additionally to that a human readable version of the xsds is generated.
 					</execution>
 					<execution>
 						<id>generate integration gateways</id>
-						<phase>generate-sources</phase>
+						<phase>generate-resources</phase>
 						<goals>
 							<goal>generate-integration-java</goal>
 						</goals>
@@ -82,8 +82,30 @@ Additionally to that a human readable version of the xsds is generated.
 						</configuration>
 					</execution>
 					<execution>
+						<id>make schemalocations absolute</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>webapp-schemalocation</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${project.build.directory}/model-absolute</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>create collection schema</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate-collected-schemas</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${project.build.directory}/model-absolute</baseDirectory>
+							<outputDirectory>${project.build.directory}/model-absolute</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>generate model analysis</id>
-						<phase>generate-resources</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>generate-model-analysis</goal>
 						</goals>
@@ -92,7 +114,7 @@ Additionally to that a human readable version of the xsds is generated.
 							<basePackageName>${base.package.name}</basePackageName>
 							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
 							<modelVersion>${revision}</modelVersion>
-							<outputDirectory>${java.gen.dir}</outputDirectory>
+							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -192,24 +214,6 @@ https://java.net/jira/browse/JAXB-486
 				</executions>
 			</plugin>
      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0.0</version>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>read-project-properties</goal>
-            </goals>
-            <configuration>
-              <files>
-                <file>${model.dir}/domain-build.properties</file>
-              </files>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
@@ -223,6 +227,7 @@ https://java.net/jira/browse/JAXB-486
 					<descriptors>
 						<descriptor>assembly-generated-java-sources.xml</descriptor>
 						<descriptor>assembly-generated-html-doc.xml</descriptor>
+						<descriptor>assembly-xsds-sources.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
@@ -246,6 +251,14 @@ https://java.net/jira/browse/JAXB-486
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

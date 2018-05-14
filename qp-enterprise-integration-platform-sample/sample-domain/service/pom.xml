@@ -13,13 +13,13 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>3.8.6</version><!--qpark-eip-version-->
+		<version>3.9.0RC</version><!--qpark-eip-version-->
 		<relativePath/>
 	</parent>
 
 	<groupId>com.samples.domain</groupId>
 	<artifactId>service</artifactId>
-	<version>3.8.6</version><!--qpark-eip-version-->
+	<version>3.9.0RC</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<name>service</name>
 	<description>The XML Schema definition of the domain services</description>
@@ -31,12 +31,20 @@
 	
  <build>
     <plugins>
-      <plugin>
+      <!--plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
         <version>1.4</version>
         <executions>
           <execution>
+						<id>buildnumber-first</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>buildmetadata</id>
             <phase>validate</phase>
             <goals>
               <goal>create-metadata</goal>
@@ -45,7 +53,6 @@
         </executions>
         <configuration>
 					<attach>true</attach>
-          <!--make it available for jar/war classpath resource -->
           <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
           <outputName>domain-build.properties</outputName>	
           <revisionOnScmFailure>SCM version not detectable</revisionOnScmFailure>
@@ -54,8 +61,40 @@
 					<providerImplementations>
             <svn>javasvn</svn>
           </providerImplementations>
+					<timezone>UTC</timezone>
           </configuration>
-      </plugin>
+      </plugin-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/../model/src/main/resources</source>
+								<source>${project.basedir}/src/main/resources</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
     </plugins>
   </build>	
 

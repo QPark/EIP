@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.8.6</version><!--qpark-eip-version-->
+		<version>3.9.0RC</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -29,7 +29,6 @@
 		<service.final.name>${bus.war.prefix}${service.application.name}-${service.name}</service.final.name>
 		<service.war.name>${service.final.name}-${project.version}</service.war.name>
 		<model.dir>${project.build.directory}/model</model.dir>
-		<model.dir.condensed>${project.build.directory}/model-condensed</model.dir.condensed>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<router.definition.dir>${project.build.directory}/classes/router/definition</router.definition.dir>
 	</properties>
@@ -127,7 +126,7 @@ WEB-INF/lib/xws-security-3.0.jar
 								<artifactItem>
 									<groupId>com.qpark.maven</groupId>
 									<artifactId>eip-model-analysis</artifactId>
-									<version>3.8.6</version><!--qpark-eip-version-->
+									<version>3.9.0RC</version><!--qpark-eip-version-->
 									<classifier>xsds</classifier>
 									<type>zip</type>
 									<outputDirectory>${model.dir}</outputDirectory>
@@ -141,7 +140,7 @@ WEB-INF/lib/xws-security-3.0.jar
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
 				<executions>
-					<execution>
+					<!--execution>
 						<id>condense service schemas</id>
 						<phase>process-sources</phase>
 						<goals>
@@ -153,7 +152,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<basePackageName>${base.package.name}</basePackageName>
 							<serviceId>${eip.service.ids}</serviceId>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>generate mock operation providers</id>
 						<phase>process-sources</phase>
@@ -188,8 +187,8 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>relative-schemalocation</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir.condensed}</baseDirectory>
-							<outputDirectory>${project.build.directory}/classes</outputDirectory>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${project.build.directory}/classes/xsds</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -199,7 +198,7 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>webapp-schemalocation</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir.condensed}</baseDirectory>
+							<baseDirectory>${model.dir}</baseDirectory>
 							<outputDirectory>${project.build.directory}/${service.final.name}</outputDirectory>
 						</configuration>
 					</execution>
@@ -210,8 +209,9 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>generate-servlet-config</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir.condensed}</baseDirectory>
+							<baseDirectory>${model.dir}</baseDirectory>
 							<outputDirectory>${project.build.directory}/${service.final.name}/WEB-INF</outputDirectory>
+							<servletXsdLocation>/WEB-INF/classes/xsds</servletXsdLocation>
 							<basePackageName>${base.package.name}</basePackageName>
 							<serviceId>${eip.service.ids}</serviceId>
 							<serviceVersion>${project.version}</serviceVersion>
@@ -238,9 +238,10 @@ WEB-INF/lib/xws-security-3.0.jar
 							<goal>generate-spring-config</goal>
 						</goals>
 						<configuration>
-							<baseDirectory>${model.dir.condensed}</baseDirectory>
+							<baseDirectory>${model.dir}</baseDirectory>
 							<outputDirectory>${project.build.directory}/${service.final.name}/WEB-INF/classes</outputDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
+							<revisionNumber>${application.revision}</revisionNumber>
 							<serviceId>${eip.service.ids}</serviceId>
 							<serviceVersion>${project.version}</serviceVersion>
 							<warName>${service.war.name}</warName>
@@ -270,13 +271,15 @@ WEB-INF/lib/xws-security-3.0.jar
 						</configuration>
 					</execution>
 					<execution>
-						<id>generate model analysis description</id>
+						<id>generate model analysis</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>generate-model-analysis</goal>
 						</goals>
 						<configuration>
 							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
 							<outputDirectory>${project.build.directory}/${service.final.name}/WEB-INF/classes</outputDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
 							<serviceId>${eip.service.ids}</serviceId>
@@ -286,47 +289,24 @@ WEB-INF/lib/xws-security-3.0.jar
 					</execution>
 				</executions>
 			</plugin>
-                       <plugin>
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>buildnumber-maven-plugin</artifactId>
-                                <executions>
-                                        <execution>
-                                                <id>buildnumber-create</id>
-                                                <phase>validate</phase>
-                                                <goals>
-                                                        <goal>create</goal>
-                                                </goals>
-                                        </execution>
-                                        <execution>
-                                                <id>buildmetadata</id>
-                                                <phase>validate</phase>
-                                                <goals>
-                                                        <goal>create-metadata</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                                <configuration>
-                                        <attach>true</attach>
-                                        <doUpdate>false</doUpdate>
-                                        <!--providerImplementations>
-                                                <svn>javasvn</svn>
-                                        </providerImplementations-->
-                                        <outputName>${base.package.name}.version.properties</outputName>
-                                        <addOutputDirectoryToResources>true</addOutputDirectoryToResources>
-                                        <buildNumberPropertyName>application.revision</buildNumberPropertyName>
-                                        <revisionPropertyName>application.scm.revision</revisionPropertyName>
-                                        <applicationPropertyName>application.artefact.name</applicationPropertyName>
-                                        <versionPropertyName>application.version</versionPropertyName>
-                                        <scmBranchPropertyName>application.scm.branch</scmBranchPropertyName>
-                                        <properties>
-                                                <application.scm.branch>${application.scm.branch}</application.scm.branch>
-                                        </properties>
-                                        <timestampPropertyName>application.build.timestamp</timestampPropertyName>
-                                        <timezone>UTC</timezone>
-                                        <timestampFormat>yyyy-MM-dd'T'HH:mm:ss</timestampFormat>
-                                        <revisionOnScmFailure>SCM version not detectable</revisionOnScmFailure>
-                                </configuration>
-                        </plugin>
+			<!--
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>buildnumber-first</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doUpdate>true</doUpdate>
+				</configuration>
+			</plugin>
+			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>

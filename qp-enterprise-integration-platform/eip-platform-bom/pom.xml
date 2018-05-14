@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom</artifactId>
-	<version>3.8.6</version><!--qpark-eip-version-->
+	<version>3.9.0RC</version><!--qpark-eip-version-->
 	<packaging>pom</packaging>
 	<name>eip-platform-bom</name>
 	<description>EIP IO Platform bill of materials</description>
@@ -45,7 +45,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<qpark-eip-version>${project.version}</qpark-eip-version>
-		
+
 		<io.spring.platform.version>1.1.4.RELEASE</io.spring.platform.version>
 
 		<javax.javaee-api>7.0</javax.javaee-api>
@@ -95,73 +95,83 @@
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-plugin-xml</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-model-analysis</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-hyperjaxb3-naming</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-failurehandler</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-logback</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
-			</dependency>
-			<dependency>
-				<groupId>com.qpark.eip.core</groupId>
-				<artifactId>eip-core-persistence</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
-			</dependency>
-			<dependency>
-				<groupId>com.qpark.eip.core</groupId>
-				<artifactId>eip-core-spring</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
-			</dependency>
-			<dependency>
-				<groupId>com.qpark.eip.core</groupId>
-				<artifactId>eip-core-spring-auth</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
-			</dependency>
-			<dependency>
-				<groupId>com.qpark.eip.core</groupId>
-				<artifactId>eip-core-spring-statistics</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-model-analysis</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
-				<artifactId>eip-core-spring-lockedoperation</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<artifactId>eip-core-persistence</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-poi</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-sftp</artifactId>
-				<version>3.8.6</version><!--qpark-eip-version-->
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring-auth</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring-lockedoperation</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring-scheduling</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-spring-statistics</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
 
 			<dependency>
@@ -251,12 +261,12 @@
 				<plugin>
 					<groupId>com.qpark.maven</groupId>
 					<artifactId>eip-generator-plugin</artifactId>
-					<version>3.8.6</version><!--qpark-eip-version-->
+					<version>3.9.0RC</version><!--qpark-eip-version-->
 					<dependencies>
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-plugin-xml</artifactId>
-							<version>3.8.6</version><!--qpark-eip-version-->
+							<version>3.9.0RC</version><!--qpark-eip-version-->
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -269,7 +279,7 @@
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-hyperjaxb3-naming</artifactId>
-							<version>3.8.6</version><!--qpark-eip-version-->
+							<version>3.9.0RC</version><!--qpark-eip-version-->
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -341,7 +351,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-dependency-plugin.version}</version>
-<!-- Execution here would need an update in all cases of generating JPA model annotations. 
+<!-- Execution here would need an update in all cases of generating JPA model annotations.
 					<executions>
 						<execution>
 							<id>create-project-bundle</id>

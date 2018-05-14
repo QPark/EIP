@@ -13,12 +13,13 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.8.6</version><!--qpark-eip-version-->
+		<version>3.9.0RC</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>platform-domain-model-persistence</artifactId>
 	<packaging>jar</packaging>
+	<name>platform-domain-model-persistence</name>
 	<description>Generates the java code of the JPA persistence layer via hyperjaxb3.</description>
 
 	<properties>
@@ -46,6 +47,7 @@
 									<version>${domain.version}</version>
 									<outputDirectory>${model.dir}</outputDirectory>
 									<includes>ISS/Library/Library.xsd,ISS/Common/Common.xsd,EIP/Common/Common.xsd,EIP/Common/DataTypeMapping.xsd</includes>
+									<excludes>EIP/Documentation/**.xsd</excludes>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -57,7 +59,7 @@
 				<artifactId>eip-generator-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>process-sources</phase>
+					<phase>process-sources</phase>
 						<goals>
 							<goal>generate-collected-schemas</goal>
 						</goals>
@@ -143,9 +145,12 @@
 						</goals>
 						<configuration>
 							<target>
-								<delete file="${project.build.directory}/generated-sources/RoundtripTest.java" />
-								<property name="gen.source.meta.inf" value="${project.build.directory}/generated-sources/META-INF" />
-								<property name="classes.meta.inf" value="${project.build.directory}/classes/META-INF" />
+								<delete
+									file="${project.build.directory}/generated-sources/RoundtripTest.java" />
+								<property name="gen.source.meta.inf"
+									value="${project.build.directory}/generated-sources/META-INF" />
+								<property name="classes.meta.inf"
+									value="${project.build.directory}/classes/META-INF" />
 								<replace file="${gen.source.meta.inf}/persistence.xml">
 									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence/orm]]></replacetoken>
 									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence/orm]]></replacevalue>
@@ -164,10 +169,16 @@
 								</replace>
 								<mkdir dir="${gen.source.meta.inf}/${persistence.unit.name}" />
 								<mkdir dir="${classes.meta.inf}/${persistence.unit.name}" />
-								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml" todir="${gen.source.meta.inf}/${persistence.unit.name}" />
-								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode" todir="${gen.source.meta.inf}/${persistence.unit.name}" failonerror="false" />
-								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml" todir="${classes.meta.inf}/${persistence.unit.name}" />
-								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode" todir="${classes.meta.inf}/${persistence.unit.name}" failonerror="false" />
+								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml"
+									todir="${gen.source.meta.inf}/${persistence.unit.name}" />
+								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode"
+									todir="${gen.source.meta.inf}/${persistence.unit.name}"
+									failonerror="false" />
+								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml"
+									todir="${classes.meta.inf}/${persistence.unit.name}" />
+								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode"
+									todir="${classes.meta.inf}/${persistence.unit.name}"
+									failonerror="false" />
 							</target>
 						</configuration>
 					</execution>
@@ -177,12 +188,16 @@
 						<goals><goal>run</goal></goals>
 						<configuration>
 							<target>
-								<!--delete verbose="true">
+								<delete verbose="true">
 									<fileset dir="${project.build.directory}/classes">
+										<exclude name="**/persistenceconfig/**/*.class"/>
 										<exclude name="META-INF/**/*.*"/>
-										<exclude name="com/model-xyz/**/*.class"/>
+                <exclude name="com/qpark/eip/model/common/AssetType*.class"/>
+                <exclude name="com/qpark/eip/model/common/EntityType*.class"/>
+                <exclude name="com/samples/platform/model/library/BookType*.class"/>
+                <exclude name="com/samples/platform/model/library/LibraryType*.class"/>
 									</fileset>
-								</delete-->
+								</delete>
 								<echo>Deleted</echo>
 							</target>
 						</configuration>
