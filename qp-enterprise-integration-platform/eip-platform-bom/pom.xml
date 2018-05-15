@@ -125,6 +125,11 @@
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
+				<artifactId>eip-core-jaxb</artifactId>
+				<version>3.9.0RC</version><!--qpark-eip-version-->
+			</dependency>
+			<dependency>
+				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-logback</artifactId>
 				<version>3.9.0RC</version><!--qpark-eip-version-->
 			</dependency>
