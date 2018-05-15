@@ -33,10 +33,20 @@
 			<artifactId>domain-gen-flow</artifactId>
 			<version>3.9.0RC</version><!--qpark-eip-version-->
 		</dependency>
+		<dependency>
+			<groupId>${domain.groupId}.gen</groupId>
+			<artifactId>domain-gen-jaxb</artifactId>
+			<version>3.9.0RC</version><!--qpark-eip-version-->
+			<classifier>xsd-sources</classifier>
+		</dependency>
 
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-jaxb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>

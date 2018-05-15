@@ -26,19 +26,19 @@
 
 	<modules>
 		<module>eip-core</module>
-		<module>eip-core-jaxb</module>
 		<module>eip-core-failurehandler-model</module>
 		<module>eip-core-failurehandler</module>
+		<module>eip-core-jaxb</module>
 		<module>eip-core-logback</module>
-		<module>eip-core-spring</module>
+		<module>eip-core-model-analysis</module>
 		<module>eip-core-persistence</module>
+		<module>eip-core-poi</module>
+		<module>eip-core-sftp</module>
+		<module>eip-core-spring</module>
 		<module>eip-core-spring-auth</module>
-		<module>eip-core-spring-statistics</module>
 		<module>eip-core-spring-lockedoperation</module>
 		<module>eip-core-spring-scheduling</module>
-		<module>eip-core-model-analysis</module>
-		<module>eip-core-sftp</module>
-		<module>eip-core-poi</module>
+		<module>eip-core-spring-statistics</module>
 	</modules>
 
 	<organization>
