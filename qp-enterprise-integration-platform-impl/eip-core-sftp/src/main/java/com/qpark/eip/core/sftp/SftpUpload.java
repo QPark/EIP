@@ -49,22 +49,32 @@ public class SftpUpload {
 				SftpGateway.DIRECTORY_OPEN);
 		String destinationFilePath = this.sftpGateway.getTargetFilePath(
 				destinationDir, timestamp, fileNamePart, fileFormat);
+		File f = null;
 		try {
-
 			/* Upload file in SFTP. */
-			File f = this.sftpGateway.createAndWriteTmpFile(fileNamePart,
-					fileFormat, content);
+			f = this.sftpGateway.createAndWriteTmpFile(fileNamePart, fileFormat,
+					content);
 			this.sftpGateway.save(f, sourceDir);
 
 			/* Rename file in SFTP. */
 			String sourceFilePath = this.sftpGateway.getFilePath(sourceDir,
 					f.getName());
 			this.sftpGateway.rename(sourceFilePath, destinationFilePath);
+
 		} catch (Exception e) {
 			this.logger.error(" putContent {} {}", destinationFilePath,
 					e.getMessage());
 			this.logger.error(e.getMessage(), e);
 		} finally {
+			if (f != null) {
+				try {
+					f.delete();
+				} catch (Exception e) {
+					this.logger.error(" putContent {} {}", f.getName(),
+							e.getMessage());
+					this.logger.error(e.getMessage(), e);
+				}
+			}
 			this.logger.debug("+putContent {}", destinationFilePath);
 		}
 	}
