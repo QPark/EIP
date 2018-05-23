@@ -17,11 +17,15 @@
 				<add:Valve className="org.apache.catalina.valves.StuckThreadDetectionValve" threshold="60" />
 			</Host>
 		</Engine>
-		<Connector protocol="org.apache.coyote.http11.Http11Protocol"
+		<Connector protocol="org.apache.coyote.http11.Http11NioProtocol"
 			add:URIEncoding="UTF-8"
-		/>
-		<Connector protocol="org.apache.coyote.ajp.AjpProtocol"
+		>
+			<add:UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol"/>
+		</Connector>
+		<Connector protocol="org.apache.coyote.ajp.AjpNioProtocol"
 			add:URIEncoding="UTF-8"
-		/>
+		>
+			<add:UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol"/>
+		</Connector>
 	</Service>
 </Server>
