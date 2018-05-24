@@ -1,5 +1,10 @@
 Changelog:
 
+3.9.1 2018xxxx
+Core: Persistence - DDLGenerator fixed
+Core: SFTP - Fixed ambigous file handling
+Some tiny bugfixes and documentation
+
 3.9.0 20180523
 Templates upgraded to Pivotal TcServer version 4.0.1
 Supports now java 10

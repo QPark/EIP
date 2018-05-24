@@ -29,7 +29,8 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
  * @author bhausen
  */
 public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
-
+	/** The {@link EqualsStrategy}. */
+	@SuppressWarnings("hiding")
 	public static EqualsStrategy INSTANCE = new ExtendedJAXBEqualsStrategy();
 
 	/**
@@ -77,6 +78,7 @@ public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
 	 *            right {@link BigDecimal}.
 	 * @return equal or not.
 	 */
+	@SuppressWarnings("static-method")
 	protected boolean equalsInternal(final ObjectLocator leftLocator,
 			final ObjectLocator rightLocator, final BigDecimal left,
 			final BigDecimal right) {
@@ -139,6 +141,7 @@ public class ExtendedJAXBEqualsStrategy extends JAXBEqualsStrategy {
 	 *            right {@link XMLGregorianCalendar}.
 	 * @return equal or not.
 	 */
+	@SuppressWarnings("static-method")
 	protected boolean equalsInternal(final ObjectLocator leftLocator,
 			final ObjectLocator rightLocator, final XMLGregorianCalendar left,
 			final XMLGregorianCalendar right) {

@@ -26,9 +26,15 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
  * @author bhausen
  */
 public class ExtendedJAXBHashCodeStrategy extends JAXBHashCodeStrategy {
+	/** Default scale number. */
 	private static final int BIG_DECIMAL_SCALE = 10;
+	/** The {@link HashCodeStrategy}. */
+	@SuppressWarnings("hiding")
 	public static HashCodeStrategy INSTANCE = new ExtendedJAXBHashCodeStrategy();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected int hashCodeInternal(final ObjectLocator locator,
 			final int hashCode, final Object value) {
