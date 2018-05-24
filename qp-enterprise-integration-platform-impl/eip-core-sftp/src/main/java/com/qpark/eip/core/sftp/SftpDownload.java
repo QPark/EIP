@@ -28,6 +28,11 @@ public class SftpDownload {
 	 */
 	private static final Random RANDOM = new Random();
 
+	/**
+	 * @param startInclusive
+	 * @param endExclusive
+	 * @return the random number.
+	 */
 	private static int nextRandomInt(final int startInclusive,
 			final int endExclusive) {
 		return startInclusive + RANDOM.nextInt(endExclusive - startInclusive);

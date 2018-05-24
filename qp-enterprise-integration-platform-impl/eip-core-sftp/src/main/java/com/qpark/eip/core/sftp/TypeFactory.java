@@ -7,6 +7,7 @@ import java.util.Optional;
  * Create the types T.
  *
  * @author bhausen
+ * @param <T>
  */
 public abstract class TypeFactory<T> {
 	/**

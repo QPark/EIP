@@ -55,9 +55,8 @@ public class SftpGatewayImpl implements SftpGateway {
 			this.logger.error("rm/rmdir {} {}", filePath,
 					callback.getSftpException().getMessage());
 			throw callback.getSftpException();
-		} else {
-			success = true;
 		}
+		success = true;
 		this.logger.debug("delete {} {}", filePath, success);
 		return success;
 	}
@@ -72,13 +71,16 @@ public class SftpGatewayImpl implements SftpGateway {
 	}
 
 	/**
+	 * @deprecated Returns a temporary file which needs to be deleted
+	 *             afterwards. Use {@link #getContentBytes(String)} instead.
 	 * @see com.qpark.eip.core.sftp.SftpGateway#getContent(java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public File getContent(final String filePath) throws Exception {
-		final File content = File.createTempFile("EIP-TemporarySftp", ".txt");
+		final File value = File.createTempFile("EIP-TemporarySftp", ".txt");
 		boolean success = false;
-		try (FileOutputStream baos = new FileOutputStream(content);) {
+		try (FileOutputStream baos = new FileOutputStream(value);) {
 			success = this.template.get(filePath,
 					new InputStreamCallbackImpl(baos));
 		} catch (final Exception e) {
@@ -88,7 +90,7 @@ public class SftpGatewayImpl implements SftpGateway {
 			throw new IllegalStateException(new StringBuffer(64)
 					.append("Could not read ").append(filePath).toString());
 		}
-		return content;
+		return value;
 	}
 
 	/**
@@ -154,6 +156,12 @@ public class SftpGatewayImpl implements SftpGateway {
 		return this.template.getRemoteFileSeparator();
 	}
 
+	/**
+	 * @param emptyDirectories
+	 * @param parent
+	 * @param currentDirectory
+	 * @throws Exception
+	 */
 	private void getTreeOfEmptyDirectories(final List<String> emptyDirectories,
 			final String parent, final String currentDirectory)
 			throws Exception {
@@ -189,6 +197,7 @@ public class SftpGatewayImpl implements SftpGateway {
 								this.getTreeOfEmptyDirectories(emptyDirectories,
 										rPath, lsEntry.getFilename());
 							} catch (final Exception e) {
+								// Nothing.
 							}
 						});
 			}
@@ -206,6 +215,13 @@ public class SftpGatewayImpl implements SftpGateway {
 		return value;
 	}
 
+	/**
+	 * @param filePathes
+	 * @param parent
+	 * @param currentDirectory
+	 * @param fileNamePattern
+	 * @throws Exception
+	 */
 	private void getTreeOfFiles(final List<String> filePathes,
 			final String parent, final String currentDirectory,
 			final String fileNamePattern) throws Exception {
@@ -234,6 +250,7 @@ public class SftpGatewayImpl implements SftpGateway {
 								this.getTreeOfFiles(filePathes, rPath,
 										lsEntry.getFilename(), fileNamePattern);
 							} catch (final Exception e) {
+								// Nothing.
 							}
 						} else if (lsEntry.getFilename()
 								.matches(fileNamePattern)) {
@@ -273,9 +290,8 @@ public class SftpGatewayImpl implements SftpGateway {
 			this.logger.error("mkdir {} {}", directory,
 					callback.getSftpException().getMessage());
 			throw callback.getSftpException();
-		} else {
-			success = true;
 		}
+		success = true;
 		this.logger.debug("mkdir {} {}", directory, success);
 		return success;
 	}

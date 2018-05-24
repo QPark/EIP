@@ -25,6 +25,7 @@ import com.jcraft.jsch.SftpException;
 public class LsClientCallback
 		implements ClientCallback<ChannelSftp, Vector<LsEntry>> {
 	/** The file pattern to use when executing the ls command. */
+	@SuppressWarnings("unused")
 	private String lsPattern;
 	/** The path to use when executing the ls command. */
 	private String path;
