@@ -1,5 +1,8 @@
 Changelog:
 
+3.10.0 20180912
+DomainDoc added annotation.appInfo and SimpleTypes
+
 3.9.0 20180523
 Templates upgraded to Pivotal TcServer version 4.0.1
 Supports now java 10

@@ -61,51 +61,23 @@ import com.qpark.maven.Util;
  * @author bhausen
  */
 public class XsdsUtil {
+	private static XsdsUtil instance0;
+	private static XsdsUtil instance1;
+	private static XsdsUtil instance2;
+	/** The {@link Logger}. */
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
+			.getLogger(XsdsUtil.class);
 	/** XMLSchema name space . */
 	public static final String QNAME_BASE_SCHEMA_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
-
-	/**
-	 * Get the namespace to be used in the sample coding.
-	 *
-	 * @param xml
-	 *            the xml.
-	 * @param targetNamespace
-	 *            the namespace
-	 * @return the name space abbreviation.
-	 */
-	private static String getSampleCodingNamespaceAbbreviation(final String xml,
-			final String targetNamespace) {
-		String prefix = "";
-		final int index = xml.indexOf(targetNamespace);
-		if (index > 0) {
-			if (xml.charAt(index - 1) == '"' && xml.charAt(index - 2) == '=') {
-				int i = 0;
-				while (true) {
-					if (index - (2 + i) == 0) {
-						break;
-					} else if (xml.charAt(index - (2 + i)) == ' ') {
-						break;
-					} else if (xml.charAt(index - (2 + i)) == ':') {
-						prefix = xml.substring(index - (2 + i - 1), index - 2);
-						break;
-					} else {
-						i++;
-					}
-				}
-			}
-		}
-		return prefix;
-	}
+	private static int reused = 0;
+	private static int used = 0;
 
 	/**
 	 * Find the corresponding request {@link ComplexType}.
 	 *
-	 * @param response
-	 *            the response {@link ComplexType}.
-	 * @param complexTypes
-	 *            the set of {@link ComplexType}s available.
-	 * @param config
-	 *            the {@link XsdsUtil}.
+	 * @param response     the response {@link ComplexType}.
+	 * @param complexTypes the set of {@link ComplexType}s available.
+	 * @param config       the {@link XsdsUtil}.
 	 * @return the request {@link ComplexType} or <code>null</code>.
 	 */
 	public static ComplexType findRequest(final ComplexType response,
@@ -131,12 +103,9 @@ public class XsdsUtil {
 	/**
 	 * Find the corresponding response {@link ComplexType}.
 	 *
-	 * @param request
-	 *            the request {@link ComplexType}.
-	 * @param complexTypes
-	 *            the set of {@link ComplexType}s available.
-	 * @param config
-	 *            the {@link XsdsUtil}.
+	 * @param request      the request {@link ComplexType}.
+	 * @param complexTypes the set of {@link ComplexType}s available.
+	 * @param config       the {@link XsdsUtil}.
 	 * @return the response {@link ComplexType} or <code>null</code>.
 	 */
 	public static ComplexType findResponse(final ComplexType request,
@@ -162,12 +131,9 @@ public class XsdsUtil {
 	/**
 	 * Find the corresponding response {@link ElementType}.
 	 *
-	 * @param request
-	 *            the request {@link ElementType}.
-	 * @param elementTypes
-	 *            the set of {@link ElementType}s available.
-	 * @param config
-	 *            the {@link XsdsUtil}.
+	 * @param request      the request {@link ElementType}.
+	 * @param elementTypes the set of {@link ElementType}s available.
+	 * @param config       the {@link XsdsUtil}.
 	 * @return the response {@link ElementType} or <code>null</code>.
 	 */
 	public static ElementType findResponse(final ElementType request,
@@ -194,8 +160,7 @@ public class XsdsUtil {
 	/**
 	 * Get the base build in {@link SchemaType} of the given {@link SchemaType}.
 	 *
-	 * @param schemaType
-	 *            the {@link SchemaType} to determine.
+	 * @param schemaType the {@link SchemaType} to determine.
 	 * @return the base build in {@link SchemaType}.
 	 */
 	public static SchemaType getBuildInBaseType(final SchemaType schemaType) {
@@ -229,8 +194,7 @@ public class XsdsUtil {
 	/**
 	 * Get the java class implementing the base build in {@link SchemaType}.
 	 *
-	 * @param schemaType
-	 *            the {@link SchemaType}.
+	 * @param schemaType the {@link SchemaType}.
 	 * @return the implementing {@link Class}.
 	 */
 	public static Class<?> getBuildInBaseTypeClass(
@@ -249,8 +213,7 @@ public class XsdsUtil {
 	/**
 	 * Provide {@link Class}s for the base build in {@link SchemaType}s.
 	 *
-	 * @param schemaType
-	 *            the {@link SchemaType}.
+	 * @param schemaType the {@link SchemaType}.
 	 * @return the implementing {@link Class}.
 	 */
 	private static Class<?> getBuildInBaseTypeClassInternal(
@@ -325,8 +288,7 @@ public class XsdsUtil {
 	/**
 	 * Get the build in {@link Class} for the {@link QName}.
 	 *
-	 * @param qName
-	 *            the {@link QName}.
+	 * @param qName the {@link QName}.
 	 * @return the build in {@link Class}.
 	 */
 	public static Class<?> getBuildInJavaClass(final QName qName) {
@@ -431,13 +393,85 @@ public class XsdsUtil {
 		return javaType;
 	}
 
+	public static XsdsUtil getInstance(final File baseDirectory,
+			final String basePackageName, final String messagePackageNameSuffix,
+			final String deltaPackageNameSuffix) {
+		return getInstance(baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix, null, null);
+	}
+
+	public static XsdsUtil getInstance(final File baseDirectory,
+			final String basePackageName, final String messagePackageNameSuffix,
+			final String deltaPackageNameSuffix,
+			final String serviceRequestSuffix,
+			final String serviceResponseSuffix) {
+		XsdsUtil value;
+		if (isSame(instance0, baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix,
+				serviceRequestSuffix, serviceResponseSuffix)) {
+
+			reused++;
+			value = instance0;
+			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
+		} else if (isSame(instance1, baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix,
+				serviceRequestSuffix, serviceResponseSuffix)) {
+
+			reused++;
+			value = instance1;
+			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
+		} else if (isSame(instance2, baseDirectory, basePackageName,
+				messagePackageNameSuffix, deltaPackageNameSuffix,
+				serviceRequestSuffix, serviceResponseSuffix)) {
+
+			reused++;
+			value = instance2;
+			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
+		} else {
+			value = new XsdsUtil(baseDirectory, basePackageName,
+					messagePackageNameSuffix, deltaPackageNameSuffix,
+					serviceRequestSuffix, serviceResponseSuffix);
+
+			logger.info("{}", String.format("XsdsUtil creating %s at %s",
+					value.getBasePackageName(), value.getBaseDirectory()));
+
+			if (instance0 == null) {
+				instance0 = value;
+			} else if (instance1 == null) {
+				instance1 = value;
+			} else if (instance2 == null) {
+				instance2 = value;
+			} else {
+				if (instance0.start < instance1.start) {
+					if (instance0.start < instance2.start) {
+						instance0 = value;
+					} else {
+						instance2 = value;
+					}
+				} else {
+					if (instance1.start < instance2.start) {
+						instance1 = value;
+					} else {
+						instance2 = value;
+					}
+				}
+			}
+		}
+		used++;
+		logger.info("XsdsUtil used " + used + " times and reused " + reused
+				+ " times");
+		return value;
+	}
+
 	/**
 	 * Get model XSDs that are not imported in service XSDs or other models.
 	 *
-	 * @param xsds
-	 *            the map of all {@link XsdContainer}s.
-	 * @param messagePackageNameSuffix
-	 *            the suffix defining message (service) XSDs.
+	 * @param xsds                     the map of all {@link XsdContainer}s.
+	 * @param messagePackageNameSuffix the suffix defining message (service)
+	 *                                 XSDs.
 	 * @return the {@link Map} of target name spaces containing not used model
 	 *         {@link XsdContainer}s.
 	 */
@@ -464,10 +498,9 @@ public class XsdsUtil {
 	/**
 	 * Get model XSDs that are not imported in service XSDs or other models.
 	 *
-	 * @param xsds
-	 *            the {@link XsdsUtil}s.
-	 * @param messagePackageNameSuffix
-	 *            the suffix defining message (service) XSDs.
+	 * @param xsds                     the {@link XsdsUtil}s.
+	 * @param messagePackageNameSuffix the suffix defining message (service)
+	 *                                 XSDs.
 	 * @return the {@link Map} of target name spaces containing not used model
 	 *         {@link XsdContainer}s.
 	 */
@@ -501,10 +534,9 @@ public class XsdsUtil {
 	/**
 	 * Get coding producing sample XML for the {@link SchemaType}.
 	 *
-	 * @param schemaType
-	 *            the {@link SchemaType}.
-	 * @param elementName
-	 *            the name of the element the sample XML should be contained in.
+	 * @param schemaType  the {@link SchemaType}.
+	 * @param elementName the name of the element the sample XML should be
+	 *                    contained in.
 	 * @return the XML.
 	 */
 	public static String getSampleCodeing(final SchemaType schemaType,
@@ -547,12 +579,41 @@ public class XsdsUtil {
 	}
 
 	/**
+	 * Get the namespace to be used in the sample coding.
+	 *
+	 * @param xml             the xml.
+	 * @param targetNamespace the namespace
+	 * @return the name space abbreviation.
+	 */
+	private static String getSampleCodingNamespaceAbbreviation(final String xml,
+			final String targetNamespace) {
+		String prefix = "";
+		final int index = xml.indexOf(targetNamespace);
+		if (index > 0) {
+			if (xml.charAt(index - 1) == '"' && xml.charAt(index - 2) == '=') {
+				int i = 0;
+				while (true) {
+					if (index - (2 + i) == 0) {
+						break;
+					} else if (xml.charAt(index - (2 + i)) == ' ') {
+						break;
+					} else if (xml.charAt(index - (2 + i)) == ':') {
+						prefix = xml.substring(index - (2 + i - 1), index - 2);
+						break;
+					} else {
+						i++;
+					}
+				}
+			}
+		}
+		return prefix;
+	}
+
+	/**
 	 * Parse the {@link File} with apache XML Beans.
 	 *
-	 * @param file
-	 *            the File to parse.
-	 * @param entityResolver
-	 *            the {@link EntityResolver}.
+	 * @param file           the File to parse.
+	 * @param entityResolver the {@link EntityResolver}.
 	 * @return the parsed {@link SchemaTypeSystem}.
 	 */
 	public static SchemaTypeSystem getSchemaTypeSystem(final File file,
@@ -809,13 +870,35 @@ public class XsdsUtil {
 		return true;
 	}
 
+	private static boolean isSame(final XsdsUtil test, final File baseDirectory,
+			final String basePackageName, final String messagePackageNameSuffix,
+			final String deltaPackageNameSuffix,
+			final String serviceRequestSuffix,
+			final String serviceResponseSuffix) {
+		boolean value = false;
+		if (Objects.nonNull(test)
+				&& (baseDirectory == test.baseDirectory
+						|| baseDirectory.equals(test.baseDirectory))
+				&& String.valueOf(basePackageName)
+						.equals(String.valueOf(test.basePackageName))
+				&& String.valueOf(messagePackageNameSuffix)
+						.equals(String.valueOf(test.messagePackageNameSuffix))
+				&& String.valueOf(deltaPackageNameSuffix)
+						.equals(String.valueOf(test.deltaPackageNameSuffix))
+				&& String.valueOf(serviceRequestSuffix)
+						.equals(String.valueOf(test.serviceRequestSuffix))
+				&& String.valueOf(serviceResponseSuffix)
+						.equals(String.valueOf(test.serviceResponseSuffix))) {
+			value = true;
+		}
+		return value;
+	}
+
 	/**
 	 * Collect the xsd files recursively.
 	 *
-	 * @param f
-	 *            the file to check.
-	 * @param xsdFiles
-	 *            the list of xsd files.
+	 * @param f        the file to check.
+	 * @param xsdFiles the list of xsd files.
 	 */
 	private static void scanForXsds(final File f, final List<File> xsdFiles) {
 		final File[] cs = f.listFiles();
@@ -843,6 +926,8 @@ public class XsdsUtil {
 			ComplexType ct;
 			ComplexTypeChild ctc;
 			int index;
+			int startIndex;
+			int stopIndex;
 			while (scct.hasNext()) {
 				sct = scct.next().trim();
 				if (sct.startsWith("name=\"")) {
@@ -864,17 +949,27 @@ public class XsdsUtil {
 										if (index < 0) {
 											index = se.indexOf("</");
 										} else {
-											final int x = se.indexOf("</");
+											int x = se.indexOf("</");
 											if (x > 0 && x < index) {
 												index = x;
 											}
 										}
-										se = se.substring(7, index);
-										index = se.indexOf("<documentation>");
-										if (index > 0) {
-											ctc.setAnnotationDocumentation(
-													se.substring(index + 15)
-															.trim());
+										startIndex = se
+												.indexOf("<documentation>");
+										stopIndex = se
+												.indexOf("</documentation>");
+										if (startIndex > 0 && stopIndex > 0) {
+											ctc.setAnnotationDocumentation(se
+													.substring(startIndex + 15,
+															stopIndex)
+													.trim());
+										}
+										startIndex = se.indexOf("<appinfo>");
+										stopIndex = se.indexOf("</appinfo>");
+										if (startIndex > 0 && stopIndex > 0) {
+											ctc.setAnnotationAppInfo(
+													se.substring(startIndex + 9,
+															stopIndex).trim());
 										}
 									}
 								}
@@ -947,16 +1042,13 @@ public class XsdsUtil {
 
 	/** The root directory where the xsds could be found. */
 	private final File baseDirectory;
-
 	/**
 	 * The name of the package where the object factories, gateway package and
 	 * service activators should be generated.
 	 */
 	private final String basePackageName;
-
 	/** The map of {@link QName}s with their {@link ComplexType}s. */
 	private final Map<String, ComplexType> complexTypeMap = new ConcurrentHashMap<>();
-
 	/** The {@link TreeSet} of {@link ComplexType}. */
 	private final TreeSet<ComplexType> complexTypes = new TreeSet<>(
 			(o1, o2) -> {
@@ -971,7 +1063,6 @@ public class XsdsUtil {
 							.compareTo(o2.getClassNameFullQualified());
 				}
 			});
-
 	/**
 	 * The package name of the delta should contain this. Default is
 	 * <code>delta</code>.
@@ -992,7 +1083,6 @@ public class XsdsUtil {
 							o2.getElement().getName());
 				}
 			});
-
 	/** The {@link EntityResolver} for the local xsds. */
 	private final EntityResolver entityResolver = (publicId, systemId) -> {
 		if (XsdsUtil.this.getXsdContainerMap().containsKey(publicId)) {
@@ -1000,39 +1090,30 @@ public class XsdsUtil {
 					new FileInputStream(XsdsUtil.this.getXsdContainerMap()
 							.get(publicId).getFile()));
 			return is;
-		} else {
-			return null;
 		}
+		return null;
 	};
-
-	/** The {@link Logger}. */
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
-			.getLogger(XsdsUtil.class);
-
 	/**
 	 * The package name of the messages should end with this. Default is
 	 * <code>msg</code>.
 	 */
 	private final String messagePackageNameSuffix;
-
 	/** Package names contained in the xsds. */
 	private final TreeSet<String> packageNames = new TreeSet<>();
-
+	private final ServiceIdRegistry serviceIdRegistry;
 	/**
 	 * The service request name need to end with this suffix (Default
 	 * <code>Request</code>).
 	 */
 	private final String serviceRequestSuffix;
-
 	/**
 	 * The service response name need to end with this suffix (Default
 	 * <code>Response</code>).
 	 */
 	private final String serviceResponseSuffix;
-
+	private final long start;
 	/** A target name space {@link Map} containing the {@link XsdContainer}s. */
 	private final Map<String, XsdContainer> xsdContainerMap;
-
 	/** A {@link List} of xsd files. */
 	private final List<File> xsdFiles;
 
@@ -1041,143 +1122,6 @@ public class XsdsUtil {
 			final String deltaPackageNameSuffix) {
 		this(baseDirectory, basePackageName, messagePackageNameSuffix,
 				deltaPackageNameSuffix, null, null);
-	}
-
-	private static XsdsUtil instance0;
-	private static XsdsUtil instance1;
-	private static XsdsUtil instance2;
-
-	public static XsdsUtil getInstance(final File baseDirectory,
-			final String basePackageName, final String messagePackageNameSuffix,
-			final String deltaPackageNameSuffix) {
-		return getInstance(baseDirectory, basePackageName,
-				messagePackageNameSuffix, deltaPackageNameSuffix, null, null);
-	}
-
-	private static int reused = 0;
-	private static int used = 0;
-
-	private static boolean isSame(final XsdsUtil test, final File baseDirectory,
-			final String basePackageName, final String messagePackageNameSuffix,
-			final String deltaPackageNameSuffix,
-			final String serviceRequestSuffix,
-			final String serviceResponseSuffix) {
-		boolean value = false;
-		if (Objects.nonNull(test)
-				&& (baseDirectory == test.baseDirectory
-						|| baseDirectory.equals(test.baseDirectory))
-				&& String.valueOf(basePackageName)
-						.equals(String.valueOf(test.basePackageName))
-				&& String.valueOf(messagePackageNameSuffix)
-						.equals(String.valueOf(test.messagePackageNameSuffix))
-				&& String.valueOf(deltaPackageNameSuffix)
-						.equals(String.valueOf(test.deltaPackageNameSuffix))
-				&& String.valueOf(serviceRequestSuffix)
-						.equals(String.valueOf(test.serviceRequestSuffix))
-				&& String.valueOf(serviceResponseSuffix)
-						.equals(String.valueOf(test.serviceResponseSuffix))) {
-			value = true;
-		}
-		return value;
-	}
-
-	public static XsdsUtil getInstance(final File baseDirectory,
-			final String basePackageName, final String messagePackageNameSuffix,
-			final String deltaPackageNameSuffix,
-			final String serviceRequestSuffix,
-			final String serviceResponseSuffix) {
-		XsdsUtil value;
-		if (isSame(instance0, baseDirectory, basePackageName,
-				messagePackageNameSuffix, deltaPackageNameSuffix,
-				serviceRequestSuffix, serviceResponseSuffix)) {
-
-			reused++;
-			value = instance0;
-			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-		} else if (isSame(instance1, baseDirectory, basePackageName,
-				messagePackageNameSuffix, deltaPackageNameSuffix,
-				serviceRequestSuffix, serviceResponseSuffix)) {
-
-			reused++;
-			value = instance1;
-			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-		} else if (isSame(instance2, baseDirectory, basePackageName,
-				messagePackageNameSuffix, deltaPackageNameSuffix,
-				serviceRequestSuffix, serviceResponseSuffix)) {
-
-			reused++;
-			value = instance2;
-			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-		} else {
-			value = new XsdsUtil(baseDirectory, basePackageName,
-					messagePackageNameSuffix, deltaPackageNameSuffix,
-					serviceRequestSuffix, serviceResponseSuffix);
-
-			logger.info("{}", String.format("XsdsUtil creating %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-
-			if (instance0 == null) {
-				instance0 = value;
-			} else if (instance1 == null) {
-				instance1 = value;
-			} else if (instance2 == null) {
-				instance2 = value;
-			} else {
-				if (instance0.start < instance1.start) {
-					if (instance0.start < instance2.start) {
-						instance0 = value;
-					} else {
-						instance2 = value;
-					}
-				} else {
-					if (instance1.start < instance2.start) {
-						instance1 = value;
-					} else {
-						instance2 = value;
-					}
-				}
-			}
-		}
-		used++;
-		logger.info("XsdsUtil used " + used + " times and reused " + reused
-				+ " times");
-		return value;
-	}
-
-	private final long start;
-
-	/**
-	 * Creates the {@link ComplexType}. First the parents, than itself.
-	 *
-	 * @param type
-	 *            the {@link SchemaType}.
-	 */
-	private void createComplexType(final SchemaType type) {
-		if (Objects.nonNull(type.getBaseType())
-				&& !type.getBaseType().isPrimitiveType()
-				&& !type.getBaseType().isSimpleType()
-				&& !this.complexTypeMap.containsKey(
-						String.valueOf(type.getBaseType().getName()))) {
-			this.createComplexType(type.getBaseType());
-		}
-		if (!this.complexTypeMap.containsKey(String.valueOf(type.getName()))) {
-			ComplexType ct = new ComplexType(type, this);
-			this.complexTypeMap.put(String.valueOf(ct.getType().getName()), ct);
-		}
-	}
-
-	/**
-	 * Creates the {@link ElementType}.
-	 *
-	 * @param elem
-	 *            SchemaGlobalElement
-	 * @return the {@link ElementType}.
-	 */
-	private ElementType createElementType(final SchemaGlobalElement elem) {
-		return new ElementType(elem, this);
 	}
 
 	private XsdsUtil(final File baseDirectory, final String basePackageName,
@@ -1240,9 +1184,11 @@ public class XsdsUtil {
 						"Could not parse a valid SchemaTypeSystem from file %s",
 						f.getAbsolutePath()));
 			}
+			Arrays.stream(sts.globalAttributes())
+					.forEach(ga -> System.out.println("GLOBALATTRIBUTE" + ga));
 			Arrays.asList(sts.globalElements()).stream()
 					.forEach(elem -> synchronizedElementTypeList
-							.add(createElementType(elem)));
+							.add(this.createElementType(elem)));
 			Arrays.asList(sts.globalTypes()).stream()
 					.forEach(type -> this.createComplexType(type));
 			logger.debug("{} to get elements and complex type of file {}",
@@ -1300,28 +1246,33 @@ public class XsdsUtil {
 				this.serviceIdRegistry.getAllServiceIds());
 	}
 
-	private final ServiceIdRegistry serviceIdRegistry;
-
-	public ServiceIdRegistry getServiceIdRegistry() {
-		return this.serviceIdRegistry;
+	/**
+	 * Creates the {@link ComplexType}. First the parents, than itself.
+	 *
+	 * @param type the {@link SchemaType}.
+	 */
+	private void createComplexType(final SchemaType type) {
+		if (Objects.nonNull(type.getBaseType())
+				&& !type.getBaseType().isPrimitiveType()
+				&& !type.getBaseType().isSimpleType()
+				&& !this.complexTypeMap.containsKey(
+						String.valueOf(type.getBaseType().getName()))) {
+			this.createComplexType(type.getBaseType());
+		}
+		if (!this.complexTypeMap.containsKey(String.valueOf(type.getName()))) {
+			ComplexType ct = new ComplexType(type, this);
+			this.complexTypeMap.put(String.valueOf(ct.getType().getName()), ct);
+		}
 	}
 
-	private void setupBaseComplexTypeFieldDocumentation(final ComplexType ct) {
-		final ComplexType base = ct.getBaseComplexType();
-		if (Objects.nonNull(base)) {
-			final Map<String, ComplexTypeChild> baseChildren = base
-					.getChildrenMap();
-			final Map<String, ComplexTypeChild> childrenMap = ct
-					.getChildrenMap();
-			baseChildren.keySet().stream().forEach(baseName -> {
-				final ComplexTypeChild child = childrenMap.get(baseName);
-				if (child.getAnnotationDocumentation().equals("")) {
-					child.setAnnotationDocumentation(baseChildren.get(baseName)
-							.getAnnotationDocumentation());
-				}
-			});
-			this.setupBaseComplexTypeFieldDocumentation(base);
-		}
+	/**
+	 * Creates the {@link ElementType}.
+	 *
+	 * @param elem SchemaGlobalElement
+	 * @return the {@link ElementType}.
+	 */
+	private ElementType createElementType(final SchemaGlobalElement elem) {
+		return new ElementType(elem, this);
 	}
 
 	/**
@@ -1398,6 +1349,10 @@ public class XsdsUtil {
 		return this.packageNames;
 	}
 
+	public ServiceIdRegistry getServiceIdRegistry() {
+		return this.serviceIdRegistry;
+	}
+
 	/**
 	 * @return the serviceRequestSuffix
 	 */
@@ -1415,15 +1370,15 @@ public class XsdsUtil {
 	/**
 	 * @return the xsdContainerMap
 	 */
-	public Map<String, XsdContainer> getXsdContainerMap() {
-		return this.xsdContainerMap;
+	public XsdContainer getXsdContainer(final String targetNamespace) {
+		return this.xsdContainerMap.get(targetNamespace);
 	}
 
 	/**
 	 * @return the xsdContainerMap
 	 */
-	public XsdContainer getXsdContainer(final String targetNamespace) {
-		return this.xsdContainerMap.get(targetNamespace);
+	public Map<String, XsdContainer> getXsdContainerMap() {
+		return this.xsdContainerMap;
 	}
 
 	/**
@@ -1431,5 +1386,23 @@ public class XsdsUtil {
 	 */
 	public List<File> getXsdFiles() {
 		return this.xsdFiles;
+	}
+
+	private void setupBaseComplexTypeFieldDocumentation(final ComplexType ct) {
+		final ComplexType base = ct.getBaseComplexType();
+		if (Objects.nonNull(base)) {
+			final Map<String, ComplexTypeChild> baseChildren = base
+					.getChildrenMap();
+			final Map<String, ComplexTypeChild> childrenMap = ct
+					.getChildrenMap();
+			baseChildren.keySet().stream().forEach(baseName -> {
+				final ComplexTypeChild child = childrenMap.get(baseName);
+				if (child.getAnnotationDocumentation().equals("")) {
+					child.setAnnotationDocumentation(baseChildren.get(baseName)
+							.getAnnotationDocumentation());
+				}
+			});
+			this.setupBaseComplexTypeFieldDocumentation(base);
+		}
 	}
 }

@@ -8,6 +8,7 @@ package com.qpark.maven.xmlbeans;
 
 import java.math.BigInteger;
 
+import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlAnySimpleType;
 
 import com.qpark.maven.Util;
@@ -17,6 +18,7 @@ import com.qpark.maven.Util;
  */
 public class ComplexTypeChild {
 	private String annotationDocumentation;
+	private String annotationAppInfo;
 	private final String childName;
 	private final ComplexType ct;
 	private final XmlAnySimpleType defaultValue;
@@ -57,11 +59,47 @@ public class ComplexTypeChild {
 	}
 
 	/**
+	 * @param childName
+	 * @param childType
+	 * @param ct
+	 * @param minOccurs
+	 * @param maxOccurs
+	 * @param defaultValue
+	 */
+	public ComplexTypeChild(final String childName, final SchemaType childType,
+			final ComplexType ct, final BigInteger minOccurs,
+			final BigInteger maxOccurs, final XmlAnySimpleType defaultValue) {
+		this.childName = childName;
+		this.javaChildName = Util.getXjcPropertyName(this.childName);
+		this.ct = ct;
+		this.minOccurs = minOccurs;
+		this.optional = minOccurs == null || minOccurs.intValue() == 0;
+		this.maxOccurs = maxOccurs;
+		this.list = maxOccurs == null || maxOccurs.intValue() > 1;
+		this.defaultValue = defaultValue;
+		this.getterName = Util.getXjcGetterName(this.childName);
+		if (this.isJavaPrimitive() && ct.getClassName().equals("boolean")) {
+			this.getterName = new StringBuffer(this.getterName.length())
+					.append("is").append(this.getterName.substring(3,
+							this.getterName.length()))
+					.toString();
+		}
+		this.setterName = Util.getXjcSetterName(this.childName);
+	}
+
+	/**
 	 * @return the annotationDocumentation - never <code>null</code>.
 	 */
 	public String getAnnotationDocumentation() {
 		return this.annotationDocumentation == null ? ""
 				: this.annotationDocumentation;
+	}
+
+	/**
+	 * @return the annotationAppInfo - never <code>null</code>.
+	 */
+	public String getAnnotationAppInfo() {
+		return this.annotationAppInfo == null ? "" : this.annotationAppInfo;
 	}
 
 	/**
@@ -79,7 +117,7 @@ public class ComplexTypeChild {
 	 * @return the cardinality as string.
 	 */
 	public String getCardinality() {
-		final StringBuffer sb = new StringBuffer(8);
+		StringBuffer sb = new StringBuffer(8);
 		sb.append("[");
 		sb.append(this.minOccurs);
 		sb.append("..");
@@ -159,7 +197,7 @@ public class ComplexTypeChild {
 	 * @return the java variable definition (after the <i>=</i> sign).
 	 */
 	public String getJavaVarDefinition() {
-		final StringBuffer sb = new StringBuffer(32);
+		StringBuffer sb = new StringBuffer(32);
 		if (this.isList()) {
 			sb.append("List<");
 		}
@@ -178,7 +216,7 @@ public class ComplexTypeChild {
 	 *         {@link ComplexType} full qualified class name.
 	 */
 	public String getJavaVarDefinitionFullQualified() {
-		final StringBuffer sb = new StringBuffer(32);
+		StringBuffer sb = new StringBuffer(32);
 		if (this.isList()) {
 			sb.append("List<");
 		}
@@ -252,11 +290,20 @@ public class ComplexTypeChild {
 	}
 
 	/**
+	 * Set the annotationAppInfo.
+	 *
+	 * @param annotationAppInfo
+	 */
+	public void setAnnotationAppInfo(final String annotationAppInfo) {
+		this.annotationAppInfo = annotationAppInfo;
+	}
+
+	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		final StringBuffer sb = new StringBuffer(128);
+		StringBuffer sb = new StringBuffer(128);
 		sb.append(this.getChildName());
 		sb.append(this.getCardinality());
 		sb.append(this.getComplexType().toQNameString());

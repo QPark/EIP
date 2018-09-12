@@ -2,9 +2,11 @@ package com.qpark.maven.xmlbeans;
 
 import java.io.File;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
@@ -14,7 +16,9 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.xmlbeans.SchemaAnnotation;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlAnySimpleType;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.schema.SchemaTypeImpl;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -25,9 +29,9 @@ public class XsdUtilTest {
 	public static void main(final String[] args) {
 		String xsdPath;
 		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain\\mapping\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\xnb\\dev\\38\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-jaxb\\target\\model";
 		xsdPath = "C:\\xnb\\dev\\38\\com.ses.domain\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\com.ses.domain.gen\\domain-gen-jaxb\\target\\model";
 		// xsdPath =
 		// "C:\\xnb\\dev\\9.1\\bus.app.monics-2.0\\monics-webapp\\target\\model";
 		File dif = new File(xsdPath);
@@ -41,13 +45,13 @@ public class XsdUtilTest {
 				.getNotImportedModels(xsds, messagePackageNameSuffix);
 		Map<String, String> importedModels = testGetImportedModels(xsds,
 				messagePackageNameSuffix);
-		testVerifyModel(xsds, notImportedModels);
+		// testVerifyModel(xsds, notImportedModels);
 
 		// printCatalog(xsds, xsdPath);
 		// testValidServiceId(xsds);
 		// testGetServiceIdTree(xsds);
 		// testFlowInputTypes(xsds);
-		testXsdContainers(dif);
+		// testXsdContainers(dif);
 		// testPrintComplexTypeContent(xsds, notImportedModels, true);
 		// testPrintElementTypeRequestResponse(xsds, notImportedModels, true);
 		// testPrintComplexTypeRequestResponse(xsds, notImportedModels, true);
@@ -56,6 +60,65 @@ public class XsdUtilTest {
 
 		// testPrintComplexTypeResponseSample(xsds, notImportedModels, true);
 		// testPrintComplexTypeChildContent
+
+		xsds.getComplexTypes().stream()
+				.filter(ct -> ct.getQNameLocalPart().equals("DataType") || ct
+						.getQNameLocalPart().equals("ApplicationStartUpType"))
+				.forEach(ct -> {
+					System.out.println(ct.getClassNameFullQualified() + " "
+							+ ct.getType()
+									.getFacet(SchemaType.FACET_ENUMERATION)
+							+ " " + ct.getType().getEnumerationValues());
+					Arrays.stream(ct.getType().getElementProperties()).filter(
+							sp -> sp.getName().toString().equals("appinfo"))
+							.forEach(sp -> {
+								System.out.println(sp);
+							});
+				});
+
+		xsds.getComplexTypes().stream().filter(
+				ct -> ct.getQNameLocalPart().equals("Std.Backoff.inDBDataType"))
+				.forEach(ct -> {
+					Arrays.stream(ct.getType().getElementProperties()).filter(
+							sp -> sp.getName().toString().equals("value"))
+							.forEach(sp -> {
+								SchemaTypeImpl t = (SchemaTypeImpl) sp
+										.getType();
+								System.out.println(
+										"SP: " + sp.getName().getLocalPart()
+												+ " " + sp.getJavaPropertyName()
+												+ " " + sp.getJavaTypeCode());
+								System.out.println("\t"
+										+ t.getName().getLocalPart() + " "
+										+ t.getBaseType().getName()
+												.getLocalPart()
+										+ " "
+										+ (Objects.nonNull(t.getFacet(
+												SchemaType.FACET_FRACTION_DIGITS))
+														? t.getFacet(
+																SchemaType.FACET_FRACTION_DIGITS)
+																.getStringValue()
+														: "-"));
+								for (int i = 0; i < t
+										.getBasicFacets().length; i++) {
+									XmlAnySimpleType facet = t
+											.getBasicFacets()[i];
+									System.out.println(i + " "
+											+ (Objects.nonNull(facet)
+													? facet.getStringValue()
+													: "null")
+											+ " "
+											+ (Objects.nonNull(facet)
+													? facet.getClass()
+															.getSimpleName()
+													: "-"));
+								}
+								if (t != null && t.getName() != null) {
+									System.out.println(
+											sp.getName().getLocalPart());
+								}
+							});
+				});
 
 		System.out
 				.println(Util.getDuration(System.currentTimeMillis() - start));
@@ -96,7 +159,7 @@ public class XsdUtilTest {
 
 	private static Map<String, String> testGetImportedModels(
 			final XsdsUtil xsds, final String messagePackageNameSuffix) {
-		TreeMap<String, String> importedModels = new TreeMap<String, String>();
+		TreeMap<String, String> importedModels = new TreeMap<>();
 		for (Entry<String, XsdContainer> xx : xsds.getXsdContainerMap()
 				.entrySet()) {
 			if (XsdsUtil.isMessagePackageName(xx.getValue().getPackageName(),
@@ -454,13 +517,10 @@ public class XsdUtilTest {
 				System.out.println(ct.getClassNameFullQualified() + " "
 						+ ct.getTargetNamespace() + " XXXXX");
 			} else {
-				System.out
-						.println(
-								ct.getClassNameFullQualified() + " "
-										+ xsds.getXsdContainer(
-												ct.getTargetNamespace())
-										.getFile().getAbsolutePath()
-										.replace(pathPrefix, ""));
+				System.out.println(ct.getClassNameFullQualified() + " "
+						+ xsds.getXsdContainer(ct.getTargetNamespace())
+								.getFile().getAbsolutePath()
+								.replace(pathPrefix, ""));
 			}
 		}
 	}
