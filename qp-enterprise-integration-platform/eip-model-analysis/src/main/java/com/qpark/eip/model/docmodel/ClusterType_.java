@@ -9,6 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(ClusterType.class)
 public abstract class ClusterType_ {
 
+	public static volatile ListAttribute<ClusterType, SimpleType> simpleType;
 	public static volatile SingularAttribute<ClusterType, String> fileName;
 	public static volatile ListAttribute<ClusterType, ComplexMappingType> complexMappingType;
 	public static volatile ListAttribute<ClusterType, InterfaceMappingType> interfaceMappingType;

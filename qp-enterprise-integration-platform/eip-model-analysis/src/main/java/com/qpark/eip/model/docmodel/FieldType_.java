@@ -10,6 +10,7 @@ public abstract class FieldType_ {
 
 	public static volatile SingularAttribute<FieldType, Integer> sequenceNumber;
 	public static volatile SingularAttribute<FieldType, String> modelVersion;
+	public static volatile SingularAttribute<FieldType, String> defaultValue;
 	public static volatile SingularAttribute<FieldType, Integer> cardinalityMaxOccurs;
 	public static volatile SingularAttribute<FieldType, String> description;
 	public static volatile SingularAttribute<FieldType, Long> hjid;
@@ -20,6 +21,7 @@ public abstract class FieldType_ {
 	public static volatile SingularAttribute<FieldType, String> name;
 	public static volatile SingularAttribute<FieldType, String> namespace;
 	public static volatile SingularAttribute<FieldType, Boolean> listField;
+	public static volatile SingularAttribute<FieldType, String> appinfo;
 	public static volatile SingularAttribute<FieldType, String> id;
 	public static volatile SingularAttribute<FieldType, String> fieldTypeDefinitionId;
 

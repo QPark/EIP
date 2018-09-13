@@ -30,5 +30,6 @@
         <class>com.qpark.eip.model.docmodel.OperationType</class>
         <class>com.qpark.eip.model.docmodel.RequestResponseDataType</class>
         <class>com.qpark.eip.model.docmodel.ServiceType</class>
+        <class>com.qpark.eip.model.docmodel.SimpleType</class>
     </persistence-unit>
 </persistence>

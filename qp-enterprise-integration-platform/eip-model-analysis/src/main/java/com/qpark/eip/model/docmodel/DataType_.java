@@ -14,6 +14,7 @@ public abstract class DataType_ {
 	public static volatile SingularAttribute<DataType, String> namespace;
 	public static volatile SingularAttribute<DataType, String> javaClassName;
 	public static volatile SingularAttribute<DataType, String> description;
+	public static volatile SingularAttribute<DataType, String> appinfo;
 	public static volatile SingularAttribute<DataType, String> id;
 	public static volatile SingularAttribute<DataType, String> shortName;
 	public static volatile SingularAttribute<DataType, Long> hjid;

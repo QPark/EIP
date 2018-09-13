@@ -1,10 +1,13 @@
 Changelog:
 
-3.9.1 2018xxxx
+3.10.1 2018xxxx
 Core: Reading of XSD files changed using java.nio
 Core: Persistence - DDLGenerator fixed
 Core: SFTP - Fixed ambigous file handling
 Some tiny bugfixes and documentation
+
+3.10.0 20180912
+DomainDoc added annotation.appInfo and SimpleTypes
 
 3.9.0 20180523
 Templates upgraded to Pivotal TcServer version 4.0.1
