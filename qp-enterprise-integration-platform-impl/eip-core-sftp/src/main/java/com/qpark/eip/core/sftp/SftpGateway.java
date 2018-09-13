@@ -1,8 +1,6 @@
 package com.qpark.eip.core.sftp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -213,7 +211,7 @@ public interface SftpGateway {
 	 *
 	 * @param baseDirectory
 	 *            the base directory to delete empty directories from.
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	default void removeEmptyDirectories(final String baseDirectory)
 			throws Exception {
@@ -225,7 +223,6 @@ public interface SftpGateway {
 						e.printStackTrace();
 					}
 				});
-
 	}
 
 	/**
@@ -248,18 +245,7 @@ public interface SftpGateway {
 	 * @throws Exception
 	 */
 	default byte[] retrieveAndRead(final String filePath) throws Exception {
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		final File f = this.getContent(filePath);
-		if (Objects.nonNull(f)) {
-			try (FileInputStream fis = new FileInputStream(f)) {
-				int readBufferLenght = 0;
-				final byte[] buffer = new byte[2048];
-				while ((readBufferLenght = fis.read(buffer)) > 0) {
-					baos.write(buffer, 0, readBufferLenght);
-				}
-			}
-		}
-		return baos.toByteArray();
+		return getContentBytes(filePath);
 	}
 
 	/**

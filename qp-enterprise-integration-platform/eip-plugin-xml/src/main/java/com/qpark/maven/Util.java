@@ -9,12 +9,13 @@ package com.qpark.maven;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -375,7 +376,7 @@ public class Util {
 	public static String readFile(final File f) throws IOException {
 		String s = null;
 		if (f.exists()) {
-			s = new Scanner(f).useDelimiter("\\A").next();
+			s = new String(Files.readAllBytes(Paths.get(f.toURI())));
 		}
 		return s;
 	}

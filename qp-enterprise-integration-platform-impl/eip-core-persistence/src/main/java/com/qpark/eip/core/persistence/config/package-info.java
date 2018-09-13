@@ -36,7 +36,7 @@
  * <dd>This is the DatabasePlatform parameter to set into the
  * {@link org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter}. If
  * hibernate is the choice, the full qualified class names of
- * {@link org.hibernate.dialect.Dialect} would be the value.</dd>
+ * <i>org.hibernate.dialect.Dialect</i> would be the value.</dd>
  * </dl>
  *
  * @author bhausen

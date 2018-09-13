@@ -1,5 +1,12 @@
 Changelog:
 
+3.11.0 2018xxxx
+Core: Upgrade to XmlBeans version 3.0.1
+Core: Reading of XSD files changed using java.nio
+Core: Persistence - DDLGenerator fixed
+Core: SFTP - Fixed ambigous file handling
+Some tiny bugfixes and documentation
+
 3.10.0 20180912
 DomainDoc added annotation.appInfo and SimpleTypes
 

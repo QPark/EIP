@@ -49,6 +49,7 @@ public class ConnectionDetails {
 						this.port = Integer.parseInt(strs[0].substring(
 								strs[0].indexOf(':') + 1, strs[0].length()));
 					} catch (NumberFormatException e) {
+						// Do nothing.
 					}
 				} else {
 					this.hostName = strs[0].trim();

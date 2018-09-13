@@ -12,6 +12,7 @@ import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
  * @author bhausen
  */
 @Configuration
+@SuppressWarnings("static-method")
 public class SampleConfig {
 	/**
 	 * @return the sftp {@link ConnectionDetails}s.
