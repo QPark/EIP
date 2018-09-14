@@ -1,6 +1,6 @@
 Changelog:
 
-3.11.0 2018xxxx
+3.11.0 20180914
 Core: Upgrade to XmlBeans version 3.0.1
 Core: Reading of XSD files changed using java.nio
 Core: Persistence - DDLGenerator fixed
