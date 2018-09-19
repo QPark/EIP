@@ -1,0 +1,265 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+
+	<parent>
+		<groupId>com.samples.platform</groupId>
+		<artifactId>platform-base</artifactId>
+		<version>3.11.0</version><!--qpark-eip-version-->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>platform-domain-model-persistence-analysis</artifactId>
+	<packaging>jar</packaging>
+	<description>Generates the java code of the JPA persistence layer via hyperjaxb3.</description>
+
+	<properties>
+		<model.dir>${project.build.directory}/model</model.dir>
+		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
+	</properties>
+	<build>
+		<sourceDirectory>${java.gen.dir}</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-model</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${domain.groupId}</groupId>
+									<artifactId>model</artifactId>
+									<version>${domain.version}</version>
+									<outputDirectory>${model.dir}</outputDirectory>
+									<includes>EIP/Documentation/**.xsd,EIP/Reporting/**.xsd</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-generator-plugin</artifactId>
+				<executions>
+					<execution>
+					<phase>process-sources</phase>
+						<goals>
+							<goal>generate-collected-schemas</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${model.dir}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate persistence config</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>generate-persistence-config</goal>
+						</goals>
+						<configuration>
+							<basePackageName>com.qpark.eip.core.model.analysis</basePackageName>
+							<persistenceUnitName>com.qpark.eip.model.docmodel</persistenceUnitName>
+							<datasourceJndiName>ComQparkEipModelAnalysisDataSourceJndi</datasourceJndiName>
+							<springJpaVendorAdapter>${persistence.jpa.vendor.adapter}</springJpaVendorAdapter>
+							<databasePlatform>${persistence.jpa.vendor.adapter.databasePlatform}</databasePlatform>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.hyperjaxb3</groupId>
+				<artifactId>maven-hyperjaxb3-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-hyperjaxb3-sources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!--<forceRegenerate>true</forceRegenerate>-->
+					<schemaDirectory>${model.dir}</schemaDirectory>
+					<verbose>false</verbose>
+					<variant>jpa2</variant>
+					<persistenceXml>${project.basedir}/src/main/persistence/persistence-template.xml</persistenceXml>
+					<episode>true</episode>
+					<generateDirectory>${java.gen.dir}</generateDirectory>
+					<extension>true</extension>
+					<persistenceUnitName>com.qpark.eip.model.docmodel</persistenceUnitName>
+					<!--<roundtripTestClassName>RoundtripTest</roundtripTestClassName>-->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<processors>
+								<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+							</processors>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-jpamodelgen</artifactId>
+						<version>4.3.11.Final</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>handle-persistence-xml</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<delete
+									file="${project.build.directory}/generated-sources/RoundtripTest.java" />
+								<property name="gen.source.meta.inf"
+									value="${project.build.directory}/generated-sources/META-INF" />
+								<property name="classes.meta.inf"
+									value="${project.build.directory}/classes/META-INF" />
+								<replace file="${gen.source.meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence/orm]]></replacetoken>
+									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence/orm]]></replacevalue>
+								</replace>
+								<replace file="${gen.source.meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[orm_2_0.xsd]]></replacetoken>
+									<replacevalue><![CDATA[orm_2_1.xsd]]></replacevalue>
+								</replace>
+								<replace file="${gen.source.meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[http://java.sun.com/xml/ns/persistence]]></replacetoken>
+									<replacevalue><![CDATA[http://xmlns.jcp.org/xml/ns/persistence]]></replacevalue>
+								</replace>
+								<replace file="${gen.source.meta.inf}/persistence.xml">
+									<replacetoken><![CDATA[persistence_2_0.xsd]]></replacetoken>
+									<replacevalue><![CDATA[persistence_2_1.xsd]]></replacevalue>
+								</replace>
+								<mkdir dir="${gen.source.meta.inf}/com.qpark.eip.model.docmodel" />
+								<mkdir dir="${classes.meta.inf}/com.qpark.eip.model.docmodel" />
+								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml"
+									todir="${gen.source.meta.inf}/com.qpark.eip.model.docmodel" />
+								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode"
+									todir="${gen.source.meta.inf}/com.qpark.eip.model.docmodel"
+									failonerror="false" />
+								<copy overwrite="true" file="${gen.source.meta.inf}/persistence.xml"
+									todir="${classes.meta.inf}/com.qpark.eip.model.docmodel" />
+								<move overwrite="true" file="${gen.source.meta.inf}/sun-jaxb.episode"
+									todir="${classes.meta.inf}/com.qpark.eip.model.docmodel"
+									failonerror="false" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<compilerArgument>-proc:none</compilerArgument>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>META-INF/persistence.xml</exclude>
+						<exclude>RoundtripTest.class</exclude>
+						<exclude>DDLGeneratorWhiteListedClassNames.txt</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jvnet.hyperjaxb3</groupId>
+			<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.hyperjaxb3</groupId>
+			<artifactId>hyperjaxb3-ejb-runtime</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -30,6 +30,7 @@
 
 	<modules>
 		<module>platform-domain-model-persistence</module>
+		<module>platform-domain-model-persistence-analysis</module>
 		<module>platform-domain-model-service</module>
 		<module>platform-core</module>
 		<module>platform-service-provider-techsupport-flow</module>

@@ -34,11 +34,10 @@
 				<annotation><documentation>Report meta data.</documentation></annotation></element>
 			<element name="reportContent" type="RM:ReportContentType" minOccurs="1" maxOccurs="unbounded">
 				<annotation><documentation>Report meta data.</documentation></annotation></element>
-			
 		</sequence>
 	</complexType>
 	<element name="Report" type="RM:ReportType"/>
-	
+
 	<complexType name="ReportInfoType">
 		<sequence>
 			<element name="numberOfHeaderRows" type="int">
@@ -51,24 +50,26 @@
 				<annotation><documentation>Delimiter used in the rowContent</documentation></annotation></element>
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="ReportHeaderDataType">
 		<sequence>
 			<element name="rowNumber" type="int" minOccurs="1" maxOccurs="1">
 				<annotation><documentation>Header row number.</documentation></annotation></element>
 			<element name="reportMetaData" type="RM:ReportMetaDataType" minOccurs="1" maxOccurs="unbounded">
 				<annotation><documentation>Report meta data.</documentation></annotation></element>
-			<element name="final" type="boolean" minOccurs="1" maxOccurs="1">
+			<element name="finalRow" type="boolean" minOccurs="1" maxOccurs="1">
 				<annotation><documentation>If true, this is the final header row</documentation></annotation></element>
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="ReportMetaDataType">
 		<sequence>
 			<element name="columnName" type="string" minOccurs="1" maxOccurs="1">
 				<annotation><documentation>Column name, can be blank.</documentation></annotation></element>
 			<element name="columnSpan" type="int"  minOccurs="1" maxOccurs="1">
 				<annotation><documentation>Column span, 1 for the final header row.</documentation></annotation></element>
+			<element name="columnWidth" type="double" minOccurs="1" maxOccurs="1">
+				<annotation><documentation>Column width in signs, like css em (size of the current font).</documentation></annotation></element>
 			<element name="columnDescription" type="string"  minOccurs="1" maxOccurs="1">
 				<annotation><documentation>Column description.</documentation></annotation></element>
 			<element name="columnJavaDataType" type="string" minOccurs="1" maxOccurs="1">
@@ -77,23 +78,23 @@
 				<annotation><documentation>Java string format expression.</documentation></annotation></element>
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="ReportContentType">
 		<sequence>
 			<element name="row" type="int" minOccurs="1" maxOccurs="1">
 				<annotation><documentation>Data row.</documentation></annotation></element>
-			<element name="rowContent" type="RM:CellType">
-				<annotation><documentation>Data content row. Contains text delimited by the delimiter.</documentation></annotation></element>	
+			<element name="rowContent" type="RM:CellType" maxOccurs="unbounded">
+				<annotation><documentation>Data content row. Contains text delimited by the delimiter.</documentation></annotation></element>
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="CellType">
 		<sequence>
 			<element name="column" type="int" minOccurs="1" maxOccurs="1">
 				<annotation><documentation>Cell column.</documentation></annotation></element>
 			<element name="cellContent" type="string">
-				<annotation><documentation>Data content of the cell.</documentation></annotation></element>	
+				<annotation><documentation>Data content of the cell.</documentation></annotation></element>
 		</sequence>
 	</complexType>
-	
-	</schema>
+
+</schema>

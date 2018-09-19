@@ -143,16 +143,16 @@ public class EipModelAnalysisPersistenceConfig {
 		String jpaVendorAdapterClassName = this.jpaVendorAdapterConfiguration
 				.getJpaVendorAdapterClassName();
 		if (jpaVendorAdapterClassName == null
-				|| jpaVendorAdapterClassName
-						.equals("org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter")
+				|| jpaVendorAdapterClassName.equals(
+						"org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter")
 				|| jpaVendorAdapterClassName.equalsIgnoreCase("Hibernate")) {
 			jpaVendorAdapter = new HibernateJpaVendorAdapter();
-		} else if (jpaVendorAdapterClassName
-				.equals("org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter")
+		} else if (jpaVendorAdapterClassName.equals(
+				"org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter")
 				|| jpaVendorAdapterClassName.equalsIgnoreCase("EclipseLink")) {
 			jpaVendorAdapter = new EclipseLinkJpaVendorAdapter();
-		} else if (jpaVendorAdapterClassName
-				.equals("org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter")
+		} else if (jpaVendorAdapterClassName.equals(
+				"org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter")
 				|| jpaVendorAdapterClassName.equalsIgnoreCase("OpenJpa")) {
 			jpaVendorAdapter = new OpenJpaVendorAdapter();
 		}
