@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,6 +40,7 @@ import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlDate;
 import org.apache.xmlbeans.XmlDateTime;
 import org.apache.xmlbeans.XmlDecimal;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlFloat;
 import org.apache.xmlbeans.XmlInt;
 import org.apache.xmlbeans.XmlInteger;
@@ -54,6 +56,7 @@ import org.apache.xmlbeans.XmlUnsignedShort;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.qpark.maven.Util;
 
@@ -633,8 +636,13 @@ public class XsdsUtil {
 					.toArray(new XmlObject[parsedMessages.size()]);
 			sts = XmlBeans.compileXsd(schemas, XmlBeans.getBuiltinTypeSystem(),
 					compileOptions);
-		} catch (final Exception e) {
-			e.printStackTrace();
+		} catch (final XmlException e) {
+			logger.error("Failed to compile {}: {} {}", file.getAbsolutePath(),
+					e.getError(), e.getErrors());
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			logger.error("Failed to compile {}", file.getAbsolutePath());
+			logger.error(e.getMessage(), e);
 		}
 		return sts;
 	}
@@ -1083,16 +1091,30 @@ public class XsdsUtil {
 							o2.getElement().getName());
 				}
 			});
-	/** The {@link EntityResolver} for the local xsds. */
-	private final EntityResolver entityResolver = (publicId, systemId) -> {
-		if (XsdsUtil.this.getXsdContainerMap().containsKey(publicId)) {
-			final InputSource is = new InputSource(
-					new FileInputStream(XsdsUtil.this.getXsdContainerMap()
-							.get(publicId).getFile()));
-			return is;
+
+	static class EipEntityResolver implements EntityResolver {
+		private final Map<String, File> publicIdMap = new HashMap<>();
+
+		void addPublicId(final String publicId, final File f) {
+			this.publicIdMap.put(publicId, f);
 		}
-		return null;
-	};
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
+		 *      java.lang.String)
+		 */
+		@SuppressWarnings("resource")
+		@Override
+		public InputSource resolveEntity(final String publicId,
+				final String systemId) throws SAXException, IOException {
+			return new InputSource(
+					new FileInputStream(this.publicIdMap.get(publicId)));
+		}
+
+	}
+
 	/**
 	 * The package name of the messages should end with this. Default is
 	 * <code>msg</code>.
@@ -1159,6 +1181,9 @@ public class XsdsUtil {
 		startX = System.currentTimeMillis();
 		this.xsdContainerMap = setupXsdContainers(this.xsdFiles,
 				this.baseDirectory);
+		EipEntityResolver eipEntityResolver = new EipEntityResolver();
+		this.xsdContainerMap.values().stream().forEach(xc -> eipEntityResolver
+				.addPublicId(xc.getTargetNamespace(), xc.getFile()));
 		this.getXsdContainerMap().values().stream()
 				.forEach(xc -> logger.debug(String.format("XsdContainer: %s %s",
 						xc.getTargetNamespace(), xc.getFile())));
@@ -1178,7 +1203,7 @@ public class XsdsUtil {
 		this.xsdFiles.stream().parallel().forEach(f -> {
 			final long startf = System.currentTimeMillis();
 			final SchemaTypeSystem sts = getSchemaTypeSystem(f,
-					this.entityResolver);
+					eipEntityResolver);
 			if (sts == null) {
 				throw new IllegalStateException(String.format(
 						"Could not parse a valid SchemaTypeSystem from file %s",
