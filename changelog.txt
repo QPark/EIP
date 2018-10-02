@@ -1,5 +1,8 @@
 Changelog:
 
+3.11.1 2018***
+Core: Fixed xmlbeans handler
+
 3.11.0 20180914
 Sample: Added analysis module in domain
 Sample: Added generic report definition
