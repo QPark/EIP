@@ -53,6 +53,7 @@ import org.apache.xmlbeans.XmlTime;
 import org.apache.xmlbeans.XmlUnsignedInt;
 import org.apache.xmlbeans.XmlUnsignedLong;
 import org.apache.xmlbeans.XmlUnsignedShort;
+import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
 import org.apache.xmlbeans.impl.xsd2inst.SampleXmlUtil;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -631,7 +632,9 @@ public class XsdsUtil {
 		compileOptions.setEntityResolver(entityResolver);
 
 		try {
-			parsedMessages.add(XmlObject.Factory.parse(file, xopt));
+			// See https://netbeans.org/bugzilla/show_bug.cgi?id=112499#c6
+			// parsedMessages.add(XmlObject.Factory.parse(file, xopt));
+			parsedMessages.add(SchemaDocument.Factory.parse(file, xopt));
 			final XmlObject[] schemas = parsedMessages
 					.toArray(new XmlObject[parsedMessages.size()]);
 			sts = XmlBeans.compileXsd(schemas, XmlBeans.getBuiltinTypeSystem(),
