@@ -109,6 +109,7 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 		boolean updateStaleFileTimestamp = false;
 		try {
 			updateStaleFileTimestamp = super.performExecution();
+//			XsdsUtil xsds = XsdsUtil.getInstance(baseDirectory, basePackageName, messagePackageNameSuffix, deltaPackageNameSuffix);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
