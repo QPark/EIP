@@ -2,7 +2,8 @@ Changelog:
 
 3.12.0 
 JAXB: Dropped unnecessary @XmlSeeAlso annotations with plugin xjc-drop-xmlseealso
-
+Core: Using xmlbeans SchemaDocument.Factory.parse instead of XMLObject.Factory.parse
+Some tiny bugfixes and documentation
 
 3.11.0 20180914
 Sample: Added analysis module in domain
