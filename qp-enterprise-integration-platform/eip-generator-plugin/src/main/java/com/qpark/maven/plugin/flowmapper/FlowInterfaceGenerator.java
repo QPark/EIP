@@ -545,7 +545,7 @@ public class FlowInterfaceGenerator {
 		}
 		sb.append(", ");
 		if (this.flow.getOut() != null) {
-			if (this.response.isOutList()) {
+			if (this.response != null && this.response.isOutList()) {
 				sb.append("List<");
 				sb.append(this.flow.getOut().getClassNameFullQualified());
 				sb.append(">");
