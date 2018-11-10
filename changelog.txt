@@ -1,6 +1,9 @@
 Changelog:
 
-3.12.0 
+Next
+Flow Generator: Fixed NullPointerException at null response
+
+3.12.0 20181031
 JAXB: Dropped unnecessary @XmlSeeAlso annotations with plugin xjc-drop-xmlseealso
 Core: Using xmlbeans SchemaDocument.Factory.parse instead of XMLObject.Factory.parse
 Some tiny bugfixes and documentation
