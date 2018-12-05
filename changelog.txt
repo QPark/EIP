@@ -1,6 +1,7 @@
 Changelog:
 
-Next
+3.12.1 20181205
+Core: ThreadPoolSupport shutdown
 Flow Generator: Fixed NullPointerException at null response
 
 3.12.0 20181031

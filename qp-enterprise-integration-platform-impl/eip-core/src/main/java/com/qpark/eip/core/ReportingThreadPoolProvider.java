@@ -24,12 +24,14 @@ public abstract class ReportingThreadPoolProvider {
 	 * Shutdown hook which calls
 	 * {@code java.util.concurrent.ExecutorService#shutdownNow()}
 	 *
-	 * @param executorService
-	 *            the executor which we want to attach to, and shutdown.
+	 * @param executorService the executor which we want to attach to, and
+	 *                        shutdown.
 	 */
-	private static void shutdown(final ExecutorService executorService) {
+	private static void shutdownNow(final ExecutorService executorService) {
 		List<Runnable> runnables = executorService.shutdownNow();
-		Arrays.toString(runnables.toArray(new Runnable[runnables.size()]));
+		if (Objects.nonNull(runnables)) {
+			Arrays.toString(runnables.toArray(new Runnable[runnables.size()]));
+		}
 	}
 
 	/** The {@link ReportingThreadPoolExecutor}. */
@@ -50,7 +52,7 @@ public abstract class ReportingThreadPoolProvider {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
-					shutdown(ReportingThreadPoolProvider.this.pool);
+					shutdownNow(ReportingThreadPoolProvider.this.pool);
 				}
 			});
 		}

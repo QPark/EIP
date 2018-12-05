@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -84,11 +85,12 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 
 	/** Indicator if the spring application context is loaded well. */
 	private boolean initialized;
+
 	/** The {@link org.slf4j.Logger}. */
 	private Logger logger = LoggerFactory.getLogger(ThreadPoolSupport.class);
+
 	/** The thread pool size. */
 	private int size = 4;
-
 	/** The thread pool name prefix. */
 	private String threadPoolNamePrefix = "EIP-ThreadPool-thread-";
 
@@ -101,6 +103,28 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 		this.pool.setThreadFactory(
 				new PoolsThreadFactory(this.getThreadPoolNamePrefix()));
 		this.initialized = true;
+	}
+
+	/**
+	 * Execute the {@link Callable}s
+	 *
+	 * @param callables     the list of {@link Callable}s to execute
+	 * @param waitForResult <code>true</code>, if the return waits for the
+	 *                      result.
+	 * @return the list of {@link Future}s.
+	 */
+	public <T> List<Future<T>> execute(final List<Callable<T>> callables,
+			final boolean waitForResult) {
+		List<Future<T>> value = new ArrayList<>();
+		if (callables.size() > 0) {
+			this.logger.info(" execute {} callables", callables.size());
+			callables.stream().filter(callable -> Objects.nonNull(callable))
+					.forEach(callable -> value.add(this.pool.submit(callable)));
+			if (waitForResult) {
+				this.futureGet(value);
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -133,28 +157,6 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 				});
 			} else {
 				this.execute(callables, true);
-			}
-		}
-		return value;
-	}
-
-	/**
-	 * Execute the {@link Callable}s
-	 *
-	 * @param callables     the list of {@link Callable}s to execute
-	 * @param waitForResult <code>true</code>, if the return waits for the
-	 *                      result.
-	 * @return the list of {@link Future}s.
-	 */
-	public <T> List<Future<T>> execute(final List<Callable<T>> callables,
-			final boolean waitForResult) {
-		List<Future<T>> value = new ArrayList<>();
-		if (callables.size() > 0) {
-			this.logger.info(" execute {} callables", callables.size());
-			callables.stream().filter(callable -> Objects.nonNull(callable))
-					.forEach(callable -> value.add(this.pool.submit(callable)));
-			if (waitForResult) {
-				this.futureGet(value);
 			}
 		}
 		return value;
@@ -227,5 +229,22 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 	 */
 	public void setThreadPoolNamePrefix(final String threadPoolNamePrefix) {
 		this.threadPoolNamePrefix = threadPoolNamePrefix;
+	}
+
+	/**
+	 * Shutdown the underlying {@link ThreadPoolExecutor}.
+	 * 
+	 * @see ThreadPoolExecutor#shutdown()
+	 */
+	public void shutdown() {
+		this.pool.shutdown();
+	}
+
+	/**
+	 * @return the list of the tasks that were awaiting execution.
+	 * @see ThreadPoolExecutor#shutdownNow()
+	 */
+	public List<Runnable> shutdownNow() {
+		return this.pool.shutdownNow();
 	}
 }
