@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.qpark.eip.core.spring.parallel;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.Instant;
@@ -78,6 +79,13 @@ public class MethodCallable<T> implements Callable<T> {
 		Instant start = Instant.now();
 		try {
 			value.set((T) this.method.invoke(this.bean, this.input));
+		} catch (IllegalArgumentException e) {
+			logger.error(String.format(" call: Failed to execute %s: %s",
+					this.method.getName(), e.getMessage()), e);
+		} catch (InvocationTargetException e) {
+			logger.error(" call: Failed to execute {}", this.method.getName());
+			logger.error(String.format("%s: %s", e.getMessage(),
+					e.getCause().getMessage()), e.getCause());
 		} catch (final Exception e) {
 			logger.error(" call: Failed to execute {}", this.method.getName());
 			logger.error(e.getMessage(), e);
