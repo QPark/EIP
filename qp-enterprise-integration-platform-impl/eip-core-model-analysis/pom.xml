@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.qpark.eip.core</groupId>
 		<artifactId>eip-base</artifactId>
-		<version>3.12.0</version><!--qpark-eip-version-->
+		<version>3.12.1</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
