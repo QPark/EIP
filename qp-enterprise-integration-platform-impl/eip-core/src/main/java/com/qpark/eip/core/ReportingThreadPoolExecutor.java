@@ -28,8 +28,7 @@ public class ReportingThreadPoolExecutor extends ThreadPoolExecutor {
 	/**
 	 * Create the thread pool like {@link Executors#newFixedThreadPool} does it
 	 * 
-	 * @param nThreads
-	 *            the number of threads.
+	 * @param nThreads the number of threads.
 	 */
 	public ReportingThreadPoolExecutor(final int nThreads) {
 		super(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
@@ -39,10 +38,8 @@ public class ReportingThreadPoolExecutor extends ThreadPoolExecutor {
 	/**
 	 * Create the thread pool like {@link Executors#newFixedThreadPool} does it
 	 * 
-	 * @param nThreads
-	 *            the number of threads.
-	 * @param threadFactory
-	 *            the {@link ThreadFactory}.
+	 * @param nThreads      the number of threads.
+	 * @param threadFactory the {@link ThreadFactory}.
 	 */
 	public ReportingThreadPoolExecutor(final int nThreads,
 			final ThreadFactory threadFactory) {
@@ -56,7 +53,7 @@ public class ReportingThreadPoolExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	protected void beforeExecute(final Thread t, final Runnable r) {
-		this.logger.debug("Starting execute - {} threads, {} callables waiting",
+		this.logger.trace("Starting execute - {} threads, {} callables waiting",
 				this.getCorePoolSize(), this.getQueue().size());
 		super.beforeExecute(t, r);
 	}
@@ -69,14 +66,15 @@ public class ReportingThreadPoolExecutor extends ThreadPoolExecutor {
 	protected void afterExecute(final Runnable r, final Throwable t) {
 		super.afterExecute(r, t);
 		if (t == null) {
-			this.logger.debug(
-					"Finished execute - {} threads, {} callables waiting",
-					this.getCorePoolSize(), this.getQueue().size());
+			this.logger.trace(
+					"Finished execute - {} - {} threads, {} callables waiting",
+					r.getClass().getName(), this.getCorePoolSize(),
+					this.getQueue().size());
 		} else {
 			this.logger.warn(
-					"Finished execute with exception - {} threads, {} callables waiting: {}",
-					this.getCorePoolSize(), this.getQueue().size(),
-					t.getMessage());
+					"Finished execute with exception - {} - {} threads, {} callables waiting: {}",
+					r.getClass().getName(), this.getCorePoolSize(),
+					this.getQueue().size(), t.getMessage());
 		}
 	}
 }
