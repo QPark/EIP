@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.qpark.eip.core.ReportingThreadPoolProvider;
@@ -30,7 +31,7 @@ import com.qpark.eip.core.ReportingThreadPoolProvider;
  * @author bhausen
  */
 public class ThreadPoolSupport extends ReportingThreadPoolProvider
-		implements InitializingBean {
+		implements InitializingBean, DisposableBean {
 	/**
 	 * The default thread factory
 	 */
@@ -68,10 +69,50 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 	}
 
 	/**
+	 * @param namePrefix
+	 * @param poolSize
+	 * @return an initialized instance of {@link ThreadPoolSupport}.
+	 * @throws Exception
+	 */
+	public static ThreadPoolSupport createInitializedInstance(final String namePrefix,
+			final int poolSize) throws Exception {
+		ThreadPoolSupport instance = new ThreadPoolSupport();
+		instance.setSize(poolSize);
+		instance.setThreadPoolNamePrefix(namePrefix);
+		instance.afterPropertiesSet();
+		return instance;
+	}
+
+	/**
+	 * Creates a {@link ThreadPoolSupport}, initializes it, runs the
+	 * {@link Callable}s and shuts down the {@link ThreadPoolSupport}.
+	 *
+	 * @param callables
+	 *            the {@link Callable}s to execute.
+	 * @param namePrefix
+	 *            the name prefix of the {@link ThreadPoolSupport}s thread
+	 *            names.
+	 * @param poolSize
+	 *            the pool size.
+	 * @return the list of {@link Future}s.
+	 * @throws Exception
+	 */
+	public static <T> List<Future<T>> executeAndWait(
+			final List<Callable<T>> callables, final String namePrefix,
+			final int poolSize) throws Exception {
+		ThreadPoolSupport instance = createInitializedInstance(namePrefix, poolSize);
+		List<Future<T>> value = instance.execute(callables, true);
+		instance.shutdown();
+		return value;
+	}
+
+	/**
 	 * Split the input list into partition lists of partitionSize.
 	 *
-	 * @param list          the input list.
-	 * @param partitionSize the size of the partitions.
+	 * @param list
+	 *            the input list.
+	 * @param partitionSize
+	 *            the size of the partitions.
 	 * @return the list of partition lists.
 	 */
 	public static <T> List<List<T>> partition(final List<T> list,
@@ -106,11 +147,20 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 	}
 
 	/**
+	 * @see org.springframework.beans.factory.DisposableBean#destroy()
+	 */
+	@Override
+	public void destroy() throws Exception {
+		this.shutdown();
+	}
+
+	/**
 	 * Execute the {@link Callable}s
 	 *
-	 * @param callables     the list of {@link Callable}s to execute
-	 * @param waitForResult <code>true</code>, if the return waits for the
-	 *                      result.
+	 * @param callables
+	 *            the list of {@link Callable}s to execute
+	 * @param waitForResult
+	 *            <code>true</code>, if the return waits for the result.
 	 * @return the list of {@link Future}s.
 	 */
 	public <T> List<Future<T>> execute(final List<Callable<T>> callables,
@@ -130,9 +180,11 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 	/**
 	 * Execute the {@link Callable}s
 	 *
-	 * @param callables     the list of {@link Callable}s to execute
-	 * @param partitionSize the number of {@link Callable}s to pass to the
-	 *                      executor at once.
+	 * @param callables
+	 *            the list of {@link Callable}s to execute
+	 * @param partitionSize
+	 *            the number of {@link Callable}s to pass to the executor at
+	 *            once.
 	 * @return the list of {@link Future}s.
 	 */
 	public <T> List<Future<T>> executePartitioned(
@@ -165,7 +217,8 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 	/**
 	 * Call the method {@link Future#get()} on the list of {@link Future}s.
 	 *
-	 * @param futures the list of {@link Future}s.
+	 * @param futures
+	 *            the list of {@link Future}s.
 	 */
 	public <T> void futureGet(final List<Future<T>> futures) {
 		futures.forEach(future -> {
@@ -218,14 +271,16 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 	}
 
 	/**
-	 * @param size the pool size to set
+	 * @param size
+	 *            the pool size to set
 	 */
 	public void setSize(final int size) {
 		this.size = size;
 	}
 
 	/**
-	 * @param threadPoolNamePrefix the threadPoolNamePrefix to set
+	 * @param threadPoolNamePrefix
+	 *            the threadPoolNamePrefix to set
 	 */
 	public void setThreadPoolNamePrefix(final String threadPoolNamePrefix) {
 		this.threadPoolNamePrefix = threadPoolNamePrefix;
@@ -233,7 +288,7 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 
 	/**
 	 * Shutdown the underlying {@link ThreadPoolExecutor}.
-	 * 
+	 *
 	 * @see ThreadPoolExecutor#shutdown()
 	 */
 	public void shutdown() {
