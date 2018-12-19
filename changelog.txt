@@ -1,4 +1,6 @@
 Changelog:
+3.12.2 201
+Some tiny bugfixes, cosmetics and documentation
 
 3.12.1 20181205
 Core: ThreadPoolSupport shutdown
