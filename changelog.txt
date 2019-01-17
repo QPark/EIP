@@ -1,4 +1,8 @@
 Changelog:
+
+3.13.0 20190117
+Core: Added reporting module
+
 3.12.2 201
 Some tiny bugfixes, cosmetics and documentation
 
