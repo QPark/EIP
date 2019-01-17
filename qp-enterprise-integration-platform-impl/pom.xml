@@ -32,6 +32,7 @@
 		<module>eip-core-logback</module>
 		<module>eip-core-model-analysis</module>
 		<module>eip-core-persistence</module>
+		<module>eip-core-reporting</module>
 		<module>eip-core-poi</module>
 		<module>eip-core-sftp</module>
 		<module>eip-core-spring</module>
