@@ -1,5 +1,8 @@
 Changelog:
 
+3.x
+Generator: Added Jaxb2Marshaller config generator
+
 3.13.0 20190117
 Core: Added reporting module
 
