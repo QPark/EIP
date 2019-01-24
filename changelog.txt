@@ -2,6 +2,7 @@ Changelog:
 
 3.14.0 20190124
 Platform: Added Hyperjaxb3 nameing with full qualified entity name
+Platform: Dropped default behaviour of Hyperjaxb3 naming
 Generator: Added Jaxb2Marshaller config generator
 
 3.13.0 20190117

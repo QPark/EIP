@@ -9,6 +9,7 @@ package com.qpark.maven.plugin.springconfig;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -30,13 +31,16 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-mashaller-config", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo(name = "generate-mashaller-config",
+		defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class Jaxb2MarshallerConfigMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory",
+			defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory",
+			defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -72,6 +76,9 @@ public class Jaxb2MarshallerConfigMojo extends AbstractMojo {
 	/** The name of the service id to generate. If empty use all. */
 	@Parameter(property = "serviceId", defaultValue = "")
 	protected String serviceId;
+	/** The name of the service id to generate. If empty use all. */
+	@Parameter(property = "java", defaultValue = "false")
+	protected boolean java;
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -86,9 +93,85 @@ public class Jaxb2MarshallerConfigMojo extends AbstractMojo {
 				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
 				this.serviceResponseSuffix);
 
-		this.generate(xsds);
+		if (this.java) {
+			this.generateJava(xsds);
+		} else {
+			this.generate(xsds);
+		}
 
 		this.getLog().debug("-execute");
+	}
+
+	private void generateJava(final XsdsUtil xsds) {
+		String eipVersion = this.getEipVersion();
+		StringBuffer capitalizeName = new StringBuffer(
+				Util.capitalizePackageName(this.basePackageName));
+		StringBuffer fileName = new StringBuffer(64)
+				.append(this.basePackageName);
+		if (Objects.nonNull(this.serviceId)
+				&& this.serviceId.trim().length() > 0) {
+			fileName.append(".").append(this.serviceId.trim());
+			capitalizeName.append(
+					ServiceIdRegistry.capitalize(this.serviceId.trim()));
+		}
+		fileName.append("-jaxb2marshaller-spring-config.xml");
+		List<String> sids = ServiceIdRegistry.splitServiceIds(this.serviceId);
+		if (sids.isEmpty()) {
+			sids.addAll(xsds.getServiceIdRegistry().getAllServiceIds());
+		}
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("package ").append(this.basePackageName).append(";\n");
+		sb.append("\n");
+		sb.append("import org.springframework.context.annotation.Bean;\n");
+		sb.append(
+				"import org.springframework.context.annotation.Configuration;\n");
+		sb.append("import org.springframework.oxm.jaxb.Jaxb2Marshaller;\n");
+		sb.append("\n");
+		sb.append("/**\n");
+		sb.append(
+				" * Provides a {@link Jaxb2Marshaller} - which is not a real marshaller, more a\n");
+		sb.append(" * marshaller factory holding a JAXBContext.\n");
+		sb.append(" *\n");
+		sb.append(" * generated\n");
+		sb.append(" */\n");
+		sb.append("@Configuration\n");
+		sb.append("public class ").append(capitalizeName)
+				.append("Jaxb2MarshallerConfig {\n");
+		sb.append("	/**\n");
+		sb.append("	 * @return the {@link Jaxb2Marshaller}.\n");
+		sb.append("	 */\n");
+		sb.append("	@Bean(name = \"eipCaller").append(capitalizeName)
+				.append("Marshaller\")\n");
+		sb.append("	public static Jaxb2Marshaller eipCaller")
+				.append(capitalizeName).append("Marshaller() {\n");
+		sb.append("		Jaxb2Marshaller value = new Jaxb2Marshaller();\n");
+		sb.append("		value.setPackagesToScan(\n");
+		sb.append("\n");
+
+		sb.append(sids.stream()
+				.map(sid -> xsds.getServiceIdRegistry().getServiceIdEntry(sid))
+				.map(side -> String.format("				\"%s\"",
+						side.getPackageName()))
+				.collect(Collectors.joining(",\n")));
+
+		sb.append("\n");
+		sb.append("		);\n");
+		sb.append("		return value;\n");
+		sb.append("	}\n");
+		sb.append("}\n");
+
+		File f = Util.getFile(this.outputDirectory, this.basePackageName,
+				String.format("%sJaxb2MarshallerConfig.java", capitalizeName));
+		this.getLog().debug(new StringBuffer().append("Write Inf  ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, sb.toString());
+		} catch (Exception e) {
+			this.getLog().error(String.format("%s: %s", e.getClass().getName(),
+					e.getMessage()));
+			e.printStackTrace();
+		}
 	}
 
 	protected void generate(final XsdsUtil xsds) {

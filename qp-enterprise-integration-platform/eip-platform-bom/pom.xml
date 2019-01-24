@@ -113,6 +113,11 @@
 				<artifactId>eip-hyperjaxb3-naming</artifactId>
 				<version>3.14.0</version><!--qpark-eip-version-->
 			</dependency>
+			<dependency>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-hyperjaxb3-naming-fq</artifactId>
+				<version>3.14.0</version><!--qpark-eip-version-->
+			</dependency>
 
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
@@ -277,19 +282,6 @@
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-plugin-xml</artifactId>
-							<version>3.14.0</version><!--qpark-eip-version-->
-						</dependency>
-					</dependencies>
-				</plugin>
-
-				<plugin>
-					<groupId>org.jvnet.hyperjaxb3</groupId>
-					<artifactId>maven-hyperjaxb3-plugin</artifactId>
-					<version>${org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version}</version>
-					<dependencies>
-						<dependency>
-							<groupId>com.qpark.maven</groupId>
-							<artifactId>eip-hyperjaxb3-naming</artifactId>
 							<version>3.14.0</version><!--qpark-eip-version-->
 						</dependency>
 					</dependencies>

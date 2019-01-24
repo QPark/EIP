@@ -23,6 +23,8 @@
 			<id>bom</id>
 			<modules>
 				<module>qp-enterprise-integration-platform/eip-platform-bom</module>
+				<module>qp-enterprise-integration-platform/eip-platform-bom/pom-hyperjaxb3-naming.xml</module>
+				<module>qp-enterprise-integration-platform/eip-platform-bom/pom-hyperjaxb3-naming-fq.xml</module>
 			</modules>
 		</profile>
 		<profile>
