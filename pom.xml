@@ -32,6 +32,7 @@
 				<module>qp-enterprise-integration-platform/eip-plugin-xml</module>
 				<module>qp-enterprise-integration-platform/eip-generator-plugin</module>
 				<module>qp-enterprise-integration-platform/eip-hyperjaxb3-naming</module>
+				<module>qp-enterprise-integration-platform/eip-hyperjaxb3-naming-fq</module>
 			</modules>
 		</profile>
 		<profile>

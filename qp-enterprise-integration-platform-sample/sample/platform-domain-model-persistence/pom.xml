@@ -87,6 +87,13 @@
 			<plugin>
 				<groupId>org.jvnet.hyperjaxb3</groupId>
 				<artifactId>maven-hyperjaxb3-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>com.qpark.maven</groupId>
+							<artifactId>eip-hyperjaxb3-naming-fq</artifactId>
+							<version>3.13.0</version><!--qpark-eip-version-->
+						</dependency>
+					</dependencies>
 				<executions>
 					<execution>
 						<id>generate-hyperjaxb3-sources</id>
