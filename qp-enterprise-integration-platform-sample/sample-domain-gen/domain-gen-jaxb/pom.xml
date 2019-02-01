@@ -37,6 +37,7 @@ Additionally to that a human readable version of the xsds is generated.
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<base.package.name>com.samples.bus</base.package.name>
+		<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
 
 		<model.dir>${project.build.directory}/model</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
@@ -59,7 +60,7 @@ Additionally to that a human readable version of the xsds is generated.
 							<baseDirectory>${model.dir}</baseDirectory>
 							<includeAllModels>true</includeAllModels>
 							<schemalocationPrefix>${domain.schema.location.prefix}</schemalocationPrefix>
-							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+							<messagePackageNameSuffixes>${messagePackageNameSuffixes}</messagePackageNameSuffixes>
 							<outputDirectory>${java.gen.dir}</outputDirectory>
 							<!-- 
 							<verbose>false</verbose>
@@ -79,6 +80,18 @@ Additionally to that a human readable version of the xsds is generated.
 						<configuration>
 							<baseDirectory>${model.dir}</baseDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate jaxb2 marshaller configs</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate-mashaller-config</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -112,7 +125,7 @@ Additionally to that a human readable version of the xsds is generated.
 						<configuration>
 							<baseDirectory>${model.dir}</baseDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
-							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+							<messagePackageNameSuffixes>${messagePackageNameSuffixes}</messagePackageNameSuffixes>
 							<modelVersion>${revision}</modelVersion>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
