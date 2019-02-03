@@ -12,19 +12,26 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 /**
- * Config to get a {@link Marshaller} and a {@link Unmarshaller} supporting the
- * entire domain.
+ * Provides a {@link Marshaller} and a {@link Unmarshaller} supporting the
+ * domain bound in the {@link Jaxb2Marshaller}.
  *
  * @author bhausen
  */
 public class JAXBMarshallerUnmarshallerProvider {
 	/** The spring {@link Jaxb2Marshaller}. */
-	@Autowired
-	private Jaxb2Marshaller jaxb2Marshaller;
+	private final Jaxb2Marshaller jaxb2Marshaller;
+
+	/**
+	 * 
+	 * @param jaxbContextToMarshaller
+	 */
+	public JAXBMarshallerUnmarshallerProvider(
+			Jaxb2Marshaller jaxbContextToMarshaller) {
+		this.jaxb2Marshaller = jaxbContextToMarshaller;
+	}
 
 	/**
 	 * @return the spring {@link Jaxb2Marshaller}.
@@ -34,14 +41,14 @@ public class JAXBMarshallerUnmarshallerProvider {
 	}
 
 	/**
-	 * @return the {@link JAXBContext} of the entire domain.
+	 * @return the {@link JAXBContext} of the domain.
 	 */
 	public JAXBContext getJAXBContext() {
 		return this.jaxb2Marshaller.getJaxbContext();
 	}
 
 	/**
-	 * @return the {@link Marshaller} supporting the entire SES domain.
+	 * @return the {@link Marshaller} supporting the domain.
 	 * @throws Exception
 	 */
 	public Marshaller getMarshaller() throws Exception {
@@ -53,7 +60,7 @@ public class JAXBMarshallerUnmarshallerProvider {
 	}
 
 	/**
-	 * @return the {@link Unmarshaller} supporting the entire SES domain.
+	 * @return the {@link Unmarshaller} supporting the domain.
 	 * @throws Exception
 	 */
 	public Unmarshaller getUnmarshaller() throws Exception {
