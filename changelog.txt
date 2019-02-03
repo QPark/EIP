@@ -1,5 +1,8 @@
 Changelog:
 
+3.14.1 20190203
+Impl: Spring core - Added some util classes
+
 3.14.0 20190124
 Platform: Added Hyperjaxb3 nameing with full qualified entity name
 Platform: Dropped default behaviour of Hyperjaxb3 naming

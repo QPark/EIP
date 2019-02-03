@@ -31,16 +31,13 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-mashaller-config",
-		defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+@Mojo(name = "generate-mashaller-config", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
 public class Jaxb2MarshallerConfigMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -216,8 +213,29 @@ public class Jaxb2MarshallerConfigMojo extends AbstractMojo {
 				});
 		xml.append("\t\t\t</list>\n");
 		xml.append("\t\t</property>\n");
-
 		xml.append("\t</bean>\n");
+
+		xml.append("\t<bean id=\"eip").append(capitalizeName)
+				.append("ServiceIdMap\"");
+		xml.append(" class=\"java.util.concurrent.ConcurrentHashMap\">\n");
+
+		xml.append("\t\t<constructor-arg>\n");
+		xml.append(
+				"\t\t\t<map key-type=\"java.lang.String\" value-type=\"java.lang.String\">\n");
+		xsds.getServiceIdRegistry().getAllServiceIds().stream()
+				.map(sid -> xsds.getServiceIdRegistry().getServiceIdEntry(sid))
+				.forEach(side -> {
+					xml.append("\t\t\t\t<entry key=\"");
+					xml.append(side.getServiceId());
+					xml.append("\" value=\"");
+					xml.append(side.getPackageName());
+					xml.append("\" />\n");
+				});
+		xml.append("\t\t\t</map>\n");
+		xml.append("\t\t</constructor-arg>\n");
+		xml.append("\t\t</property>\n");
+		xml.append("\t</bean>\n");
+
 		xml.append("\n</beans>\n");
 
 		File f = Util.getFile(this.outputDirectory, "", fileName.toString());
