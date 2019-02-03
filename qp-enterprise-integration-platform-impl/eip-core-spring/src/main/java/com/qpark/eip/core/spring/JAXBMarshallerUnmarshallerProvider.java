@@ -34,9 +34,9 @@ public class JAXBMarshallerUnmarshallerProvider {
 	}
 
 	/**
-	 * @return the {@link JAXBContext} of the entire SES domain.
+	 * @return the {@link JAXBContext} of the entire domain.
 	 */
-	public JAXBContext getJAXBContextComSesDomain() {
+	public JAXBContext getJAXBContext() {
 		return this.jaxb2Marshaller.getJaxbContext();
 	}
 
