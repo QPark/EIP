@@ -13,13 +13,13 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>3.14.0</version><!--qpark-eip-version-->
+		<version>3.14.1</version><!--qpark-eip-version-->
 		<relativePath/>
 	</parent>
 
 	<groupId>com.samples.platform.templates</groupId>
 	<artifactId>sample-templates</artifactId>
-	<version>3.14.0</version><!--qpark-eip-version-->
+	<version>3.14.1</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<description>
 		<![CDATA[Templates of the platform.]]>
