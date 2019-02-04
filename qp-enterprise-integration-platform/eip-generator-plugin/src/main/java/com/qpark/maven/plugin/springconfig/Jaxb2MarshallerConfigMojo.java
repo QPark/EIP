@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
+import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
