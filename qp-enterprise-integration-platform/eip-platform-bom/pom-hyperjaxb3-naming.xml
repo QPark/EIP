@@ -13,6 +13,7 @@
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
 		<version>3.14.1</version><!--qpark-eip-version-->
+		<relativePath>pom.xml</relativePath>
 	</parent>
 
 	<groupId>com.qpark.eip</groupId>

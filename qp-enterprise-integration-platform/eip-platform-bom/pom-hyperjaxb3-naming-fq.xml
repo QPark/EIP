@@ -13,7 +13,8 @@
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
 		<version>3.14.1</version><!--qpark-eip-version-->
-	</parent>
+		<relativePath>pom.xml</relativePath>
+</parent>
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom-hj3-nameing-fq</artifactId>
