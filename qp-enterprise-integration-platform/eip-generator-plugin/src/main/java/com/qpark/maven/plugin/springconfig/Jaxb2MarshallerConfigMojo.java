@@ -21,7 +21,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.impl.StaticLoggerBinder;
 
-import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
@@ -215,26 +214,20 @@ public class Jaxb2MarshallerConfigMojo extends AbstractMojo {
 		xml.append("\t\t</property>\n");
 		xml.append("\t</bean>\n");
 
-		xml.append("\t<bean id=\"eip").append(capitalizeName)
+		xml.append("\t<util:map id=\"eip").append(capitalizeName)
 				.append("ServiceIdMap\"");
-		xml.append(" class=\"java.util.concurrent.ConcurrentHashMap\">\n");
+		xml.append(" map-class=\"java.util.concurrent.ConcurrentHashMap\">\n");
 
-		xml.append("\t\t<constructor-arg>\n");
-		xml.append(
-				"\t\t\t<map key-type=\"java.lang.String\" value-type=\"java.lang.String\">\n");
 		xsds.getServiceIdRegistry().getAllServiceIds().stream()
 				.map(sid -> xsds.getServiceIdRegistry().getServiceIdEntry(sid))
 				.forEach(side -> {
-					xml.append("\t\t\t\t<entry key=\"");
+					xml.append("\t\t<entry key=\"");
 					xml.append(side.getServiceId());
 					xml.append("\" value=\"");
 					xml.append(side.getPackageName());
 					xml.append("\" />\n");
 				});
-		xml.append("\t\t\t</map>\n");
-		xml.append("\t\t</constructor-arg>\n");
-		xml.append("\t\t</property>\n");
-		xml.append("\t</bean>\n");
+		xml.append("\t</util:map>\n");
 
 		xml.append("\n</beans>\n");
 
