@@ -35,7 +35,14 @@ public class ReportRenderer {
 	private static final String Root = "target/";
 
 	public void renderReportCSV(final ReportType report) {
+		Path path = Paths.get(Root + report.getReportName() + ".csv");
+		this.renderReportCSV(report, path);
+	}
 
+	public void renderReportCSV(final ReportType report, final Path path) {
+		if (!path.getParent().toFile().exists()) {
+			path.getParent().toFile().mkdirs();
+		}
 		List<ReportHeaderDataType> headers = report.getReportHeaderData();
 		ReportHeaderDataType header = headers.get(0);
 		int i = 0;
@@ -53,7 +60,7 @@ public class ReportRenderer {
 		}
 
 		try {
-			Path path = Paths.get(Root + report.getReportName() + ".csv");
+
 			BufferedWriter writer = Files.newBufferedWriter(path);
 
 			CSVPrinter csvPrinter = new CSVPrinter(writer,
@@ -75,7 +82,5 @@ public class ReportRenderer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-
 }
