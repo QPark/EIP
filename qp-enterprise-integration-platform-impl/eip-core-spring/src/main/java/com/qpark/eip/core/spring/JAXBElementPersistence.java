@@ -11,6 +11,7 @@ package com.qpark.eip.core.spring;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -223,11 +226,11 @@ public class JAXBElementPersistence {
 	/** The {@link Jaxb2Marshaller}. */
 	private final Jaxb2Marshaller jaxb2Marshaller;
 
-	/** The service id map. */
-	private final Map<String, Object> serviceIdMap;
 	/** The {@link org.slf4j.Logger}. */
 	private final Logger logger = LoggerFactory
 			.getLogger(JAXBElementPersistence.class);
+	/** The service id map. */
+	private final Map<String, Object> serviceIdMap;
 
 	/**
 	 * @param jaxb2Marshaller the {@link Jaxb2Marshaller}.
@@ -257,19 +260,65 @@ public class JAXBElementPersistence {
 		String resourceName = String.format("%s/%s", thePath, fileName);
 		if (thePath.equals("/")) {
 			resourceName = String.format("/%s", fileName);
+			resourceName = String.format("/%s", fileName);
 		}
-
-		try (InputStream inputSteam = this.getClass()
-				.getResourceAsStream(resourceName)) {
+		String resourceNameGzip = String.format("%s.gz", resourceName);
+		try (GZIPInputStream inputSteam = new GZIPInputStream(
+				this.getClass().getResourceAsStream(resourceNameGzip))) {
 			value = unmarshal(type, inputSteam,
 					this.jaxb2Marshaller.getJaxbContext());
 		} catch (Exception e) {
-			e.printStackTrace();
+			try (InputStream inputSteam = this.getClass()
+					.getResourceAsStream(resourceName)) {
+				value = unmarshal(type, inputSteam,
+						this.jaxb2Marshaller.getJaxbContext());
+			} catch (Exception e1) {
+				logger.error(e1.getMessage(), e1);
+			}
 		}
 		this.logger.debug("getJAXBElement {} #{} duration {}", resourceName,
 				DateUtil.getDuration(start, System.currentTimeMillis()));
 		return value;
 
+	}
+
+	/**
+	 * @param jaxbElement the {@link JAXBElement} to store.
+	 * @param out         the {@link OutputStream} to write the xml to.
+	 * @return the proposed file name.
+	 * @throws JAXBException
+	 */
+	public Optional<String> write(final JAXBElement<?> jaxbElement,
+			final OutputStream out) throws JAXBException {
+		AtomicReference<String> value = new AtomicReference<>();
+		if (Objects.nonNull(jaxbElement)
+				&& Objects.nonNull(jaxbElement.getValue())
+				&& Objects.nonNull(out)) {
+			AtomicReference<JAXBException> e = new AtomicReference<>();
+			getFileName(jaxbElement, this.serviceIdMap).ifPresent(fileName -> {
+				if (GZIPOutputStream.class.isAssignableFrom(out.getClass())) {
+					value.set(String.format("%s.gz", fileName));
+				} else {
+					value.set(fileName);
+				}
+				try {
+					Marshaller m = this.jaxb2Marshaller.getJaxbContext()
+							.createMarshaller();
+					m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+					m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+							Boolean.TRUE);
+					try (PrintWriter pw = new PrintWriter(out);) {
+						m.marshal(jaxbElement, pw);
+					}
+				} catch (JAXBException jaxbe) {
+					e.set(jaxbe);
+				}
+			});
+			if (Objects.nonNull(e.get())) {
+				throw e.get();
+			}
+		}
+		return Optional.ofNullable(value.get());
 	}
 
 	/**
@@ -280,14 +329,34 @@ public class JAXBElementPersistence {
 	 */
 	public void write(final JAXBElement<?> jaxbElement, final Path path)
 			throws JAXBException {
+		this.write(jaxbElement, path, false);
+	}
+
+	/**
+	 * @param jaxbElement the {@link JAXBElement} to store.
+	 * @param path        the directory {@link Path} to store the
+	 *                    {@link JAXBElement}.
+	 * @param gzipped     if <code>true</code> the file gets saved in GZIP
+	 *                    format.
+	 * @throws JAXBException
+	 */
+	public void write(final JAXBElement<?> jaxbElement, final Path path,
+			final boolean gzipped) throws JAXBException {
 		if (Objects.nonNull(jaxbElement)
 				&& Objects.nonNull(jaxbElement.getValue())
 				&& Objects.nonNull(path)) {
 			AtomicReference<JAXBException> e = new AtomicReference<>();
 			getFileName(jaxbElement, this.serviceIdMap).ifPresent(fileName -> {
-				Path file = new File(
-						String.format("%s%s%s", path.toFile().getAbsolutePath(),
-								File.separatorChar, fileName)).toPath();
+				Path file;
+				if (gzipped) {
+					file = new File(String.format("%s%s%s",
+							path.toFile().getAbsolutePath(), File.separatorChar,
+							String.format("%s.gz", fileName))).toPath();
+				} else {
+					file = new File(String.format("%s%s%s",
+							path.toFile().getAbsolutePath(), File.separatorChar,
+							fileName)).toPath();
+				}
 				Path parentDirectory = file.getParent();
 				if (!parentDirectory.toFile().exists()) {
 					parentDirectory.toFile().mkdirs();
@@ -298,19 +367,36 @@ public class JAXBElementPersistence {
 					m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 					m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
 							Boolean.TRUE);
-					try (PrintWriter pw = new PrintWriter(
-							Files.newOutputStream(file,
-									StandardOpenOption.CREATE,
-									StandardOpenOption.TRUNCATE_EXISTING),
-							true);) {
-						m.marshal(jaxbElement, pw);
-						this.logger.debug("wrote {}",
-								file.toFile().getAbsolutePath());
-					} catch (IOException ioe) {
-						this.logger.error(String.format("FileName[%s] %s",
-								file.toFile().getAbsolutePath(),
-								ioe.getMessage()));
-						ioe.printStackTrace();
+					if (gzipped) {
+						try (PrintWriter pw = new PrintWriter(
+								new GZIPOutputStream(Files.newOutputStream(file,
+										StandardOpenOption.CREATE,
+										StandardOpenOption.TRUNCATE_EXISTING),
+										true));) {
+							m.marshal(jaxbElement, pw);
+							this.logger.debug("wrote {}",
+									file.toFile().getAbsolutePath());
+						} catch (IOException ioe) {
+							this.logger.error(String.format("FileName[%s] %s",
+									file.toFile().getAbsolutePath(),
+									ioe.getMessage()));
+							ioe.printStackTrace();
+						}
+					} else {
+						try (PrintWriter pw = new PrintWriter(
+								Files.newOutputStream(file,
+										StandardOpenOption.CREATE,
+										StandardOpenOption.TRUNCATE_EXISTING),
+								true);) {
+							m.marshal(jaxbElement, pw);
+							this.logger.debug("wrote {}",
+									file.toFile().getAbsolutePath());
+						} catch (IOException ioe) {
+							this.logger.error(String.format("FileName[%s] %s",
+									file.toFile().getAbsolutePath(),
+									ioe.getMessage()));
+							ioe.printStackTrace();
+						}
 					}
 				} catch (JAXBException jaxbe) {
 					e.set(jaxbe);
@@ -320,5 +406,16 @@ public class JAXBElementPersistence {
 				throw e.get();
 			}
 		}
+	}
+
+	/**
+	 * @param jaxbElement the {@link JAXBElement} to store.
+	 * @param path        the directory {@link Path} to store the
+	 *                    {@link JAXBElement}.
+	 * @throws JAXBException
+	 */
+	public void writeGzipped(final JAXBElement<?> jaxbElement, final Path path)
+			throws JAXBException {
+		this.write(jaxbElement, path, true);
 	}
 }
