@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.logging.Log;
@@ -18,7 +19,6 @@ import org.apache.maven.project.MavenProject;
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ElementType;
-import com.qpark.maven.xmlbeans.ServiceIdEntry;
 import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdContainer;
 import com.qpark.maven.xmlbeans.XsdsUtil;
@@ -240,8 +240,12 @@ public class WsServletXmlGenerator {
 		if (sids.isEmpty()) {
 			sids.addAll(this.config.getServiceIdRegistry().getAllServiceIds());
 		}
-		sids.stream().map(sid -> this.config.getServiceIdRegistry()
-				.getServiceIdEntry(sid)).forEach(side -> {
+		sids.stream()
+				.map(sid -> this.config.getServiceIdRegistry()
+						.getServiceIdEntry(sid))
+				.filter(side -> Objects.nonNull(side)
+						&& Objects.nonNull(side.getPackageName()))
+				.forEach(side -> {
 					sb.append("\t\t\t\t<value>");
 					sb.append(side.getPackageName());
 					sb.append("</value>\n");
@@ -279,17 +283,20 @@ public class WsServletXmlGenerator {
 				serviceIds = this.config.getServiceIdRegistry()
 						.getAllServiceIds();
 			}
-			for (final String sid : serviceIds) {
-				final ServiceIdEntry entry = this.config.getServiceIdRegistry()
-						.getServiceIdEntry(sid);
-				final XsdContainer xc = this.config
-						.getXsdContainer(entry.getTargetNamespace());
-				sb.append("\t\t\t\t<value>");
-				sb.append(this.servletXsdLocation);
-				sb.append(Util.getRelativePathTranslated(
-						this.config.getBaseDirectory(), xc.getFile()));
-				sb.append("</value>\n");
-			}
+			serviceIds.stream()
+					.map(sid -> this.config.getServiceIdRegistry()
+							.getServiceIdEntry(sid))
+					.filter(side -> Objects.nonNull(side)
+							&& Objects.nonNull(side.getTargetNamespace()))
+					.forEach(side -> {
+						XsdContainer xc = this.config
+								.getXsdContainer(side.getTargetNamespace());
+						sb.append("\t\t\t\t<value>");
+						sb.append(this.servletXsdLocation);
+						sb.append(Util.getRelativePathTranslated(
+								this.config.getBaseDirectory(), xc.getFile()));
+						sb.append("</value>\n");
+					});
 		} else {
 			for (final File f : this.config.getXsdFiles()) {
 				sb.append("\t\t\t\t<value>");
