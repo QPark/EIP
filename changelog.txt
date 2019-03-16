@@ -1,5 +1,13 @@
 Changelog:
 
+3.14.3 20190316
+Impl: Spring core - JAXBElementPersistence support of GZIP
+Some tiny bugfixes and documentation
+
+3.14.2 20190210
+Impl: Spring core - Auth config db
+Some tiny bugfixes and documentation
+
 3.14.1 20190204
 Impl: Spring core - Added some util classes
 
