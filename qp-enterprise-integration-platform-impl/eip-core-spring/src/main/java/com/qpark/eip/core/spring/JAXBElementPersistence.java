@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.qpark.eip.core.spring;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,7 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.qpark.eip.core.DateUtil;
@@ -260,23 +262,84 @@ public class JAXBElementPersistence {
 		String resourceName = String.format("%s/%s", thePath, fileName);
 		if (thePath.equals("/")) {
 			resourceName = String.format("/%s", fileName);
-			resourceName = String.format("/%s", fileName);
 		}
 		String resourceNameGzip = String.format("%s.gz", resourceName);
-		try (GZIPInputStream inputSteam = new GZIPInputStream(
-				this.getClass().getResourceAsStream(resourceNameGzip))) {
-			value = unmarshal(type, inputSteam,
-					this.jaxb2Marshaller.getJaxbContext());
-		} catch (Exception e) {
-			try (InputStream inputSteam = this.getClass()
-					.getResourceAsStream(resourceName)) {
-				value = unmarshal(type, inputSteam,
-						this.jaxb2Marshaller.getJaxbContext());
-			} catch (Exception e1) {
-				logger.error(e1.getMessage(), e1);
+		String name = resourceNameGzip;
+		if (!value.isPresent()) {
+			try (InputStream zResourceInputStream = this.getClass()
+					.getResourceAsStream(resourceNameGzip);) {
+				if (Objects.nonNull(zResourceInputStream)) {
+					value = unmarshal(type,
+							new GZIPInputStream(zResourceInputStream),
+							this.jaxb2Marshaller.getJaxbContext());
+				}
+			} catch (Exception e) {
+				this.logger.error(e.getMessage(), e);
 			}
 		}
-		this.logger.debug("getJAXBElement {} #{} duration {}", resourceName,
+		if (!value.isPresent()) {
+			try (InputStream resourceInputStream = this.getClass()
+					.getResourceAsStream(resourceName);) {
+				if (Objects.nonNull(resourceInputStream)) {
+					name = resourceName;
+					value = unmarshal(type, resourceInputStream,
+							this.jaxb2Marshaller.getJaxbContext());
+				}
+			} catch (Exception e) {
+				this.logger.error(e.getMessage(), e);
+			}
+		}
+		if (!value.isPresent()) {
+			File f = new File(resourceNameGzip);
+			if (f.exists()) {
+				try (InputStream zResourceInputStream = new GZIPInputStream(
+						new ByteArrayInputStream(
+								Files.readAllBytes(f.toPath())));) {
+					value = unmarshal(type, zResourceInputStream,
+							this.jaxb2Marshaller.getJaxbContext());
+				} catch (Exception e) {
+					this.logger.error(e.getMessage(), e);
+				}
+			} else {
+				f = new File(resourceName);
+				if (f.exists()) {
+					try (InputStream resourceInputStream = new ByteArrayInputStream(
+							Files.readAllBytes(f.toPath()));) {
+						name = resourceName;
+						value = unmarshal(type, resourceInputStream,
+								this.jaxb2Marshaller.getJaxbContext());
+					} catch (Exception e) {
+						this.logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+		if (!value.isPresent()) {
+			try (InputStream zResourceInputStream = new ClassPathResource(
+					resourceNameGzip).getInputStream();) {
+				if (Objects.nonNull(zResourceInputStream)) {
+					value = unmarshal(type,
+							new GZIPInputStream(zResourceInputStream),
+							this.jaxb2Marshaller.getJaxbContext());
+				}
+			} catch (Exception e) {
+				this.logger.error(e.getMessage(), e);
+			}
+		}
+		if (!value.isPresent()) {
+			try (InputStream resourceInputStream = new ClassPathResource(
+					resourceName).getInputStream();) {
+				if (Objects.nonNull(resourceInputStream)) {
+					name = resourceName;
+					value = unmarshal(type, resourceInputStream,
+							this.jaxb2Marshaller.getJaxbContext());
+				}
+			} catch (Exception e) {
+				this.logger.error(e.getMessage(), e);
+			}
+		}
+		this.logger.debug("getJAXBElement {} [{}] duration {}", name,
+				value.isPresent(),
 				DateUtil.getDuration(start, System.currentTimeMillis()));
 		return value;
 
