@@ -236,6 +236,16 @@ public class ThreadPoolSupport extends ReportingThreadPoolProvider
 		});
 	}
 
+	/** @return the number of queued processes. */
+	public int getNumberQueued() {
+		return this.pool.getQueue().size();
+	}
+
+	/** @return the number of active processes. */
+	public int getNumberActive() {
+		return this.pool.getActiveCount();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
