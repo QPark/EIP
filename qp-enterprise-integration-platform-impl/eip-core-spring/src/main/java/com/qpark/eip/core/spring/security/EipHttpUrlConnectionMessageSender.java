@@ -1,0 +1,112 @@
+/*******************************************************************************
+ * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+ ******************************************************************************/
+package com.qpark.eip.core.spring.security;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
+
+/**
+ * @author bhausen
+ */
+public class EipHttpUrlConnectionMessageSender
+		extends HttpUrlConnectionMessageSender {
+	/** The user name of the basic HTTP-authentication. */
+	private String userName;
+
+	/** The password of the basic HTTP-authentication. */
+	private String password;
+
+	/** base64(userName:password) */
+	private String base64UserNamePassword;
+
+	/**
+	 * @return the password.
+	 */
+	public String getPassword() {
+		return this.password;
+	}
+
+	/**
+	 * @return the userName.
+	 */
+	public String getUserName() {
+		return this.userName;
+	}
+
+	/**
+	 * Initialize the HTTP connection.
+	 *
+	 * @throws UnsupportedEncodingException
+	 */
+	@PostConstruct
+	public void init() throws UnsupportedEncodingException {
+		if (this.userName != null) {
+			if (this.password == null) {
+				this.password = "";
+			}
+			this.base64UserNamePassword = new String(
+					Base64.encodeBase64String(new StringBuffer(this.userName)
+							.append(":").append(this.password).toString()
+							.getBytes("UTF-8"))).replaceAll("\n", "");
+		}
+	}
+
+	/**
+	 * @see org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender#prepareConnection(java.net.HttpURLConnection)
+	 */
+	@Override
+	protected void prepareConnection(final HttpURLConnection connection)
+			throws IOException {
+		/* call the super method. */
+		super.prepareConnection(connection);
+
+		/* Setup the basic Authentication. */
+		if (this.userName != null) {
+			this.logger.debug(String.format(
+					"prepareConnection add request header '%s' basic AUTH userName '%s'",
+					"Authorization", this.userName));
+			connection.setRequestProperty("Authorization",
+					new StringBuffer(128).append("Basic ")
+							.append(this.base64UserNamePassword).toString());
+			this.logger.debug(String.format(
+					"prepareConnection request Headers: %s",
+					connection.getRequestProperties().entrySet().stream()
+							.sorted(Comparator
+									.comparing(v -> String.valueOf(v.getKey())))
+							.map(v -> String.format("%s: %s", v.getKey(),
+									v.getValue().stream()
+											.collect(Collectors.joining(","))))
+							.collect(Collectors.joining(", "))));
+		}
+	}
+
+	/**
+	 * @param password
+	 *            the password to set.
+	 */
+	public void setPassword(final String password) {
+		this.password = password;
+	}
+
+	/**
+	 * @param userName
+	 *            the userName to set.
+	 */
+	public void setUserName(final String userName) {
+		this.userName = userName;
+	}
+}
