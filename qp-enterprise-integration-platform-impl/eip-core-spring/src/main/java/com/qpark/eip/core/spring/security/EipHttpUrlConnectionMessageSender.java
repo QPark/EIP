@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -26,12 +27,26 @@ public class EipHttpUrlConnectionMessageSender
 		extends HttpUrlConnectionMessageSender {
 	/** The user name of the basic HTTP-authentication. */
 	private String userName;
-
 	/** The password of the basic HTTP-authentication. */
 	private String password;
-
+	/** The HTTP request content type. */
+	private String contentType;
 	/** base64(userName:password) */
 	private String base64UserNamePassword;
+
+	/**
+	 * @param contentType
+	 */
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	/**
+	 * @return the contentType.
+	 */
+	public String getContentType() {
+		return this.contentType;
+	}
 
 	/**
 	 * @return the password.
@@ -82,6 +97,9 @@ public class EipHttpUrlConnectionMessageSender
 			connection.setRequestProperty("Authorization",
 					new StringBuffer(128).append("Basic ")
 							.append(this.base64UserNamePassword).toString());
+			if (Objects.nonNull(contentType)) {
+				connection.setRequestProperty("Content-Type", contentType);
+			}
 			this.logger.debug(String.format(
 					"prepareConnection request Headers: %s",
 					connection.getRequestProperties().entrySet().stream()
@@ -95,16 +113,14 @@ public class EipHttpUrlConnectionMessageSender
 	}
 
 	/**
-	 * @param password
-	 *            the password to set.
+	 * @param password the password to set.
 	 */
 	public void setPassword(final String password) {
 		this.password = password;
 	}
 
 	/**
-	 * @param userName
-	 *            the userName to set.
+	 * @param userName the userName to set.
 	 */
 	public void setUserName(final String userName) {
 		this.userName = userName;
