@@ -100,6 +100,11 @@ public class EipHttpsUrlConnectionMessageSender
 		/* call the super method. */
 		super.prepareConnection(connection);
 
+		/* Setup ContentType HTTP header. */
+		if (Objects.nonNull(this.contentType)) {
+			connection.setRequestProperty("Content-Type", this.contentType);
+		}
+
 		/* Setup the basic Authentication. */
 		if (Objects.nonNull(this.userName)) {
 			this.logger.debug(String.format(
@@ -118,10 +123,6 @@ public class EipHttpsUrlConnectionMessageSender
 											.collect(Collectors.joining(","))))
 							.collect(Collectors.joining(", "))));
 		}
-		/* Setup ContentType HTTP header. */
-		if (Objects.nonNull(this.contentType)) {
-			connection.setRequestProperty("Content-Type", this.contentType);
-		}
 	}
 
 	/**
@@ -132,24 +133,21 @@ public class EipHttpsUrlConnectionMessageSender
 	}
 
 	/**
-	 * @param password
-	 *            the password to set.
+	 * @param password the password to set.
 	 */
 	public void setPassword(final String password) {
 		this.password = password;
 	}
 
 	/**
-	 * @param userName
-	 *            the userName to set.
+	 * @param userName the userName to set.
 	 */
 	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 
 	/**
-	 * @param x509TrustManager
-	 *            the x509TrustManager to set.
+	 * @param x509TrustManager the x509TrustManager to set.
 	 */
 	public void setX509TrustManager(
 			final EipX509TrustManager x509TrustManager) {

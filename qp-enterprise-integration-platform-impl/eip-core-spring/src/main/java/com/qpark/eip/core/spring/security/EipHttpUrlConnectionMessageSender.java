@@ -35,13 +35,6 @@ public class EipHttpUrlConnectionMessageSender
 	private String base64UserNamePassword;
 
 	/**
-	 * @param contentType
-	 */
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	/**
 	 * @return the contentType.
 	 */
 	public String getContentType() {
@@ -89,17 +82,19 @@ public class EipHttpUrlConnectionMessageSender
 		/* call the super method. */
 		super.prepareConnection(connection);
 
+		/* Setup ContentType HTTP header. */
+		if (Objects.nonNull(this.contentType)) {
+			connection.setRequestProperty("Content-Type", this.contentType);
+		}
+
 		/* Setup the basic Authentication. */
-		if (this.userName != null) {
+		if (Objects.nonNull(this.userName)) {
 			this.logger.debug(String.format(
 					"prepareConnection add request header '%s' basic AUTH userName '%s'",
 					"Authorization", this.userName));
 			connection.setRequestProperty("Authorization",
 					new StringBuffer(128).append("Basic ")
 							.append(this.base64UserNamePassword).toString());
-			if (Objects.nonNull(contentType)) {
-				connection.setRequestProperty("Content-Type", contentType);
-			}
 			this.logger.debug(String.format(
 					"prepareConnection request Headers: %s",
 					connection.getRequestProperties().entrySet().stream()
@@ -110,6 +105,13 @@ public class EipHttpUrlConnectionMessageSender
 											.collect(Collectors.joining(","))))
 							.collect(Collectors.joining(", "))));
 		}
+	}
+
+	/**
+	 * @param contentType
+	 */
+	public void setContentType(final String contentType) {
+		this.contentType = contentType;
 	}
 
 	/**
