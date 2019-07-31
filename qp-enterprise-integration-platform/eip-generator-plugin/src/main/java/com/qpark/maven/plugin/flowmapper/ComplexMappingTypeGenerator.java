@@ -22,17 +22,6 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  */
 public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 
-	private static String[] getDirectAccessProperties(final String name) {
-		String[] x = new String[0];
-		int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
-			String s = name.substring(index + 1,
-					name.length() - "MappingType".length());
-			x = s.split("\\.");
-		}
-		return x;
-	}
-
 	private static String getTabs(final int number) {
 		StringBuffer sb = new StringBuffer(number * 2);
 		for (int i = 0; i < number; i++) {
@@ -41,6 +30,16 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param complexContent
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
 	public ComplexMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName,
 			final ComplexContent complexContent,
@@ -52,11 +51,26 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 				log);
 	}
 
+	@Override
+	public void generateImpl() {
+		String s = this.generateImplContent();
+		File f = Util.getFile(this.preparedSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
+		this.log.debug(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, s);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	String generateImplContent() {
 		this.log.debug("+generateImpl");
 
-		String[] propertyNames = getDirectAccessProperties(
-				this.complexType.getType().getName().getLocalPart());
+		String[] propertyNames = getDirectAccessProperties(this.complexType);
 		List<ComplexTypeChild> children = this.getChildren();
 
 		boolean returnValueIsList = this.isReturnValueList();
@@ -176,10 +190,6 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		} else {
 			sb.append("\t\tObject mappedReturnValue = null;\n");
 		}
-		if (children.size() == 0) {
-			this.log.warn(this.complexType.getType().getName()
-					+ " as ComplexMapper does not have children to access");
-		}
 
 		String propertiesValue = "mappedReturnValue";
 
@@ -238,22 +248,6 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	@Override
-	public void generateImpl() {
-		String s = this.generateImplContent();
-		File f = Util.getFile(this.preparedSourceDirectory,
-				this.packageNameImpl, new StringBuffer().append(this.implName)
-						.append(".java").toString());
-		this.log.debug(new StringBuffer().append("Write Impl ")
-				.append(f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, s);
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
 	 */
@@ -282,7 +276,7 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	private String getProperty(final ComplexTypeChild object, int index,
+	private String getProperty(final ComplexTypeChild object, final int index,
 			final String[] propertyNames) {
 		StringBuffer sb = new StringBuffer(128);
 		String tabs = getTabs(index + 2);
@@ -314,9 +308,9 @@ public class ComplexMappingTypeGenerator extends AbstractMappingTypeGenerator {
 				sb.append(".get(0)");
 			}
 			sb.append(".").append(child.getGetterName()).append("();\n");
-			index++;
-			if (index < propertyNames.length) {
-				sb.append(this.getProperty(child, index, propertyNames));
+			int nextIndex = index + 1;
+			if (nextIndex < propertyNames.length) {
+				sb.append(this.getProperty(child, nextIndex, propertyNames));
 			}
 
 			sb.append(tabs).append("}\n");

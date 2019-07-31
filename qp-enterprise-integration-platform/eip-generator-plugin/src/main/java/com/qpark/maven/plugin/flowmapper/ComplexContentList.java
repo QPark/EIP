@@ -26,16 +26,6 @@ class ComplexContentList {
 				"{http://.*?/Interfaces/MappingTypes}ComplexMappingType");
 	}
 
-	public static boolean isTabularMappingType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://.*?/Interfaces/MappingTypes}TabularMappingType");
-	}
-
-	public static boolean isMappingType(final SchemaType schemaType) {
-		return isInstanceOf(schemaType,
-				"{http://.*?/Interfaces/MappingTypes}MappingType");
-	}
-
 	public static boolean isComplexUUIDMappingType(
 			final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
@@ -88,6 +78,11 @@ class ComplexContentList {
 				"{http://.*?/Interfaces/MappingTypes}InterfaceType");
 	}
 
+	public static boolean isMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}MappingType");
+	}
+
 	public static boolean isMapRequestType(final SchemaType schemaType) {
 		return isInstanceOf(schemaType,
 				"{http://.*?/Interfaces/Mapping}MappingInputType");
@@ -98,94 +93,18 @@ class ComplexContentList {
 				"{http://.*?/Interfaces/Mapping}MappingOutputType");
 	}
 
-	private final List<ComplexContent> tabularMappings = new ArrayList<ComplexContent>();
+	public static boolean isTabularMappingType(final SchemaType schemaType) {
+		return isInstanceOf(schemaType,
+				"{http://.*?/Interfaces/MappingTypes}TabularMappingType");
+	}
+
 	private final List<ComplexContent> complexMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> complexUUIDMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> defaultMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> directMappings = new ArrayList<ComplexContent>();
 	private final List<ComplexContent> interfaceTypes = new ArrayList<ComplexContent>();
 	private final List<ComplexRequestResponse> requestResponses = new ArrayList<ComplexRequestResponse>();
-
-	/**
-	 * @return the complexMappings
-	 */
-	public List<ComplexContent> getComplexMappings() {
-		return this.complexMappings;
-	}
-
-	/**
-	 * @return the complexMappings
-	 */
-	public List<ComplexContent> getTabularMappings() {
-		return this.tabularMappings;
-	}
-
-	/**
-	 * @return the complexUUIDMappings
-	 */
-	public List<ComplexContent> getComplexUUIDMappings() {
-		return this.complexUUIDMappings;
-	}
-
-	/**
-	 * @return the defaultMappings
-	 */
-	public List<ComplexContent> getDefaultMappings() {
-		return this.defaultMappings;
-	}
-
-	/**
-	 * @return the directMappings
-	 */
-	public List<ComplexContent> getDirectMappings() {
-		return this.directMappings;
-	}
-
-	/**
-	 * @return the interfaceTypes
-	 */
-	public List<ComplexContent> getInterfaceTypes() {
-		return this.interfaceTypes;
-	}
-
-	/**
-	 * @return the requestResponses
-	 */
-	public List<ComplexRequestResponse> getRequestResponses() {
-		return this.requestResponses;
-	}
-
-	public void setupComplexContentLists(final XsdsUtil config) {
-		ComplexType response;
-		for (ComplexType ct : config.getComplexTypes()) {
-			response = XsdsUtil.findResponse(ct, config.getComplexTypes(),
-					config);
-			if (ct.isRequestType() && response != null
-					&& isMapRequestType(ct.getType())
-					&& isMapResponseType(response.getType())) {
-				this.requestResponses
-						.add(new ComplexRequestResponse(ct, response));
-			} else if (isDirectMappingType(ct.getType())) {
-				this.directMappings.add(new ComplexContent(ct).setDirect());
-			} else if (isTabularMappingType(ct.getType())) {
-				this.tabularMappings.add(new ComplexContent(ct).setTabular());
-			} else if (isComplexUUIDMappingType(ct.getType())
-					&& !ct.getClassName().toLowerCase().contains("lifecycle")
-					&& GeneratorMapperMojo.getValidChildren(ct).size() > 1) {
-				this.complexUUIDMappings
-						.add(new ComplexContent(ct).setComplexUUID());
-			} else if (isComplexMappingType(ct.getType())) {
-				this.complexMappings.add(new ComplexContent(ct).setComplex());
-			} else if (isInterfaceType(ct.getType())) {
-				this.interfaceTypes.add(new ComplexContent(ct).setInterface());
-			} else if (isDefaultMappingType(ct.getType())) {
-				this.defaultMappings.add(new ComplexContent(ct).setDefault());
-			} else if (isMappingType(ct.getType())) {
-				/* Add all remaining mapping types as complex mapping types. */
-				this.complexMappings.add(new ComplexContent(ct).setComplex());
-			}
-		}
-	}
+	private final List<ComplexContent> tabularMappings = new ArrayList<ComplexContent>();
 
 	public ComplexContent getComplexContent(final String namespace,
 			final String ctName) {
@@ -244,6 +163,87 @@ class ComplexContentList {
 			}
 		}
 		return cc;
+	}
+
+	/**
+	 * @return the complexMappings
+	 */
+	public List<ComplexContent> getComplexMappings() {
+		return this.complexMappings;
+	}
+
+	/**
+	 * @return the complexUUIDMappings
+	 */
+	public List<ComplexContent> getComplexUUIDMappings() {
+		return this.complexUUIDMappings;
+	}
+
+	/**
+	 * @return the defaultMappings
+	 */
+	public List<ComplexContent> getDefaultMappings() {
+		return this.defaultMappings;
+	}
+
+	/**
+	 * @return the directMappings
+	 */
+	public List<ComplexContent> getDirectMappings() {
+		return this.directMappings;
+	}
+
+	/**
+	 * @return the interfaceTypes
+	 */
+	public List<ComplexContent> getInterfaceTypes() {
+		return this.interfaceTypes;
+	}
+
+	/**
+	 * @return the requestResponses
+	 */
+	public List<ComplexRequestResponse> getRequestResponses() {
+		return this.requestResponses;
+	}
+
+	/**
+	 * @return the complexMappings
+	 */
+	public List<ComplexContent> getTabularMappings() {
+		return this.tabularMappings;
+	}
+
+	public void setupComplexContentLists(final XsdsUtil config) {
+		ComplexType response;
+		for (ComplexType ct : config.getComplexTypes()) {
+			response = XsdsUtil.findResponse(ct, config.getComplexTypes(),
+					config);
+			if (ct.isRequestType() && response != null
+					&& isMapRequestType(ct.getType())
+					&& isMapResponseType(response.getType())) {
+				this.requestResponses
+						.add(new ComplexRequestResponse(ct, response));
+			} else if (isDirectMappingType(ct.getType())) {
+				this.directMappings.add(new ComplexContent(ct).setDirect());
+			} else if (isTabularMappingType(ct.getType())) {
+				this.tabularMappings.add(new ComplexContent(ct).setTabular());
+			} else if (isComplexUUIDMappingType(ct.getType())
+					&& !ct.getClassName().toLowerCase().contains("lifecycle")
+					&& GeneratorMapperMojo.getValidChildren(ct).size() > 1) {
+				this.complexUUIDMappings
+						.add(new ComplexContent(ct).setComplexUUID());
+			} else if (isComplexMappingType(ct.getType())) {
+				this.complexMappings.add(new ComplexContent(ct).setComplex());
+			} else if (isInterfaceType(ct.getType())) {
+				this.interfaceTypes.add(new ComplexContent(ct).setInterface());
+			} else if (isDefaultMappingType(ct.getType())) {
+				this.defaultMappings.add(new ComplexContent(ct).setDefault());
+			} else if (isMappingType(ct.getType())) {
+				/* Add all remaining mapping types as complex mapping types. */
+				this.complexMappings.add(new ComplexContent(ct).setComplex());
+			}
+		}
 	}
 
 }

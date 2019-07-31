@@ -15,13 +15,13 @@ import com.qpark.maven.xmlbeans.ComplexType;
 class ComplexContent {
 	ComplexType ct;
 	String interfaceClassName = "";
+	String interfacePackageName;
 	boolean isComplex;
 	boolean isComplexUUID;
 	boolean isDefault;
 	boolean isDirect;
 	boolean isInterfaceType;
 	boolean isTabular;
-	String interfacePackageName;
 	QName qName;
 
 	ComplexContent(final ComplexType ct) {

@@ -23,6 +23,16 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  */
 public class MappingOperationGenerator
 		extends AbstractMappingOperationGenerator {
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param crr
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
 	public MappingOperationGenerator(final XsdsUtil config,
 			final String basicFlowPackageName, final ComplexRequestResponse crr,
 			final ComplexContentList complexContentList,
@@ -30,6 +40,24 @@ public class MappingOperationGenerator
 			final File preparedSourceDirectory, final Log log) {
 		super(config, basicFlowPackageName, crr, complexContentList, eipVersion,
 				compileableSourceDirectory, preparedSourceDirectory, log);
+	}
+
+	@Override
+	public void generateImpl() {
+		this.log.debug("+generateImpl");
+		String source = this.generateImplContent();
+		File f = Util.getFile(this.preparedSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
+		this.log.debug(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, source);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+		this.log.debug("-generateImpl");
 	}
 
 	String generateImplContent() {
@@ -191,24 +219,6 @@ public class MappingOperationGenerator
 		sb.append("}\n");
 		this.log.debug("-generateImpl");
 		return sb.toString();
-	}
-
-	@Override
-	public void generateImpl() {
-		this.log.debug("+generateImpl");
-		String source = this.generateImplContent();
-		File f = Util.getFile(this.preparedSourceDirectory,
-				this.packageNameImpl, new StringBuffer().append(this.implName)
-						.append(".java").toString());
-		this.log.debug(new StringBuffer().append("Write Impl ")
-				.append(f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, source);
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
-		this.log.debug("-generateImpl");
 	}
 
 	private String getComplexContentSetter(final String parentName,

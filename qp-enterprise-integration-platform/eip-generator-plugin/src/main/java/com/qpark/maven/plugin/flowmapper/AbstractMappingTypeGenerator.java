@@ -24,6 +24,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * @author bhausen
  */
+@SuppressWarnings("static-method")
 public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	private static String getInterfaceName(final ComplexType ct) {
 		StringBuffer sb = new StringBuffer(128);
@@ -40,10 +41,20 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 
 	protected final String basicFlowPackageName;
 	protected final ComplexType complexType;
+	protected final String eipVersion;
 	protected final String implName;
 	protected final String interfaceName;
-	protected final String eipVersion;
 
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param complexContent
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
 	public AbstractMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName,
 			final ComplexContent complexContent,
@@ -172,22 +183,6 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		return GeneratorMapperMojo.getValidChildren(this.complexType);
 	}
 
-	protected ComplexTypeChild getReturnChild() {
-		ComplexTypeChild returnChild = this.getReturnChild(this.complexType);
-		return returnChild;
-	}
-
-	protected ComplexTypeChild getReturnChild(final ComplexType ct) {
-		ComplexTypeChild returnChild = null;
-		for (ComplexTypeChild child : ct.getChildren()) {
-			if (child.getChildName().equals("return")) {
-				returnChild = child;
-				break;
-			}
-		}
-		return returnChild;
-	}
-
 	protected String getChildrenImports(final List<ComplexTypeChild> children) {
 		StringBuffer sb = new StringBuffer(256);
 		TreeSet<String> imports = new TreeSet<>();
@@ -249,8 +244,8 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	}
 
 	/**
-	 * @param children
-	 * @return
+	 * @param modifier
+	 * @return the java default value definition.
 	 */
 	protected String getDefaultDefinitions(final String modifier) {
 		StringBuffer sb = new StringBuffer(1024);
@@ -306,6 +301,22 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 	protected abstract String getMappingType();
 
 	protected abstract String getMethodName();
+
+	protected ComplexTypeChild getReturnChild() {
+		ComplexTypeChild returnChild = this.getReturnChild(this.complexType);
+		return returnChild;
+	}
+
+	protected ComplexTypeChild getReturnChild(final ComplexType ct) {
+		ComplexTypeChild returnChild = null;
+		for (ComplexTypeChild child : ct.getChildren()) {
+			if (child.getChildName().equals("return")) {
+				returnChild = child;
+				break;
+			}
+		}
+		return returnChild;
+	}
 
 	protected String getReturnValueClassName() {
 		String returnValueClassName = null;

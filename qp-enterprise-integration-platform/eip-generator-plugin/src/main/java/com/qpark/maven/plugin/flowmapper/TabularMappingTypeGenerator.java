@@ -25,84 +25,6 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
-
-	private static String[] getDirectAccessProperties(final String name) {
-		String[] x = new String[0];
-		final int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
-			final String s = name.substring(index + 1,
-					name.length() - "MappingType".length());
-			x = s.split("\\.");
-		}
-		return x;
-	}
-
-	public TabularMappingTypeGenerator(final XsdsUtil config,
-			final String basicFlowPackageName,
-			final ComplexContent complexContent,
-			final ComplexContentList complexContentList,
-			final String eipVersion, final File compileableSourceDirectory,
-			final File preparedSourceDirectory, final Log log) {
-		super(config, basicFlowPackageName, complexContent, complexContentList,
-				eipVersion, compileableSourceDirectory, preparedSourceDirectory,
-				log);
-	}
-
-	/**
-	 * @param children
-	 * @return
-	 */
-	private List<String> getDefaultDefinitionNames() {
-		final List<String> names = new ArrayList<String>();
-		for (final ComplexTypeChild child : this
-				.getDefaultingChildren(this.complexType)) {
-			names.add(String.format("DEFAULT_%s",
-					child.getJavaChildName().toUpperCase()));
-		}
-		return names;
-	}
-
-	private String getConstructor(final List<String> names,
-			final Class<?> inputValueClass, final Class<?> returnValueClass) {
-		final StringBuffer sb = new StringBuffer(1024);
-		if (names.size() > 0) {
-			sb.append("\t/**\n\t * Create the {@link ");
-			sb.append(this.implName);
-			sb.append(" and setup the tabular mapping @{link Map}.\n\t */\n");
-			sb.append("\tpublic ");
-			sb.append(this.implName);
-			sb.append("() {\n");
-			String suffixIn;
-			String suffixOut;
-			for (final String nameIn : names) {
-				if (nameIn.startsWith("DEFAULT_KEY")) {
-					suffixIn = nameIn.substring("DEFAULT_KEY".length());
-					for (final String nameOut : names) {
-						if (nameOut.startsWith("DEFAULT_VALUE")) {
-							suffixOut = nameOut
-									.substring("DEFAULT_VALUE".length());
-							if (suffixIn.equals(suffixOut)) {
-								sb.append("\t\tthis.tabularValueMap.put(");
-
-								sb.append(getValueInstance(inputValueClass,
-										String.format("DEFAULT_KEY%s",
-												suffixIn)));
-								sb.append(", ");
-								sb.append(getValueInstance(returnValueClass,
-										String.format("DEFAULT_VALUE%s",
-												suffixIn)));
-
-								sb.append(");\n");
-							}
-						}
-					}
-				}
-			}
-			sb.append("\t}\n");
-		}
-		return sb.toString();
-	}
-
 	private static String getValueInstance(final Class<?> valueClass,
 			final String valueDefinition) {
 		final StringBuffer sb = new StringBuffer(256);
@@ -125,38 +47,47 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	private ComplexTypeChild getInputValueReturnChild() {
-		ComplexTypeChild returnChild = null;
-		final List<ComplexTypeChild> children = this.getChildren();
-		ComplexTypeChild input = null;
-		if (children.size() == 1) {
-			input = children.get(0);
-			if (input != null) {
-				returnChild = this.getReturnChild(input.getComplexType());
-			}
-		}
-		return returnChild;
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param complexContent
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
+	public TabularMappingTypeGenerator(final XsdsUtil config,
+			final String basicFlowPackageName,
+			final ComplexContent complexContent,
+			final ComplexContentList complexContentList,
+			final String eipVersion, final File compileableSourceDirectory,
+			final File preparedSourceDirectory, final Log log) {
+		super(config, basicFlowPackageName, complexContent, complexContentList,
+				eipVersion, compileableSourceDirectory, preparedSourceDirectory,
+				log);
 	}
 
-	private String getInputValueName() {
-		String inputValueName = "inputValueName";
-		final List<ComplexTypeChild> children = this.getChildren();
-		ComplexTypeChild input = null;
-		if (children.size() == 1) {
-			input = children.get(0);
-			if (input != null) {
-				inputValueName = input.getChildName();
-			}
+	@Override
+	public void generateImpl() {
+		File output = this.compileableSourceDirectory;
+		final String s = this.generateImplContent();
+		if (this.isValidTabularMapping()) {
+			output = this.compileableSourceDirectory;
+		} else {
+			output = this.preparedSourceDirectory;
 		}
-		return inputValueName;
-	}
-
-	private boolean isValidTabularMapping() {
-		final ComplexTypeChild inputValueReturnChild = this
-				.getInputValueReturnChild();
-		final boolean tabularMapping = this.getDefaultDefinitionNames()
-				.size() > 1 && inputValueReturnChild != null;
-		return tabularMapping;
+		final File f = Util.getFile(output, this.packageNameImpl,
+				new StringBuffer().append(this.implName).append(".java")
+						.toString());
+		this.log.debug(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, s);
+		} catch (final Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -169,10 +100,6 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 		final String inputValueName = this.getInputValueName();
 
 		final List<ComplexTypeChild> children = this.getChildren();
-		if (children.size() == 0) {
-			this.log.warn(this.complexType.getType().getName()
-					+ " as ComplexMapper does not have children to access");
-		}
 
 		Class<?> inputValueClass = String.class;
 		if (inputValueReturnValue != null) {
@@ -212,7 +139,7 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 		final Set<String> importedClasses = this.complexType
 				.getJavaImportClasses();
 		final String[] propertyNames = getDirectAccessProperties(
-				this.complexType.getType().getName().getLocalPart());
+				this.complexType);
 		if (propertyNames.length > 0 && children.size() > 0) {
 			ctc = children.get(0);
 			for (final String propertyName : propertyNames) {
@@ -230,7 +157,7 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 					.addAll(child.getComplexType().getJavaImportClasses());
 		}
 
-		final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = new ArrayList<Entry<ComplexTypeChild, List<ComplexTypeChild>>>();
+		final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree = new ArrayList<>();
 
 		importedClasses.addAll(this.getImplImports(childrenTree));
 		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
@@ -393,26 +320,84 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 		return sb.toString();
 	}
 
-	@Override
-	public void generateImpl() {
-		File output = this.compileableSourceDirectory;
-		final String s = this.generateImplContent();
-		if (this.isValidTabularMapping()) {
-			output = this.compileableSourceDirectory;
-		} else {
-			output = this.preparedSourceDirectory;
+	private String getConstructor(final List<String> names,
+			final Class<?> inputValueClass, final Class<?> returnValueClass) {
+		final StringBuffer sb = new StringBuffer(1024);
+		if (names.size() > 0) {
+			sb.append("\t/**\n\t * Create the {@link ");
+			sb.append(this.implName);
+			sb.append(" and setup the tabular mapping @{link Map}.\n\t */\n");
+			sb.append("\tpublic ");
+			sb.append(this.implName);
+			sb.append("() {\n");
+			String suffixIn;
+			String suffixOut;
+			for (final String nameIn : names) {
+				if (nameIn.startsWith("DEFAULT_KEY")) {
+					suffixIn = nameIn.substring("DEFAULT_KEY".length());
+					for (final String nameOut : names) {
+						if (nameOut.startsWith("DEFAULT_VALUE")) {
+							suffixOut = nameOut
+									.substring("DEFAULT_VALUE".length());
+							if (suffixIn.equals(suffixOut)) {
+								sb.append("\t\tthis.tabularValueMap.put(");
+
+								sb.append(getValueInstance(inputValueClass,
+										String.format("DEFAULT_KEY%s",
+												suffixIn)));
+								sb.append(", ");
+								sb.append(getValueInstance(returnValueClass,
+										String.format("DEFAULT_VALUE%s",
+												suffixIn)));
+
+								sb.append(");\n");
+							}
+						}
+					}
+				}
+			}
+			sb.append("\t}\n");
 		}
-		final File f = Util.getFile(output, this.packageNameImpl,
-				new StringBuffer().append(this.implName).append(".java")
-						.toString());
-		this.log.debug(new StringBuffer().append("Write Impl ")
-				.append(f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, s);
-		} catch (final Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
+		return sb.toString();
+	}
+
+	/**
+	 * @return list of children names.
+	 */
+	private List<String> getDefaultDefinitionNames() {
+		final List<String> names = new ArrayList<>();
+		for (final ComplexTypeChild child : this
+				.getDefaultingChildren(this.complexType)) {
+			names.add(String.format("DEFAULT_%s",
+					child.getJavaChildName().toUpperCase()));
 		}
+		return names;
+	}
+
+	private String getInputValueName() {
+		String inputValueName = "inputValueName";
+		final List<ComplexTypeChild> children = this.getChildren();
+		ComplexTypeChild input = null;
+		if (children.size() == 1) {
+			input = children.get(0);
+			if (input != null) {
+				inputValueName = input.getChildName();
+			}
+		}
+		return inputValueName;
+	}
+
+	private ComplexTypeChild getInputValueReturnChild() {
+		ComplexTypeChild returnChild = null;
+		final List<ComplexTypeChild> children = this.getChildren();
+		ComplexTypeChild input = null;
+		if (children.size() == 1) {
+			input = children.get(0);
+			if (input != null) {
+				returnChild = this.getReturnChild(input.getComplexType());
+			}
+		}
+		return returnChild;
 	}
 
 	/**
@@ -441,5 +426,13 @@ public class TabularMappingTypeGenerator extends ComplexMappingTypeGenerator {
 				this.complexType.getPackageName().lastIndexOf('.')));
 		sb.append(".mapper.complex");
 		return sb.toString();
+	}
+
+	private boolean isValidTabularMapping() {
+		final ComplexTypeChild inputValueReturnChild = this
+				.getInputValueReturnChild();
+		final boolean tabularMapping = this.getDefaultDefinitionNames()
+				.size() > 1 && inputValueReturnChild != null;
+		return tabularMapping;
 	}
 }

@@ -9,6 +9,7 @@ package com.qpark.maven.plugin.flowmapper;
 import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.maven.plugin.logging.Log;
@@ -53,6 +54,16 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		return sb.toString();
 	}
 
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param complexContent
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
 	public ComplexUUIDReferenceDataMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName,
 			final ComplexContent complexContent,
@@ -64,6 +75,23 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				log);
 	}
 
+	@Override
+	public void generateImpl() {
+		String s = this.generateImplContent();
+
+		File f = Util.getFile(this.compileableSourceDirectory,
+				this.packageNameImpl, new StringBuffer().append(this.implName)
+						.append(".java").toString());
+		this.log.debug(new StringBuffer().append("Write Impl ")
+				.append(f.getAbsolutePath()));
+		try {
+			Util.writeToFile(f, s);
+		} catch (Exception e) {
+			this.log.error(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	String generateImplContent() {
 		this.log.debug("+generateImpl");
 		boolean isRefenenceUUIDValueMappingType = this.complexType
@@ -72,50 +100,34 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				.endsWith("UUIDMappingType");
 		boolean isRefenenceUUIDNameMappingType = this.complexType.getClassName()
 				.endsWith("NameMappingType");
+
+		/* Check general naming. */
+		AbstractGenerator.getDirectAccessProperties(this.complexType);
+
 		String[] propertyNames = getDirectAccessProperties(
 				this.complexType.getType().getName().getLocalPart());
 
 		List<ComplexTypeChild> children = this.getChildren();
-		ComplexTypeChild targetChildCt = null;
-		ComplexTypeChild ctc;
 		if (children == null || children.size() == 0) {
-			throw new IllegalStateException(new StringBuffer(128)
-					.append("ComplexUUIDMapperType ")
-					.append(this.complexType.getClassNameFullQualified())
-					.append(" defined in namespace ")
-					.append(this.complexType.getTargetNamespace())
-					.append(" does not define any parameters to get the UUID description.")
-					.toString());
+			throw new InvalidComplexUUIDMappingTypeException(this.complexType,
+					"Not any parameter defined to get the UUID Description");
 		}
 
 		if (propertyNames == null || propertyNames.length == 0) {
-			throw new IllegalStateException(new StringBuffer(128)
-					.append("ComplexUUIDMapperType ")
-					.append(this.complexType.getClassNameFullQualified())
-					.append(" defined in namespace ")
-					.append(this.complexType.getTargetNamespace())
-					.append(" does not define any parameters fields to get the UUID description.")
-					.toString());
-		}
-		ctc = children.get(0);
-		for (String propertyName : propertyNames) {
-			ctc = ctc.getComplexType().getChild(propertyName);
-			targetChildCt = ctc;
-			if (ctc == null) {
-				String msg = new StringBuffer(128)
-						.append(this.complexType.toQNameString())
-						.append(" does not contain a child ")
-						.append(propertyName).append("!").toString();
-				this.log.error(msg);
-				throw new IllegalStateException(msg);
-			}
+			throw new InvalidComplexUUIDMappingTypeException(this.complexType,
+					"Not any parameter field defined to get the UUID Description");
 		}
 
 		Set<String> importedClasses = this.complexType.getJavaImportClasses();
-		ctc = children.get(0);
-		for (String propertyName : propertyNames) {
-			ctc = ctc.getComplexType().getChild(propertyName);
-			importedClasses.addAll(ctc.getComplexType().getJavaImportClasses());
+		ComplexTypeChild ctc = children.get(0);
+		if (Objects.nonNull(ctc)) {
+			for (String propertyName : propertyNames) {
+				ctc = ctc.getComplexType().getChild(propertyName);
+				if (Objects.nonNull(ctc)) {
+					importedClasses.addAll(
+							ctc.getComplexType().getJavaImportClasses());
+				}
+			}
 		}
 		for (ComplexTypeChild child : children) {
 			importedClasses
@@ -165,12 +177,7 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		if (defaultDefinitions.length() > 0) {
 			sb.append(defaultDefinitions);
 		} else {
-			throw new IllegalStateException(new StringBuffer(128)
-					.append("ComplexUUIDMapperType ")
-					.append(this.complexType.getClassNameFullQualified())
-					.append(" defined in namespace ")
-					.append(this.complexType.getTargetNamespace())
-					.append(" does not define any default.").toString());
+			throw new MissingDefaultException(this.complexType);
 		}
 		sb.append("\t/** The {@link ObjectFactory}. */\n");
 		sb.append("\tprivate final ObjectFactory of = new ObjectFactory();\n");
@@ -228,11 +235,13 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 
 		for (String propertyName : propertyNames) {
 			ctc = ctc.getComplexType().getChild(propertyName);
-			sb.append("\t\t");
-			sb.append(ctc.getJavaVarDefinition());
-			sb.append(" = ");
-			sb.append(ctc.getJavaDefaultValue());
-			sb.append(";\n");
+			if (Objects.nonNull(ctc)) {
+				sb.append("\t\t");
+				sb.append(ctc.getJavaVarDefinition());
+				sb.append(" = ");
+				sb.append(ctc.getJavaDefaultValue());
+				sb.append(";\n");
+			}
 		}
 		sb.append(this.getProperty(children.get(0), 0, propertyNames));
 
@@ -287,23 +296,6 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		return sb.toString();
 	}
 
-	@Override
-	public void generateImpl() {
-		String s = this.generateImplContent();
-
-		File f = Util.getFile(this.compileableSourceDirectory,
-				this.packageNameImpl, new StringBuffer().append(this.implName)
-						.append(".java").toString());
-		this.log.debug(new StringBuffer().append("Write Impl ")
-				.append(f.getAbsolutePath()));
-		try {
-			Util.writeToFile(f, s);
-		} catch (Exception e) {
-			this.log.error(e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * @see com.qpark.maven.plugin.flowmapper.AbstractMappingTypeGenerator#getMappingType()
 	 */
@@ -332,7 +324,7 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 		return sb.toString();
 	}
 
-	private String getProperty(final ComplexTypeChild object, int index,
+	private String getProperty(final ComplexTypeChild object, final int index,
 			final String[] propertyNames) {
 		StringBuffer sb = new StringBuffer(128);
 		String tabs = getTabs(index + 2);
@@ -364,9 +356,9 @@ public class ComplexUUIDReferenceDataMappingTypeGenerator
 				sb.append(".get(0)");
 			}
 			sb.append(".").append(child.getGetterName()).append("();\n");
-			index++;
-			if (index < propertyNames.length) {
-				sb.append(this.getProperty(child, index, propertyNames));
+			int nextIndex = index + 1;
+			if (nextIndex < propertyNames.length) {
+				sb.append(this.getProperty(child, nextIndex, propertyNames));
 			}
 
 			sb.append(tabs).append("}\n");

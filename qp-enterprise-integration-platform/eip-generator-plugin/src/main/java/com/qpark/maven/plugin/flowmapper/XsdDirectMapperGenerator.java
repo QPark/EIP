@@ -15,19 +15,6 @@ import com.qpark.maven.xmlbeans.ComplexTypeChild;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 public class XsdDirectMapperGenerator {
-	public static String toPropertyName(final String name) {
-		String s = name;
-		if (s != null && s.length() > 0) {
-			StringBuffer sb = new StringBuffer(s.length());
-			sb.append(s.substring(0, 1).toLowerCase());
-			if (s.length() > 1) {
-				sb.append(s.substring(1, s.length()));
-			}
-			s = sb.toString();
-		}
-		return s;
-	}
-
 	/**
 	 * Accepts a function that extracts a {@link java.lang.Comparable
 	 * Comparable} sort key from a type {@code T}, and returns a {@code
@@ -176,6 +163,23 @@ public class XsdDirectMapperGenerator {
 				});
 		System.out.println(sb.toString());
 		// xsds.getComplexTypes().stream().filter(ComplexType::)
+	}
+
+	/**
+	 * @param name
+	 * @return the property name.
+	 */
+	public static String toPropertyName(final String name) {
+		String s = name;
+		if (s != null && s.length() > 0) {
+			StringBuffer sb = new StringBuffer(s.length());
+			sb.append(s.substring(0, 1).toLowerCase());
+			if (s.length() > 1) {
+				sb.append(s.substring(1, s.length()));
+			}
+			s = sb.toString();
+		}
+		return s;
 	}
 
 }

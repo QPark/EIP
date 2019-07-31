@@ -33,6 +33,72 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * @author bhausen
  */
 public abstract class AbstractGenerator {
+	static class InvalidComplexUUIDMappingTypeException
+			extends MappingTypeException {
+		public InvalidComplexUUIDMappingTypeException(
+				final ComplexType complexType, final String msg) {
+			super(String.format("%s: %s!", complexType.toQNameString(), msg));
+		}
+	}
+
+	static class MappingTypeException extends IllegalStateException {
+		public MappingTypeException(final ComplexType complexType,
+				final String message) {
+			super(String.format("%s: %s", complexType.toQNameString(),
+					message));
+		}
+
+		public MappingTypeException(final String message) {
+			super(message);
+		}
+	}
+
+	static class MappingTypeNameException extends MappingTypeException {
+		public MappingTypeNameException(final ComplexType complexType,
+				final String missingPart) {
+			super(String.format("%s: Name of %s without any '%s'!",
+					complexType.toQNameString(),
+					ComplexContentList
+							.isDirectMappingType(complexType.getType())
+									? "DirectMappingType"
+									: ComplexContentList.isComplexMappingType(
+											complexType.getType())
+													? "ComplexMappingType"
+													: "MappingType",
+					missingPart));
+		}
+	}
+
+	static class MissingAccessPropertiesException extends MappingTypeException {
+		public MissingAccessPropertiesException(final ComplexType complexType) {
+			super(String.format(
+					"%s: Not any property defined to access values!",
+					complexType.toQNameString()));
+		}
+	}
+
+	static class MissingDefaultException extends MappingTypeException {
+		public MissingDefaultException(final ComplexType complexType) {
+			super(String.format("%s: Missing the default definition!",
+					complexType.toQNameString()));
+		}
+	}
+
+	static class NoChildrenAvailableException extends MappingTypeException {
+		public NoChildrenAvailableException(final ComplexType complexType) {
+			super(String.format("%s: Not any child available!",
+					complexType.toQNameString()));
+		}
+	}
+
+	static class NotExistingChildException extends MappingTypeException {
+		public NotExistingChildException(final ComplexType complexType,
+				final String childName) {
+			super(String.format("%s: Child with name '%s' does not exist!",
+					complexType.toQNameString(), childName));
+		}
+	}
+
 	public static void addImport(final String fqName, final Set<String> imports,
 			final Set<String> importClasses) {
 		int index = fqName.lastIndexOf('.');
@@ -46,76 +112,35 @@ public abstract class AbstractGenerator {
 		}
 	}
 
-	public static boolean isChildListImport(
-			final List<ComplexTypeChild> children) {
-		boolean value = children.stream().filter(ctc -> ctc.isList())
-				.findFirst().isPresent();
-		return value;
+	static String[] getDirectAccessProperties(final ComplexType complexType) {
+		String[] x = new String[0];
+		int index = complexType.getType().getName().getLocalPart().indexOf('.');
+		if (!complexType.getType().getName().getLocalPart()
+				.endsWith("MappingType")) {
+			throw new MappingTypeNameException(complexType, "MappingType");
+		} else if (index > 0) {
+			String s = complexType.getType().getName().getLocalPart().substring(
+					index + 1,
+					complexType.getType().getName().getLocalPart().length()
+							- "MappingType".length());
+			x = s.split("\\.");
+		}
+		return x;
 	}
 
-	public static boolean isListImport(
-			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
-		boolean value = childrenTree.stream()
-				.filter(child -> child.getKey().isList()
-						|| isChildListImport(child.getValue()))
-				.findFirst().isPresent();
+	/**
+	 * @param returnValueChild
+	 *            the {@link ComplexTypeChild} defining the default value.
+	 * @return the default value as String.
+	 */
+	public static String getReturnDefaultString(
+			final ComplexTypeChild returnValueChild) {
+		String value = null;
+		if (Objects.nonNull(returnValueChild)
+				&& Objects.nonNull(returnValueChild.getDefaultValue())) {
+			value = returnValueChild.getDefaultValue().getStringValue();
+		}
 		return value;
-	}
-
-	public static void main(final String[] args) {
-		String xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
-		xsdPath = "C:\\xnb\\dev\\bus.app.cpo\\cpo-model-service\\target\\model";
-		File dif = new File(xsdPath);
-		long start = System.currentTimeMillis();
-		String basePackageName = "com.qpark.eip.inf";
-		String mappingPackageNameSuffixes = "map svc flow";
-		String mappingRequestSuffix = "Request";
-		String mappingResponseSuffix = "Response";
-
-		basePackageName = "com.ses.osp.bus";
-		XsdsUtil config = XsdsUtil.getInstance(dif, basePackageName,
-				mappingPackageNameSuffixes, null, mappingRequestSuffix,
-				mappingResponseSuffix);
-		ComplexContentList complexContentList = new ComplexContentList();
-		complexContentList.setupComplexContentLists(config);
-		System.out
-				.println(Util.getDuration(System.currentTimeMillis() - start));
-
-		String eipVersion = "eipVersion";
-		String source = null;
-		ComplexType ct;
-		ComplexContent cc;
-		SchemaType type;
-		String ctNamespace;
-		String ctName;
-		SystemStreamLog log = new org.apache.maven.plugin.logging.SystemStreamLog();
-
-		ctName = "Beam.nameMappingType";
-		ctNamespace = "http://www.ses.com/Interfaces/SatelliteMappingTypes-2.0";
-		complexContentList.getDirectMappings().stream()
-				.sorted(Comparator.comparing(ComplexContent::getFQInterfaceName)
-						.thenComparing(ComplexContent::getInterfaceName))
-				.forEach(dm -> System.out.println(dm.qName.toString()));
-
-		ct = config.getComplexType(new QName(ctNamespace, ctName));
-		type = ct.getType().getElementProperties()[0].getType();
-		cc = complexContentList.getComplexContent(ctNamespace, ctName);
-		System.out.println(cc.ct.toQNameString());
-		DirectMappingTypeGenerator mapper = new DirectMappingTypeGenerator(
-				config, basePackageName, cc, complexContentList, eipVersion,
-				dif, dif, log);
-		source = mapper.generateImplContent();
-
-		// ct = xsds.getComplexType(new QName(ctNamespace, ctName));
-		// type = ct.getType().getElementProperties()[0].getType();
-		// cc = complexContentList.getComplexContent(ctNamespace, ctName);
-		//
-		// TabularMappingTypeGenerator directMapper = new
-		// TabularMappingTypeGenerator(
-		// config, basePackageName, cc, complexContentList, ctName, dif, dif,
-		// new org.apache.maven.plugin.logging.SystemStreamLog());
-		// source = directMapper.generateImplContent();
-		System.out.println(source);
 	}
 
 	/**
@@ -196,19 +221,95 @@ public abstract class AbstractGenerator {
 		return sb.toString();
 	}
 
-	/**
-	 * @param returnValueChild
-	 *            the {@link ComplexTypeChild} defining the default value.
-	 * @return the default value as String.
-	 */
-	public static String getReturnDefaultString(
-			final ComplexTypeChild returnValueChild) {
-		String value = null;
-		if (Objects.nonNull(returnValueChild)
-				&& Objects.nonNull(returnValueChild.getDefaultValue())) {
-			value = returnValueChild.getDefaultValue().getStringValue();
-		}
+	public static boolean isChildListImport(
+			final List<ComplexTypeChild> children) {
+		boolean value = children.stream().filter(ctc -> ctc.isList())
+				.findFirst().isPresent();
 		return value;
+	}
+
+	public static boolean isListImport(
+			final List<Entry<ComplexTypeChild, List<ComplexTypeChild>>> childrenTree) {
+		boolean value = childrenTree.stream()
+				.filter(child -> child.getKey().isList()
+						|| isChildListImport(child.getValue()))
+				.findFirst().isPresent();
+		return value;
+	}
+
+	public static void main(final String[] args) {
+		String xsdPath = "C:\\xnb\\dev\\git\\EIP\\qp-enterprise-integration-platform-sample\\sample-domain-gen\\domain-gen-flow\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\bus.app.cpo\\cpo-model-service\\target\\model";
+		xsdPath = "C:\\xnb\\dev\\com.ses.domain.gen\\domain-gen-flow\\target\\model";
+		File dif = new File(xsdPath);
+		long start = System.currentTimeMillis();
+		String basePackageName = "com.qpark.eip.inf";
+		String mappingPackageNameSuffixes = "map svc flow";
+		String mappingRequestSuffix = "Request";
+		String mappingResponseSuffix = "Response";
+
+		basePackageName = "com.ses.osp.bus";
+		XsdsUtil config = XsdsUtil.getInstance(dif, basePackageName,
+				mappingPackageNameSuffixes, null, mappingRequestSuffix,
+				mappingResponseSuffix);
+		ComplexContentList complexContentList = new ComplexContentList();
+		complexContentList.setupComplexContentLists(config);
+		System.out
+				.println(Util.getDuration(System.currentTimeMillis() - start));
+
+		String eipVersion = "eipVersion";
+		String source = null;
+		ComplexType ct;
+		ComplexContent cc;
+		SchemaType type;
+		String ctNamespace;
+		String ctName;
+		SystemStreamLog log = new org.apache.maven.plugin.logging.SystemStreamLog();
+
+		ctName = "EarthStation.frequencyBandUUIDMappingType";
+		ctNamespace = "http://www.ses.com/Interfaces/EarthStationMappingTypes";
+
+		complexContentList.getDirectMappings().stream()
+				.filter(m -> m.ct.toQNameString().contains(ctName))
+				.forEach(m -> {
+					System.out.println(m);
+				});
+
+		complexContentList.getComplexMappings().stream()
+				.filter(m -> m.ct.toQNameString().contains(ctName))
+				.forEach(m -> {
+					System.out.println(m);
+				});
+		complexContentList.getComplexUUIDMappings().stream()
+				.filter(m -> m.ct.toQNameString().contains(ctName))
+				.forEach(m -> {
+					System.out.println(m);
+				});
+
+		complexContentList.getDirectMappings().stream()
+				.sorted(Comparator.comparing(ComplexContent::getFQInterfaceName)
+						.thenComparing(ComplexContent::getInterfaceName))
+				.forEach(dm -> System.out.println(dm.qName.toString()));
+
+		ct = config.getComplexType(new QName(ctNamespace, ctName));
+		type = ct.getType().getElementProperties()[0].getType();
+		cc = complexContentList.getComplexContent(ctNamespace, ctName);
+		System.out.println(cc.ct.toQNameString());
+		DirectMappingTypeGenerator mapper = new DirectMappingTypeGenerator(
+				config, basePackageName, cc, complexContentList, eipVersion,
+				dif, dif, log);
+		source = mapper.generateImplContent();
+
+		// ct = xsds.getComplexType(new QName(ctNamespace, ctName));
+		// type = ct.getType().getElementProperties()[0].getType();
+		// cc = complexContentList.getComplexContent(ctNamespace, ctName);
+		//
+		// TabularMappingTypeGenerator directMapper = new
+		// TabularMappingTypeGenerator(
+		// config, basePackageName, cc, complexContentList, ctName, dif, dif,
+		// new org.apache.maven.plugin.logging.SystemStreamLog());
+		// source = directMapper.generateImplContent();
+		System.out.println(source);
 	}
 
 	public static String toJavadocHeader(final String documentation) {
@@ -247,12 +348,12 @@ public abstract class AbstractGenerator {
 
 	}
 
+	protected File compileableSourceDirectory;
 	protected ComplexContentList complexContentList;
 	protected XsdsUtil config;
 	protected Log log;
 	protected String packageName;
 	protected String packageNameImpl;
-	protected File compileableSourceDirectory;
 	protected File preparedSourceDirectory;
 
 	AbstractGenerator(final XsdsUtil config,

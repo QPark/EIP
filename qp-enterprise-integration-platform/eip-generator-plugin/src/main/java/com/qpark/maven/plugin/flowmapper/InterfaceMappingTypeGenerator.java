@@ -22,17 +22,16 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  */
 public class InterfaceMappingTypeGenerator
 		extends AbstractMappingTypeGenerator {
-	private static String[] getDirectAccessProperties(final String name) {
-		String[] x = new String[0];
-		int index = name.indexOf('.');
-		if (index > 0 && name.endsWith("MappingType")) {
-			String s = name.substring(index + 1,
-					name.length() - "MappingType".length());
-			x = s.split("\\.");
-		}
-		return x;
-	}
-
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param complexContent
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
 	public InterfaceMappingTypeGenerator(final XsdsUtil config,
 			final String basicFlowPackageName,
 			final ComplexContent complexContent,

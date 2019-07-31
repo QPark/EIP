@@ -24,6 +24,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 /**
  * @author bhausen
  */
+@SuppressWarnings("static-method")
 public abstract class AbstractMappingOperationGenerator
 		extends AbstractGenerator {
 	private static String getInterfaceName(final ComplexType ct) {
@@ -40,12 +41,22 @@ public abstract class AbstractMappingOperationGenerator
 	}
 
 	protected final String basicFlowPackageName;
+	protected final String eipVersion;
 	protected final String implName;
 	protected final String interfaceName;
 	protected final ComplexType request;
 	protected final ComplexType response;
-	protected final String eipVersion;
 
+	/**
+	 * @param config
+	 * @param basicFlowPackageName
+	 * @param crr
+	 * @param complexContentList
+	 * @param eipVersion
+	 * @param compileableSourceDirectory
+	 * @param preparedSourceDirectory
+	 * @param log
+	 */
 	public AbstractMappingOperationGenerator(final XsdsUtil config,
 			final String basicFlowPackageName, final ComplexRequestResponse crr,
 			final ComplexContentList complexContentList,
@@ -121,7 +132,7 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append(Util.splitOnCapital(this.interfaceName));
 		sb.append(".\n");
 		for (int i = 0; i < children.size(); i++) {
-
+			// Nothing so far.
 		}
 		sb.append("\t * @param request");
 		sb.append(" the {@link ");

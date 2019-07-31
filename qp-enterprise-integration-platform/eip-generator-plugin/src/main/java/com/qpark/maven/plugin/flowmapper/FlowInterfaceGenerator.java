@@ -335,8 +335,8 @@ public class FlowInterfaceGenerator {
 	}
 
 	private final XsdsUtil config;
+	private final String eipVersion;
 	private final List<SimpleMethodDefinition> filters = new ArrayList<>();
-	private final List<SimpleMethodDefinition> rules = new ArrayList<>();
 	private final SimpleMethodDefinition flow;
 	private final ComplexType flowInput;
 	private final String flowName;
@@ -346,9 +346,15 @@ public class FlowInterfaceGenerator {
 	private final String packageName;
 	private final SimpleMethodDefinition request;
 	private final SimpleMethodDefinition response;
+	private final List<SimpleMethodDefinition> rules = new ArrayList<>();
 	private final List<SimpleMethodDefinition> subRequests = new ArrayList<>();
-	private final String eipVersion;
 
+	/**
+	 * @param config
+	 * @param flowInput
+	 * @param eipVersion
+	 * @param log
+	 */
 	public FlowInterfaceGenerator(final XsdsUtil config,
 			final ComplexType flowInput, final String eipVersion,
 			final Log log) {
@@ -406,6 +412,10 @@ public class FlowInterfaceGenerator {
 
 	}
 
+	/**
+	 * @param outputDirectory
+	 * @param basicFlowPackageName
+	 */
 	public void generateInterface(final File outputDirectory,
 			final String basicFlowPackageName) {
 		final String source = this.generateInterface(basicFlowPackageName);

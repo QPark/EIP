@@ -9,6 +9,7 @@ package com.qpark.maven.plugin.flowmapper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +39,24 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
 @Mojo(name = "generate-flow-mapper",
 		defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMapperMojo extends AbstractMojo {
+	private static void addErrorMessage(final AbstractGenerator mtg,
+			final List<String> errorMessages, final Exception e) {
+		if (e.getClass().getPackage().getName()
+				.equals("com.qpark.maven.plugin.flowmapper")) {
+			errorMessages.add(String.format("%s: %s",
+					e.getClass().getSimpleName(), e.getMessage()));
+		} else {
+			String stack = Arrays.asList(e.getStackTrace()).stream()
+					.map(line -> line.toString().trim())
+					.filter(line -> line.startsWith(
+							"at com.qpark.maven.plugin.flowmapper."))
+					.findFirst().orElse(e.getStackTrace()[0].toString());
+			errorMessages.add(String.format("%s: %s -- %s:%s",
+					e.getClass().getSimpleName(), e.getMessage(),
+					mtg.getFqInterfaceName(), stack));
+		}
+	}
+
 	public static List<ComplexTypeChild> getValidChildren(
 			final ComplexType complexType) {
 		List<ComplexTypeChild> list = new ArrayList<>(
@@ -61,7 +80,6 @@ public class GeneratorMapperMojo extends AbstractMojo {
 		}
 		return list;
 	}
-
 	/** The base directory where to start the scan of xsd files. */
 	@Parameter(property = "baseDirectory",
 			defaultValue = "${project.build.directory}/model")
@@ -69,6 +87,8 @@ public class GeneratorMapperMojo extends AbstractMojo {
 	/** The base package name where to place the mappings factories. */
 	@Parameter(property = "basePackageName", defaultValue = "")
 	private String basePackageName;
+	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
+	protected MojoExecution execution;
 	/** The name of the interface id to generate. If empty use all. */
 	@Parameter(property = "interfaceId", defaultValue = "")
 	private String interfaceId;
@@ -102,21 +122,11 @@ public class GeneratorMapperMojo extends AbstractMojo {
 	@Parameter(property = "outputInterfacesDirectory",
 			defaultValue = "${project.build.directory}/generated-sources")
 	private File outputInterfacesDirectory;
-	@Parameter(defaultValue = "${project}", readonly = true)
-	protected MavenProject project;
-	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
-	protected MojoExecution execution;
 	@Parameter(defaultValue = "${plugin}", readonly = true) // Maven 3 only
 	private PluginDescriptor plugin;
 
-	/**
-	 * Get the executing plugin version - the EIP version.
-	 *
-	 * @return the EIP version.
-	 */
-	protected String getEipVersion() {
-		return this.plugin.getVersion();
-	}
+	@Parameter(defaultValue = "${project}", readonly = true)
+	protected MavenProject project;
 
 	/**
 	 * @see org.apache.maven.plugin.Mojo#execute()
@@ -182,97 +192,74 @@ public class GeneratorMapperMojo extends AbstractMojo {
 			List<AbstractGenerator> generators = new ArrayList<>();
 
 			for (ComplexContent cc : complexContentList.getDirectMappings()) {
+				DirectMappingTypeGenerator mtg = new DirectMappingTypeGenerator(
+						config, basicPackageName, cc, complexContentList,
+						eipVersion, this.outputInterfacesDirectory,
+						this.outputClassesDirectory, this.getLog());
 				try {
-					DirectMappingTypeGenerator mtg = new DirectMappingTypeGenerator(
-							config, basicPackageName, cc, complexContentList,
-							eipVersion, this.outputInterfacesDirectory,
-							this.outputClassesDirectory, this.getLog());
 					mtg.generateInterface();
 					if (!cc.ct.toQNameString().startsWith(
 							"{http://www.qpark.com/Interfaces/MappingTypes}")) {
 						generators.add(mtg);
 						directMappers++;
 					}
-				} catch (IndexOutOfBoundsException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
+					addErrorMessage(mtg, errorMessages, e);
 				}
 			}
 			for (ComplexContent cc : complexContentList.getDefaultMappings()) {
+				DefaultMappingTypeGenerator mtg = new DefaultMappingTypeGenerator(
+						config, basicPackageName, cc, complexContentList,
+						eipVersion, this.outputInterfacesDirectory,
+						this.outputClassesDirectory, this.getLog());
 				try {
-					DefaultMappingTypeGenerator mtg = new DefaultMappingTypeGenerator(
-							config, basicPackageName, cc, complexContentList,
-							eipVersion, this.outputInterfacesDirectory,
-							this.outputClassesDirectory, this.getLog());
 					mtg.generateInterface();
 					generators.add(mtg);
 					defaultMappers++;
-				} catch (IndexOutOfBoundsException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
-				} catch (IllegalStateException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
+				} catch (Exception e) {
+					addErrorMessage(mtg, errorMessages, e);
 				}
 			}
 			for (ComplexContent cc : complexContentList
 					.getComplexUUIDMappings()) {
+				ComplexUUIDReferenceDataMappingTypeGenerator mtg = new ComplexUUIDReferenceDataMappingTypeGenerator(
+						config, basicPackageName, cc, complexContentList,
+						eipVersion, this.outputInterfacesDirectory,
+						this.outputClassesDirectory, this.getLog());
 				try {
-					ComplexUUIDReferenceDataMappingTypeGenerator mtg = new ComplexUUIDReferenceDataMappingTypeGenerator(
-							config, basicPackageName, cc, complexContentList,
-							eipVersion, this.outputInterfacesDirectory,
-							this.outputClassesDirectory, this.getLog());
 					mtg.generateInterface();
 					generators.add(mtg);
 					complexUUIDMappers++;
-				} catch (IndexOutOfBoundsException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
+					errorMessages.add(String.format("%s: %s -- %s:%s",
+							e.getClass().getSimpleName(), e.getMessage(),
+							mtg.getFqInterfaceName(), e.getStackTrace()[1]));
 				}
 			}
 			for (ComplexContent cc : complexContentList.getComplexMappings()) {
+				ComplexMappingTypeGenerator mtg = new ComplexMappingTypeGenerator(
+						config, basicPackageName, cc, complexContentList,
+						eipVersion, this.outputInterfacesDirectory,
+						this.outputClassesDirectory, this.getLog());
 				try {
-					ComplexMappingTypeGenerator mtg = new ComplexMappingTypeGenerator(
-							config, basicPackageName, cc, complexContentList,
-							eipVersion, this.outputInterfacesDirectory,
-							this.outputClassesDirectory, this.getLog());
 					mtg.generateInterface();
 					generators.add(mtg);
 					complexMappers++;
-				} catch (IndexOutOfBoundsException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
+					addErrorMessage(mtg, errorMessages, e);
 				}
 			}
 			for (ComplexContent cc : complexContentList.getTabularMappings()) {
+				TabularMappingTypeGenerator mtg = new TabularMappingTypeGenerator(
+						config, basicPackageName, cc, complexContentList,
+						eipVersion, this.outputInterfacesDirectory,
+						this.outputClassesDirectory, this.getLog());
 				try {
-					TabularMappingTypeGenerator mtg = new TabularMappingTypeGenerator(
-							config, basicPackageName, cc, complexContentList,
-							eipVersion, this.outputInterfacesDirectory,
-							this.outputClassesDirectory, this.getLog());
 					mtg.generateInterface();
 					generators.add(mtg);
 					tabularMappers++;
-				} catch (IndexOutOfBoundsException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
+					addErrorMessage(mtg, errorMessages, e);
 				}
 			}
 			for (ComplexContent cc : complexContentList.getInterfaceTypes()) {
@@ -299,18 +286,12 @@ public class GeneratorMapperMojo extends AbstractMojo {
 			for (AbstractGenerator gen : generators) {
 				try {
 					gen.generateImpl();
-				} catch (IndexOutOfBoundsException e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
-					e.printStackTrace();
 				} catch (Exception e) {
-					errorMessages.add(String.format("%s: %s",
-							e.getClass().getName(), e.getMessage()));
+					addErrorMessage(gen, errorMessages, e);
 				}
 			}
-			for (String errorMessage : errorMessages) {
-				this.getLog().error(errorMessage);
-			}
+			errorMessages.stream().sorted()
+					.forEach(errorMessage -> this.getLog().error(errorMessage));
 		}
 
 		this.getLog()
@@ -594,6 +575,15 @@ public class GeneratorMapperMojo extends AbstractMojo {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Get the executing plugin version - the EIP version.
+	 *
+	 * @return the EIP version.
+	 */
+	protected String getEipVersion() {
+		return this.plugin.getVersion();
 	}
 
 	private Collection<String> getInterfaceIds(final XsdsUtil config) {
