@@ -2,6 +2,11 @@ Changelog:
 
 3.14.5 20191112
 Platform: generate-mock-operations added option 'addSampleResponse'
+Platform: Fixed memomy leak
+
+3.14.4 20190724
+Impl: Spring core - HTTP and HTTPs MessageSender ContentType header
+Impl: Spring core - JAXBElementPersistence support of file system access and spring ClassPathResource
 
 3.14.3 20190316
 Impl: Spring core - JAXBElementPersistence support of GZIP

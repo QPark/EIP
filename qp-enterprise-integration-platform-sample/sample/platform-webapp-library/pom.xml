@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.14.4</version><!--qpark-eip-version-->
+		<version>3.14.5</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -126,7 +126,7 @@ WEB-INF/lib/xws-security-3.0.jar
 								<artifactItem>
 									<groupId>com.qpark.maven</groupId>
 									<artifactId>eip-model-analysis</artifactId>
-									<version>3.14.4</version><!--qpark-eip-version-->
+									<version>3.14.5</version><!--qpark-eip-version-->
 									<classifier>xsds</classifier>
 									<type>zip</type>
 									<outputDirectory>${model.dir}</outputDirectory>
