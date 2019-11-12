@@ -65,9 +65,6 @@ import com.qpark.maven.Util;
  * @author bhausen
  */
 public class XsdsUtil {
-	private static XsdsUtil instance0;
-	private static XsdsUtil instance1;
-	private static XsdsUtil instance2;
 	/** The {@link Logger}. */
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(XsdsUtil.class);
@@ -410,63 +407,63 @@ public class XsdsUtil {
 			final String serviceRequestSuffix,
 			final String serviceResponseSuffix) {
 		XsdsUtil value;
-		if (isSame(instance0, baseDirectory, basePackageName,
+//		if (isSame(instance0, baseDirectory, basePackageName,
+//				messagePackageNameSuffix, deltaPackageNameSuffix,
+//				serviceRequestSuffix, serviceResponseSuffix)) {
+//
+//			reused++;
+//			value = instance0;
+//			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+//					value.getBasePackageName(), value.getBaseDirectory()));
+//		} else if (isSame(instance1, baseDirectory, basePackageName,
+//				messagePackageNameSuffix, deltaPackageNameSuffix,
+//				serviceRequestSuffix, serviceResponseSuffix)) {
+//
+//			reused++;
+//			value = instance1;
+//			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+//					value.getBasePackageName(), value.getBaseDirectory()));
+//		} else if (isSame(instance2, baseDirectory, basePackageName,
+//				messagePackageNameSuffix, deltaPackageNameSuffix,
+//				serviceRequestSuffix, serviceResponseSuffix)) {
+//
+//			reused++;
+//			value = instance2;
+//			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
+//					value.getBasePackageName(), value.getBaseDirectory()));
+//		} else {
+		value = new XsdsUtil(baseDirectory, basePackageName,
 				messagePackageNameSuffix, deltaPackageNameSuffix,
-				serviceRequestSuffix, serviceResponseSuffix)) {
+				serviceRequestSuffix, serviceResponseSuffix);
 
-			reused++;
-			value = instance0;
-			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-		} else if (isSame(instance1, baseDirectory, basePackageName,
-				messagePackageNameSuffix, deltaPackageNameSuffix,
-				serviceRequestSuffix, serviceResponseSuffix)) {
+		logger.info("{}", String.format("XsdsUtil creating %s at %s",
+				value.getBasePackageName(), value.getBaseDirectory()));
 
-			reused++;
-			value = instance1;
-			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-		} else if (isSame(instance2, baseDirectory, basePackageName,
-				messagePackageNameSuffix, deltaPackageNameSuffix,
-				serviceRequestSuffix, serviceResponseSuffix)) {
-
-			reused++;
-			value = instance2;
-			logger.info("{}", String.format("XsdsUtil reusing %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-		} else {
-			value = new XsdsUtil(baseDirectory, basePackageName,
-					messagePackageNameSuffix, deltaPackageNameSuffix,
-					serviceRequestSuffix, serviceResponseSuffix);
-
-			logger.info("{}", String.format("XsdsUtil creating %s at %s",
-					value.getBasePackageName(), value.getBaseDirectory()));
-
-			if (instance0 == null) {
-				instance0 = value;
-			} else if (instance1 == null) {
-				instance1 = value;
-			} else if (instance2 == null) {
-				instance2 = value;
-			} else {
-				if (instance0.start < instance1.start) {
-					if (instance0.start < instance2.start) {
-						instance0 = value;
-					} else {
-						instance2 = value;
-					}
-				} else {
-					if (instance1.start < instance2.start) {
-						instance1 = value;
-					} else {
-						instance2 = value;
-					}
-				}
-			}
-		}
-		used++;
-		logger.info("XsdsUtil used " + used + " times and reused " + reused
-				+ " times");
+//			if (instance0 == null) {
+//				instance0 = value;
+//			} else if (instance1 == null) {
+//				instance1 = value;
+//			} else if (instance2 == null) {
+//				instance2 = value;
+//			} else {
+//				if (instance0.start < instance1.start) {
+//					if (instance0.start < instance2.start) {
+//						instance0 = value;
+//					} else {
+//						instance2 = value;
+//					}
+//				} else {
+//					if (instance1.start < instance2.start) {
+//						instance1 = value;
+//					} else {
+//						instance2 = value;
+//					}
+//				}
+//			}
+//		}
+//		used++;
+//		logger.info("XsdsUtil used " + used + " times and reused " + reused
+//				+ " times");
 		return value;
 	}
 
