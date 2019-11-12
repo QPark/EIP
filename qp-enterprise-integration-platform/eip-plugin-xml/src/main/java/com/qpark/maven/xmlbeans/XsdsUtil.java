@@ -572,9 +572,18 @@ public class XsdsUtil {
 		for (final String string : ss) {
 			if (!string.contains("<!--Optional:-->")
 					&& !string.contains("<!--Zero or more repetitions:-->")) {
+				String s = string.replaceAll("\"", "\\\\\"")
+						.replaceAll("  ", "\t").replace('\r', ' ');
+				if (s.length() > 1024) {
+					int indexa = s.indexOf('>');
+					int indexb = s.lastIndexOf('<');
+					if (indexb > indexa + 127 && indexa > 0)
+						s = String.format("%s%s%s", s.substring(0, indexa + 1),
+								s.substring(indexa + 1, indexa + 127),
+								s.substring(indexb, s.length()));
+				}
 				sb.append("\t\tsb.append(\"");
-				sb.append(string.replaceAll("\"", "\\\\\"")
-						.replaceAll("  ", "\t").replace('\r', ' '));
+				sb.append(s);
 				sb.append("\");\n");
 			}
 		}

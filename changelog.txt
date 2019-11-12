@@ -1,5 +1,8 @@
 Changelog:
 
+3.14.5 20191112
+Platform: generate-mock-operations added option 'addSampleResponse'
+
 3.14.3 20190316
 Impl: Spring core - JAXBElementPersistence support of GZIP
 Some tiny bugfixes and documentation

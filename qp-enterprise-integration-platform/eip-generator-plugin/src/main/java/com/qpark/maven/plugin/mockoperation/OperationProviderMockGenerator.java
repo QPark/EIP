@@ -38,12 +38,13 @@ public class OperationProviderMockGenerator {
 	private final String serviceId;
 	private final File outputDirectory;
 	private final boolean useInsightAnnotation;
+	private final boolean addSampleResponse;
 	private final String eipVersion;
 
 	public OperationProviderMockGenerator(final XsdsUtil config,
 			final File outputDirectory, final ElementType element,
-			final boolean useInsightAnnotation, final String eipVersion,
-			final Log log) {
+			final boolean useInsightAnnotation, boolean addSampleResponse,
+			final String eipVersion, final Log log) {
 		this.config = config;
 		this.outputDirectory = outputDirectory;
 		this.log = log;
@@ -53,6 +54,7 @@ public class OperationProviderMockGenerator {
 		this.serviceId = element.getServiceId();
 		this.methodName = element.getMethodName();
 		this.useInsightAnnotation = useInsightAnnotation;
+		this.addSampleResponse = addSampleResponse;
 		this.eipVersion = eipVersion;
 
 		this.elementResponse = XsdsUtil.findResponse(this.elementRequest,
@@ -84,11 +86,16 @@ public class OperationProviderMockGenerator {
 			sb.append("import java.io.StringReader;\n");
 			sb.append("import java.util.concurrent.TimeUnit;\n");
 			sb.append("\n");
-			sb.append("import javax.xml.bind.JAXBContext;\n");
-			sb.append("import javax.xml.bind.JAXBElement;\n");
-			sb.append("import javax.xml.bind.JAXBException;\n");
-			sb.append("import javax.xml.bind.Unmarshaller;\n");
-			sb.append("\n");
+			if (addSampleResponse) {
+				sb.append("import javax.xml.bind.JAXBContext;\n");
+				sb.append("import javax.xml.bind.JAXBElement;\n");
+				sb.append("import javax.xml.bind.JAXBException;\n");
+				sb.append("import javax.xml.bind.Unmarshaller;\n");
+				sb.append("\n");
+			} else {
+				sb.append("import javax.xml.bind.JAXBElement;\n");
+				sb.append("\n");
+			}
 			sb.append(
 					"import org.springframework.beans.factory.annotation.Autowired;\n");
 			// sb.append("import
@@ -181,14 +188,17 @@ public class OperationProviderMockGenerator {
 
 			sb.append("\t\ttry {\n");
 
-			sb.append("\t\t\t");
-			sb.append(this.responseType);
-			sb.append(" responseSample = this.getSampleResponseObject();\n");
+			if (addSampleResponse) {
+				sb.append("\t\t\t");
+				sb.append(this.responseType);
+				sb.append(
+						" responseSample = this.getSampleResponseObject();\n");
 
-			sb.append("\t\t\tif (responseSample != null) {\n");
-			sb.append("\t\t\t\tresponse = responseSample;\n");
-			sb.append("\t\t\t}\n");
-			sb.append("\t\t\t// response.getFailure().clear();\n");
+				sb.append("\t\t\tif (responseSample != null) {\n");
+				sb.append("\t\t\t\tresponse = responseSample;\n");
+				sb.append("\t\t\t}\n");
+				sb.append("\t\t\t// response.getFailure().clear();\n");
+			}
 			sb.append(
 					"\t\t\t// The operation {0} of service {1} is not implement!!\n");
 			sb.append("\t\t\t// response.getFailure().add(\n");
@@ -258,54 +268,57 @@ public class OperationProviderMockGenerator {
 			sb.append("(response);\n");
 			sb.append("	}\n");
 
-			sb.append("\n");
-			sb.append("\t/**\n");
-			sb.append("\t * @return a mock {@link ");
-			sb.append(this.responseType);
-			sb.append("}.\n");
-			sb.append("\t */\n");
-			sb.append("\tprivate ");
-			sb.append(this.responseType);
-			sb.append(" getSampleResponseObject() {\n");
-			sb.append("\t\t");
-			sb.append(this.responseType);
-			sb.append(" mock = null;\n");
-			sb.append("\t\tString xml = this.getSampleXml();\n");
-			sb.append("\t\ttry {\n");
-			sb.append("\t\t\tJAXBContext jaxbContext = JAXBContext\n");
-			sb.append("\t\t\t\t\t.newInstance(\"");
-			sb.append(this.ctRequest.getPackageName());
-			sb.append("\");\n");
-			sb.append(
-					"\t\t\tUnmarshaller unmarshaller = jaxbContext.createUnmarshaller();\n");
-			sb.append("\t\t\tJAXBElement<");
-			sb.append(this.responseType);
-			sb.append("> jaxb = (JAXBElement<");
-			sb.append(this.responseType);
-			sb.append(">) unmarshaller.unmarshal(new StringReader(xml));\n");
-			sb.append("\t\t\tif (jaxb != null) {\n");
-			sb.append("\t\t\t\tmock = jaxb.getValue();\n");
-			sb.append("\t\t\t}\n");
-			sb.append("\t\t} catch (Exception e) {\n");
-			sb.append("\t\t\tthis.logger.debug(\"");
-			sb.append(this.operationName);
-			sb.append(
-					" generate sample message error: {}\", e.getMessage());\n");
-			sb.append("\t\t\tmock = null;\n");
-			sb.append("\t\t}\n");
-			sb.append("\t\treturn mock;\n");
-			sb.append("\t}\n");
+			if (addSampleResponse) {
+				sb.append("\n");
+				sb.append("\t/**\n");
+				sb.append("\t * @return a mock {@link ");
+				sb.append(this.responseType);
+				sb.append("}.\n");
+				sb.append("\t */\n");
+				sb.append("\tprivate ");
+				sb.append(this.responseType);
+				sb.append(" getSampleResponseObject() {\n");
+				sb.append("\t\t");
+				sb.append(this.responseType);
+				sb.append(" mock = null;\n");
+				sb.append("\t\tString xml = this.getSampleXml();\n");
+				sb.append("\t\ttry {\n");
+				sb.append("\t\t\tJAXBContext jaxbContext = JAXBContext\n");
+				sb.append("\t\t\t\t\t.newInstance(\"");
+				sb.append(this.ctRequest.getPackageName());
+				sb.append("\");\n");
+				sb.append(
+						"\t\t\tUnmarshaller unmarshaller = jaxbContext.createUnmarshaller();\n");
+				sb.append("\t\t\tJAXBElement<");
+				sb.append(this.responseType);
+				sb.append("> jaxb = (JAXBElement<");
+				sb.append(this.responseType);
+				sb.append(
+						">) unmarshaller.unmarshal(new StringReader(xml));\n");
+				sb.append("\t\t\tif (jaxb != null) {\n");
+				sb.append("\t\t\t\tmock = jaxb.getValue();\n");
+				sb.append("\t\t\t}\n");
+				sb.append("\t\t} catch (Exception e) {\n");
+				sb.append("\t\t\tthis.logger.debug(\"");
+				sb.append(this.operationName);
+				sb.append(
+						" generate sample message error: {}\", e.getMessage());\n");
+				sb.append("\t\t\tmock = null;\n");
+				sb.append("\t\t}\n");
+				sb.append("\t\treturn mock;\n");
+				sb.append("\t}\n");
 
-			sb.append("\n");
-			sb.append("\t/**\n");
-			sb.append("\t * @return a sample xml.\n");
-			sb.append("\t */\n");
-			sb.append("\tprivate String getSampleXml() {\n");
-			sb.append(XsdsUtil.getSampleCodeing(this.ctResponse.getType(),
-					this.elementResponse.getElement().getName()
-							.getLocalPart()));
-			sb.append("\t\treturn sb.toString();\n");
-			sb.append("\t}\n");
+				sb.append("\n");
+				sb.append("\t/**\n");
+				sb.append("\t * @return a sample xml.\n");
+				sb.append("\t */\n");
+				sb.append("\tprivate String getSampleXml() {\n");
+				sb.append(XsdsUtil.getSampleCodeing(this.ctResponse.getType(),
+						this.elementResponse.getElement().getName()
+								.getLocalPart()));
+				sb.append("\t\treturn sb.toString();\n");
+				sb.append("\t}\n");
+			}
 
 			sb.append("\t/**\n");
 			sb.append("\t * @param start\n");

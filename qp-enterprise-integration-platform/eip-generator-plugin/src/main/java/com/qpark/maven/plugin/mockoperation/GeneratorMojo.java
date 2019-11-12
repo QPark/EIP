@@ -29,16 +29,13 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-mock-operations",
-		defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+@Mojo(name = "generate-mock-operations", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 public class GeneratorMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	private File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -80,6 +77,12 @@ public class GeneratorMojo extends AbstractMojo {
 	protected MavenProject project;
 	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
 	protected MojoExecution execution;
+	/**
+	 * If <code>true</code>, a sample response gets added to the mocked
+	 * operation.
+	 */
+	@Parameter(property = "addSampleResponse", defaultValue = "true")
+	private boolean addSampleResponse;
 
 	/**
 	 * Get the executing plugin version - the EIP version.
@@ -117,8 +120,8 @@ public class GeneratorMojo extends AbstractMojo {
 						.isValidServiceId(element.getServiceId(), sid)) {
 					mop = new OperationProviderMockGenerator(xsds,
 							this.outputDirectory, element,
-							this.useSpringInsightAnnotation, eipVersion,
-							this.getLog());
+							this.useSpringInsightAnnotation, addSampleResponse,
+							eipVersion, this.getLog());
 					mop.generate();
 				}
 			}
