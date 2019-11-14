@@ -14,6 +14,6 @@ jobs:
       with:
         java-version: 1.8
     - name: Build bom with Maven
-      run: mvn -B package --file pom.xml -P bom
+      run: mvn -B clean install --file pom.xml -P bom
     - name: Build with Maven
-      run: mvn -B package --file pom.xml -P platform,impl,sample
+      run: mvn -B clean install --file pom.xml -P platform,impl,sample
