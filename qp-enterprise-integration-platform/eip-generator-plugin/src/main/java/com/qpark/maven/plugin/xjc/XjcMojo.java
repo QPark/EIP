@@ -47,9 +47,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @see <a href="https://jaxb.java.net/">The JAXB Reference Implementation</a>
  */
-@Mojo(name = "xjc", threadSafe = false,
-		defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-		requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "xjc", threadSafe = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class XjcMojo extends AbstractJavaGeneratorMojo {
 
 	/**
@@ -58,8 +56,7 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 	public static final String STALE_FILENAME = "xjcStaleFlag";
 
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	private File baseDirectory;
 
 	/**
@@ -73,8 +70,7 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 	 * The package names of the messages should end with - separation by space.
 	 * Default is <code>msg svc mapping flow</code>.
 	 */
-	@Parameter(property = "messagePackageNameSuffixes",
-			defaultValue = "msg svc mapping flow")
+	@Parameter(property = "messagePackageNameSuffixes", defaultValue = "msg svc mapping flow")
 	private String messagePackageNameSuffixes;
 	/**
 	 * <p>
@@ -84,8 +80,7 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 	 * The working directory where the generated Java source files are created.
 	 * </p>
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/generated-sources",
-			required = true)
+	@Parameter(defaultValue = "${project.build.directory}/generated-sources", required = true)
 	private File outputDirectory;
 	/**
 	 * The schema location prefixes separated by <code>,</code>. This is used to
@@ -282,7 +277,7 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
 		for (String source : sources) {
 			this.getLog().info("\t" + source);
 		}
-		File f = Util.getFile(new File(this.outputDirectory, ".."),
+		File f = Util.getFile(this.outputDirectory.getParentFile(),
 				"domain-warnings.txt");
 		this.getLog().info(new StringBuffer().append("Write ")
 				.append(f.getAbsolutePath()));
