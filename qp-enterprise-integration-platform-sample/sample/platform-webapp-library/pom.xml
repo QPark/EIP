@@ -445,7 +445,7 @@ WEB-INF/lib/xws-security-3.0.jar
 
 	</dependencies>
 
-	<!-- This is needed because of org.apache.santuario:xmlsec jar file dependency! -->
+	<!-- This is needed because of org.apache.santuario:xmlsec jar file dependency! 
 	<repositories>
 		<repository>
 			<id>spring-ext</id>
@@ -453,4 +453,5 @@ WEB-INF/lib/xws-security-3.0.jar
 			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
 		</repository>
 	</repositories>
+	-->
 </project>
