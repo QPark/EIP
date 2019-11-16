@@ -1,0 +1,19 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>javax.xml.crypto</groupId>
+  <artifactId>xmldsig</artifactId>
+  <version>1.0</version>
+  <name>JSR 105 - Java(TM) XML Digital Signature API</name>
+  <description>
+    Part of the Java Web Services Developer Pack 2.0
+  </description>
+  <url>http://www.jcp.org/en/jsr/detail?id=105</url>
+  <dependencies>
+      <dependency>
+          <groupId>com.sun.org.apache.xml.security</groupId>
+          <artifactId>xmlsec</artifactId>
+          <version>2.0</version>
+          <scope>runtime</scope>
+      </dependency>
+  </dependencies>
+</project>
