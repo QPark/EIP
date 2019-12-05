@@ -36,16 +36,13 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  *
  * @author bhausen
  */
-@Mojo(name = "generate-integration-java",
-		defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = "generate-integration-java", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
 	/**
 	 * The package name of the messages should end with this. Default is
@@ -93,7 +90,7 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		String eipVersion = this.getEipVersion();
 
 		this.generateBasicIntegrationGatewayInterface(eipVersion);
-		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<String, List<IntegrationGatewayGenerator>>();
+		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<>();
 		List<IntegrationGatewayGenerator> igs;
 		for (ElementType element : xsds.getElementTypes()) {
 			if (element.isRequest()) {
@@ -103,13 +100,14 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 				if (ig.isGenerated()) {
 					igs = serviceIgMap.get(ig.getServiceId());
 					if (igs == null) {
-						igs = new ArrayList<IntegrationGatewayGenerator>();
+						igs = new ArrayList<>();
 						serviceIgMap.put(ig.getServiceId(), igs);
 					}
 					igs.add(ig);
 				}
 			}
 		}
+		WsEndPointGenerator wepg;
 		ServiceOperationProviderGenerator sopg;
 		for (Entry<String, List<IntegrationGatewayGenerator>> entry : serviceIgMap
 				.entrySet()) {
@@ -117,6 +115,10 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 					entry.getValue(), this.basePackageName, eipVersion,
 					this.getLog(), this.project);
 			sopg.generate();
+			wepg = new WsEndPointGenerator(entry.getKey(), entry.getValue(),
+					this.basePackageName, eipVersion, this.getLog(),
+					this.project);
+			wepg.generate();
 		}
 	}
 

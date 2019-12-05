@@ -48,7 +48,7 @@
 							<Implementation-Build>${project.version}-b${buildNumber}</Implementation-Build>
 						</manifestEntries>
 					</archive>
-					<packagingIncludes>
+					<!--packagingIncludes>
 					</packagingIncludes>
 					<packagingExcludes>
 WEB-INF/lib/activation-1.1.1.jar,
@@ -94,7 +94,7 @@ WEB-INF/lib/xmlbeans-2.6.0.jar,
 WEB-INF/lib/xmlschema-core-2.1.0.jar,
 WEB-INF/lib/xmlsec-1.5.8.jar,
 WEB-INF/lib/xws-security-3.0.jar
-					</packagingExcludes>
+					</packagingExcludes-->
 					<ignoreWebxml>true</ignoreWebxml>
 					<!--<webXml>${project.build.directory}/${service.final.name}/WEB-INF</webXml>-->
 				</configuration>

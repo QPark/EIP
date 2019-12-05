@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.9.RELEASE</version>
+	</parent>
+
+	<groupId>com.samples.platform.boot</groupId>
+	<artifactId>eip-sample-boot</artifactId>
+	<version>3.14.5</version><!--qpark-eip-version-->
+	<packaging>jar</packaging>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.samples.domain.gen</groupId>
+			<artifactId>domain-gen-jaxb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-xsds</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.samples.domain.gen</groupId>
+									<artifactId>domain-gen-jaxb</artifactId>
+									<version>${project.version}</version>
+									<classifier>xsd-sources</classifier>
+									<type>zip</type>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>docker-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>image</argument>
+								<argument>build</argument>
+								<argument>target</argument>
+								<argument>-f</argument>
+								<argument>target/Dockerfile</argument>
+								<argument>-t</argument>
+								<argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
+								<argument>--build-arg</argument>
+								<argument>JAR_FILE=.</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>Create Dockerfile</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo file="target/Dockerfile">ARG JAR_FILE
+FROM openjdk:8-jdk-alpine
+VOLUME /tmp
+ADD $JAR_FILE eip-sample
+ENTRYPOINT ["java","-jar","/eip-sample/eip-sample-boot-${project.version}.jar"]
+EXPOSE 8080
+</echo>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>What next?</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo>
+Executed 
+docker build target -f target/Dockerfile -t ${project.groupId}/${project.artifactId}:${project.version} --build-arg JAR_FILE=.
+
+To be done
+docker container run -p 8080:8080 --interactive --name eip-boot ${project.groupId}/${project.artifactId}:${project.version} .     
+
+Dont forget
+docker container rm --force eip-boot     
+								</echo>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
