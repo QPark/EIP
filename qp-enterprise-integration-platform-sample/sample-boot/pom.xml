@@ -53,36 +53,51 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack-xsds</id>
-						<phase>process-test-classes</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.samples.domain.gen</groupId>
-									<artifactId>domain-gen-jaxb</artifactId>
-									<version>${project.version}</version>
-									<classifier>xsd-sources</classifier>
-									<type>zip</type>
-									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>docker-package</id>
+						<id>docker-lib-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>build</argument>
+								<argument>target</argument>
+								<argument>--no-cache</argument>
+								<argument>-f</argument>
+								<argument>target/Dockerfile.eip-platform-lib</argument>
+								<argument>-t</argument>
+								<argument>eip-platform-lib/tomcat/9-jre-8:${project.version}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>docker-war-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>build</argument>
+								<argument>target</argument>
+								<argument>--no-cache</argument>
+								<argument>-f</argument>
+								<argument>target/Dockerfile.war</argument>
+								<argument>-t</argument>
+								<argument>iss-library/tomcat:${project.version}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>docker-file-package</id>
 						<phase>package</phase>
 						<goals>
 							<goal>exec</goal>
@@ -117,11 +132,24 @@
 						<configuration>
 							<target>
 								<echo file="target/Dockerfile">ARG JAR_FILE
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jre-alpine
 VOLUME /tmp
 COPY $JAR_FILE eip-sample
 ENTRYPOINT ["java","-jar","/eip-sample/eip-sample-boot-${project.version}.jar"]
 EXPOSE 8080
+</echo>
+								<echo file="target/Dockerfile.war">
+FROM eip-platform-lib/tomcat/9-jre-8:${project.version}
+VOLUME /tmp
+RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/lib-platform-1\.0\.0\/\*\.jar/g' /usr/local/tomcat/conf/catalina.properties
+COPY platform-webapp-library-${project.version}.war /usr/local/tomcat/webapps/iss-library.war
+EXPOSE 8080
+</echo>
+								<echo file="target/Dockerfile.eip-platform-lib">
+FROM tomcat:9-jdk8-openjdk-slim
+RUN mkdir -p /usr/local/lib-platform-1.0.0
+COPY lib-platform-servicebus-1.0.0 /usr/local/lib-platform-1.0.0
+COPY Dockerfile.eip-platform-lib /usr/local/lib-platform-1.0.0/Dockerfile
 </echo>
 							</target>
 						</configuration>
@@ -136,6 +164,8 @@ EXPOSE 8080
 							<target>
 								<echo>
 Executed 
+docker build target --no-cache -f target/Dockerfile.eip-platform-lib -t eip-platform-lib/tomcat/9-jre-8:${project.version}
+docker build target --no-cache -f target/Dockerfile.war -t iss-library/tomcat:${project.version}
 docker build target --no-cache -f target/Dockerfile -t ${project.groupId}/${project.artifactId}:${project.version} --build-arg JAR_FILE=.
 
 To be done
@@ -145,6 +175,274 @@ Dont forget
 docker container rm --force eip-boot     
 								</echo>
 							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-xsds</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.samples.domain.gen</groupId>
+									<artifactId>domain-gen-jaxb</artifactId>
+									<version>${project.version}</version>
+									<classifier>xsd-sources</classifier>
+									<type>zip</type>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-war-file</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.samples.platform</groupId>
+									<artifactId>platform-webapp-library</artifactId>
+									<version>${project.version}</version>
+									<type>war</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-lib-platform-servicebus-1.0.0</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib-platform-servicebus-1.0.0</outputDirectory>
+							<artifactItems>
+								<artifactItem>
+									<groupId>aopalliance</groupId>
+									<artifactId>aopalliance</artifactId>
+									<version>1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>ch.qos.logback</groupId>
+									<artifactId>logback-classic</artifactId>
+									<version>1.2.3</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>ch.qos.logback</groupId>
+									<artifactId>logback-core</artifactId>
+									<version>1.2.3</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.goldmansachs</groupId>
+									<artifactId>gs-collections</artifactId>
+									<version>5.1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.goldmansachs</groupId>
+									<artifactId>gs-collections-api</artifactId>
+									<version>5.1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.lmax</groupId>
+									<artifactId>disruptor</artifactId>
+									<version>3.2.1</version>
+								</artifactItem>
+								<!--artifactItem>
+									<groupId>com.springsource.insight</groupId>
+									<artifactId>insight-annotation</artifactId>
+									<version>1.9.2.RELEASE</version>
+								</artifactItem-->
+								<artifactItem>
+									<groupId>com.sun.xml.bind</groupId>
+									<artifactId>jaxb-core</artifactId>
+									<version>2.2.11</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.xml.bind</groupId>
+									<artifactId>jaxb-impl</artifactId>
+									<version>2.2.11</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.xml.wss</groupId>
+									<artifactId>xws-security</artifactId>
+									<version>3.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-beanutils</groupId>
+									<artifactId>commons-beanutils</artifactId>
+									<version>1.9.2</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-codec</groupId>
+									<artifactId>commons-codec</artifactId>
+									<version>1.10</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-collections</groupId>
+									<artifactId>commons-collections</artifactId>
+									<version>3.2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-digester</groupId>
+									<artifactId>commons-digester</artifactId>
+									<version>2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-httpclient</groupId>
+									<artifactId>commons-httpclient</artifactId>
+									<version>3.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-io</groupId>
+									<artifactId>commons-io</artifactId>
+									<version>2.4</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-lang</groupId>
+									<artifactId>commons-lang</artifactId>
+									<version>2.6</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-logging</groupId>
+									<artifactId>commons-logging</artifactId>
+									<version>1.2</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-net</groupId>
+									<artifactId>commons-net</artifactId>
+									<version>3.3</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>dom4j</groupId>
+									<artifactId>dom4j</artifactId>
+									<version>1.6.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>io.gatling</groupId>
+									<artifactId>jsr166e</artifactId>
+									<version>1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.activation</groupId>
+									<artifactId>activation</artifactId>
+									<version>1.1.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.xml.bind</groupId>
+									<artifactId>jaxb-api</artifactId>
+									<version>2.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.xml.bind</groupId>
+									<artifactId>jsr173_api</artifactId>
+									<version>1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.xml.soap</groupId>
+									<artifactId>saaj-api</artifactId>
+									<version>1.3.5</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.xml.stream</groupId>
+									<artifactId>stax-api</artifactId>
+									<version>1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.xml.ws</groupId>
+									<artifactId>jaxws-api</artifactId>
+									<version>2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>joda-time</groupId>
+									<artifactId>joda-time</artifactId>
+									<version>2.5</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.commons</groupId>
+									<artifactId>commons-lang3</artifactId>
+									<version>3.3.2</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.commons</groupId>
+									<artifactId>commons-pool2</artifactId>
+									<version>2.2</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.santuario</groupId>
+									<artifactId>xmlsec</artifactId>
+									<version>1.5.8</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.ws.security</groupId>
+									<artifactId>wss4j</artifactId>
+									<version>1.6.18</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.ws.xmlschema</groupId>
+									<artifactId>xmlschema-core</artifactId>
+									<version>2.1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.xmlbeans</groupId>
+									<artifactId>xmlbeans</artifactId>
+									<version>2.6.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.aspectj</groupId>
+									<artifactId>aspectjtools</artifactId>
+									<version>1.8.7</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.eclipse.persistence</groupId>
+									<artifactId>javax.persistence</artifactId>
+									<version>2.1.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.projectreactor</groupId>
+									<artifactId>reactor-core</artifactId>
+									<version>1.1.6.RELEASE</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>jcl-over-slf4j</artifactId>
+									<version>1.7.12</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>jul-to-slf4j</artifactId>
+									<version>1.7.12</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>log4j-over-slf4j</artifactId>
+									<version>1.7.12</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>slf4j-api</artifactId>
+									<version>1.7.12</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>wsdl4j</groupId>
+									<artifactId>wsdl4j</artifactId>
+									<version>1.6.3</version>
+								</artifactItem>
+							</artifactItems>
 						</configuration>
 					</execution>
 				</executions>
