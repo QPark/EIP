@@ -77,7 +77,7 @@
 		</repository>
 		<repository>
 			<id>maven.springframework.org</id>
-			<url>http://maven.springframework.org/release/</url>
+			<url>https://maven.springframework.org/release/</url>
 		</repository>
 		<repository>
 			<id>maven.java.net</id>
