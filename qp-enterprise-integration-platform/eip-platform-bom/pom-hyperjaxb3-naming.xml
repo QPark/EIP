@@ -24,11 +24,21 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<plugin.org.apache.maven.plugins.maven-compiler-plugin.version>3.8.0</plugin.org.apache.maven.plugins.maven-compiler-plugin.version>
 	</properties>
 
 	<build>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${plugin.org.apache.maven.plugins.maven-compiler-plugin.version}</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.jvnet.hyperjaxb3</groupId>
 					<artifactId>maven-hyperjaxb3-plugin</artifactId>

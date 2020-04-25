@@ -64,7 +64,7 @@
 		<plugin.org.apache.maven.plugins.maven-clean-plugin.version>3.0.0</plugin.org.apache.maven.plugins.maven-clean-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-changelog-plugin.version>2.3</plugin.org.apache.maven.plugins.maven-changelog-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version>2.17</plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-compiler-plugin.version>3.3</plugin.org.apache.maven.plugins.maven-compiler-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-compiler-plugin.version>3.8.0</plugin.org.apache.maven.plugins.maven-compiler-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-dependency-plugin.version>2.10</plugin.org.apache.maven.plugins.maven-dependency-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-eclipse-plugin.version>2.10</plugin.org.apache.maven.plugins.maven-eclipse-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-install-plugin.version>2.5.2</plugin.org.apache.maven.plugins.maven-install-plugin.version>
