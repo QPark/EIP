@@ -51,6 +51,7 @@
 				<module>qp-enterprise-integration-platform-sample/sample</module>
 				<module>qp-enterprise-integration-platform-sample/sample-client</module>
 				<module>qp-enterprise-integration-platform-sample/sample-templates</module>
+				<module>qp-enterprise-integration-platform-sample/sample-docker</module>
 			</modules>
 		</profile>
 		<profile>

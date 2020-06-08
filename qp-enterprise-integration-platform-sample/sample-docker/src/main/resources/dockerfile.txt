@@ -1,0 +1,42 @@
+# Copyright (c) 2013-2020 QPark Consulting  S.a r.l.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Eclipse Public License v1.0.
+# The Eclipse Public License is available at
+# http://www.eclipse.org/legal/epl-v10.html.
+
+FROM tomcat:jdk8-openjdk-slim
+
+ADD tomcat/lib-platform-servicebus-1.0.0 /usr/local/tomcat/lib-platform-servicebus-1.0.0/
+ADD tomcat/lib/* /usr/local/tomcat/lib/
+ADD tomcat/conf/* /usr/local/tomcat/conf/
+ADD tomcat/webapps/platform-webapp-library-xxx-application.version-xxx.war /usr/local/tomcat/webapps/iss-library.war
+
+RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/tomcat\/lib-platform-servicebus-1.0.0\/*.jar/g' /usr/local/tomcat/conf/catalina.properties; 
+RUN sed -i 's/<\/Context>/<ResourceLink name="jdbc\/PlatformDB" type="javax.sql.DataSource" global="jdbc\/PlatformDB" \/><\/Context>/g' /usr/local/tomcat/conf/context.xml; 
+RUN sed -i 's/<\/GlobalNamingResources>/<Resource name="jdbc\/PlatformDB" auth="Container" username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}\/issLibraryHSQLDB.bin" driverClassName="org.hsqldb.jdbc.JDBCDriver" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" defaultTransactionIsolation="READ_COMMITTED" maxActive="20" maxIdle="20" minIdle="3" initialSize="2" \/><\/GlobalNamingResources>/g' /usr/local/tomcat/conf/server.xml; 
+RUN sed -i 's/redirectPort="8443"\ \/>/redirectPort="8443" address="0.0.0.0" URIEncoding="UTF-8" ><UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" \/><\/Connector>/g' /usr/local/tomcat/conf/server.xml; 
+RUN sed -i "s/1catalina.org.apache.juli.AsyncFileHandler.level\ =\ FINE/1catalina.org.apache.juli.AsyncFileHandler.level=WARNING/g" /usr/local/tomcat/conf/logging.properties; 
+RUN echo "org.apache.catalina.startup.Catalina.level = INFO\norg.apache.catalina.startup.Catalina.handlers = java.util.logging.ConsoleHandler\njava.util.logging.SimpleFormatter.format=%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS.%1$tL %2$s%n%4$s: %5$s%6$s%n" >> /usr/local/tomcat/conf/logging.properties;
+RUN chmod 600 /usr/local/tomcat/conf/jmxremote.password;
+
+EXPOSE 8080 8010 1099
+
+ENV CATALINA_OPTS="${CATALINA_OPTS} -Duser.timezone=UTC \
+    -Duser.language=en \
+    -Duser.region=GB \
+    -Dcom.sun.management.jmxremote.port=1099 \
+    -Dcom.sun.management.jmxremote.rmi.port=1099 \ 
+    -Dcom.sun.management.jmxremote.ssl=false \
+    -Dcom.sun.management.jmxremote.authenticate=false \
+    -Dcom.sun.management.jmxremote.authenticate=true \
+    -Dcom.sun.management.jmxremote.password.file=/usr/local/tomcat/conf/jmxremote.password \
+    -Dcom.sun.management.jmxremote.access.file=/usr/local/tomcat/conf/jmxremote.access \
+    -Xmx512M \
+    -Xms512M \
+    -Xss256K \
+    -XX:NewSize=128M \
+    -XX:MaxNewSize=128M \
+    -Xrunjdwp:transport=dt_socket,address=8010,server=y,suspend=n \
+    -verbose:gc \
+    -Xloggc:/usr/local/tomcat/logs/gc-eip-platform-$(date +%Y%m%d-%H%M%S).log"
