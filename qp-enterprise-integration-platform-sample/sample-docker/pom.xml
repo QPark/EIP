@@ -17,8 +17,8 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>com.samples.platform.templates</groupId>
-	<artifactId>sample-templates</artifactId>
+	<groupId>com.qpark.eip.samples</groupId>
+	<artifactId>sample-docker</artifactId>
 	<version>3.16.0</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<description>
@@ -60,29 +60,60 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-templates</id>
+						<id>make-dockerfile</id>
 						<phase>process-sources</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<target>
-								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
-									<property name="environment.name">base</property>
-									<target name="base-config" />
-									<target name="base-additional-libs" />
-									<target name="base-webapps-applications" />
-									<target name="handle-readme"/>
-								</ant>
-								<ant antfile="${basedir}/build-rename-wars.xml" inheritRefs="true">
-									<property name="environment.name">base</property>
-									<target name="rename-wars" />
-								</ant>
-								<ant antfile="${basedir}/build-base.xml" inheritRefs="true">
-									<property name="environment.name">local</property>
-									<target name="user-config" />
-									<target name="handle-readme"/>
-								</ant>
+							<target name="dockerfile" >
+								<copy
+									failonerror="false"
+									file="${basedir}/src/main/resources/dockerfile.txt"
+									todir="${project.build.directory}" />
+								<copy
+									failonerror="false"
+									file="${basedir}/src/main/resources/docker-compose.yaml"
+									todir="${project.build.directory}" />
+								<replace file="${project.build.directory}/dockerfile.txt"
+									token="xxx-application.version-xxx"
+									value="${application.version}" />
+								<replace file="${project.build.directory}/docker-compose.yaml"
+									token="xxx-application.version-xxx"
+									value="${application.version}" />
+
+								<mkdir
+									dir="${project.build.directory}/tomcat/conf" />
+								<copy todir="${project.build.directory}/tomcat/conf" >
+									<fileset dir="${basedir}/src/main/resources/conf">
+										<include name="**"/>
+									</fileset>
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>echo-commands</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target name="commands" >
+								<echo>Commands:</echo>
+								<echo>docker build target --no-cache -f target/dockerfile.txt -t com.qpark.eip/sample:${application.version}</echo>
+								<echo>docker-compose -f target/docker-compose.yaml up</echo>
+
+								<echo> </echo>
+								<echo> or </echo>
+								<echo> </echo>
+
+								<echo>docker build qp-enterprise-integration-platform-sample/sample-docker/target --no-cache -f qp-enterprise-integration-platform-sample/sample-docker/target/dockerfile.txt -t com.qpark.eip/sample:${application.version}</echo>
+								<echo>docker-compose -f qp-enterprise-integration-platform-sample/sample-docker/target/docker-compose.yaml up</echo>
+
+								<echo> </echo>
+
+								<echo>curl localhost:18080/iss-library/services/library.wsdl</echo>
 							</target>
 						</configuration>
 					</execution>
@@ -99,7 +130,7 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/artifacts</outputDirectory>
+							<outputDirectory>${project.build.directory}/tomcat/webapps</outputDirectory>
 							<artifactItems>
 								<artifactItem>
 									<groupId>${application.groupId}</groupId>
@@ -118,7 +149,7 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/additional-jars</outputDirectory>
+							<outputDirectory>${project.build.directory}/tomcat/lib</outputDirectory>
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.hsqldb</groupId>
@@ -135,7 +166,7 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/templates/lib-platform-servicebus-1.0.0</outputDirectory>
+							<outputDirectory>${project.build.directory}/tomcat/lib-platform-servicebus-1.0.0</outputDirectory>
 							<artifactItems>
 								<artifactItem>
 									<groupId>aopalliance</groupId>
@@ -396,7 +427,7 @@
 		</repository>
 		<repository>
 			<id>maven.springframework.org</id>
-			<url>https://maven.springframework.org/release/</url>
+			<url>http://maven.springframework.org/release/</url>
 		</repository>
 		<repository>
 			<id>maven.java.net</id>
