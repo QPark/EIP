@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.logback;
@@ -61,36 +61,27 @@ public class LoggingInitializer implements ReInitalizeable {
 		this.serviceName = serviceName;
 		this.versionName = versionName;
 		String catalinaBase = System.getProperty(CATALINA_BASE);
-		StringBuffer sb = new StringBuffer(256);
-		String catalinaConf = sb.append(catalinaBase).append(File.separatorChar)
-				.append("conf").append(File.separatorChar).toString();
-		sb.setLength(0);
+		String catalinaConf = String.format("%s%sconf%s", catalinaBase,
+				File.separatorChar, File.separatorChar);
 
-		List<String> configs = new ArrayList<String>(4);
+		List<String> configs = new ArrayList<>(4);
 
-		sb.setLength(0);
 		if (baseName != null && baseName.length() > 0 && serviceName != null
 				&& serviceName.length() > 0 && versionName != null
 				&& versionName.length() > 0) {
-			sb.append(catalinaConf).append("logback-").append(baseName)
-					.append("-").append(serviceName).append("-")
-					.append(versionName).append(".xml");
-			configs.add(sb.toString());
+			configs.add(String.format("%slogback-%s-%s-%s.xml", catalinaConf,
+					baseName, serviceName, versionName));
 		}
-		sb.setLength(0);
 		if (baseName != null && baseName.length() > 0 && serviceName != null
 				&& serviceName.length() > 0) {
-			sb.append(catalinaConf).append("logback-").append(baseName)
-					.append("-").append(serviceName).append(".xml");
-			configs.add(sb.toString());
+			configs.add(String.format("%slogback-%s-%s.xml", catalinaConf,
+					baseName, serviceName));
 		}
-
-		sb.setLength(0);
 		if (baseName != null && baseName.length() > 0) {
-			sb.append(catalinaConf).append("logback-").append(baseName)
-					.append(".xml");
-			configs.add(sb.toString());
+			configs.add(
+					String.format("%slogback-%s.xml", catalinaConf, baseName));
 		}
+		configs.add(String.format("%slogback.xml", catalinaConf));
 
 		boolean fromFile = false;
 		for (String logbackConfigPath : configs) {
