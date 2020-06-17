@@ -1,7 +1,9 @@
 Changelog:
-3.17.0 20200616
-Impl: Statistics without DB connection
-Impl: Support simple logback.xml file
+3.17.0 20200617
+Impl: core-logback - Support simple logback.xml file
+Impl: core-spring-statistics - StatisticsListener support different persistances then the database.
+
+If already using the com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig, please add the com.qpark.eip.core.spring.statistics.config.EipStatisticsDBListenerConfig too or implement your own com.qpark.eip.core.spring.statistics.StatisticsListener and add it to the spring context.
 
 3.16.0 20200608
 Sample: Added deployment in a tomcat docker
