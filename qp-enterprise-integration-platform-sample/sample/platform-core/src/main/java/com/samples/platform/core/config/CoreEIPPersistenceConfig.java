@@ -26,9 +26,7 @@ import com.qpark.eip.core.spring.auth.DatabaseUserProvider;
 import com.qpark.eip.core.spring.auth.config.EipAuthConfig;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.statistics.MessageContentProvider;
-import com.qpark.eip.core.spring.statistics.StatisticsListener;
 import com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig;
-import com.qpark.eip.core.spring.statistics.impl.StatisticsInfoLogger;
 import com.samples.platform.core.SamplesMessageContentProvider;
 import com.samples.platform.persistenceconfig.PersistenceConfig;
 
@@ -42,6 +40,7 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 
 		com.qpark.eip.core.persistence.config.EipPersistenceConfig.class,
 		com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig.class,
+		com.qpark.eip.core.spring.statistics.config.EipStatisticsDBListenerConfig.class,
 		com.qpark.eip.core.spring.auth.config.EipAuthConfig.class,
 		com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig.class,
 		com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig.class,
@@ -60,17 +59,6 @@ public class CoreEIPPersistenceConfig {
 	@Bean(name = "ComSamplesIssLibraryUserProvider")
 	public DatabaseUserProvider getEipAuthDatabaseUserProvider() {
 		DatabaseUserProvider bean = new DatabaseUserProvider();
-		return bean;
-	}
-
-	/**
-	 * Get the {@link StatisticsListener} of {@link EipStatisticsConfig}.
-	 *
-	 * @return the {@link StatisticsListener} of {@link EipStatisticsConfig}.
-	 */
-	@Bean
-	public StatisticsListener getStatisticsListener() {
-		StatisticsListener bean = new StatisticsInfoLogger();
 		return bean;
 	}
 
