@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013 - 2016 QPark Consulting S.a r.l.
  *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.statistics.config;
@@ -15,15 +14,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ContextNameProvider;
 import com.qpark.eip.core.spring.statistics.AsyncFlowLogMessagePersistence;
 import com.qpark.eip.core.spring.statistics.FlowExecutionLog;
 import com.qpark.eip.core.spring.statistics.MessageContentProvider;
-import com.qpark.eip.core.spring.statistics.dao.StatisticsEraser;
+import com.qpark.eip.core.spring.statistics.StatisticsListener;
 import com.qpark.eip.core.spring.statistics.dao.StatisticsLoggingDao;
 import com.qpark.eip.core.spring.statistics.impl.AppUserStatisticsChannelAdapter;
 import com.qpark.eip.core.spring.statistics.impl.AsyncFlowLogMessagePersistenceImpl;
@@ -36,12 +33,16 @@ import com.qpark.eip.core.spring.statistics.impl.SysUserStatisticsChannelInvocat
  * deployed. Requires a {@link ContextNameProvider} with name
  * {@value #CONTEXTNAME_PROVIDER_BEAN_NAME} in the spring context deployed.
  *
+ * Be sure to have a {@link StatisticsListener} implemented and bound to the
+ * spring context. The default implementation of the {@link StatisticsListener}
+ * is the {@link StatisticsLoggingDao}.
+ *
  * @author bhausen
  */
 @Configuration
-@Import({ EipPersistenceConfig.class })
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@SuppressWarnings("static-method")
 public class EipStatisticsConfig {
 	/** The bean name of the {@link ContextNameProvider}. */
 	public static final String CONTEXTNAME_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringStatisticsContextNameProvider";
@@ -53,6 +54,12 @@ public class EipStatisticsConfig {
 			"com.qpark.eip.core.spring.statistics.statistics.SysUserStats");
 	/** The name of the statistics message content provider bean. */
 	public static final String STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME = "ComQparkEipCoreSpringStatisticsMessageContentProvider";
+	/** The name of the statistics message async flow handler bean. */
+	public static final String STATISTICS_ASYNC_FLOWLOG_HANDLER_BEAN_NAME = "ComQparkEipCoreSpringStatisticsAsyncFlowLogMessagePersistence";
+	/** The name of the statistics channel invocation listener bean. */
+	public static final String STATISTICS_CHANNEL_INVOCATION_LISTENER_BEAN_NAME = "ComQparkEipCoreSpringStatisticsSysUserStatisticsChannelInvocationListener";
+	/** The name of the statistics channel invocation listener bean. */
+	public static final String STATISTICS_FLOWLOG_ASPECT_BEAN_NAME = "ComQparkEipCoreSpringStatisticsFlowExecutionLog";
 	/** The {@link ContextNameProvider}. */
 	@Autowired
 	@Qualifier(CONTEXTNAME_PROVIDER_BEAN_NAME)
@@ -61,17 +68,15 @@ public class EipStatisticsConfig {
 	@Autowired
 	@Qualifier(STATISTICS_MESSAGE_CONTENT_PROVIDER_BEAN_NAME)
 	private MessageContentProvider messageContentProvider;
-	/** The number of weeks to keep the log entries in the database. */
-	private int numberOfWeeksToKeepLogs = 2;
 
 	/**
-	 * Get the {@link StatisticsChannelAdapter} bean.
+	 * Get the {@link AppUserStatisticsChannelAdapter} bean.
 	 *
-	 * @return the {@link StatisticsChannelAdapter} bean.
+	 * @return the {@link AppUserStatisticsChannelAdapter} bean.
 	 */
 	@Bean
 	public AppUserStatisticsChannelAdapter getAppUserStatisticsChannelAdapter() {
-		AppUserStatisticsChannelAdapter bean = new AppUserStatisticsChannelAdapter();
+		final AppUserStatisticsChannelAdapter bean = new AppUserStatisticsChannelAdapter();
 		return bean;
 	}
 
@@ -80,9 +85,9 @@ public class EipStatisticsConfig {
 	 *
 	 * @return the {@link AsyncFlowLogMessagePersistenceImpl} bean.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringStatisticsAsyncFlowLogMessagePersistence")
+	@Bean(name = STATISTICS_ASYNC_FLOWLOG_HANDLER_BEAN_NAME)
 	public AsyncFlowLogMessagePersistence getAsyncFlowLogMessagePersistence() {
-		AsyncFlowLogMessagePersistence bean = new AsyncFlowLogMessagePersistenceImpl();
+		final AsyncFlowLogMessagePersistence bean = new AsyncFlowLogMessagePersistenceImpl();
 		return bean;
 	}
 
@@ -91,9 +96,9 @@ public class EipStatisticsConfig {
 	 *
 	 * @return the {@link SysUserStatisticsChannelInvocationListener} bean.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringStatisticsSysUserStatisticsChannelInvocationListener")
+	@Bean(name = STATISTICS_CHANNEL_INVOCATION_LISTENER_BEAN_NAME)
 	public SysUserStatisticsChannelInvocationListener getBusChannelInvocationListener() {
-		SysUserStatisticsChannelInvocationListener bean = new SysUserStatisticsChannelInvocationListener();
+		final SysUserStatisticsChannelInvocationListener bean = new SysUserStatisticsChannelInvocationListener();
 		return bean;
 	}
 
@@ -108,46 +113,13 @@ public class EipStatisticsConfig {
 	}
 
 	/**
-	 * Get the {@link FlowExecutionLogAspect} bean.
+	 * Get the {@link FlowExecutionLog} bean.
 	 *
-	 * @return the {@link FlowExecutionLogAspect} bean.
+	 * @return the {@link FlowExecutionLog} bean.
 	 */
-	@Bean(name = "ComQparkEipCoreSpringStatisticsFlowExecutionLog")
+	@Bean(name = STATISTICS_FLOWLOG_ASPECT_BEAN_NAME)
 	public FlowExecutionLog getFlowExecutionLog() {
-		FlowExecutionLog bean = new FlowExecutionLog();
+		final FlowExecutionLog bean = new FlowExecutionLog();
 		return bean;
-	}
-
-	/**
-	 * Get the {@link FlowLogMessageDao} bean.
-	 *
-	 * @return the {@link FlowLogMessageDao} bean.
-	 */
-	@Bean(name = "ComQparkEipCoreSpringStatisticsLoggingDao")
-	public StatisticsLoggingDao getStatisticsLoggingDao() {
-		StatisticsLoggingDao bean = new StatisticsLoggingDao();
-		return bean;
-	}
-
-	/**
-	 * Get the {@link StatisticsEraser} bean.
-	 *
-	 * @return the {@link StatisticsEraser} bean.
-	 */
-	@Bean
-	public StatisticsEraser getSystemUserLogEraser() {
-		StatisticsEraser bean = new StatisticsEraser();
-		bean.setNumberOfWeeksToKeepLogs(this.numberOfWeeksToKeepLogs);
-		return bean;
-	}
-
-	/**
-	 * Set the number of weeks to keep the log entries in the database.
-	 *
-	 * @param numberOfWeeksToKeepLogs
-	 *            the number of weeks to keep the log entries in the database.
-	 */
-	public void setNumberOfWeeksToKeepLogs(final int numberOfWeeksToKeepLogs) {
-		this.numberOfWeeksToKeepLogs = numberOfWeeksToKeepLogs;
 	}
 }

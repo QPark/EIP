@@ -1,4 +1,13 @@
 Changelog:
+3.17.0 20200616
+Impl: Statistics without DB connection
+Impl: Support simple logback.xml file
+
+3.16.0 20200608
+Sample: Added deployment in a tomcat docker
+
+3.15.0 20200425
+Platform: Maven repos using https URLs
 
 3.14.5 20191112
 Platform: generate-mock-operations added option 'addSampleResponse'
