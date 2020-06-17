@@ -40,6 +40,7 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 
 		com.qpark.eip.core.persistence.config.EipPersistenceConfig.class,
 		com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig.class,
+		com.qpark.eip.core.spring.statistics.config.EipStatisticsDBListenerConfig.class,
 		com.qpark.eip.core.spring.auth.config.EipAuthConfig.class,
 		com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig.class,
 		com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig.class,
@@ -64,8 +65,8 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 *
-	 * @param applicationProperties
-	 *            The {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties The
+	 *                              {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 */
 	@Bean(name = EipAuthConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
@@ -179,8 +180,8 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipStatisticsConfig}.
 	 *
-	 * @param applicationProperties
-	 *            The {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties The
+	 *                              {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link ContextNameProvider} of the
 	 *         {@link EipStatisticsConfig}.
 	 */
@@ -216,8 +217,8 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link MessageContentProvider} of {@link EipStatisticsConfig}.
 	 *
-	 * @param applicationProperties
-	 *            The {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties The
+	 *                              {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link MessageContentProvider} of {@link EipStatisticsConfig}
 	 *         .
 	 */

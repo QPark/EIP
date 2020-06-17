@@ -45,6 +45,8 @@
 		<appender-ref ref="FILE_STATISTICS" />
 	</logger>
 
+	<logger name="com.qpark.eip.core.spring.statistics.impl.StatisticsInfoLogger" level="INFO" />
+
 	<!-- spring -->
 	<logger name="org.springframework" level="WARN" />
 	<logger name="org.springframework.web.context.ContextLoader" level="INFO" />
