@@ -26,7 +26,9 @@ import com.qpark.eip.core.spring.auth.DatabaseUserProvider;
 import com.qpark.eip.core.spring.auth.config.EipAuthConfig;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.statistics.MessageContentProvider;
+import com.qpark.eip.core.spring.statistics.StatisticsListener;
 import com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig;
+import com.qpark.eip.core.spring.statistics.impl.StatisticsInfoLogger;
 import com.samples.platform.core.SamplesMessageContentProvider;
 import com.samples.platform.persistenceconfig.PersistenceConfig;
 
@@ -62,10 +64,21 @@ public class CoreEIPPersistenceConfig {
 	}
 
 	/**
+	 * Get the {@link StatisticsListener} of {@link EipStatisticsConfig}.
+	 *
+	 * @return the {@link StatisticsListener} of {@link EipStatisticsConfig}.
+	 */
+	@Bean
+	public StatisticsListener getStatisticsListener() {
+		StatisticsListener bean = new StatisticsInfoLogger();
+		return bean;
+	}
+
+	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 *
-	 * @param applicationProperties
-	 *            The {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties The
+	 *                              {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 */
 	@Bean(name = EipAuthConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
@@ -179,8 +192,8 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipStatisticsConfig}.
 	 *
-	 * @param applicationProperties
-	 *            The {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties The
+	 *                              {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link ContextNameProvider} of the
 	 *         {@link EipStatisticsConfig}.
 	 */
@@ -216,8 +229,8 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link MessageContentProvider} of {@link EipStatisticsConfig}.
 	 *
-	 * @param applicationProperties
-	 *            The {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties The
+	 *                              {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link MessageContentProvider} of {@link EipStatisticsConfig}
 	 *         .
 	 */
