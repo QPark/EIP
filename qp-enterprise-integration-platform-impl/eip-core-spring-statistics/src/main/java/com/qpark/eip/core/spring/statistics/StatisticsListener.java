@@ -11,33 +11,32 @@ import com.qpark.eip.core.domain.persistencedefinition.ApplicationUserLogType;
 import com.qpark.eip.core.domain.persistencedefinition.FlowLogMessageType;
 import com.qpark.eip.core.domain.persistencedefinition.SystemUserLogType;
 
-
 /**
  * Listening for statistics entries.
+ *
  * @author bhausen
  */
 public interface StatisticsListener {
-  /**
-   * Add the {@link ApplicationUserLogType} to the database.
-   *
-   * @param log
-   *            the {@link ApplicationUserLogType} to add.
-   */
-  void addChannelInvocation(ApplicationUserLogType log);
+	/**
+	 * Add the {@link ApplicationUserLogType} to the database.
+	 *
+	 * @param channelName the name of the channel invoked
+	 * @param log         the {@link ApplicationUserLogType} to add.
+	 */
+	void addChannelInvocation(String channelName, ApplicationUserLogType log);
 
-  /**
-   * Add the {@link SystemUserLogType} to the database.
-   *
-   * @param log
-   *            the {@link SystemUserLogType} to add.
-   */
-  void addChannelInvocation(SystemUserLogType log);
+	/**
+	 * Add the {@link SystemUserLogType} to the database.
+	 *
+	 * @param channelName the name of the channel invoked
+	 * @param log         the {@link SystemUserLogType} to add.
+	 */
+	void addChannelInvocation(String channelName, SystemUserLogType log);
 
-  /**
-   * Add the {@link FlowLogMessageType} to the database.
-   *
-   * @param log
-   *            the {@link FlowLogMessageType} to add.
-   */
-  void addFlowLogMessage(FlowLogMessageType log);
+	/**
+	 * Add the {@link FlowLogMessageType} to the database.
+	 *
+	 * @param log the {@link FlowLogMessageType} to add.
+	 */
+	void addFlowLogMessage(FlowLogMessageType log);
 }
