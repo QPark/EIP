@@ -113,7 +113,8 @@
 
 								<echo> </echo>
 
-								<echo>curl localhost:18080/iss-library/services/library.wsdl</echo>
+								<echo>curl http://localhost:18080/iss-library/services/library.wsdl</echo>
+								<echo>SystemUser bus with password bus-user-password</echo>
 							</target>
 						</configuration>
 					</execution>
