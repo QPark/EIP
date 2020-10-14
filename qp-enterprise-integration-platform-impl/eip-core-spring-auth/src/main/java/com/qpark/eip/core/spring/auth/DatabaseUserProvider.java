@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013 - 2016 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring.auth;
@@ -13,7 +13,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.jasypt.util.text.StrongTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.security.core.userdetails.User;
 import com.qpark.eip.core.ReInitalizeable;
 import com.qpark.eip.core.domain.persistencedefinition.AuthenticationType;
 import com.qpark.eip.core.domain.persistencedefinition.GrantedAuthorityType;
+import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.qpark.eip.core.spring.ContextNameProvider;
 import com.qpark.eip.core.spring.auth.dao.AuthorityDao;
 import com.qpark.eip.core.spring.security.EipUserProvider;
@@ -43,17 +46,19 @@ public class DatabaseUserProvider implements EipUserProvider, ReInitalizeable {
 	@Autowired
 	@Qualifier("ComQparkEipCoreSpringAuthContextNameProvider")
 	private ContextNameProvider contextNameProvider;
+	/** The {@link ApplicationPlaceholderConfigurer}. */
+	@Autowired
+	private ApplicationPlaceholderConfigurer properties;
 	/** The {@link org.slf4j.Logger}. */
 	private final Logger logger = LoggerFactory
 			.getLogger(DatabaseUserProvider.class);
 	/** The map containing the User objects of the application. */
-	private final Map<String, User> userMap = new HashMap<String, User>();
+	private final Map<String, User> userMap = new HashMap<>();
 
 	/**
 	 * Get a clone of the {@link User}.
 	 *
-	 * @param user
-	 *            the {@link User} to clone.
+	 * @param user the {@link User} to clone.
 	 * @return the clone.
 	 */
 	private User clone(final User user) {
@@ -70,12 +75,12 @@ public class DatabaseUserProvider implements EipUserProvider, ReInitalizeable {
 	/**
 	 * Map the {@link AuthenticationType} to a {@link User}.
 	 *
-	 * @param auth
-	 *            the {@link AuthenticationType}.
+	 * @param auth the {@link AuthenticationType}.
 	 * @return the {@link User}.
 	 */
-	private User getUser(final AuthenticationType auth) {
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(
+	private User getUser(final AuthenticationType auth,
+			final StrongTextEncryptor encryptor) {
+		List<GrantedAuthority> authorities = new ArrayList<>(
 				auth.getGrantedAuthority().size() + 1);
 		authorities.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
 		for (GrantedAuthorityType grantedAuthority : auth
@@ -83,7 +88,14 @@ public class DatabaseUserProvider implements EipUserProvider, ReInitalizeable {
 			authorities.add(
 					new SimpleGrantedAuthority(grantedAuthority.getRoleName()));
 		}
-		User u = new User(auth.getUserName(), auth.getPassword(), authorities);
+		User u = new User(auth.getUserName(),
+				Optional.ofNullable(auth.getPassword()).map(pwd -> {
+					if (pwd.trim().startsWith("ENC(")
+							&& pwd.trim().endsWith(")")) {
+						return encryptor.decrypt(pwd);
+					}
+					return null;
+				}).orElse(auth.getPassword()), authorities);
 		return u;
 	}
 
@@ -119,12 +131,15 @@ public class DatabaseUserProvider implements EipUserProvider, ReInitalizeable {
 				.getAuthenticationTypes(Boolean.TRUE);
 		this.logger.trace(" setupUserMap found {} AuthenticationTypes",
 				auths.size());
+		StrongTextEncryptor encryptor = new StrongTextEncryptor();
+		encryptor.setPassword(this.properties.getProperty(
+				EipUserProvider.EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip"));
 		/* Add all defined users. */
 		for (AuthenticationType auth : auths) {
-			this.userMap.put(auth.getUserName(), this.getUser(auth));
+			this.userMap.put(auth.getUserName(), this.getUser(auth, encryptor));
 		}
 		/* Remove not existing users out of the user map. */
-		List<String> userNames = new ArrayList<String>(this.userMap.size());
+		List<String> userNames = new ArrayList<>(this.userMap.size());
 		Collections.addAll(userNames, this.userMap.keySet()
 				.toArray(new String[this.userMap.keySet().size()]));
 		boolean foundUserNameInDatabase;

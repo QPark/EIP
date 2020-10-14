@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.samples.platform.core.security;
@@ -13,9 +13,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.jasypt.util.text.StrongTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +51,9 @@ import com.qpark.eip.core.spring.security.EipUserProvider;
  * </pre>
  *
  * The user <code>nameOfUserA</code> has to authenticate with password
- * <code>password</code> and get the authority to get user, do all things
- * in service common and to access all read operations of all services.
+ * <code>password</code> and get the authority to get user, do all things in
+ * service common and to access all read operations of all services.
+ *
  * @author bhausen
  */
 public class UserProvider implements EipUserProvider, ReInitalizeable {
@@ -63,10 +66,11 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 		/** The password of the user. */
 		private String password = "";
 		/** The set containing the roles of the user. */
-		private final TreeSet<String> rolenames = new TreeSet<String>();
+		private final TreeSet<String> rolenames = new TreeSet<>();
 
 		/**
 		 * Create a {@link UserDefinition} with the key.
+		 *
 		 * @param key
 		 */
 		UserDefinition(final String key) {
@@ -75,6 +79,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Add the role to the set of role names the user is assigned to .
+		 *
 		 * @param rolename the role name to add.
 		 */
 		public void addRolename(final String rolename) {
@@ -85,6 +90,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Get the key of the user.
+		 *
 		 * @return the key.
 		 */
 		public String getKey() {
@@ -93,6 +99,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Get the name of the user.
+		 *
 		 * @return the name.
 		 */
 		public String getName() {
@@ -101,6 +108,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Get the password of the user.
+		 *
 		 * @return the password.
 		 */
 		public String getPassword() {
@@ -110,10 +118,11 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 		/**
 		 * Get the list of {@link GrantedAuthority} containing the roles of the
 		 * user.
+		 *
 		 * @return the list of {@link GrantedAuthority}.
 		 */
 		public List<GrantedAuthority> getRoles() {
-			List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+			List<GrantedAuthority> roles = new ArrayList<>();
 			for (String rolename : this.rolenames) {
 				roles.add(new SimpleGrantedAuthority(rolename));
 			}
@@ -122,6 +131,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Set the name of the user.
+		 *
 		 * @param name the name of the user.
 		 */
 		public void setName(final String name) {
@@ -130,6 +140,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Set the password of the user.
+		 *
 		 * @param password the password of the user.
 		 */
 		public void setPassword(final String password) {
@@ -138,6 +149,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 		/**
 		 * Get the size of the list of roles of the user.
+		 *
 		 * @return the number of roles of the user.
 		 */
 		public int size() {
@@ -166,6 +178,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 	/**
 	 * Get the user definition key out of the property name (<code>xxx</code> in
 	 * the example).
+	 *
 	 * @param propertyName The property name.
 	 * @return the user name key part.
 	 */
@@ -183,7 +196,6 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 	/** The {@link ApplicationPlaceholderConfigurer}. */
 	@Autowired
 	private ApplicationPlaceholderConfigurer properties;
-
 	/** The start of all user definition property names. */
 	private static final String BUS_PROPERTY_NAME_START = "bus.user.definition.";
 	/** The name of the anonymous role. */
@@ -191,7 +203,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 	/** The name of the common role. */
 	public static final String ROLE_COMMON = "ROLE_COMMON";
 	/** The map containing the User objects of the application. */
-	private final Map<String, User> userMap = new HashMap<String, User>();
+	private final Map<String, User> userMap = new HashMap<>();
 
 	/**
 	 * Read the user definitions out of the properties and put the into the map
@@ -200,7 +212,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 	public void createUsers() {
 		this.logger.trace("+createUsers");
 		/* Create an _sorted_ map containing all user definition properties. */
-		TreeMap<String, String> userDefinitionProperties = new TreeMap<String, String>();
+		TreeMap<String, String> userDefinitionProperties = new TreeMap<>();
 		for (Map.Entry<String, String> entry : this.properties.getProperties()
 				.entrySet()) {
 			if (entry.getKey() != null
@@ -208,9 +220,11 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 				userDefinitionProperties.put(entry.getKey(), entry.getValue());
 			}
 		}
-
+		StrongTextEncryptor encryptor = new StrongTextEncryptor();
+		encryptor.setPassword(this.properties.getProperty(
+				EipUserProvider.EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip"));
 		/* Create a map of UserDefinitions parsed out of the properties. */
-		HashMap<String, UserDefinition> parsedUserDefinitions = new HashMap<String, UserProvider.UserDefinition>();
+		HashMap<String, UserDefinition> parsedUserDefinitions = new HashMap<>();
 		UserDefinition userDefinition = null;
 		String userKey = null;
 		for (Map.Entry<String, String> userDefinitionProperty : userDefinitionProperties
@@ -232,13 +246,21 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 			if (userDefinitionProperty.getKey().endsWith("userName")) {
 				userDefinition.setName(userDefinitionProperty.getValue());
 			} else if (userDefinitionProperty.getKey().endsWith("password")) {
-				userDefinition.setPassword(userDefinitionProperty.getValue());
+				userDefinition.setPassword(
+						Optional.ofNullable(userDefinitionProperty.getValue())
+								.map(pwd -> {
+									if (pwd.trim().startsWith("ENC(")
+											&& pwd.trim().endsWith(")")) {
+										return encryptor.decrypt(pwd);
+									}
+									return null;
+								}).orElse(userDefinitionProperty.getValue()));
 			} else if (userDefinitionProperty.getKey().contains(".role.")) {
 				if (userDefinitionProperty.getValue() != null
-						&& !userDefinitionProperty.getValue().equals(
-								ROLE_ANONYMOUS)) {
-					userDefinition.addRolename(userDefinitionProperty
-							.getValue());
+						&& !userDefinitionProperty.getValue()
+								.equals(ROLE_ANONYMOUS)) {
+					userDefinition
+							.addRolename(userDefinitionProperty.getValue());
 				}
 			}
 		}
@@ -252,11 +274,9 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 		 * parsedUserDefinitions any more, the user is removed out of the
 		 * userMap.
 		 */
-		List<String> keyList = new ArrayList<String>(this.userMap.size());
-		Collections.addAll(
-				keyList,
-				this.userMap.keySet().toArray(
-						new String[this.userMap.keySet().size()]));
+		List<String> keyList = new ArrayList<>(this.userMap.size());
+		Collections.addAll(keyList, this.userMap.keySet()
+				.toArray(new String[this.userMap.keySet().size()]));
 		for (String userName : keyList) {
 			userDefinition = parsedUserDefinitions.get(userName);
 			if (!parsedUserDefinitions.containsKey(userName)) {
@@ -286,6 +306,7 @@ public class UserProvider implements EipUserProvider, ReInitalizeable {
 
 	/**
 	 * Add the user from the userDefinition to the map.
+	 *
 	 * @param userDefinition
 	 */
 	private User getUser(final UserDefinition userDefinition) {

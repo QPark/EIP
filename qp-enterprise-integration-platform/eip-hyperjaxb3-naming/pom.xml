@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.maven</groupId>
 	<artifactId>eip-hyperjaxb3-naming</artifactId>
-	<version>3.17.0</version><!--qpark-eip-version-->
+	<version>3.17.1</version><!--qpark-eip-version-->
 	<name>eip-hyperjaxb3-naming</name>
 	<description>Provides hyperjaxb3 version 0.5.6 naming, even when using newer ones.</description>
 
