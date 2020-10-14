@@ -22,7 +22,6 @@ import com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfi
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.qpark.eip.core.spring.ContextNameProvider;
-import com.qpark.eip.core.spring.auth.DatabaseUserProvider;
 import com.qpark.eip.core.spring.auth.config.EipAuthConfig;
 import com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig;
 import com.qpark.eip.core.spring.statistics.MessageContentProvider;
@@ -41,7 +40,7 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 		com.qpark.eip.core.persistence.config.EipPersistenceConfig.class,
 		com.qpark.eip.core.spring.statistics.config.EipStatisticsConfig.class,
 		com.qpark.eip.core.spring.statistics.config.EipStatisticsDBListenerConfig.class,
-		com.qpark.eip.core.spring.auth.config.EipAuthConfig.class,
+		com.qpark.eip.core.spring.auth.config.EipAuthPropertyConfig.class,
 		com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig.class,
 		com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig.class,
 
@@ -49,19 +48,7 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 		com.samples.platform.persistenceconfig.JndiDataSourceConfig.class
 
 })
-@SuppressWarnings("static-method")
 public class CoreEIPPersistenceConfig {
-	/**
-	 * Get the {@link DatabaseUserProvider} of {@link EipAuthConfig}.
-	 *
-	 * @return the {@link DatabaseUserProvider} of {@link EipAuthConfig}.
-	 */
-	@Bean(name = "ComSamplesIssLibraryUserProvider")
-	public DatabaseUserProvider getEipAuthDatabaseUserProvider() {
-		DatabaseUserProvider bean = new DatabaseUserProvider();
-		return bean;
-	}
-
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 *

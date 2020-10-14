@@ -22,6 +22,8 @@ RUN chmod 600 /usr/local/tomcat/conf/jmxremote.password;
 
 EXPOSE 8080 8010 1099
 
+ENV eip.jasypt.encryptor.password=eip
+
 ENV CATALINA_OPTS="${CATALINA_OPTS} -Duser.timezone=UTC \
     -Duser.language=en \
     -Duser.region=GB \

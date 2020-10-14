@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.User;
  */
 public interface EipUserProvider {
 	/** The property name of the encryptor password. */
-	String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip.userdetails.enc";
+	String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip.jasypt.encryptor.password";
 
 	/**
 	 * @return the {@link User} for the name.

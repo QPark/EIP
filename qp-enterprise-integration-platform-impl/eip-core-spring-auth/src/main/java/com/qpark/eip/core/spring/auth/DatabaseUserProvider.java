@@ -132,8 +132,9 @@ public class DatabaseUserProvider implements EipUserProvider, ReInitalizeable {
 		this.logger.trace(" setupUserMap found {} AuthenticationTypes",
 				auths.size());
 		StrongTextEncryptor encryptor = new StrongTextEncryptor();
-		encryptor.setPassword(this.properties.getProperty(
-				EipUserProvider.EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip"));
+		encryptor.setPassword(System
+				.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME, this.properties
+						.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip")));
 		/* Add all defined users. */
 		for (AuthenticationType auth : auths) {
 			this.userMap.put(auth.getUserName(), this.getUser(auth, encryptor));
