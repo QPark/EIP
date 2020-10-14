@@ -4,7 +4,7 @@
 # terms of the Eclipse Public License v1.0.
 # The Eclipse Public License is available at
 # http://www.eclipse.org/legal/epl-v10.html.
-version: "3.8"
+version: "2.3"
 services:
   iss-platform-sample:
     image: com.qpark.eip/sample:xxx-application.version-xxx
