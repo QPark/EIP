@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.qpark.eip.core</groupId>
 		<artifactId>eip-base</artifactId>
-		<version>3.17.0</version><!--qpark-eip-version-->
+		<version>3.17.1</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -67,6 +67,10 @@
 			<artifactId>spring-security-core</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>

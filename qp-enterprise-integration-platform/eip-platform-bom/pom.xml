@@ -12,7 +12,7 @@
 
 	<groupId>com.qpark.eip</groupId>
 	<artifactId>eip-platform-bom</artifactId>
-	<version>3.17.0</version><!--qpark-eip-version-->
+	<version>3.17.1</version><!--qpark-eip-version-->
 	<packaging>pom</packaging>
 	<name>eip-platform-bom</name>
 	<description>EIP IO Platform bill of materials</description>
@@ -50,6 +50,7 @@
 
 		<javax.javaee-api>7.0</javax.javaee-api>
 		<com.sun.xml.bind.jaxb-impl.version>2.2.11</com.sun.xml.bind.jaxb-impl.version>
+		<org.jasypt.jasypt.version>1.9.3</org.jasypt.jasypt.version>
 		<org.jvnet.jaxb2_commons.jaxb2-basics.version>0.9.5</org.jvnet.jaxb2_commons.jaxb2-basics.version>
 		<org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>0.6.1</org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>
 		<org.apache.santuario-xmlsec>1.5.8</org.apache.santuario-xmlsec>
@@ -96,98 +97,98 @@
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-plugin-xml</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-model-analysis</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-hyperjaxb3-naming</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-hyperjaxb3-naming-fq</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-failurehandler</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-jaxb</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-logback</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-model-analysis</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-persistence</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-poi</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-reporting</artifactId>
-				<version>3.14.2</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-sftp</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-auth</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-lockedoperation</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-scheduling</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 			<dependency>
 				<groupId>com.qpark.eip.core</groupId>
 				<artifactId>eip-core-spring-statistics</artifactId>
-				<version>3.17.0</version><!--qpark-eip-version-->
+				<version>3.17.1</version><!--qpark-eip-version-->
 			</dependency>
 
 			<dependency>
@@ -243,6 +244,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>${org.jasypt.jasypt.version}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.apache.santuario</groupId>
 				<artifactId>xmlsec</artifactId>
 				<version>${org.apache.santuario-xmlsec}</version>
@@ -282,12 +289,12 @@
 				<plugin>
 					<groupId>com.qpark.maven</groupId>
 					<artifactId>eip-generator-plugin</artifactId>
-					<version>3.17.0</version><!--qpark-eip-version-->
+					<version>3.17.1</version><!--qpark-eip-version-->
 					<dependencies>
 						<dependency>
 							<groupId>com.qpark.maven</groupId>
 							<artifactId>eip-plugin-xml</artifactId>
-							<version>3.17.0</version><!--qpark-eip-version-->
+							<version>3.17.1</version><!--qpark-eip-version-->
 						</dependency>
 					</dependencies>
 				</plugin>

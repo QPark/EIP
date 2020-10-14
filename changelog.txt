@@ -1,4 +1,8 @@
 Changelog:
+3.17.1 20201014
+Impl: core-spring - Support of JSypt encrypted system user passwords.
+Impl: core-spring-statistics - StatisticsListener change adding channelName to the methods.
+
 3.17.0 20200617
 Impl: core-logback - Support simple logback.xml file
 Impl: core-spring-statistics - StatisticsListener support different persistances then the database.
