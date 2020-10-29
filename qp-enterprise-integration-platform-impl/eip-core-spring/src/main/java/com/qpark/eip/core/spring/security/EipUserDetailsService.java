@@ -7,6 +7,9 @@
  ******************************************************************************/
 package com.qpark.eip.core.spring.security;
 
+import java.util.Objects;
+import java.util.Optional;
+import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,15 +36,15 @@ public class EipUserDetailsService extends EipRoleVoter implements UserDetailsSe
   /**
    * @param userDetailService
    * @param userName
-   * @return
+   * @return execute a login or not.
    */
   public static boolean setSecurityContextHolderAuthentication(
       final EipUserProvider userDetailService, final String userName) {
     final boolean doLogin = SecurityContextHolder.getContext().getAuthentication() == null;
     if (doLogin) {
-      final User user = userDetailService.getUser(userName);
-      SecurityContextHolder.getContext()
-          .setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+      Optional.ofNullable(userDetailService.getUser(userName))
+          .ifPresent(user -> SecurityContextHolder.getContext().setAuthentication(
+              new UsernamePasswordAuthenticationToken(user, user.getPassword())));
     }
     return doLogin;
   }
@@ -60,7 +63,7 @@ public class EipUserDetailsService extends EipRoleVoter implements UserDetailsSe
       throws UsernameNotFoundException, DataAccessException {
     this.logger.debug("+loadUserByUsername user {}", username);
     final User user = this.userProvider.getUser(username);
-    if (user == null) {
+    if (Objects.isNull(user)) {
       throw new UsernameNotFoundException("Application user '" + username + "' is not known");
     }
     this.logger.debug("-loadUserByUsername user {} found!", user.getUsername());
