@@ -44,6 +44,16 @@
 	</developers>
 	<inceptionYear>2015</inceptionYear>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.qpark.eip</groupId>
+				<artifactId>eip-platform-bom</artifactId>
+				<version>3.17.1</version><!--qpark-eip-version-->
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<repositories>
 		<repository>
 			<id>repository.apache.org</id>

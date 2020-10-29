@@ -26,6 +26,13 @@
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<sourceDirectory>${java.gen.dir}</sourceDirectory>
 		<plugins>
