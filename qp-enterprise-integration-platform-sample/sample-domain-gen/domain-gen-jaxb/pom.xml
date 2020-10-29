@@ -43,6 +43,13 @@ Additionally to that a human readable version of the xsds is generated.
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
 		<domain.schema.location.prefix>http://www.samples.com/model, http://www.qpark.com/model</domain.schema.location.prefix>
 	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<sourceDirectory>${java.gen.dir}</sourceDirectory>
 		<plugins>
