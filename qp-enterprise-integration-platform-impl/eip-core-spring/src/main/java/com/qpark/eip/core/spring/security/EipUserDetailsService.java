@@ -47,7 +47,9 @@ public class EipUserDetailsService extends EipRoleVoter implements UserDetailsSe
             .setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
         return false;
       }).orElse(true)) {
-        logger.warn(
+        logger.error(
+            String.format("Authentication not possible. User name '%s' is unknown", userName));
+        throw new UsernameNotFoundException(
             String.format("Authentication not possible. User name '%s' is unknown", userName));
       }
     }
