@@ -42,15 +42,20 @@ public class EipUserDetailsService extends EipRoleVoter implements UserDetailsSe
       final EipUserProvider userDetailService, final String userName) {
     final boolean doLogin = SecurityContextHolder.getContext().getAuthentication() == null;
     if (doLogin) {
-      Optional.ofNullable(userDetailService.getUser(userName))
-          .ifPresent(user -> SecurityContextHolder.getContext().setAuthentication(
-              new UsernamePasswordAuthenticationToken(user, user.getPassword())));
+      if (Optional.ofNullable(userDetailService.getUser(userName)).map(user -> {
+        SecurityContextHolder.getContext()
+            .setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+        return false;
+      }).orElse(true)) {
+        logger.warn(
+            String.format("Authentication not possible. User name '%s' is unknown", userName));
+      }
     }
     return doLogin;
   }
 
   /** The {@link Logger}. */
-  private final org.slf4j.Logger logger =
+  private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(EipUserDetailsService.class);
   /** The {@link EipUserProvider}. */
   private EipUserProvider userProvider;
@@ -59,14 +64,15 @@ public class EipUserDetailsService extends EipRoleVoter implements UserDetailsSe
    * @see org.springframework.security.core.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
    */
   @Override
-  public UserDetails loadUserByUsername(final String username)
+  public UserDetails loadUserByUsername(final String userName)
       throws UsernameNotFoundException, DataAccessException {
-    this.logger.debug("+loadUserByUsername user {}", username);
-    final User user = this.userProvider.getUser(username);
+    EipUserDetailsService.logger.debug("+loadUserByUsername user {}", userName);
+    final User user = this.userProvider.getUser(userName);
     if (Objects.isNull(user)) {
-      throw new UsernameNotFoundException("Application user '" + username + "' is not known");
+      throw new UsernameNotFoundException(
+          String.format("Can not get user details. User name '%s' is unknown", userName));
     }
-    this.logger.debug("-loadUserByUsername user {} found!", user.getUsername());
+    EipUserDetailsService.logger.debug("-loadUserByUsername user {} found!", user.getUsername());
     return user;
   }
 
