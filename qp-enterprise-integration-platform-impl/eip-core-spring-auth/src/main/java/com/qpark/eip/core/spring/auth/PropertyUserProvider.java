@@ -282,18 +282,20 @@ public class PropertyUserProvider implements EipUserProvider, ReInitalizeable {
    * @param userDefinition
    */
   private User getUser(final UserDefinition userDefinition) {
-    userDefinition.addRolename(ROLE_ANONYMOUS);
-    final boolean enabled = true;
-    final boolean accountNonExpired = true;
-    final boolean credentialsNonExpired = true;
-    final boolean accountNonLocked = true;
-    final User user = new User(userDefinition.getName(), userDefinition.getPassword(), enabled,
-        accountNonExpired, credentialsNonExpired, accountNonLocked, userDefinition.getRoles());
-    if (this.logger.isTraceEnabled()) {
-      this.logger.trace("Created: {} {}", userDefinition.toString(), userDefinition.getRoles()
-          .stream().map(r -> r.getAuthority()).collect(Collectors.joining(", ")));
-    }
-    return user;
+    return Optional.ofNullable(userDefinition).map(ud -> {
+      userDefinition.addRolename(ROLE_ANONYMOUS);
+      final boolean enabled = true;
+      final boolean accountNonExpired = true;
+      final boolean credentialsNonExpired = true;
+      final boolean accountNonLocked = true;
+      final User user = new User(userDefinition.getName(), userDefinition.getPassword(), enabled,
+          accountNonExpired, credentialsNonExpired, accountNonLocked, userDefinition.getRoles());
+      if (this.logger.isTraceEnabled()) {
+        this.logger.trace("Created: {} {}", userDefinition.toString(), userDefinition.getRoles()
+            .stream().map(r -> r.getAuthority()).collect(Collectors.joining(", ")));
+      }
+      return user;
+    }).orElse(null);
   }
 
   /**
