@@ -5,7 +5,7 @@
 # The Eclipse Public License is available at
 # http://www.eclipse.org/legal/epl-v10.html.
 
-FROM tomcat:jdk8-openjdk-slim
+FROM tomcat:jdk11-openjdk-slim
 
 ADD tomcat/lib-platform-servicebus-1.0.0 /usr/local/tomcat/lib-platform-servicebus-1.0.0/
 ADD tomcat/lib/* /usr/local/tomcat/lib/

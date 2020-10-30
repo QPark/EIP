@@ -11,17 +11,15 @@
 -->
 
 	<parent>
-		<groupId>com.qpark.eip</groupId>
-		<artifactId>eip-platform-bom</artifactId>
+		<groupId>com.samples.domain</groupId>
+		<artifactId>base</artifactId>
 		<version>3.17.1</version><!--qpark-eip-version-->
-		<relativePath/>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.samples.domain</groupId>
 	<artifactId>model</artifactId>
-	<version>3.17.1</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
-	<name>model</name>
+	<name>icd.model</name>
 	<description>The XML Schema definition of the domain model</description>
 
 	<properties>
@@ -32,4 +30,22 @@
 		<name>QPark Consulting s.a r.l</name>
 		<url>http://www.qpark-consulting.com</url>
 	</organization>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

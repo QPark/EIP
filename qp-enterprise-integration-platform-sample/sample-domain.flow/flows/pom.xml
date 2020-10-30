@@ -1,0 +1,342 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.samples.domain.flow</groupId>
+		<artifactId>base</artifactId>
+		<version>3.17.1</version><!--qpark-eip-version-->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>flows</artifactId>
+	<packaging>jar</packaging>
+	<name>flow.flows</name>
+	<description>This pom contains the generation of all types defined in the com.ses.domain model and service artefact contained xsds. The generator used is xjc.</description>
+
+	<properties>
+		<domain.schema.location.prefix>http://www.qpark-consulting.com/model</domain.schema.location.prefix>
+		<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+
+		<model.dir>${project.build.directory}/model</model.dir>
+		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>
+
+		<interface.gen.dir>${project.build.directory}/generated-sources</interface.gen.dir>
+		<impl.gen.dir>${project.build.directory}/prepared-sources</impl.gen.dir>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.samples.domain</groupId>
+			<artifactId>jaxb</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-model-analysis</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<sourceDirectory>${java.gen.dir}</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>com.qpark.maven</groupId>
+				<artifactId>eip-generator-plugin</artifactId>
+				<version>3.17.1</version><!--qpark-eip-version-->
+				<executions>
+					<execution>
+						<id>make schemalocations absolute</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>webapp-schemalocation</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${project.build.directory}/model-absolute</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>create collection schema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-collected-schemas</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${project.build.directory}/model-absolute</baseDirectory>
+							<outputDirectory>${project.build.directory}/model-absolute</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate model analysis</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-model-analysis</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<messagePackageNameSuffixes>msg svc mapping flow systemdescription</messagePackageNameSuffixes>
+							<outputDirectory>${project.build.directory}/classes</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate jaxb2 marshaller configs</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-mashaller-config</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<outputDirectory>${project.build.directory}/classes</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+<!--
+XJC can only handle one schemalocation per target namespace. It is not possilbe to
+execute XJC with
+schemalocation="../../../EIP/Common/CommonTypes.xsd"
+and
+schemaLocation="http://www.qpark.com/model/EIP/Common/Common.xsd"
+for target namespace http://www.qpark.com/CommonTypes.
+Pointing twice to the same location as
+schemalocation="../../../EIP/Common/CommonTypes.xsd"
+and
+schemalocation="../../../../EIP/Common/CommonTypes.xsd"
+is valid.
+See:
+https://java.net/jira/browse/JAXB-486
+-->
+						<id>Unify schemalocations to relative pathes</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>relative-schemalocation</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputDirectory>${model.dir}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>call xjc</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<includeAllModels>true</includeAllModels>
+							<schemalocationPrefix>${domain.schema.location.prefix}</schemalocationPrefix>
+							<messagePackageNameSuffixes>${messagePackageNameSuffixes}</messagePackageNameSuffixes>
+							<outputDirectory>${java.gen.dir}</outputDirectory>
+							<arguments>
+								<!-- supports jaxb object defaults -->
+								<argument>-Xeip-xsd-default-value</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate schema file list and catalog to prepare xjc</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>generate-flow-mapper</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<outputInterfacesDirectory>${interface.gen.dir}</outputInterfacesDirectory>
+							<outputClassesDirectory>${impl.gen.dir}</outputClassesDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-xsds</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.samples.domain</groupId>
+									<artifactId>model</artifactId>
+									<version>3.17.1</version><!--qpark-eip-version-->
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.samples.domain</groupId>
+									<artifactId>service</artifactId>
+									<version>3.17.1</version><!--qpark-eip-version-->
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.samples.domain.flow</groupId>
+									<artifactId>model</artifactId>
+									<version>3.17.1</version><!--qpark-eip-version-->
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.samples.domain.flow</groupId>
+									<artifactId>service</artifactId>
+									<version>3.17.1</version><!--qpark-eip-version-->
+									<outputDirectory>${model.dir}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generated-java-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly-generated-java-sources.xml</descriptor>
+								<descriptor>assembly-xsds-sources.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create generated-sources dir</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="${java.gen.dir}"/> <!-- workaround to make it buildable on linux -->
+								<echo message="Created ${java.gen.dir} directory."/>
+								<replace token="@" value=" " >
+									<fileset dir="${model.dir}">
+										<include name="**/*.xsd"/>
+									</fileset>
+								</replace>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>drop domain model and domain service java files</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<delete verbose="false">
+									<fileset dir="${java.gen.dir}">
+										<include name="com/qpark/eip/model/common/**/*"/>
+										<include name="com/qpark/eip/model/datatypemapping/**/*"/>
+										<include name="com/qpark/eip/model/docmodel/**/*"/>
+										<include name="com/qpark/eip/model/maven/**/*"/>
+										<include name="com/qpark/eip/model/reporting/**/*"/>
+										<include name="com/samples/platform/model/iss/common/**/*"/>
+										<include name="com/samples/platform/model/library/**/*"/>
+										<include name="com/samples/platform/model/iss/tech/support/**/*"/>
+										<include name="com/qpark/lime/survey/model/v25/**/*"/>
+										<include name="com/qpark/eip/service/base/msg/**/*"/>
+										<include name="com/qpark/eip/service/common/msg/**/*"/>
+										<include name="com/qpark/eip/service/lime/survey/msg/**/*"/>
+										<include name="com/samples/platform/service/iss/common/msg/**/*"/>
+										<include name="com/samples/platform/service/library/msg/**/*"/>
+										<include name="com/samples/platform/service/iss/tech/support/msg/**/*"/>
+									</fileset>
+								</delete>
+								<echo>Deleted domain model and domain service java files</echo>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source-folders</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${interface.gen.dir}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

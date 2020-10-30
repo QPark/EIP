@@ -17,6 +17,7 @@
 	<description>Generate the classes and configurations needed by the bus.</description>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.test.skip>true</maven.test.skip>
 		<model.dir>src/main/xsd</model.dir>
 		<java.gen.dir>${project.build.directory}/generated-sources</java.gen.dir>

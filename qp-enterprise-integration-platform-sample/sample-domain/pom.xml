@@ -22,52 +22,24 @@
 	<artifactId>base</artifactId>
 	<version>3.17.1</version><!--qpark-eip-version-->
 	<packaging>pom</packaging>
-	<name>base</name>
+	<name>icd.base</name>
 
 	<description>Example model and service definition example.</description>
+
+	<properties>
+		<base.package.name>com.samples.bus</base.package.name>
+	</properties>
 
 	<modules>
 		<module>model</module>
 		<module>service</module>
-		<module>analysis</module>
+		<module>jaxb</module>
+		<module>serviceprovider</module>
 	</modules>
 
 	<organization>
 		<name>QPark Consulting s.a r.l</name>
 		<url>http://www.qpark-consulting.com</url>
 	</organization>
-	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+
 </project>

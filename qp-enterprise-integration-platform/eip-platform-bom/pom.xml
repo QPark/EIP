@@ -63,27 +63,27 @@
 		<com.springsource.insight.insight-annotation.version>1.9.2.RELEASE</com.springsource.insight.insight-annotation.version>
 
 
-		<plugin.org.apache.maven.plugins.maven-antrun-plugin.version>1.8</plugin.org.apache.maven.plugins.maven-antrun-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-assembly-plugin.version>2.6</plugin.org.apache.maven.plugins.maven-assembly-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-clean-plugin.version>3.0.0</plugin.org.apache.maven.plugins.maven-clean-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-changelog-plugin.version>2.3</plugin.org.apache.maven.plugins.maven-changelog-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version>2.17</plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-antrun-plugin.version>3.0.0</plugin.org.apache.maven.plugins.maven-antrun-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-assembly-plugin.version>3.3.0</plugin.org.apache.maven.plugins.maven-assembly-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-clean-plugin.version>3.1.0</plugin.org.apache.maven.plugins.maven-clean-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-changelog-plugin.version>2.1</plugin.org.apache.maven.plugins.maven-changelog-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version>3.1.1</plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-compiler-plugin.version>3.8.1</plugin.org.apache.maven.plugins.maven-compiler-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-dependency-plugin.version>2.10</plugin.org.apache.maven.plugins.maven-dependency-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-dependency-plugin.version>3.1.2</plugin.org.apache.maven.plugins.maven-dependency-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-eclipse-plugin.version>2.10</plugin.org.apache.maven.plugins.maven-eclipse-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-install-plugin.version>2.5.2</plugin.org.apache.maven.plugins.maven-install-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-jar-plugin.version>2.6</plugin.org.apache.maven.plugins.maven-jar-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-jar-plugin.version>3.2.0</plugin.org.apache.maven.plugins.maven-jar-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-javadoc-plugin.version>2.10.3</plugin.org.apache.maven.plugins.maven-javadoc-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-jxr-plugin.version>2.5</plugin.org.apache.maven.plugins.maven-jxr-plugin.version>
 		<plugin.org.apache.maven.plugins.maven.plugin.plugin.version>3.6.0</plugin.org.apache.maven.plugins.maven.plugin.plugin.version>
 		<plugin.org.apache.maven.plugins.maven-pmd-plugin.version>3.5</plugin.org.apache.maven.plugins.maven-pmd-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-project-info-reports-plugin.version>2.8.1</plugin.org.apache.maven.plugins.maven-project-info-reports-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-resources-plugin.version>2.7</plugin.org.apache.maven.plugins.maven-resources-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-site-plugin.version>3.4</plugin.org.apache.maven.plugins.maven-site-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-source-plugin.version>2.4</plugin.org.apache.maven.plugins.maven-source-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-resources-plugin.version>3.2.0</plugin.org.apache.maven.plugins.maven-resources-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-site-plugin.version>3.9.1</plugin.org.apache.maven.plugins.maven-site-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-source-plugin.version>3.2.0</plugin.org.apache.maven.plugins.maven-source-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-surefire-plugin.version>2.19</plugin.org.apache.maven.plugins.maven-surefire-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-surefire-report-plugin.version>2.19</plugin.org.apache.maven.plugins.maven-surefire-report-plugin.version>
-		<plugin.org.apache.maven.plugins.maven-war-plugin.version>2.6</plugin.org.apache.maven.plugins.maven-war-plugin.version>
+		<plugin.org.apache.maven.plugins.maven-war-plugin.version>3.3.1</plugin.org.apache.maven.plugins.maven-war-plugin.version>
 		<plugin.org.bsc.maven.maven-processor-plugin.version>2.2.4</plugin.org.bsc.maven.maven-processor-plugin.version>
 		<plugin.org.codehaus.mojo.build-helper-maven-plugin.version>1.9.1</plugin.org.codehaus.mojo.build-helper-maven-plugin.version>
 		<plugin.org.codehaus.mojo.buildnumber-maven-plugin.version>1.4</plugin.org.codehaus.mojo.buildnumber-maven-plugin.version>
@@ -529,85 +529,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>${plugin.org.apache.maven.plugins.maven-site-plugin.version}</version>
-					<configuration>
-						<reportPlugins>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-project-info-reports-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-project-info-reports-plugin.version}</version>
-								<reportSets>
-									<reportSet>
-										<reports>
-											<report>index</report>
-											<report>dependency-info</report>
-											<report>dependency-convergence</report>
-											<report>summary</report>
-										</reports>
-									</reportSet>
-								</reportSets>
-							</plugin>
-							<!-- Only possible with a source code repository assigned
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-changelog-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-changelog-plugin.version}</version>
-							</plugin>
-							-->
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-dependency-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-dependency-plugin.version}</version>
-								<configuration>
-									<repositoryUrl>--</repositoryUrl>
-									<artifactItems />
-								</configuration>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-javadoc-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-javadoc-plugin.version}</version>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-surefire-report-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-surefire-report-plugin.version}</version>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-jxr-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-jxr-plugin.version}</version>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-checkstyle-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version}</version>
-							</plugin>
-							<plugin>
-								<groupId>org.codehaus.mojo</groupId>
-								<artifactId>jdepend-maven-plugin</artifactId>
-								<version>${plugin.org.codehaus.mojo.jdepend-maven-plugin.version}</version>
-							</plugin>
-							<plugin>
-								<groupId>org.apache.maven.plugins</groupId>
-								<artifactId>maven-pmd-plugin</artifactId>
-								<version>${plugin.org.apache.maven.plugins.maven-pmd-plugin.version}</version>
-							</plugin>
-							<plugin>
-								<groupId>org.codehaus.mojo</groupId>
-								<artifactId>findbugs-maven-plugin</artifactId>
-								<version>${plugin.org.codehaus.mojo.findbugs-maven-plugin.version}</version>
-								<configuration>
-									<xmlOutput>true</xmlOutput>
-									<xmlOutputDirectory>target/site</xmlOutputDirectory>
-								</configuration>
-							</plugin>
-							<plugin>
-								<groupId>com.googlecode.maven-overview-plugin</groupId>
-								<artifactId>maven-overview-plugin</artifactId>
-								<version>${plugin.com.googlecode.maven-overview-plugin.maven-overview-plugin.version}</version>
-							</plugin>
-						</reportPlugins>
-					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
