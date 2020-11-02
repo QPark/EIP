@@ -11,7 +11,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetRevisionRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetRevisionResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -25,9 +24,9 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetRevision;
 public class GetRevisionOperation implements GetRevision {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetRevision";
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetRevisionOperation.class);
@@ -36,8 +35,8 @@ public class GetRevisionOperation implements GetRevision {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetRevisionRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetRevisionRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetRevisionResponseType}.
 	 */
 	@Override

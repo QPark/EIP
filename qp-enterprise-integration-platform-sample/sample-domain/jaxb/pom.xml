@@ -11,7 +11,7 @@
 
 	<artifactId>jaxb</artifactId>
 	<packaging>jar</packaging>
-	<name>icd.jaxb</name>
+	<name>sample.icd.jaxb</name>
 	<description>This pom contains the generation of all types defined in the domain model and service artefact contained xsds. The generator used is xjc.</description>
 
 	<properties>

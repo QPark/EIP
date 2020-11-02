@@ -17,7 +17,7 @@ public class DDLGeneratorTest {
 		DDLGenerator generator = new DDLGenerator(
 				DDLGenerator.getWhiteListedClassNames());
 		generator.setResultingPersistenceUnitName(PersistenceConfig.PERSISTENCE_UNIT_NAME);
-		//		generator.setDatabaseProcuct("PostgreSQL","9","4");
+		generator.setDatabaseProcuct("PostgreSQL","9","4");
 		//		generator.setDatabaseProcuct("Microsoft SQL Server","9","0");
 		try {
 			String persistenceXml = generator.createTemporaryPersistenceXml(

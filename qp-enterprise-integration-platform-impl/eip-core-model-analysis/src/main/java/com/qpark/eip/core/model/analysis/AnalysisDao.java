@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qpark.eip.core.EagerLoader;
 import com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig;
+import com.qpark.eip.core.model.analysis.operation.ExtendedDataProviderModelAnalysis;
 import com.qpark.eip.model.docmodel.ClusterType;
 import com.qpark.eip.model.docmodel.ClusterType_;
 import com.qpark.eip.model.docmodel.ComplexType;
@@ -53,14 +54,13 @@ import com.qpark.eip.model.docmodel.InterfaceMappingType;
 import com.qpark.eip.model.docmodel.InterfaceMappingType_;
 import com.qpark.eip.model.docmodel.ServiceType;
 import com.qpark.eip.model.docmodel.ServiceType_;
-import com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis;
 
 /**
  * The dao of the domain model analysis.
  *
  * @author bhausen
  */
-public class AnalysisDao implements DataProviderModelAnalysis {
+public class AnalysisDao implements ExtendedDataProviderModelAnalysis {
 	/** The {@link EntityManager}. */
 	@PersistenceContext(
 			unitName = EipModelAnalysisPersistenceConfig.PERSISTENCE_UNIT_NAME,
@@ -72,9 +72,9 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * exists.
 	 *
 	 * @param name
-	 *            the name of the {@link EnterpriseType}.
+	 *                         the name of the {@link EnterpriseType}.
 	 * @param modelVersion
-	 *            the version of the model.
+	 *                         the version of the model.
 	 * @return <code>true</code> if exists, else <code>false</code>.
 	 */
 	@Transactional(
@@ -106,12 +106,13 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the {@link ClusterType} with targetNamespace of the modelVersion.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                            the model version.
 	 * @param targetNamespace
-	 *            the target namespace.
+	 *                            the target namespace.
 	 * @return the {@link ClusterType} with targetNamespace of the modelVersion.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -134,7 +135,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getComplexType(java.lang.String)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getComplexType(java.lang.String)
 	 */
 	@Override
 	@Transactional(
@@ -153,12 +154,13 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of {@link ComplexType} with the ids.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param ids
-	 *            the list of ids to return.
+	 *                         the list of ids to return.
 	 * @return the list of {@link ComplexType}.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -179,7 +181,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getDataTypes(java.util.List)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getDataTypes(java.util.List)
 	 */
 	@Override
 	@Transactional(
@@ -193,12 +195,13 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of {@link DataType} with the ids.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param ids
-	 *            the list of ids to return.
+	 *                         the list of ids to return.
 	 * @return the list of {@link DataType}.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -221,7 +224,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getElement(java.lang.String)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getElement(java.lang.String)
 	 */
 	@Override
 	@Transactional(
@@ -238,12 +241,13 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of {@link ElementType} with the ids.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param ids
-	 *            the list of ids to return.
+	 *                         the list of ids to return.
 	 * @return the list of {@link ElementType}.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -282,7 +286,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getFieldMapping(java.lang.String)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getFieldMapping(java.lang.String)
 	 */
 	@Override
 	@Transactional(
@@ -296,9 +300,9 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the {@link FieldMappingType} with the id.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param id
-	 *            the id to return.
+	 *                         the id to return.
 	 * @return the {@link FieldMappingType}.
 	 * @since 3.5.1
 	 */
@@ -326,12 +330,13 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of {@link FieldMappingType} with the ids.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param ids
-	 *            the list of ids to return.
+	 *                         the list of ids to return.
 	 * @return the list of {@link FieldMappingType}.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -356,9 +361,9 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of {@link FlowType}s matching the name pattern.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param namePattern
-	 *            the name pattern.
+	 *                         the name pattern.
 	 * @return the list of {@link FlowType}s matching the name pattern.
 	 * @since 3.5.1
 	 */
@@ -389,18 +394,19 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of {@link InterfaceMappingType}s of the flow with id.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param flowId
-	 *            the flow id.
+	 *                         the flow id.
 	 * @return the list of {@link InterfaceMappingType}s of the flow with id.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<InterfaceMappingType> getFlowInterfaceMappingTypes(
 			final String modelVersion, final String flowId) {
-		final List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
+		final List<InterfaceMappingType> value = new ArrayList<>();
 		final List<String> flowProcessTypeIds = this
 				.getFlowProcessTypeIds(modelVersion, flowId);
 		final List<String> flowMappingInterfaceMappingTypeIds = this
@@ -433,7 +439,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 
 	private List<String> getFlowMappingInterfaceMappingTypeIds(
 			final String modelVersion, final List<String> flowProcessTypeIds) {
-		final List<String> value = new ArrayList<String>();
+		final List<String> value = new ArrayList<>();
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaQuery<Long> q = cb.createQuery(Long.class);
 		final Root<FlowMapInOutType> f = q.from(FlowMapInOutType.class);
@@ -472,7 +478,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getFlows(java.lang.String)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getFlows(java.lang.String)
 	 */
 	@Override
 	@Transactional(
@@ -505,7 +511,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 			final List<String> interfaceMappingIds,
 			final List<InterfaceMappingType> interfaceMappings) {
 		if (interfaceMappingIds.size() > 0) {
-			List<InterfaceMappingType> value = new ArrayList<InterfaceMappingType>();
+			List<InterfaceMappingType> value = new ArrayList<>();
 			final List<String> fieldDefinitionIds = this
 					.getInterfaceMappingFieldDefinitionIds(modelVersion,
 							interfaceMappingIds);
@@ -536,7 +542,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getInterfaceMappings(java.lang.String)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getInterfaceMappings(java.lang.String)
 	 */
 	@Override
 	@Transactional(
@@ -554,6 +560,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * @return the last model version.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -576,10 +583,11 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of serviceIds available.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @return the list of serviceIds available.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -595,7 +603,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	}
 
 	/**
-	 * @see com.qpark.eip.core.model.analysis.report.DataProviderModelAnalysis#getService(java.lang.String)
+	 * @see com.qpark.eip.core.model.analysis.ExtendedDataProviderModelAnalysis.DataProviderModelAnalysis#getService(java.lang.String)
 	 */
 	@Override
 	@Transactional(
@@ -611,12 +619,13 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the {@link ServiceType} with serviceId of the modelVersion.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @param serviceId
-	 *            the serviceId.
+	 *                         the serviceId.
 	 * @return the {@link ServiceType} with serviceId of the modelVersion.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
@@ -642,15 +651,16 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of serviceIds available.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @return the list of serviceIds available.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<String> getServiceIds(final String modelVersion) {
-		final List<String> value = new ArrayList<String>();
+		final List<String> value = new ArrayList<>();
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaQuery<ServiceType> q = cb.createQuery(ServiceType.class);
 		final Root<ServiceType> f = q.from(ServiceType.class);
@@ -669,15 +679,16 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Get the list of target name spaces available.
 	 *
 	 * @param modelVersion
-	 *            the model version.
+	 *                         the model version.
 	 * @return the list of target name spaces available.
 	 * @since 3.5.1
 	 */
+	@Override
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,
 			propagation = Propagation.REQUIRED)
 	public List<String> getTargetNamespaces(final String modelVersion) {
-		final List<String> value = new ArrayList<String>();
+		final List<String> value = new ArrayList<>();
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaQuery<ClusterType> q = cb.createQuery(ClusterType.class);
 		final Root<ClusterType> f = q.from(ClusterType.class);
@@ -696,7 +707,7 @@ public class AnalysisDao implements DataProviderModelAnalysis {
 	 * Save the {@link EnterpriseType}.
 	 *
 	 * @param value
-	 *            the {@link EnterpriseType}.
+	 *                  the {@link EnterpriseType}.
 	 */
 	@Transactional(
 			value = EipModelAnalysisPersistenceConfig.TRANSACTION_MANAGER_NAME,

@@ -11,7 +11,7 @@
 
 	<artifactId>serviceprovider</artifactId>
 	<packaging>jar</packaging>
-	<name>icd.serviceprovider</name>
+	<name>sample.icd.serviceprovider</name>
 	<description>Provides the services configured calling.</description>
 
 	<dependencies>

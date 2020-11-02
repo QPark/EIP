@@ -19,7 +19,7 @@
 
 	<artifactId>service</artifactId>
 	<packaging>jar</packaging>
-	<name>icd.service</name>
+	<name>sample.icd.service</name>
 	<description>The XML Schema definition of the domain services</description>
 
 	<properties>

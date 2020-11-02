@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetDataTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetDataTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -27,9 +26,9 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetDataType;
 public class GetDataTypeOperation implements GetDataType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetDataType";
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetDataTypeOperation.class);
@@ -38,8 +37,8 @@ public class GetDataTypeOperation implements GetDataType {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetDataTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetDataTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetDataTypeResponseType}.
 	 */
 	@Override

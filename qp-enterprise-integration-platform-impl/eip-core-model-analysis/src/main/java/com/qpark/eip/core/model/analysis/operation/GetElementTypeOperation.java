@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetElementTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetElementTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -27,9 +26,9 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetElementType;
 public class GetElementTypeOperation implements GetElementType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetElementType";
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetElementTypeOperation.class);
@@ -38,8 +37,8 @@ public class GetElementTypeOperation implements GetElementType {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetElementTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetElementTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetElementTypeResponseType}
 	 *         .
 	 */

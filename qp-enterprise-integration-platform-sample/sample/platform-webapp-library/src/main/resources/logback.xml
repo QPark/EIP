@@ -15,7 +15,7 @@
 		</encoder>
 	</appender>
 	<root>
-		<level value="WARN" />
+		<level value="DEBUG" />
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

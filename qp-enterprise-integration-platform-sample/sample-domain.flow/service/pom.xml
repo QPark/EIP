@@ -19,7 +19,7 @@
 
 	<artifactId>service</artifactId>
 	<packaging>jar</packaging>
-	<name>flow.service</name>
+	<name>sample.flow.service</name>
 	<description>The XML Schema definition of the domain services</description>
 
 	<properties>

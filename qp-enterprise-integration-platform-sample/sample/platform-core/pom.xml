@@ -26,20 +26,30 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>platform-domain-model-service</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${domain.groupId}.gen</groupId>
-			<artifactId>domain-gen-flow</artifactId>
 			<version>3.17.1</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
-			<groupId>${domain.groupId}.gen</groupId>
-			<artifactId>domain-gen-jaxb</artifactId>
+			<groupId>${domain.groupId}.flow</groupId>
+			<artifactId>flows</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+		</dependency>
+		<dependency>
+			<groupId>${domain.groupId}</groupId>
+			<artifactId>jaxb</artifactId>
 			<version>3.17.1</version><!--qpark-eip-version-->
 			<classifier>xsd-sources</classifier>
 		</dependency>
+		<dependency>
+			<groupId>${domain.groupId}</groupId>
+			<artifactId>jaxb</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+			<classifier>html-description</classifier>
+		</dependency>
 
+		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-model-analysis</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core</artifactId>

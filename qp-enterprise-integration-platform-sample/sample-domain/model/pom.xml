@@ -19,7 +19,7 @@
 
 	<artifactId>model</artifactId>
 	<packaging>jar</packaging>
-	<name>icd.model</name>
+	<name>sample.icd.model</name>
 	<description>The XML Schema definition of the domain model</description>
 
 	<properties>

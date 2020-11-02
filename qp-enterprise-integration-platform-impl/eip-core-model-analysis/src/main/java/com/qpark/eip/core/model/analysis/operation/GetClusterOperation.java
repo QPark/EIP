@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetClusterRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetClusterResponseType;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeResponseType;
@@ -28,9 +27,9 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetCluster;
 public class GetClusterOperation implements GetCluster {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "com.qpark.eip.cobeare.model.analysis.operationProviderDomainDocGetCluster";
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetClusterOperation.class);
@@ -39,8 +38,8 @@ public class GetClusterOperation implements GetCluster {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetClusterRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetClusterRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetComplexTypeResponseType}
 	 *         .
 	 */
