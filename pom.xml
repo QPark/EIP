@@ -48,10 +48,8 @@
 			<modules>
 				<module>qp-enterprise-integration-platform-sample/sample-domain</module>
 				<module>qp-enterprise-integration-platform-sample/sample-domain.flow</module>
-				<module>qp-enterprise-integration-platform-sample/sample-domain-gen</module>
 				<module>qp-enterprise-integration-platform-sample/sample</module>
 				<module>qp-enterprise-integration-platform-sample/sample-client</module>
-				<module>qp-enterprise-integration-platform-sample/sample-templates</module>
 				<module>qp-enterprise-integration-platform-sample/sample-docker</module>
 			</modules>
 		</profile>
@@ -59,7 +57,7 @@
 			<id>sample-domain</id>
 			<modules>
 				<module>qp-enterprise-integration-platform-sample/sample-domain</module>
-				<module>qp-enterprise-integration-platform-sample/sample-domain-gen</module>
+				<module>qp-enterprise-integration-platform-sample/sample-domain.flow</module>
 			</modules>
 		</profile>
 	</profiles>

@@ -35,6 +35,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}</groupId>
+			<artifactId>serviceprovider</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+		</dependency>
+		<dependency>
+			<groupId>${domain.groupId}</groupId>
 			<artifactId>jaxb</artifactId>
 			<version>3.17.1</version><!--qpark-eip-version-->
 			<classifier>xsd-sources</classifier>

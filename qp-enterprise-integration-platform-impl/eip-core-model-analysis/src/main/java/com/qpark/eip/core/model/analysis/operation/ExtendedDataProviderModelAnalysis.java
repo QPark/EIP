@@ -1,5 +1,6 @@
 package com.qpark.eip.core.model.analysis.operation;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.qpark.eip.model.docmodel.ClusterType;
@@ -7,6 +8,7 @@ import com.qpark.eip.model.docmodel.ComplexType;
 import com.qpark.eip.model.docmodel.DataType;
 import com.qpark.eip.model.docmodel.ElementType;
 import com.qpark.eip.model.docmodel.FieldMappingType;
+import com.qpark.eip.model.docmodel.FlowType;
 import com.qpark.eip.model.docmodel.InterfaceMappingType;
 import com.qpark.eip.model.docmodel.ServiceType;
 import com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis;
@@ -76,6 +78,18 @@ public interface ExtendedDataProviderModelAnalysis
 	 */
 	List<FieldMappingType> getFieldMappingTypesById(String modelVersion,
 			List<String> ids);
+
+	/**
+	 * Get the list of {@link FlowType}s matching the name pattern.
+	 *
+	 * @param modelVersion
+	 *                         the model version.
+	 * @param namePattern
+	 *                         the name pattern.
+	 * @return the list of {@link FlowType}s matching the name pattern.
+	 */
+	List<FlowType> getFlowByNamePattern(String modelVersion,
+			Collection<String> namePattern);
 
 	/**
 	 * Get the list of {@link InterfaceMappingType}s of the flow with id.

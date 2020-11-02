@@ -43,9 +43,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.samples.domain.gen</groupId>
-			<artifactId>domain-gen-jaxb</artifactId>
-			<version>${project.version}</version>
+			<groupId>com.samples.domain</groupId>
+			<artifactId>jaxb</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>

@@ -35,8 +35,10 @@ import com.qpark.eip.core.failure.BaseFailureHandler;
 import com.qpark.eip.core.logback.LoggingInitializer;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.qpark.eip.core.spring.EipSoapActionWebServiceMessageCallback;
+import com.samples.domain.serviceprovider.AppSecurityContextHandler;
 import com.samples.platform.core.BusSettings;
 import com.samples.platform.core.SystemUserInitDao;
+import com.samples.platform.core.security.SetAppSecurityContextAuthentication;
 
 /**
  * Provides the java spring config.
@@ -85,6 +87,11 @@ public class CoreSpringConfig implements ServletContextAware,
 	public EipSoapActionWebServiceMessageCallback getEipSoapActionWebServiceMessageCallback() {
 		EipSoapActionWebServiceMessageCallback bean = new EipSoapActionWebServiceMessageCallback();
 		return bean;
+	}
+
+	@Bean
+	public AppSecurityContextHandler getAppSecurityContextHandler() {
+		return new SetAppSecurityContextAuthentication();
 	}
 
 	/**

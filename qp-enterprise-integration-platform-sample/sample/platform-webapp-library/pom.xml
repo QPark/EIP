@@ -381,6 +381,11 @@ WEB-INF/lib/xws-security-3.0.jar
 			<artifactId>platform-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+		<groupId>com.samples.domain</groupId>
+		<artifactId>serviceprovider</artifactId>
+		<version>3.17.1</version><!--qpark-eip-version-->
+		</dependency>
 
 		<dependency>
 			<groupId>com.sun.xml.messaging.saaj</groupId>

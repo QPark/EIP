@@ -214,47 +214,6 @@ public abstract class AnalysisEnterpriseDao
 	}
 
 	/**
-	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getFlows(java.util.Collection)
-	 */
-	@Override
-	public List<FlowType> getFlows(final Collection<String> flowNameParts) {
-		return Optional.ofNullable(flowNameParts).map(p -> this.enterprise)
-				.map(e -> e.getFlows().stream()
-						.filter(f -> f.getName().matches(
-								String.format(".*%s.*", flowNameParts)))
-						.collect(Collectors.toList()))
-				.orElse(new ArrayList<>());
-	}
-
-	/**
-	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getLastModelVersion()
-	 */
-	@Override
-	public String getLastModelVersion() {
-		return Optional.ofNullable(this.enterprise)
-				.map(e -> e.getModelVersion()).orElse("");
-	}
-
-	/**
-	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getService(java.lang.String)
-	 */
-	@Override
-	public Optional<ServiceType> getService(final String serviceId) {
-		return Optional.ofNullable(serviceId).map(ctid -> this.enterprise)
-				.map(e -> e.getDomains().stream()
-						.flatMap(d -> d.getService().stream())
-						.filter(s -> s.getId().equals(serviceId)).findAny())
-				.orElse(Optional.empty());
-	}
-
-	/**
-	 * @param enterprise
-	 */
-	public void setEnterpriseType(final EnterpriseType enterprise) {
-		this.enterprise = enterprise;
-	}
-
-	/**
 	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getFieldMappingTypesById(java.lang.String,
 	 *      java.util.List)
 	 */
@@ -293,6 +252,44 @@ public abstract class AnalysisEnterpriseDao
 	}
 
 	/**
+	 * @see com.qpark.eip.core.model.analysis.operation.ExtendedDataProviderModelAnalysis#getFlowByNamePattern(java.lang.String,
+	 *      java.util.Collection)
+	 */
+	@Override
+	public List<FlowType> getFlowByNamePattern(final String modelVersion,
+			final Collection<String> namePattern) {
+		return Optional.ofNullable(namePattern).map(p -> this.enterprise)
+				.map(e -> e.getFlows().stream()
+						.filter(f -> e.getModelVersion().equals(modelVersion))
+						.filter(f -> f.getName()
+								.matches(String.format(".*%s.*", namePattern)))
+						.collect(Collectors.toList()))
+				.orElse(new ArrayList<>());
+	}
+
+	/**
+	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getFlows(java.util.Collection)
+	 */
+	@Override
+	public List<FlowType> getFlows(final Collection<String> flowNameParts) {
+		return Optional.ofNullable(flowNameParts).map(p -> this.enterprise)
+				.map(e -> e.getFlows().stream()
+						.filter(f -> f.getName().matches(
+								String.format(".*%s.*", flowNameParts)))
+						.collect(Collectors.toList()))
+				.orElse(new ArrayList<>());
+	}
+
+	/**
+	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getLastModelVersion()
+	 */
+	@Override
+	public String getLastModelVersion() {
+		return Optional.ofNullable(this.enterprise)
+				.map(e -> e.getModelVersion()).orElse("");
+	}
+
+	/**
 	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getRevisions()
 	 */
 	@Override
@@ -301,6 +298,18 @@ public abstract class AnalysisEnterpriseDao
 		Optional.ofNullable(this.enterprise)
 				.ifPresent(e -> value.add(e.getModelVersion()));
 		return value;
+	}
+
+	/**
+	 * @see com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis#getService(java.lang.String)
+	 */
+	@Override
+	public Optional<ServiceType> getService(final String serviceId) {
+		return Optional.ofNullable(serviceId).map(ctid -> this.enterprise)
+				.map(e -> e.getDomains().stream()
+						.flatMap(d -> d.getService().stream())
+						.filter(s -> s.getId().equals(serviceId)).findAny())
+				.orElse(Optional.empty());
 	}
 
 	/**
@@ -354,5 +363,12 @@ public abstract class AnalysisEnterpriseDao
 					}
 					return null;
 				}).orElse(new ArrayList<>());
+	}
+
+	/**
+	 * @param enterprise
+	 */
+	public void setEnterpriseType(final EnterpriseType enterprise) {
+		this.enterprise = enterprise;
 	}
 }
