@@ -8,55 +8,150 @@
 package com.qpark.eip.core.spring.security;
 
 import java.util.Optional;
+import java.util.Properties;
+
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.StrongTextEncryptor;
+
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 
 /**
  * @author bhausen
  */
 public class EipJasyptEncryptionProvider {
-  /** The property name of the encryptor password. */
-  public static String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip.jasypt.encryptor.password";
+	/** The property name of the encryptor password. */
+	public static String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip_jasypt_encryptor_password";
 
-  /**
-   * Encrypts the text if it starts with <i>ENC(</i> and ends with <i>)</i>.
-   * @param text the text to encrypt.
-   * @param properties the {@link ApplicationPlaceholderConfigurer}.
-   * @return the encrypted text.
-   * @throws EncryptionOperationNotPossibleException
-   */
-  public static String decrypt(final String text, final ApplicationPlaceholderConfigurer properties)
-      throws EncryptionOperationNotPossibleException {
-    return Optional.ofNullable(text).map(t -> {
-      String value = null;
-      if (t.trim().startsWith("ENC(") && t.trim().endsWith(")")) {
-        value =
-            getEncryptor(properties).decrypt(t.substring(0, t.length() - 1).replace("ENC(", ""));
-      }
-      return value;
-    }).orElse(text);
-  }
+	/**
+	 * Encrypts the text if it starts with <i>ENC(</i> and ends with <i>)</i>.
+	 *
+	 * @param text
+	 *                       the text to encrypt.
+	 * @param properties
+	 *                       the {@link ApplicationPlaceholderConfigurer}.
+	 * @return the encrypted text.
+	 * @throws EncryptionOperationNotPossibleException
+	 */
+	public static String decrypt(final String text,
+			final ApplicationPlaceholderConfigurer properties)
+			throws EncryptionOperationNotPossibleException {
+		return Optional.ofNullable(properties)
+				.map(p -> decrypt(text, p.toProperties()))
+				.orElse(decrypt(text, (Properties) null));
+	}
 
-  /**
-   * @param properties the {@link ApplicationPlaceholderConfigurer}.
-   * @return the jasypt {@link StrongTextEncryptor}
-   */
-  public static StrongTextEncryptor getEncryptor(
-      final ApplicationPlaceholderConfigurer properties) {
-    final StrongTextEncryptor encryptor = new StrongTextEncryptor();
-    encryptor.setPassword(getEncryptorPassword(properties));
-    return encryptor;
-  }
+	/**
+	 * Encrypts the text if it starts with <i>ENC(</i> and ends with <i>)</i>.
+	 *
+	 * @param text
+	 *                     the text to encrypt.
+	 * @param password
+	 *                     the password.
+	 * @return the encrypted text.
+	 * @throws EncryptionOperationNotPossibleException
+	 */
+	public static String decrypt(final String text, final char[] password)
+			throws EncryptionOperationNotPossibleException {
+		return Optional.ofNullable(password).map(p -> text).map(t -> {
+			String value = null;
+			if (t.trim().startsWith("ENC(") && t.trim().endsWith(")")
+					&& password.length > 0) {
+				StrongTextEncryptor encryptor = new StrongTextEncryptor();
+				encryptor.setPassword(String.valueOf(password));
+				value = encryptor.decrypt(
+						t.substring(0, t.length() - 1).replace("ENC(", ""));
+			}
+			return value;
+		}).orElse(text);
+	}
 
-  /**
-   * Get the encryptor password from Environment, system properties or properties.
-   * @param properties the {@link ApplicationPlaceholderConfigurer}.
-   * @return the password.
-   */
-  public static String getEncryptorPassword(final ApplicationPlaceholderConfigurer properties) {
-    return Optional.ofNullable(System.getenv(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
-        .orElse(System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME, Optional.ofNullable(properties)
-            .map(p -> p.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip")).orElse("eip")));
-  }
+	/**
+	 * Encrypts the text if it starts with <i>ENC(</i> and ends with <i>)</i>.
+	 *
+	 * @param text
+	 *                       the text to encrypt.
+	 * @param properties
+	 *                       the {@link ApplicationPlaceholderConfigurer}.
+	 * @return the encrypted text.
+	 * @throws EncryptionOperationNotPossibleException
+	 */
+	public static String decrypt(final String text, final Properties properties)
+			throws EncryptionOperationNotPossibleException {
+		return Optional.ofNullable(text).map(t -> {
+			String value = null;
+			if (t.trim().startsWith("ENC(") && t.trim().endsWith(")")) {
+				value = getEncryptor(properties).decrypt(
+						t.substring(0, t.length() - 1).replace("ENC(", ""));
+			}
+			return value;
+		}).orElse(text);
+	}
+
+	/**
+	 * @param properties
+	 *                       the {@link Properties}.
+	 * @return the jasypt {@link StrongTextEncryptor}
+	 */
+	public static StrongTextEncryptor getEncryptor(
+			final ApplicationPlaceholderConfigurer properties) {
+		final StrongTextEncryptor encryptor = new StrongTextEncryptor();
+		encryptor.setPassword(getEncryptorPassword(properties));
+		return encryptor;
+	}
+
+	/**
+	 * @param password
+	 *                     the {@link ApplicationPlaceholderConfigurer}.
+	 * @return the jasypt {@link StrongTextEncryptor}
+	 */
+	public static StrongTextEncryptor getEncryptor(final char[] password) {
+		final StrongTextEncryptor encryptor = new StrongTextEncryptor();
+		Optional.ofNullable(password)
+				.ifPresent(p -> encryptor.setPasswordCharArray(password));
+		return encryptor;
+	}
+
+	/**
+	 * @param properties
+	 *                       the {@link Properties}.
+	 * @return the jasypt {@link StrongTextEncryptor}
+	 */
+	public static StrongTextEncryptor getEncryptor(
+			final Properties properties) {
+		final StrongTextEncryptor encryptor = new StrongTextEncryptor();
+		encryptor.setPassword(getEncryptorPassword(properties));
+		return encryptor;
+	}
+
+	/**
+	 * Get the encryptor password from Environment, system properties or
+	 * properties.
+	 *
+	 * @param properties
+	 *                       the {@link ApplicationPlaceholderConfigurer}.
+	 * @return the password.
+	 */
+	public static String getEncryptorPassword(
+			final ApplicationPlaceholderConfigurer properties) {
+		return Optional.ofNullable(properties)
+				.map(p -> getEncryptorPassword(p.toProperties())).orElse("eip");
+	}
+
+	/**
+	 * Get the encryptor password from Environment, system properties or
+	 * properties.
+	 *
+	 * @param properties
+	 *                       the {@link Properties}.
+	 * @return the password.
+	 */
+	public static String getEncryptorPassword(final Properties properties) {
+		return Optional
+				.ofNullable(System.getenv(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
+				.orElse(System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME,
+						Optional.ofNullable(properties)
+								.map(p -> p.getProperty(
+										EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip"))
+								.orElse("eip")));
+	}
 }

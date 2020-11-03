@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.spring;
@@ -35,12 +35,12 @@ public abstract class AbstractPlaceholderConfigurer
 		ReInitalizeable, ApplicationContextAware {
 	/**
 	 * @param properties
-	 *            The loaded properties
+	 *                       The loaded properties
 	 * @return the {@link TreeMap} containing the translations.
 	 */
 	public static TreeMap<String, String> setupTranslationMap(
 			final Map<String, String> properties) {
-		TreeMap<String, String> translationMap = new TreeMap<String, String>();
+		TreeMap<String, String> translationMap = new TreeMap<>();
 		String number;
 		String source;
 		String translated;
@@ -75,9 +75,17 @@ public abstract class AbstractPlaceholderConfigurer
 	}
 
 	/** The map containing all the properties. */
-	private final TreeMap<String, String> properties = new TreeMap<String, String>();
+	private final TreeMap<String, String> properties = new TreeMap<>();
 	/** The application context. */
 	protected ApplicationContext applicationContext;
+
+	/** @return filled {@link Properties}. */
+	public Properties toProperties() {
+		final Properties p = new Properties();
+		this.properties.entrySet().stream()
+				.forEach(e -> p.put(e.getKey(), e.getValue()));
+		return p;
+	}
 
 	/**
 	 * Not supported!
@@ -179,7 +187,7 @@ public abstract class AbstractPlaceholderConfigurer
 
 	/**
 	 * Get the property names as {@link Set}.
-	 * 
+	 *
 	 * @return the property names.
 	 */
 	public Set<String> stringPropertyNames() {

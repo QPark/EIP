@@ -112,4 +112,3 @@
 		<appender-ref ref="FILE_TRACE" />
 	</root>
 </configuration>
-

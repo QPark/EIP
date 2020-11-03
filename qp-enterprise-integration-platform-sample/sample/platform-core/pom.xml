@@ -53,10 +53,6 @@
 
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
-			<artifactId>eip-core-model-analysis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.qpark.eip.core</groupId>
 			<artifactId>eip-core</artifactId>
 		</dependency>
 		<dependency>

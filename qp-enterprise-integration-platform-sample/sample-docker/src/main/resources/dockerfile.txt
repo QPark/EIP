@@ -7,12 +7,14 @@
 
 FROM tomcat:jdk11-openjdk-slim
 
-ADD tomcat/lib-platform-servicebus-2.0.0 /usr/local/tomcat/lib-platform-servicebus-2.0.0/
+# Enable this once a working library is defined
+# ADD tomcat/lib-platform-servicebus-2.0.0 /usr/local/tomcat/lib-platform-servicebus-2.0.0/
 ADD tomcat/lib/* /usr/local/tomcat/lib/
 ADD tomcat/conf/* /usr/local/tomcat/conf/
 ADD tomcat/webapps/platform-webapp-library-xxx-application.version-xxx.war /usr/local/tomcat/webapps/iss-library.war
 
-RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/tomcat\/lib-platform-servicebus-2.0.0\/*.jar/g' /usr/local/tomcat/conf/catalina.properties; 
+# Enable this once a working library is defined
+# RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/tomcat\/lib-platform-servicebus-2.0.0\/*.jar/g' /usr/local/tomcat/conf/catalina.properties; 
 RUN sed -i 's/<\/Context>/<ResourceLink name="jdbc\/PlatformDB" type="javax.sql.DataSource" global="jdbc\/PlatformDB" \/><\/Context>/g' /usr/local/tomcat/conf/context.xml; 
 RUN sed -i 's/<\/GlobalNamingResources>/<Resource name="jdbc\/PlatformDB" auth="Container" username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}\/issLibraryHSQLDB.bin" driverClassName="org.hsqldb.jdbc.JDBCDriver" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" defaultTransactionIsolation="READ_COMMITTED" maxActive="20" maxIdle="20" minIdle="3" initialSize="2" \/><\/GlobalNamingResources>/g' /usr/local/tomcat/conf/server.xml; 
 RUN sed -i 's/redirectPort="8443"\ \/>/redirectPort="8443" address="0.0.0.0" URIEncoding="UTF-8" ><UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" \/><\/Connector>/g' /usr/local/tomcat/conf/server.xml; 
