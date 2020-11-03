@@ -33,7 +33,7 @@ public class WebServiceDispatcherXmlGenerator {
 	private final XsdsUtil config;
 	private final File outputDirectory;
 	private final String combinedServiceIdName;
-	private final TreeSet<ElementType> elementTypes;
+	private final Set<ElementType> elementTypes;
 	private final String marshallerName;
 	private final MavenProject project;
 	private String serviceId = "esb";
@@ -122,7 +122,7 @@ public class WebServiceDispatcherXmlGenerator {
 		}
 
 		if (this.serviceId.length() > 0) {
-			final Set<String> totalServiceIds = new TreeSet<String>();
+			final Set<String> totalServiceIds = new TreeSet<>();
 			final List<String> list = ServiceIdRegistry
 					.splitServiceIds(this.serviceId);
 			totalServiceIds.addAll(list);

@@ -23,7 +23,6 @@ import com.samples.platform.service.iss.tech.support.msg.GetOperationReportReque
 import com.samples.platform.service.iss.tech.support.msg.GetOperationReportResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
 import com.samples.platform.util.OperationLogProvider;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get operation report on service <code>iss.tech.support</code>.
@@ -44,12 +43,12 @@ public class GetOperationReportOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetOperationReportRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetOperationReportRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetOperationReportResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetOperationReportResponseType> getOperationReport(
 			final JAXBElement<GetOperationReportRequestType> message) {

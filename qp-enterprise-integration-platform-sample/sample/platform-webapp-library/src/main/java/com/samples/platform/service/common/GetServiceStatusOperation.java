@@ -23,7 +23,6 @@ import com.qpark.eip.model.common.PropertyType;
 import com.qpark.eip.service.common.msg.GetServiceStatusRequestType;
 import com.qpark.eip.service.common.msg.GetServiceStatusResponseType;
 import com.qpark.eip.service.common.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get service status on service <code>common</code>.
@@ -50,7 +49,7 @@ public class GetServiceStatusOperation {
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetServiceStatusResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetServiceStatusResponseType> getServiceStatus(
 			final JAXBElement<GetServiceStatusRequestType> message) {

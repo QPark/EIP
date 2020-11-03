@@ -67,7 +67,7 @@
 	</developers>
 	<inceptionYear>2013</inceptionYear>
 
-	<repositories>
+	<!--repositories>
 		<repository>
 			<id>maven.central</id>
 			<url>https://repo1.maven.org/maven2/</url>
@@ -88,7 +88,8 @@
 			<id>repository.jboss.org.thirdparty</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
 		</repository>
-	</repositories>
+	</repositories-->
+	
 	<properties>
 		<base.package.name>${project.groupId}</base.package.name>
 		<bus.application.name>iss</bus.application.name>

@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<tomcat-users>
-	<user username="eip" password="platform" roles="standard,manager-gui,manager-jmx" />
-</tomcat-users>
-

@@ -70,7 +70,7 @@
 	</developers>
 	<inceptionYear>2013</inceptionYear>
 
-	<repositories>
+	<!--repositories>
 		<repository>
 			<id>repository.apache.org</id>
 			<url>https://repository.apache.org/content/repositories/releases/</url>
@@ -87,7 +87,7 @@
 			<id>repository.jboss.org.thirdparty</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
 		</repository>
-	</repositories>
+	</repositories-->
 
 	<dependencies>
 		<dependency>

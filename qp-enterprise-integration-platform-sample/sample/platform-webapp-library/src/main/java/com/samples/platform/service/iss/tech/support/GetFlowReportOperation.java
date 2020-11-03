@@ -17,7 +17,6 @@ import com.qpark.eip.core.DateUtil;
 import com.samples.platform.service.iss.tech.support.msg.GetFlowReportRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetFlowReportResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get flow report on service <code>iss.tech.support</code>.
@@ -35,11 +34,11 @@ public class GetFlowReportOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetFlowReportRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetFlowReportRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetFlowReportResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetFlowReportResponseType> getFlowReport(
 			final JAXBElement<GetFlowReportRequestType> message) {

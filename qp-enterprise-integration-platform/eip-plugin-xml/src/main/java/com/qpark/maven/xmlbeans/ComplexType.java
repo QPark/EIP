@@ -351,9 +351,19 @@ public class ComplexType implements Comparable<ComplexType> {
 	 */
 	@Override
 	public int compareTo(final ComplexType o) {
-		int value = this.getTargetNamespace().compareTo(o.getTargetNamespace());
-		if (value == 0) {
-			value = this.getClassName().compareTo(o.getClassName());
+		if (o == null) {
+			return -1;
+		}
+		int value = 0;
+		if (o.getTargetNamespace() == null) {
+			value = this.getClassNameFullQualified()
+					.compareTo(o.getClassNameFullQualified());
+		} else {
+			value = this.getTargetNamespace().compareTo(o.getTargetNamespace());
+			if (value == 0) {
+				value = this.getClassNameFullQualified()
+						.compareTo(o.getClassNameFullQualified());
+			}
 		}
 		return value;
 	}
@@ -361,7 +371,8 @@ public class ComplexType implements Comparable<ComplexType> {
 	/**
 	 * Checks, if one of the children has the name.
 	 *
-	 * @param childName the name to check.
+	 * @param childName
+	 *                      the name to check.
 	 * @return <code>true</code>, if one of the children has the name, else
 	 *         <code>false</code>.
 	 */
@@ -410,7 +421,8 @@ public class ComplexType implements Comparable<ComplexType> {
 	/**
 	 * Get the {@link ComplexTypeChild} with the give property name.
 	 *
-	 * @param propertyName the property name.
+	 * @param propertyName
+	 *                         the property name.
 	 * @return the {@link ComplexTypeChild} found or <code>null</code>.
 	 */
 	public ComplexTypeChild getChild(final String propertyName) {

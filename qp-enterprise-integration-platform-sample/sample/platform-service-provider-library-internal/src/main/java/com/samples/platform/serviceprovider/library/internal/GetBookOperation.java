@@ -21,7 +21,6 @@ import com.samples.platform.service.library.msg.GetBookRequestType;
 import com.samples.platform.service.library.msg.GetBookResponseType;
 import com.samples.platform.service.library.msg.ObjectFactory;
 import com.samples.platform.serviceprovider.library.internal.dao.PlatformDao;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get book on service <code>library</code>.
@@ -41,11 +40,11 @@ public class GetBookOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetBookRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetBookRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetBookResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetBookResponseType> getBook(
 			final JAXBElement<GetBookRequestType> message) {

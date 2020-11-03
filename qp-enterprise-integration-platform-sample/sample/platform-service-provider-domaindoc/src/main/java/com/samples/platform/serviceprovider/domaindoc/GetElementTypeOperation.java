@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetElementTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetElementTypeResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get element type on service <code>domain.doc</code>.
@@ -35,12 +34,12 @@ public class GetElementTypeOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetElementTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetElementTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetElementTypeResponseType}
 	 *         .
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetElementTypeResponseType> getElementType(
 			final JAXBElement<GetElementTypeRequestType> message) {

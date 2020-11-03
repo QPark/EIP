@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetRevisionRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetRevisionResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get revision on service <code>domain.doc</code>.
@@ -35,11 +34,11 @@ public class GetRevisionOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetRevisionRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetRevisionRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetRevisionResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetRevisionResponseType> getRevision(
 			final JAXBElement<GetRevisionRequestType> message) {

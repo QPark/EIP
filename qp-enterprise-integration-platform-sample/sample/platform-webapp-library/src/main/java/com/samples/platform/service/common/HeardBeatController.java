@@ -27,6 +27,6 @@ public class HeardBeatController {
 		GetServiceStatusRequestType request = new GetServiceStatusRequestType();
 		this.logger.info(Optional
 				.ofNullable(this.common.getServiceStatus(request))
-				.map(r -> r.getStatus()).orElse("Serive does not answer"));
+				.map(r -> r.getStatus()).orElse("Service does not answer"));
 	}
 }

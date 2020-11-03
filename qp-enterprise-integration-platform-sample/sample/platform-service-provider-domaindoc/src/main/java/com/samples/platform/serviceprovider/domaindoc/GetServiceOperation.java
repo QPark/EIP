@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetServiceRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetServiceResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get service on service <code>domain.doc</code>.
@@ -34,11 +33,11 @@ public class GetServiceOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetServiceRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetServiceRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetServiceResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetServiceResponseType> getService(
 			final JAXBElement<GetServiceRequestType> message) {
