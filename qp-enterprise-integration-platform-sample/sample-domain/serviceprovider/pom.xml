@@ -11,10 +11,15 @@
 
 	<artifactId>serviceprovider</artifactId>
 	<packaging>jar</packaging>
-	<name>sample.icd.serviceprovider</name>
+	<name>platform.sample.icd.serviceprovider</name>
 	<description>Provides the services configured calling.</description>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.qpark.maven</groupId>
+			<artifactId>eip-model-analysis</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jaxb</artifactId>

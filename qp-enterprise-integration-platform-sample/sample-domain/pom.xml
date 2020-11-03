@@ -22,7 +22,7 @@
 	<artifactId>base</artifactId>
 	<version>3.17.1</version><!--qpark-eip-version-->
 	<packaging>pom</packaging>
-	<name>sample.icd.base</name>
+	<name>platform.sample.icd.base</name>
 
 	<description>Example model and service definition example.</description>
 

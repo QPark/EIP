@@ -19,7 +19,7 @@
 
 	<artifactId>model</artifactId>
 	<packaging>jar</packaging>
-	<name>sample.flow.model</name>
+	<name>platform.sample.flow.model</name>
 	<description>The XML Schema definition of the domain model</description>
 
 	<properties>

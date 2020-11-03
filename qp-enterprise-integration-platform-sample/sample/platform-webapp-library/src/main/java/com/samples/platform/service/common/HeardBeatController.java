@@ -1,5 +1,7 @@
 package com.samples.platform.service.common;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,12 +14,19 @@ import com.samples.domain.serviceprovider.OperationProviderCommon;
  */
 @Component
 public class HeardBeatController {
+	/** The {@link Logger}. */
+	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
+			.getLogger(HeardBeatController.class);
+	/** The {@link OperationProviderCommon} */
 	@Autowired
 	private OperationProviderCommon common;
 
+	/** Check common.GetServiceStatus. */
 	@Scheduled(fixedDelay = 30000)
-	public void push() {
+	public void check() {
 		GetServiceStatusRequestType request = new GetServiceStatusRequestType();
-		this.common.getServiceStatus(request);
+		this.logger.info(Optional
+				.ofNullable(this.common.getServiceStatus(request))
+				.map(r -> r.getStatus()).orElse("Serive does not answer"));
 	}
 }

@@ -11,7 +11,7 @@
 
 	<artifactId>flows</artifactId>
 	<packaging>jar</packaging>
-	<name>sample.flow.flows</name>
+	<name>platform.sample.flow.flows</name>
 	<description>This pom contains the generation of all types defined in the com.ses.domain model and service artefact contained xsds. The generator used is xjc.</description>
 
 	<properties>

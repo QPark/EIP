@@ -102,7 +102,7 @@
 		<persistence.unit.name>${project.groupId}.domain</persistence.unit.name>
 		<persistence.jndi.datasource.name>PlatformDB</persistence.jndi.datasource.name>
 		<persistence.jpa.vendor.adapter>Hibernate</persistence.jpa.vendor.adapter>
-		<persistence.jpa.vendor.adapter.databasePlatform>org.hibernate.dialect.Oracle10gDialect</persistence.jpa.vendor.adapter.databasePlatform>
+		<persistence.jpa.vendor.adapter.databasePlatform>org.hibernate.dialect.HSQLDialect</persistence.jpa.vendor.adapter.databasePlatform>
 
 <!--
 		<security.channel.pattern.admin>.*?CommonGetServerStatus.*</security.channel.pattern.admin>
