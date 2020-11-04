@@ -128,7 +128,8 @@ public class EipJasyptEncryptionProvider {
 	 * @return the password.
 	 */
 	public static String getEncryptorPassword(final ApplicationPlaceholderConfigurer properties) {
-		return Optional.ofNullable(properties).map(p -> getEncryptorPassword(p.toProperties())).orElse("eip");
+		return Optional.ofNullable(properties).map(p -> getEncryptorPassword(p.toProperties()))
+				.orElse(getEncryptorPassword((Properties) null));
 	}
 
 	/**

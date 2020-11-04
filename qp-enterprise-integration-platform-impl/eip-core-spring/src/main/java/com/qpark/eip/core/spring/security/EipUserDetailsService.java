@@ -25,8 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  *
  * @author bhausen
  */
-public class EipUserDetailsService extends EipRoleVoter
-		implements UserDetailsService {
+public class EipUserDetailsService extends EipRoleVoter implements UserDetailsService {
 	/** The name of the anonymous role. */
 	public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 
@@ -40,32 +39,25 @@ public class EipUserDetailsService extends EipRoleVoter
 	 * @param userName
 	 * @return execute a login or not.
 	 */
-	public static boolean setSecurityContextHolderAuthentication(
-			final EipUserProvider userDetailService, final String userName) {
-		final boolean doLogin = SecurityContextHolder.getContext()
-				.getAuthentication() == null;
+	public static boolean setSecurityContextHolderAuthentication(final EipUserProvider userDetailService,
+			final String userName) {
+		final boolean doLogin = SecurityContextHolder.getContext().getAuthentication() == null;
 		if (doLogin) {
-			if (Optional.ofNullable(userDetailService.getUser(userName))
-					.map(user -> {
-						SecurityContextHolder.getContext().setAuthentication(
-								new UsernamePasswordAuthenticationToken(user,
-										user.getPassword()));
-						return false;
-					}).orElse(true)) {
-				logger.error(String.format(
-						"Authentication not possible. User name '%s' is unknown",
-						userName));
-				throw new UsernameNotFoundException(String.format(
-						"Authentication not possible. User name '%s' is unknown",
-						userName));
+			if (Optional.ofNullable(userDetailService.getUser(userName)).map(user -> {
+				SecurityContextHolder.getContext()
+						.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+				return false;
+			}).orElse(true)) {
+				logger.error(String.format("Authentication not possible. User name '%s' is unknown", userName));
+				throw new UsernameNotFoundException(
+						String.format("Authentication not possible. User name '%s' is unknown", userName));
 			}
 		}
 		return doLogin;
 	}
 
 	/** The {@link Logger}. */
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory
-			.getLogger(EipUserDetailsService.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EipUserDetailsService.class);
 	/** The {@link EipUserProvider}. */
 	private EipUserProvider userProvider;
 
@@ -73,18 +65,15 @@ public class EipUserDetailsService extends EipRoleVoter
 	 * @see org.springframework.security.core.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
 	 */
 	@Override
-	public UserDetails loadUserByUsername(final String userName)
-			throws UsernameNotFoundException, DataAccessException {
-		EipUserDetailsService.logger.debug("+loadUserByUsername user {}",
-				userName);
+	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException, DataAccessException {
+		EipUserDetailsService.logger.debug("+loadUserByUsername user '{}'", userName);
 		final User user = this.userProvider.getUser(userName);
 		if (Objects.isNull(user)) {
-			throw new UsernameNotFoundException(String.format(
-					"Can not get user details. User name '%s' is unknown",
-					userName));
+			throw new UsernameNotFoundException(
+					String.format("Can not get user details. User name '%s' is unknown", userName));
 		}
-		EipUserDetailsService.logger.debug("-loadUserByUsername user '{}' {} found!",
-				user.getUsername(), user.getAuthorities());
+		EipUserDetailsService.logger.debug("-loadUserByUsername user '{}' {} found!", user.getUsername(),
+				user.getAuthorities());
 		return user;
 	}
 
