@@ -1,4 +1,10 @@
 Changelog:
+4.0.0
+* Made java 11 compatible
+* Fixed minor issues
+* Dropped pivotal tc-server templates
+* Dropped spring inside dependencies
+
 3.17.1 20201014
 Impl: core-spring - Support of JSypt encrypted system user passwords.
 Impl: core-spring-statistics - StatisticsListener change adding channelName to the methods.
