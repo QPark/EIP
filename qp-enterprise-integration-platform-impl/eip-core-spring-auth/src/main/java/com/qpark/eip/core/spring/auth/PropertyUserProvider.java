@@ -219,31 +219,15 @@ public class PropertyUserProvider implements EipUserProvider, ReInitalizeable {
 
     /* Create a map of UserDefinitions parsed out of the properties. */
     final HashMap<String, UserDefinition> parsedUserDefinitions = new HashMap<>();
-    UserDefinition userDefinition = null;
-    String userKey = null;
     for (final Map.Entry<String, String> userDefinitionProperty : userDefinitionProperties
         .entrySet()) {
       /* Get the user key out of the property name. */
-      userKey = extractUser(userDefinitionProperty.getKey());
+      final String userKey = extractUser(userDefinitionProperty.getKey());
       parsedUserDefinitions.putIfAbsent(userKey, new UserDefinition(userKey));
-      userDefinition = parsedUserDefinitions.get(userKey);
+      final UserDefinition userDefinition = parsedUserDefinitions.get(userKey);
       /* Setup the content of the property into the UserDefinition. */
       if (userDefinitionProperty.getKey().endsWith("userName")) {
         userDefinition.setName(userDefinitionProperty.getValue());
-      } else if (userDefinitionProperty.getKey().endsWith("password")) {
-        userDefinition
-            .setPassword(Optional.ofNullable(userDefinitionProperty.getValue()).map(pwd -> {
-              String pwdEncrypted = null;
-              if (pwd.trim().startsWith("ENC(") && pwd.trim().endsWith(")")) {
-                try {
-                  pwdEncrypted =
-                      encryptor.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
-                } catch (final EncryptionOperationNotPossibleException e) {
-                  this.logger.error(e.getMessage(), e);
-                }
-              }
-              return pwdEncrypted;
-            }).orElse(userDefinitionProperty.getValue()));
       } else if (userDefinitionProperty.getKey().contains(".role.")) {
         if (userDefinitionProperty.getValue() != null
             && !userDefinitionProperty.getValue().equals(ROLE_ANONYMOUS)) {
@@ -251,6 +235,40 @@ public class PropertyUserProvider implements EipUserProvider, ReInitalizeable {
         }
       }
     }
+    /* Password setup */
+    for (final Map.Entry<String, String> userDefinitionProperty : userDefinitionProperties
+        .entrySet()) {
+      if (userDefinitionProperty.getKey().endsWith("password")) {
+        /* Get the user key out of the property name. */
+        final String userKey = extractUser(userDefinitionProperty.getKey());
+        final UserDefinition userDefinition = parsedUserDefinitions.get(userKey);
+        if (parsedUserDefinitions.containsKey(userKey)) {
+          userDefinition
+              .setPassword(Optional.ofNullable(userDefinitionProperty.getValue()).map(pwd -> {
+                String pwdEncrypted = null;
+                if (pwd.trim().startsWith("ENC(") && pwd.trim().endsWith(")")) {
+                  this.logger.debug(
+                      "createUsers: Try password decryption '{}' password '{}' failed.",
+                      userDefinition.getName(), pwd);
+                  try {
+                    pwdEncrypted =
+                        encryptor.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
+                  } catch (final EncryptionOperationNotPossibleException e) {
+                    this.logger.error(
+                        "createUsers: Password decryption of user '{}' password '{}' failed.",
+                        userDefinition.getName(), pwd);
+                    this.logger.error(e.getMessage(), e);
+                  }
+                }
+                return pwdEncrypted;
+              }).orElse(userDefinitionProperty.getValue()));
+        } else {
+          this.logger.error("No user setup for password property {}",
+              userDefinitionProperty.getKey());
+        }
+      }
+    }
+
     /*
      * Update the userMap. If the userName of the userMap is not part of the parsedUserDefinitions
      * any more, the user is removed out of the userMap.

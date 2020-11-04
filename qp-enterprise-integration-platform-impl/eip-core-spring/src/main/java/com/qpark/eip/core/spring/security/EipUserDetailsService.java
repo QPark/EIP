@@ -68,13 +68,14 @@ public class EipUserDetailsService extends EipRoleVoter implements UserDetailsSe
   @Override
   public UserDetails loadUserByUsername(final String userName)
       throws UsernameNotFoundException, DataAccessException {
-    EipUserDetailsService.logger.debug("+loadUserByUsername user {}", userName);
+    EipUserDetailsService.logger.debug("+loadUserByUsername user '{}'", userName);
     final User user = this.userProvider.getUser(userName);
     if (Objects.isNull(user)) {
       throw new UsernameNotFoundException(
           String.format("Can not get user details. User name '%s' is unknown", userName));
     }
-    EipUserDetailsService.logger.debug("-loadUserByUsername user {} found!", user.getUsername());
+    EipUserDetailsService.logger.debug("-loadUserByUsername user '{}' {} found!",
+        user.getUsername(), user.getAuthorities());
     return user;
   }
 

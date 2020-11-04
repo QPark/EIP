@@ -130,7 +130,7 @@ public class EipJasyptEncryptionProvider {
    */
   public static String getEncryptorPassword(final ApplicationPlaceholderConfigurer properties) {
     return Optional.ofNullable(properties).map(p -> getEncryptorPassword(p.toProperties()))
-        .orElse("eip");
+        .orElse(getEncryptorPassword((Properties) null));
   }
 
   /**
@@ -158,8 +158,8 @@ public class EipJasyptEncryptionProvider {
     }
     if (Objects.isNull(pwd)) {
       pwd = "eip";
+      logger.debug("No password specified - returned default.");
     }
-    return pwd;
+    return pwd.trim();
   }
-
 }
