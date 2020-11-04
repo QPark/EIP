@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.samples.domain.flow</groupId>
+		<artifactId>base</artifactId>
+		<version>3.17.1</version><!--qpark-eip-version-->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>addons</artifactId>
+	<packaging>jar</packaging>
+	<name>platform.sample.flow.addons</name>
+	<description>This pom contains the generation of all types defined in the com.ses.domain model and service artefact contained xsds. The generator used is xjc.</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.samples.domain</groupId>
+			<artifactId>jaxb</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.samples.domain.flow</groupId>
+			<artifactId>flows</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>11.0.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>
