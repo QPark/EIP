@@ -59,25 +59,6 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<!--repositories>
-		<repository>
-			<id>repository.apache.org</id>
-			<url>https://repository.apache.org/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>maven.springframework.org</id>
-			<url>https://maven.springframework.org/release/</url>
-		</repository>
-		<repository>
-			<id>maven.java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-		<repository>
-			<id>repository.jboss.org.thirdparty</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
-		</repository>
-	</repositories-->
-
 	<build>
 		<plugins>
 			<plugin>
@@ -93,7 +74,7 @@
 	</build>
 
 	<dependencies>
-		<!-- 
+		<!--
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
@@ -119,8 +100,8 @@
 			<version>0.6.1</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		<!-- 
+
+		<!--
       <dependency>
         <groupId>org.jvnet.jaxb2_commons</groupId>
         <artifactId>jaxb2-basics-runtime</artifactId>
@@ -376,15 +357,15 @@
         <version>2.1</version>
         <scope>test</scope>
       </dependency>
-		
-		
+
+
 		-->
-		
+
 		<dependency>
 			<groupId>com.sun.codemodel</groupId>
 			<artifactId>codemodel</artifactId>
 			<version>2.6</version>
 		</dependency>
-		
+
 	</dependencies>
 </project>

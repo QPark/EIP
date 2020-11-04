@@ -234,10 +234,12 @@ public class PropertyUserProvider implements EipUserProvider, ReInitalizeable {
         userDefinition
             .setPassword(Optional.ofNullable(userDefinitionProperty.getValue()).map(pwd -> {
               String pwdEncrypted = null;
+              // logger.error("'{}' {}",pwd.trim(),pwd.trim().startsWith("ENC(") && pwd.trim().endsWith(")"));
               if (pwd.trim().startsWith("ENC(") && pwd.trim().endsWith(")")) {
                 try {
-                  pwdEncrypted =
+                  pwdEncrypted = 
                       encryptor.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
+                  // logger.error("'{}'=>'{}'", pwd,pwdEncrypted);
                 } catch (final EncryptionOperationNotPossibleException e) {
                   this.logger.error(e.getMessage(), e);
                 }

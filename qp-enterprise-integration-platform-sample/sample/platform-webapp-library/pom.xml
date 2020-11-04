@@ -51,7 +51,7 @@
 					<packagingIncludes>
 					</packagingIncludes>
 <!-- lib-platform-bus-2.0.0 -->
-					<!-- packagingExcludes>
+					<!--packagingExcludes>
 WEB-INF/lib/activation-1.1.1.jar
 WEB-INF/lib/aopalliance-1.0.jar
 WEB-INF/lib/aspectjtools-1.8.14.jar
@@ -70,7 +70,9 @@ WEB-INF/lib/disruptor-3.2.1.jar,
 WEB-INF/lib/dom4j-1.6.1.jar,
 WEB-INF/lib/gs-collections-5.1.0.jar,
 WEB-INF/lib/gs-collections-api-5.1.0.jar,
+WEB-INF/lib/javax.annotation-api-1.3.1.jar,
 WEB-INF/lib/javax.persistence-2.1.0.jar,
+WEB-INF/lib/javax.xml.soap-api-1.3.8.jar,
 WEB-INF/lib/jaxb-api-2.3.0.jar,
 WEB-INF/lib/jaxb-core-2.3.0.jar,
 WEB-INF/lib/jaxb-impl-2.3.0.jar,
@@ -84,6 +86,8 @@ WEB-INF/lib/log4j-over-slf4j-1.7.30.jar,
 WEB-INF/lib/logback-classic-1.2.3.jar,
 WEB-INF/lib/logback-core-1.2.3.jar,
 WEB-INF/lib/reactor-core-1.1.6.RELEASE.jar,
+WEB-INF/lib/saaj-api-1.3.5.jar,
+WEB-INF/lib/saaj-impl-1.3.28.jar,
 WEB-INF/lib/slf4j-api-1.7.30.jar,
 WEB-INF/lib/stax-api-1.0-2.jar,
 WEB-INF/lib/wsdl4j-1.6.3.jar,
@@ -380,9 +384,9 @@ WEB-INF/lib/xws-security-3.0.jar
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-		<groupId>com.samples.domain</groupId>
-		<artifactId>serviceprovider</artifactId>
-		<version>3.17.1</version><!--qpark-eip-version-->
+			<groupId>com.samples.domain</groupId>
+			<artifactId>serviceprovider</artifactId>
+			<version>3.17.1</version><!--qpark-eip-version-->
 		</dependency>
 
 		<dependency>
@@ -404,6 +408,11 @@ WEB-INF/lib/xws-security-3.0.jar
 			<groupId>javax.xml.stream</groupId>
 			<artifactId>stax-api</artifactId>
 			<version>1.0-2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.1</version>
 		</dependency>
 
 		<dependency>
@@ -469,12 +478,4 @@ WEB-INF/lib/xws-security-3.0.jar
 
 	</dependencies>
 
-	<!-- This is needed because of javax.xml.crypto:xmldsig:jar:1.0 org.apache.santuario:xmlsec jar file dependency! -
-	<repositories>
-		<repository>
-			<id>spring-ext</id>
-			<name>Spring repo-ext http://repo1.maven.org/maven2/</name>
-			<url>http://maven.springframework.org/release/</url>
-		</repository>
-	</repositories-->
 </project>

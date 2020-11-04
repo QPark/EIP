@@ -194,7 +194,7 @@
 									<artifactId>gs-collections-api</artifactId>
 									<version>5.1.0</version>
 								</artifactItem>
-								<!--artifactItem>
+								<artifactItem>
 									<groupId>com.lmax</groupId>
 									<artifactId>disruptor</artifactId>
 									<version>3.2.1</version>
@@ -203,6 +203,11 @@
 									<groupId>com.sun.xml.bind</groupId>
 									<artifactId>jaxb-core</artifactId>
 									<version>2.3.0</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.xml.messaging.saaj</groupId>
+									<artifactId>saaj-impl</artifactId>
+									<version>1.3.28</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.sun.xml.bind</groupId>
@@ -273,6 +278,11 @@
 									<groupId>javax.activation</groupId>
 									<artifactId>activation</artifactId>
 									<version>1.1.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>javax.annotation</groupId>
+									<artifactId>javax.annotation-api</artifactId>
+									<version>1.3.1</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>javax.xml.bind</groupId>
@@ -378,7 +388,7 @@
 									<groupId>wsdl4j</groupId>
 									<artifactId>wsdl4j</artifactId>
 									<version>1.6.3</version>
-								</artifactItem-->
+								</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -420,24 +430,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<!--repositories>
-		<repository>
-			<id>repository.apache.org</id>
-			<url>https://repository.apache.org/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>maven.springframework.org</id>
-			<url>http://maven.springframework.org/release/</url>
-		</repository>
-		<repository>
-			<id>maven.java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-		<repository>
-			<id>repository.jboss.org.thirdparty</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
-		</repository>
-	</repositories-->
 
 </project>

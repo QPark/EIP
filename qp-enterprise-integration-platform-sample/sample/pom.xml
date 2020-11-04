@@ -67,29 +67,6 @@
 	</developers>
 	<inceptionYear>2013</inceptionYear>
 
-	<!--repositories>
-		<repository>
-			<id>maven.central</id>
-			<url>https://repo1.maven.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>repository.apache.org</id>
-			<url>https://repository.apache.org/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>maven.springframework.org</id>
-			<url>https://maven.springframework.org/release/</url>
-		</repository>
-		<repository>
-			<id>maven.java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-		<repository>
-			<id>repository.jboss.org.thirdparty</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
-		</repository>
-	</repositories-->
-	
 	<properties>
 		<base.package.name>${project.groupId}</base.package.name>
 		<bus.application.name>iss</bus.application.name>

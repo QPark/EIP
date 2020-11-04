@@ -7,11 +7,14 @@
  ******************************************************************************/
 package com.qpark.eip.core.spring.security;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.StrongTextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 
@@ -19,6 +22,8 @@ import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
  * @author bhausen
  */
 public class EipJasyptEncryptionProvider {
+	/** The {@link Logger}. */
+	private static final Logger logger = LoggerFactory.getLogger(EipJasyptEncryptionProvider.class);
 	/** The property name of the encryptor password. */
 	public static String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip_jasypt_encryptor_password";
 
@@ -32,11 +37,9 @@ public class EipJasyptEncryptionProvider {
 	 * @return the encrypted text.
 	 * @throws EncryptionOperationNotPossibleException
 	 */
-	public static String decrypt(final String text,
-			final ApplicationPlaceholderConfigurer properties)
+	public static String decrypt(final String text, final ApplicationPlaceholderConfigurer properties)
 			throws EncryptionOperationNotPossibleException {
-		return Optional.ofNullable(properties)
-				.map(p -> decrypt(text, p.toProperties()))
+		return Optional.ofNullable(properties).map(p -> decrypt(text, p.toProperties()))
 				.orElse(decrypt(text, (Properties) null));
 	}
 
@@ -54,12 +57,10 @@ public class EipJasyptEncryptionProvider {
 			throws EncryptionOperationNotPossibleException {
 		return Optional.ofNullable(password).map(p -> text).map(t -> {
 			String value = null;
-			if (t.trim().startsWith("ENC(") && t.trim().endsWith(")")
-					&& password.length > 0) {
+			if (t.trim().startsWith("ENC(") && t.trim().endsWith(")") && password.length > 0) {
 				StrongTextEncryptor encryptor = new StrongTextEncryptor();
 				encryptor.setPassword(String.valueOf(password));
-				value = encryptor.decrypt(
-						t.substring(0, t.length() - 1).replace("ENC(", ""));
+				value = encryptor.decrypt(t.substring(0, t.length() - 1).replace("ENC(", ""));
 			}
 			return value;
 		}).orElse(text);
@@ -80,8 +81,7 @@ public class EipJasyptEncryptionProvider {
 		return Optional.ofNullable(text).map(t -> {
 			String value = null;
 			if (t.trim().startsWith("ENC(") && t.trim().endsWith(")")) {
-				value = getEncryptor(properties).decrypt(
-						t.substring(0, t.length() - 1).replace("ENC(", ""));
+				value = getEncryptor(properties).decrypt(t.substring(0, t.length() - 1).replace("ENC(", ""));
 			}
 			return value;
 		}).orElse(text);
@@ -92,8 +92,7 @@ public class EipJasyptEncryptionProvider {
 	 *                       the {@link Properties}.
 	 * @return the jasypt {@link StrongTextEncryptor}
 	 */
-	public static StrongTextEncryptor getEncryptor(
-			final ApplicationPlaceholderConfigurer properties) {
+	public static StrongTextEncryptor getEncryptor(final ApplicationPlaceholderConfigurer properties) {
 		final StrongTextEncryptor encryptor = new StrongTextEncryptor();
 		encryptor.setPassword(getEncryptorPassword(properties));
 		return encryptor;
@@ -106,8 +105,7 @@ public class EipJasyptEncryptionProvider {
 	 */
 	public static StrongTextEncryptor getEncryptor(final char[] password) {
 		final StrongTextEncryptor encryptor = new StrongTextEncryptor();
-		Optional.ofNullable(password)
-				.ifPresent(p -> encryptor.setPasswordCharArray(password));
+		Optional.ofNullable(password).ifPresent(p -> encryptor.setPasswordCharArray(password));
 		return encryptor;
 	}
 
@@ -116,42 +114,49 @@ public class EipJasyptEncryptionProvider {
 	 *                       the {@link Properties}.
 	 * @return the jasypt {@link StrongTextEncryptor}
 	 */
-	public static StrongTextEncryptor getEncryptor(
-			final Properties properties) {
+	public static StrongTextEncryptor getEncryptor(final Properties properties) {
 		final StrongTextEncryptor encryptor = new StrongTextEncryptor();
 		encryptor.setPassword(getEncryptorPassword(properties));
 		return encryptor;
 	}
 
 	/**
-	 * Get the encryptor password from Environment, system properties or
-	 * properties.
+	 * Get the encryptor password from Environment, system properties or properties.
 	 *
 	 * @param properties
 	 *                       the {@link ApplicationPlaceholderConfigurer}.
 	 * @return the password.
 	 */
-	public static String getEncryptorPassword(
-			final ApplicationPlaceholderConfigurer properties) {
-		return Optional.ofNullable(properties)
-				.map(p -> getEncryptorPassword(p.toProperties())).orElse("eip");
+	public static String getEncryptorPassword(final ApplicationPlaceholderConfigurer properties) {
+		return Optional.ofNullable(properties).map(p -> getEncryptorPassword(p.toProperties())).orElse("eip");
 	}
 
 	/**
-	 * Get the encryptor password from Environment, system properties or
-	 * properties.
+	 * Get the encryptor password from Environment, system properties or properties.
 	 *
 	 * @param properties
 	 *                       the {@link Properties}.
 	 * @return the password.
 	 */
 	public static String getEncryptorPassword(final Properties properties) {
-		return Optional
-				.ofNullable(System.getenv(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
-				.orElse(System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME,
-						Optional.ofNullable(properties)
-								.map(p -> p.getProperty(
-										EIP_ENCRYPTOR_PWD_PROPERTY_NAME, "eip"))
-								.orElse("eip")));
+		String pwd = Optional.ofNullable(System.getenv(EIP_ENCRYPTOR_PWD_PROPERTY_NAME)).orElse(null);
+		if (Objects.nonNull(pwd)) {
+			logger.info("Found OS environment variable {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+		} else {
+			pwd = System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+			if (Objects.nonNull(pwd)) {
+				logger.info("Found JVM property {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+			} else {
+				pwd = Optional.ofNullable(properties).map(p -> p.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
+						.orElse(null);
+				if (Objects.nonNull(pwd)) {
+					logger.info("Found in provided properties property {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+				}
+			}
+		}
+		if (Objects.isNull(pwd)) {
+			pwd = "eip";
+		}
+		return pwd;
 	}
 }
