@@ -1,41 +1,51 @@
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
 
 	xmlns:LSv25="http://www.qpark.com/LimeSurvey/LimeSurvey-2.5"
 	targetNamespace="http://www.qpark.com/LimeSurvey/LimeSurvey-2.5"
 >
+
+
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.qpark.lime.survey.model.v25" />
+				<jaxb:package name="com.qpark.lime.survey.model.v25"/>
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation></documentation>
+		<documentation/>
 	</annotation>
+
 
 	<complexType name="RequestType">
 		<sequence>
 			<element name="method" type="normalizedString">
-				<annotation><documentation>The name of the method to request.</documentation></annotation>
-			</element>
+				<annotation><documentation>The name of the method to request.</documentation></annotation></element>
 			<element name="params" type="anyType" minOccurs="0" maxOccurs="unbounded">
-				<annotation><documentation>The parameters to pass to the method request.</documentation></annotation>
-			</element>
-			<element name="id" type="int" minOccurs="0" maxOccurs="1">
-				<annotation><documentation>The parameters to pass to the method request.</documentation></annotation>
-			</element>
+				<annotation><documentation>The parameters to pass to the method request.</documentation></annotation></element>
+			<element name="id" type="int" minOccurs="0">
+				<annotation><documentation>The parameters to pass to the method request.</documentation></annotation></element>
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="GetSessionKeyResponseType">
 		<sequence>
 			<element name="id" type="int"/>
 			<element name="result" type="string">
-				<annotation><documentation>The session key.</documentation></annotation>
-			</element>
+				<annotation><documentation>The session key.</documentation></annotation></element>
 			<element name="error" type="string"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ListSurveysResponseType">
 		<sequence>
 			<element name="id" type="int"/>
@@ -43,6 +53,7 @@
 			<element name="error" type="string"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ListSurveysEntryType">
 		<sequence>
 			<element name="sid" type="int"/>
@@ -52,6 +63,7 @@
 			<element name="active" type="boolean"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ListQuestionsResponseType">
 		<sequence>
 			<element name="id" type="int"/>
@@ -59,6 +71,7 @@
 			<element name="error" type="string"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ListQuestionsEntryType">
 		<sequence>
 			<element name="qid" type="string"/>
@@ -80,6 +93,7 @@
 			<element name="modulename" type="string" minOccurs="0"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ExportResponsesResponseType">
 		<sequence>
 			<element name="id" type="int"/>
@@ -87,22 +101,24 @@
 			<element name="error" type="string"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ExportResponsesListType">
 		<sequence>
 			<element name="responses" type="LSv25:ExportResponsesListEntryType" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ExportResponsesListEntryType">
 		<sequence>
-			<element name="id" type="string" minOccurs="0" />
-			<element name="submitdate" type="dateTime" minOccurs="0" />
-			<element name="lastpage" type="string" minOccurs="0" />
-			<element name="startlanguage" type="string" minOccurs="0" />
-			<element name="token" type="string" minOccurs="0" />
-			<element name="startdate" type="dateTime" minOccurs="0" />
-			<element name="datestamp" type="dateTime" minOccurs="0" />
-			<element name="ipaddr" type="string" minOccurs="0" />
-			<element name="refurl" type="string" minOccurs="0" />
+			<element name="id" type="string" minOccurs="0"/>
+			<element name="submitdate" type="dateTime" minOccurs="0"/>
+			<element name="lastpage" type="string" minOccurs="0"/>
+			<element name="startlanguage" type="string" minOccurs="0"/>
+			<element name="token" type="string" minOccurs="0"/>
+			<element name="startdate" type="dateTime" minOccurs="0"/>
+			<element name="datestamp" type="dateTime" minOccurs="0"/>
+			<element name="ipaddr" type="string" minOccurs="0"/>
+			<element name="refurl" type="string" minOccurs="0"/>
 		</sequence>
 	</complexType>
 </schema>

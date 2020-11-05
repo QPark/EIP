@@ -7,17 +7,19 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
 
 	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
 	targetNamespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
 >
 
+
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.inf.iss.tech.support.ext.type" />
+				<jaxb:package name="com.samples.platform.inf.iss.tech.support.ext.type"/>
 			</jaxb:schemaBindings>
 		</appinfo>
 		<documentation>Interfaces: Technical support external domain model (as in eip-core-persistence)</documentation>
@@ -25,44 +27,42 @@
 
 
 	<complexType name="ExtSystemUserLogType">
-		<annotation>
-			<documentation>System users number of calls.</documentation>
-		</annotation>
+		<annotation><documentation>System users number of calls.</documentation></annotation>
 		<sequence>
-			<element name="context" type="normalizedString" />
-			<element name="version" type="normalizedString" />
-			<element name="userName" type="normalizedString" />
-			<element name="serviceName" type="normalizedString" />
-			<element name="operationName" type="normalizedString" />
-			<element name="logDate" type="date" />
-			<element name="requestsGranted" type="int" />
-			<element name="requestsDenied" type="int" />
-			<element name="responseFaults" type="int" />
+			<element name="context" type="normalizedString"/>
+			<element name="version" type="normalizedString"/>
+			<element name="userName" type="normalizedString"/>
+			<element name="serviceName" type="normalizedString"/>
+			<element name="operationName" type="normalizedString"/>
+			<element name="logDate" type="date"/>
+			<element name="requestsGranted" type="int"/>
+			<element name="requestsDenied" type="int"/>
+			<element name="responseFaults" type="int"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ExtSystemUserLogCriteriaType">
 		<sequence>
-			<element name="logDate" type="date" />
+			<element name="logDate" type="date"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="ExtApplicationUserLogType">
-		<annotation>
-			<documentation>Application user log definition.</documentation>
-		</annotation>
+		<annotation><documentation>Application user log definition.</documentation></annotation>
 		<sequence>
-			<element name="context" type="normalizedString" />
-			<element name="version" type="normalizedString" />
-			<element name="userName" type="normalizedString" />
-			<element name="serviceName" type="normalizedString" />
-			<element name="operationName" type="normalizedString" />
-			<element name="clientSessionId" type="string" />
-			<element name="hostName" type="normalizedString" />
-			<element name="durationString" type="normalizedString" />
-			<element name="returnedEntities" type="int" />
-			<element name="returnedFailures" type="int" />
-			<element name="start" type="dateTime" />
-			<element name="stop" type="dateTime" />
-			<element name="durationMillis" type="long" />
+			<element name="context" type="normalizedString"/>
+			<element name="version" type="normalizedString"/>
+			<element name="userName" type="normalizedString"/>
+			<element name="serviceName" type="normalizedString"/>
+			<element name="operationName" type="normalizedString"/>
+			<element name="clientSessionId" type="string"/>
+			<element name="hostName" type="normalizedString"/>
+			<element name="durationString" type="normalizedString"/>
+			<element name="returnedEntities" type="int"/>
+			<element name="returnedFailures" type="int"/>
+			<element name="start" type="dateTime"/>
+			<element name="stop" type="dateTime"/>
+			<element name="durationMillis" type="long"/>
 		</sequence>
 	</complexType>
 

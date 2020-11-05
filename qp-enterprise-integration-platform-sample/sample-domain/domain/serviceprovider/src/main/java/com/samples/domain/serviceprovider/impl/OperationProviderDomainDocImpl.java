@@ -63,8 +63,7 @@ import com.samples.domain.serviceprovider.OperationProviderDomainDoc;
 @Component
 public class OperationProviderDomainDocImpl implements OperationProviderDomainDoc {
 	/** The {@link Logger}. */
-	private final Logger logger = LoggerFactory
-			.getLogger(OperationProviderDomainDocImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(OperationProviderDomainDocImpl.class);
 	/** The {@link ObjectFactory}. */
 	private final ObjectFactory of = new ObjectFactory();
 	/** Authenticated? */
@@ -72,47 +71,47 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	private AppSecurityContextHandler setSecurityContextAuth;
 	/** Gateway to get cluster. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetClusterGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetClusterGateway")
 	private GetCluster getCluster;
 	/** Gateway to get complex type. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetComplexTypeGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetComplexTypeGateway")
 	private GetComplexType getComplexType;
 	/** Gateway to get data type. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetDataTypeGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetDataTypeGateway")
 	private GetDataType getDataType;
 	/** Gateway to get element type. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetElementTypeGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetElementTypeGateway")
 	private GetElementType getElementType;
 	/** Gateway to get field mapping type. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetFieldMappingTypeGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetFieldMappingTypeGateway")
 	private GetFieldMappingType getFieldMappingType;
 	/** Gateway to get flow interface mapping type. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetFlowInterfaceMappingTypeGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetFlowInterfaceMappingTypeGateway")
 	private GetFlowInterfaceMappingType getFlowInterfaceMappingType;
 	/** Gateway to get flow. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetFlowGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetFlowGateway")
 	private GetFlow getFlow;
 	/** Gateway to get revision. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetRevisionGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetRevisionGateway")
 	private GetRevision getRevision;
 	/** Gateway to get service id. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetServiceIdGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetServiceIdGateway")
 	private GetServiceId getServiceId;
 	/** Gateway to get service. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetServiceGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetServiceGateway")
 	private GetService getService;
 	/** Gateway to get target namespace. */
 	@Autowired
-	@Qualifier("eipCallerComSamplesPlatformDomainDocGetTargetNamespaceGateway")
+	@Qualifier("eipCallerComSamplesBusDomainDocGetTargetNamespaceGateway")
 	private GetTargetNamespace getTargetNamespace;
 
 	/**
@@ -121,14 +120,13 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 */
 	private String requestDuration(final long start) {
 		long millis = System.currentTimeMillis() - start;
-		String hmss = String.format("%03d:%02d:%02d.%03d",
-				TimeUnit.MILLISECONDS.toHours(millis),
-				TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS
-						.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-				TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES
-						.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
-				TimeUnit.MILLISECONDS.toMillis(millis) - TimeUnit.SECONDS
-						.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)));
+		String hmss = String.format("%03d:%02d:%02d.%03d", TimeUnit.MILLISECONDS.toHours(millis),
+				TimeUnit.MILLISECONDS.toMinutes(millis)
+						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+				TimeUnit.MILLISECONDS.toSeconds(millis)
+						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+				TimeUnit.MILLISECONDS.toMillis(millis)
+						- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)));
 		return hmss;
 	}
 
@@ -161,8 +159,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getCluster(com.qpark.eip.service.domain.doc.msg.GetClusterRequestType)
 	 */
 	@Override
-	public GetClusterResponseType getCluster(
-			final GetClusterRequestType request) {
+	public GetClusterResponseType getCluster(final GetClusterRequestType request) {
 		this.logger.debug("+getCluster");
 		GetClusterResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -175,8 +172,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getCluster duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getCluster duration {}", this.requestDuration(start));
 			this.logger.debug("-getCluster");
 		}
 		return value;
@@ -186,8 +182,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getComplexType(com.qpark.eip.service.domain.doc.msg.GetComplexTypeRequestType)
 	 */
 	@Override
-	public GetComplexTypeResponseType getComplexType(
-			final GetComplexTypeRequestType request) {
+	public GetComplexTypeResponseType getComplexType(final GetComplexTypeRequestType request) {
 		this.logger.debug("+getComplexType");
 		GetComplexTypeResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -200,8 +195,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getComplexType duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getComplexType duration {}", this.requestDuration(start));
 			this.logger.debug("-getComplexType");
 		}
 		return value;
@@ -211,8 +205,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getDataType(com.qpark.eip.service.domain.doc.msg.GetDataTypeRequestType)
 	 */
 	@Override
-	public GetDataTypeResponseType getDataType(
-			final GetDataTypeRequestType request) {
+	public GetDataTypeResponseType getDataType(final GetDataTypeRequestType request) {
 		this.logger.debug("+getDataType");
 		GetDataTypeResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -225,8 +218,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getDataType duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getDataType duration {}", this.requestDuration(start));
 			this.logger.debug("-getDataType");
 		}
 		return value;
@@ -236,8 +228,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getElementType(com.qpark.eip.service.domain.doc.msg.GetElementTypeRequestType)
 	 */
 	@Override
-	public GetElementTypeResponseType getElementType(
-			final GetElementTypeRequestType request) {
+	public GetElementTypeResponseType getElementType(final GetElementTypeRequestType request) {
 		this.logger.debug("+getElementType");
 		GetElementTypeResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -250,8 +241,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getElementType duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getElementType duration {}", this.requestDuration(start));
 			this.logger.debug("-getElementType");
 		}
 		return value;
@@ -261,8 +251,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getFieldMappingType(com.qpark.eip.service.domain.doc.msg.GetFieldMappingTypeRequestType)
 	 */
 	@Override
-	public GetFieldMappingTypeResponseType getFieldMappingType(
-			final GetFieldMappingTypeRequestType request) {
+	public GetFieldMappingTypeResponseType getFieldMappingType(final GetFieldMappingTypeRequestType request) {
 		this.logger.debug("+getFieldMappingType");
 		GetFieldMappingTypeResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -275,8 +264,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getFieldMappingType duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getFieldMappingType duration {}", this.requestDuration(start));
 			this.logger.debug("-getFieldMappingType");
 		}
 		return value;
@@ -294,15 +282,13 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 		try {
 			this.requestInit();
 			JAXBElement<GetFlowInterfaceMappingTypeResponseType> response = this.getFlowInterfaceMappingType
-					.invoke(this.of
-							.createGetFlowInterfaceMappingTypeRequest(request));
+					.invoke(this.of.createGetFlowInterfaceMappingTypeRequest(request));
 			if (response != null) {
 				value = response.getValue();
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getFlowInterfaceMappingType duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getFlowInterfaceMappingType duration {}", this.requestDuration(start));
 			this.logger.debug("-getFlowInterfaceMappingType");
 		}
 		return value;
@@ -318,15 +304,13 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 		long start = System.currentTimeMillis();
 		try {
 			this.requestInit();
-			JAXBElement<GetFlowResponseType> response = this.getFlow
-					.invoke(this.of.createGetFlowRequest(request));
+			JAXBElement<GetFlowResponseType> response = this.getFlow.invoke(this.of.createGetFlowRequest(request));
 			if (response != null) {
 				value = response.getValue();
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getFlow duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getFlow duration {}", this.requestDuration(start));
 			this.logger.debug("-getFlow");
 		}
 		return value;
@@ -336,8 +320,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getRevision(com.qpark.eip.service.domain.doc.msg.GetRevisionRequestType)
 	 */
 	@Override
-	public GetRevisionResponseType getRevision(
-			final GetRevisionRequestType request) {
+	public GetRevisionResponseType getRevision(final GetRevisionRequestType request) {
 		this.logger.debug("+getRevision");
 		GetRevisionResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -350,8 +333,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getRevision duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getRevision duration {}", this.requestDuration(start));
 			this.logger.debug("-getRevision");
 		}
 		return value;
@@ -361,8 +343,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getServiceId(com.qpark.eip.service.domain.doc.msg.GetServiceIdRequestType)
 	 */
 	@Override
-	public GetServiceIdResponseType getServiceId(
-			final GetServiceIdRequestType request) {
+	public GetServiceIdResponseType getServiceId(final GetServiceIdRequestType request) {
 		this.logger.debug("+getServiceId");
 		GetServiceIdResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -375,8 +356,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getServiceId duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getServiceId duration {}", this.requestDuration(start));
 			this.logger.debug("-getServiceId");
 		}
 		return value;
@@ -386,8 +366,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getService(com.qpark.eip.service.domain.doc.msg.GetServiceRequestType)
 	 */
 	@Override
-	public GetServiceResponseType getService(
-			final GetServiceRequestType request) {
+	public GetServiceResponseType getService(final GetServiceRequestType request) {
 		this.logger.debug("+getService");
 		GetServiceResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -400,8 +379,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getService duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getService duration {}", this.requestDuration(start));
 			this.logger.debug("-getService");
 		}
 		return value;
@@ -411,8 +389,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 	 * @see com.samples.domain.serviceprovider.OperationProviderDomainDoc#getTargetNamespace(com.qpark.eip.service.domain.doc.msg.GetTargetNamespaceRequestType)
 	 */
 	@Override
-	public GetTargetNamespaceResponseType getTargetNamespace(
-			final GetTargetNamespaceRequestType request) {
+	public GetTargetNamespaceResponseType getTargetNamespace(final GetTargetNamespaceRequestType request) {
 		this.logger.debug("+getTargetNamespace");
 		GetTargetNamespaceResponseType value = null;
 		long start = System.currentTimeMillis();
@@ -425,8 +402,7 @@ public class OperationProviderDomainDocImpl implements OperationProviderDomainDo
 			}
 		} finally {
 			this.requestFinalization();
-			this.logger.debug(" getTargetNamespace duration {}",
-					this.requestDuration(start));
+			this.logger.debug(" getTargetNamespace duration {}", this.requestDuration(start));
 			this.logger.debug("-getTargetNamespace");
 		}
 		return value;

@@ -7,8 +7,8 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:ISScty="http://www.samples.com/CommonTypes"
@@ -23,21 +23,22 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.model.library" />
+				<jaxb:package name="com.samples.platform.model.library"/>
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation></documentation>
+		<documentation/>
 	</annotation>
+
 
 	<complexType name="BookType">
 		<complexContent>
 			<extension base="EIPcty:EntityType">
 				<sequence>
-					<element name="ISBN" type="string"></element>
-					<element name="title" type="string"></element>
-					<element name="price" type="ISScty:EURType"></element>
-					<element name="category" type="EIPcty:UUIDType"></element>
-					<element name="language" type="EIPcty:UUIDType"></element>
+					<element name="ISBN" type="string"/>
+					<element name="title" type="string"/>
+					<element name="price" type="ISScty:EURType"/>
+					<element name="category" type="EIPcty:UUIDType"/>
+					<element name="language" type="EIPcty:UUIDType"/>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -47,7 +48,8 @@
 		<complexContent>
 			<extension base="EIPcty:EntityCriteriaType">
 				<sequence>
-					<element name="ISBN" type="string"></element>
+					<element name="title" type="string"/>
+					<element name="ISBN" type="string"/>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -57,10 +59,8 @@
 		<complexContent>
 			<extension base="EIPcty:AssetType">
 				<sequence>
-					<element name="location" type="string" maxOccurs="1"
-						minOccurs="0">
-					</element>
-					<element name="books" type="ISSlib:BookType" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="location" type="string" minOccurs="0"/>
+					<element name="books" type="ISSlib:BookType" minOccurs="0" maxOccurs="unbounded"/>
 				</sequence>
 			</extension>
 		</complexContent>

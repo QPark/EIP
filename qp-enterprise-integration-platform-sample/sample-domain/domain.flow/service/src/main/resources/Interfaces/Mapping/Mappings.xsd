@@ -7,12 +7,14 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
 
 	xmlns:MPmap="http://www.qpark.com/Interfaces/Mapping"
 	targetNamespace="http://www.qpark.com/Interfaces/Mapping"
 >
+
 
 	<annotation>
 		<appinfo>
@@ -23,16 +25,16 @@
 		<documentation>Interface: Mapping definitions interface.</documentation>
 	</annotation>
 
+
 	<complexType name="MappingInputType">
 		<sequence>
-			<element name="userName" type="string" minOccurs="1" maxOccurs="1">
-				<annotation>
-					<documentation>The application user</documentation>
-				</annotation>
-			</element>
+			<element name="userName" type="string">
+				<annotation><documentation>The application user</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="MappingOutputType"/>
+
 	<complexType name="NullMapRequestType">
 		<complexContent>
 			<extension base="MPmap:MappingInputType">
@@ -40,6 +42,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="NullMapResponseType">
 		<complexContent>
 			<extension base="MPmap:MappingOutputType">

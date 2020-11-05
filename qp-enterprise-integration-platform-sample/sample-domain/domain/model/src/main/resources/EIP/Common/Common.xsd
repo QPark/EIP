@@ -7,12 +7,14 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	targetNamespace="http://www.qpark.com/CommonTypes"
 >
+
 
 	<annotation>
 		<appinfo>
@@ -27,12 +29,10 @@
 		<annotation><documentation>A regular expression</documentation></annotation>
 		<restriction base="string"/>
 	</simpleType>
-
 	<simpleType name="ContainsSearchExpressionType">
 		<annotation><documentation>A search expression using the contains semantic.</documentation></annotation>
 		<restriction base="string"/>
 	</simpleType>
-
 	<simpleType name="UUIDType">
 		<annotation><documentation>A general unique identifier based on the Java implementation. Every entity in the master data architecture needs an assigned UUID.</documentation></annotation>
 		<restriction base="normalizedString">
@@ -45,8 +45,7 @@
 		<sequence>
 			<element name="UUID" type="EIPcty:UUIDType" minOccurs="0">
 				<annotation><documentation>The UUID is a unique identifier of an object in a master data architecture.
-					The id is optional since it can be empty for entities to be saved in a system.</documentation></annotation>
-			</element>
+The id is optional since it can be empty for entities to be saved in a system.</documentation></annotation></element>
 		</sequence>
 	</complexType>
 
@@ -72,7 +71,7 @@ search that is compliant with the regular expression search in the back-end syst
 		<sequence>
 			<element name="id" type="EIPcty:UUIDType" minOccurs="0" maxOccurs="unbounded">
 				<annotation><documentation>The UUID of the object that shall be retrieved. The UUID is optional.
-					If no UUID is given the size of the search result set can be >1.</documentation></annotation></element>
+If no UUID is given the size of the search result set can be >1.</documentation></annotation></element>
 			<element name="maxElements" type="integer" minOccurs="0">
 				<annotation><documentation>The maximum number of elements returned by the search.</documentation></annotation></element>
 		</sequence>
@@ -102,14 +101,14 @@ Enumerations allow for a flexible configuration of the the master data aware app
 			<extension base="EIPcty:EntityType">
 				<sequence>
 					<element name="displayValue" type="string">
-						<annotation><documentation> The display value shall be used to populate visual GUI elements.</documentation></annotation></element>
+						<annotation><documentation>The display value shall be used to populate visual GUI elements.</documentation></annotation></element>
 					<element name="category" type="string">
 						<annotation><documentation>The category the reference data entry belongs to. The category is defined in the master system or in the enterprise integration platform itself.</documentation></annotation></element>
 					<element name="description" type="string" minOccurs="0">
 						<annotation><documentation>Description of the reference data entry.</documentation></annotation></element>
 					<element name="active" type="boolean">
 						<annotation><documentation>Flag indicating that the reference data entry is no longer active. It shall no longer be used in partner systems.</documentation></annotation></element>
-					<element name="value" type="string" minOccurs="0"></element>
+					<element name="value" type="string" minOccurs="0"/>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -168,5 +167,4 @@ Enumerations allow for a flexible configuration of the the master data aware app
 				<annotation><documentation>Schema validation error</documentation></annotation></element>
 		</sequence>
 	</complexType>
-
 </schema>

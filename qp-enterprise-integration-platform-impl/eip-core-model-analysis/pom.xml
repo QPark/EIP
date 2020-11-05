@@ -37,6 +37,10 @@
 			<artifactId>eip-model-analysis</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-reporting</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
 		</dependency>

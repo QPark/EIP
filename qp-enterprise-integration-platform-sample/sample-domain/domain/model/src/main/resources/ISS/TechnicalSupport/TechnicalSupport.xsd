@@ -7,8 +7,8 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:ISScty="http://www.samples.com/CommonTypes"
@@ -23,16 +23,18 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.model.iss.tech.support" />
+				<jaxb:package name="com.samples.platform.model.iss.tech.support"/>
 			</jaxb:schemaBindings>
 		</appinfo>
 	</annotation>
+
 
 	<complexType name="SystemUserReportCriteriaType">
 		<sequence>
 			<element name="date" type="date" minOccurs="0"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="SystemUserReportType">
 		<sequence>
 			<element name="date" type="date"/>
@@ -62,10 +64,11 @@
 
 	<complexType name="FlowReportCriteriaType">
 		<sequence>
-			<element name="start" type="dateTime" />
+			<element name="start" type="dateTime"/>
 			<element name="end" type="dateTime" minOccurs="0"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="FlowReportType">
 		<sequence>
 			<element name="flowSessionId" type="EIPcty:UUIDType"/>
@@ -81,25 +84,24 @@
 	</complexType>
 
 	<complexType name="OperationEventType">
-		<annotation>
-			<documentation>Contains the event to start, stop, lock or unlock of a operation.</documentation>
-		</annotation>
+		<annotation><documentation>Contains the event to start, stop, lock or unlock of a operation.</documentation></annotation>
 		<sequence>
-			<element name="operationUUID" type="EIPcty:UUIDType" />
-			<element name="event" type="normalizedString" />
+			<element name="operationUUID" type="EIPcty:UUIDType"/>
+			<element name="event" type="normalizedString"/>
 			<element name="operationTime" type="dateTime" minOccurs="0"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="OperationStateType">
 		<sequence>
-			<element name="operationUUID" type="EIPcty:UUIDType" />
-			<element name="state" type="normalizedString" />
-		</sequence>
-	</complexType>
-	<complexType name="BookType">
-		<sequence>
-			<element name="JustAnotherBookType" type="string"></element>
+			<element name="operationUUID" type="EIPcty:UUIDType"/>
+			<element name="state" type="normalizedString"/>
 		</sequence>
 	</complexType>
 
+	<complexType name="BookType">
+		<sequence>
+			<element name="JustAnotherBookType" type="string"/>
+		</sequence>
+	</complexType>
 </schema>

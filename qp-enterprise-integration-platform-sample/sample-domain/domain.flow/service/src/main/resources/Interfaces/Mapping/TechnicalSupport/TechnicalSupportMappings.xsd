@@ -7,14 +7,13 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:ISSTechSupport="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes"
 	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
 	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportInterfaceTypes"
-
 	xmlns:MPmap="http://www.qpark.com/Interfaces/Mapping"
 
 	xmlns:MPTechSupportMapp="http://www.samples.com/Interfaces/TechnicalSupportMappings"
@@ -25,7 +24,6 @@
 	<import namespace="http://www.samples.com/TechnicalSupport/TechnicalSupportTypes" schemaLocation="http://www.samples.com/model/ISS/TechnicalSupport/TechnicalSupport.xsd"/>
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportExternalDefinedTypes.xsd"/>
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportInterfaceTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportInterfaceTypes.xsd"/>
-
 	<import namespace="http://www.qpark.com/Interfaces/Mapping" schemaLocation="../Mappings.xsd"/>
 
 	<annotation>
@@ -37,6 +35,7 @@
 		<documentation>Interface: Mapping definitions of the technical support interface.</documentation>
 	</annotation>
 
+
 	<complexType name="SystemUserReportTypeMapRequestType">
 		<complexContent>
 			<extension base="MPmap:MappingInputType">
@@ -46,6 +45,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="SystemUserReportTypeMapResponseType">
 		<complexContent>
 			<extension base="MPmap:MappingOutputType">
@@ -65,6 +65,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="SystemUserLogCriteriaTypeMapResponseType">
 		<complexContent>
 			<extension base="MPmap:MappingOutputType">

@@ -7,8 +7,8 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
 	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
@@ -23,93 +23,59 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.qpark.eip.service.common.msg" />
+				<jaxb:package name="com.qpark.eip.service.common.msg"/>
 			</jaxb:schemaBindings>
 		</appinfo>
 		<documentation>Message definitions of the common web service.</documentation>
 	</annotation>
 
+
 	<complexType name="GetServiceStatusRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer ESB
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription returns the status of the service (connectivity to databases, external systems ...).
-			</documentation>
-		</annotation>
+		<annotation><documentation>Returns the status of the service (connectivity to databases, external systems ...).</documentation></annotation>
 		<complexContent>
-			<extension base="EIPbasem:RequestMessage" />
+			<extension base="EIPbasem:RequestMessage"/>
 		</complexContent>
 	</complexType>
+
 	<complexType name="GetServiceStatusResponseType">
-		<annotation>
-			<documentation>The service status.</documentation>
-		</annotation>
+		<annotation><documentation>The service status.</documentation></annotation>
 		<complexContent>
 			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="status" type="string">
-						<annotation>
-							<documentation>
-								Status of the service.
-							</documentation>
-						</annotation>
-					</element>
-					<element name="details" type="EIPcty:PropertyType"
-						minOccurs="0" maxOccurs="unbounded">
-						<annotation>
-							<documentation>
-								The details of the status.
-							</documentation>
-						</annotation>
-					</element>
+						<annotation><documentation>Status of the service.</documentation></annotation></element>
+					<element name="details" type="EIPcty:PropertyType" minOccurs="0" maxOccurs="unbounded">
+						<annotation><documentation>The details of the status.</documentation></annotation></element>
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
-	<element name="GetServiceStatusRequest" type="EIPctym:GetServiceStatusRequestType" />
-	<element name="GetServiceStatusResponse" type="EIPctym:GetServiceStatusResponseType" />
+	<element name="GetServiceStatusRequest" type="EIPctym:GetServiceStatusRequestType"/>
+	<element name="GetServiceStatusResponse" type="EIPctym:GetServiceStatusResponseType"/>
 
 	<complexType name="GetReferenceDataRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer tbd
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription GetReferenceData returns reference data definitions from the ESB core to resolve UUID references.
-			</documentation>
-		</annotation>
+		<annotation><documentation>GetReferenceData returns reference data definitions from the ESB core to resolve UUID references.</documentation></annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
 				<sequence>
 					<element name="criteria" type="EIPcty:ReferenceDataCriteriaType">
-						<annotation>
-							<documentation>Reference data search criteria</documentation>
-						</annotation>
-					</element>
+						<annotation><documentation>Reference data search criteria</documentation></annotation></element>
 				</sequence>
-				</extension>
+			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="GetReferenceDataResponseType">
-		<annotation>
-			<documentation>Reference data from ESb enumerations.</documentation>
-		</annotation>
+		<annotation><documentation>Reference data from ESb enumerations.</documentation></annotation>
 		<complexContent>
 			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
 					<element name="referenceData" type="EIPcty:ReferenceDataType" minOccurs="0" maxOccurs="unbounded">
-						<annotation>
-							<documentation>Reference data</documentation>
-						</annotation>
-					</element>
+						<annotation><documentation>Reference data</documentation></annotation></element>
 				</sequence>
-				</extension>
+			</extension>
 		</complexContent>
 	</complexType>
-
-	<element name="GetReferenceDataRequest" type="EIPctym:GetReferenceDataRequestType" />
-	<element name="GetReferenceDataResponse" type="EIPctym:GetReferenceDataResponseType" />
+	<element name="GetReferenceDataRequest" type="EIPctym:GetReferenceDataRequestType"/>
+	<element name="GetReferenceDataResponse" type="EIPctym:GetReferenceDataResponseType"/>
 </schema>
-

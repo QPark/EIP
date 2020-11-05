@@ -6,26 +6,34 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
-package com.samples.platform.service.iss.tech.support.lockedoperation;
+package com.samples.platform.serviceprovider.domaindoc;
+
+import java.util.Date;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.qpark.eip.core.model.analysis.ServiceReport;
+import com.qpark.eip.core.reporting.Report;
+import com.qpark.eip.core.reporting.ReportRenderer;
 import com.qpark.eip.core.spring.lockedoperation.AbstractAsyncLockableOperation;
+import com.qpark.eip.core.spring.lockedoperation.LockableOperation;
 import com.qpark.eip.core.spring.lockedoperation.LockableOperationContext;
+import com.qpark.eip.service.domain.doc.report.DataProviderModelAnalysis;
 
 /**
- * 60 seconds running operation with UUID {@value #OPERATION_UUID}.
- *
  * @author bhausen
  */
 @Component
-public class AsyncLongRunningLockedOperation extends AbstractAsyncLockableOperation {
-	/** The UUID of the locked operation. */
-	public static final String OPERATION_UUID = "a5a70aea-86b0-3a74-86dd-2f0ea139c950";
-	/** The {@link org.slf4j.Logger}. */
-	private Logger logger = LoggerFactory.getLogger(AsyncLongRunningLockedOperation.class);
+public class CreateServiceReport extends AbstractAsyncLockableOperation {
+	/** The UUID of the {@link LockableOperation}. */
+	public static final String OPERATION_UUID = "3668b727-b3a8-496b-99b7-d77b517a738a";
+	/** The {@link Logger}. */
+	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CreateServiceReport.class);
+	/** The {@link EnterpriseDao}. */
+	@Autowired
+	private EnterpriseDao enterprise;
 
 	/**
 	 * @see com.qpark.eip.core.spring.lockedoperation.LockableOperation#getLogger()
@@ -56,13 +64,16 @@ public class AsyncLongRunningLockedOperation extends AbstractAsyncLockableOperat
 	 */
 	@Override
 	protected void invokeOperationAsync(final LockableOperationContext context) {
-		this.logger.info("+invokeOperationAsync {} {}", this.getName(), this.getUUID());
+		this.logger.debug("+invokeOperationAsync {} {}", this.getName(), this.getUUID());
+		final ReportRenderer renderer = new ReportRenderer();
+		StringBuffer sb = new StringBuffer();
+		Report<DataProviderModelAnalysis> report = new ServiceReport(new Date()).createReportContent(this.enterprise);
 		try {
-			Thread.sleep(15 * 1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			renderer.renderReportCSV(report.getReport(), sb);
+			this.logger.info(sb.toString());
+		} catch (final Exception e) {
+			this.logger.error(e.getMessage(), e);
 		}
-		this.logger.info("-invokeOperationAsync {} {}", this.getName(), this.getUUID());
+		this.logger.debug("-invokeOperationAsync {} {}", this.getName(), this.getUUID());
 	}
-
 }

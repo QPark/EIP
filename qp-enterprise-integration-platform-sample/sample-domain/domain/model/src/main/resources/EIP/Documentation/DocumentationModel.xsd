@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
+
 	xmlns:DM="http://www.qpark-consulting.com/EIP/Utility/DocumentationModel"
 	targetNamespace="http://www.qpark-consulting.com/EIP/Utility/DocumentationModel"
 >
+
+
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.qpark.eip.model.docmodel" />
+				<jaxb:package name="com.qpark.eip.model.docmodel"/>
 			</jaxb:schemaBindings>
 		</appinfo>
 	</annotation>
+
 
 	<complexType name="EnterpriseType">
 		<sequence>
 			<element name="name" type="DM:nameType"/>
 			<element name="modelVersion" type="DM:modelVersionType">
 				<annotation><documentation>The version concatenated with the time stamp created.</documentation></annotation></element>
-			<element name="domains" type="DM:DomainType" maxOccurs="unbounded" minOccurs="0"/>
-			<element name="flows" type="DM:FlowType" maxOccurs="unbounded" minOccurs="0"/>
+			<element name="domains" type="DM:DomainType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="flows" type="DM:FlowType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="basicDataTypes" type="DM:DataType" minOccurs="0" maxOccurs="unbounded">
 				<annotation><documentation>The XMLSchema defined data types.</documentation></annotation></element>
 		</sequence>
@@ -46,6 +59,7 @@
 				<annotation><documentation>This is _NOT_ parsed data till now.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="ClusterType">
 		<annotation><documentation>This is basically the schema file.</documentation></annotation>
 		<sequence>
@@ -84,8 +98,9 @@
 				<annotation><documentation>The list of warning detected (e.g. namespace imported but not used).</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="ServiceType">
-		<annotation><documentation>This is basically the schema file. </documentation></annotation>
+		<annotation><documentation>This is basically the schema file.</documentation></annotation>
 		<sequence>
 			<element name="id" type="DM:UUIDType">
 				<annotation><documentation>The UUID.</documentation></annotation></element>
@@ -99,22 +114,17 @@
 			<element name="clusterId" type="DM:UUIDType">
 				<annotation><documentation>The id of the cluster that contains the service definition.</documentation></annotation></element>
 			<element name="serviceId" type="DM:nameType">
-				<annotation>
-					<documentation>
-						This is a substring of the package name reduced by
-						the base package name of the {@link Enterprise} and the message
-						definitions.
-						If the {@link Enterprise#getBasePackageName()} equals to
-						"com.samples.platform" and the message definitions specified when
-						running the {@link XsdsUtil} is "msg svc mapping flow" the resulting
-						{@link Service#serviceId} of the service defined in the XSD with JAXB
-						package name "com.samples.platform.service.library.msg" will be
-						"library".
-						see ServiceIdRegistry#getAllServiceIds()
-						see com.qpark.maven.plugin.xjc.XjcMojo#messagePackageNameSuffixes
-					</documentation>
-				</annotation>
-			</element>
+				<annotation><documentation>This is a substring of the package name reduced by
+the base package name of the {@link Enterprise} and the message
+definitions.
+If the {@link Enterprise#getBasePackageName()} equals to
+"com.samples.platform" and the message definitions specified when
+running the {@link XsdsUtil} is "msg svc mapping flow" the resulting
+{@link Service#serviceId} of the service defined in the XSD with JAXB
+package name "com.samples.platform.service.library.msg" will be
+"library".
+see ServiceIdRegistry#getAllServiceIds()
+see com.qpark.maven.plugin.xjc.XjcMojo#messagePackageNameSuffixes</documentation></annotation></element>
 			<element name="packageName" type="DM:nameType">
 				<annotation><documentation>This is the JAXB package name definition of the service.</documentation></annotation></element>
 			<element name="securityRoleName" type="DM:nameType">
@@ -125,6 +135,7 @@
 				<annotation><documentation>This is _NOT_ parsed data till now.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="DataType">
 		<annotation><documentation>ComplexType or XMLSchema defined data type.</documentation></annotation>
 		<sequence>
@@ -146,10 +157,14 @@
 			<element name="description" type="DM:descriptionType" minOccurs="0">
 				<annotation><documentation>This is the annotation documentation of complextType tag. Elsewise (XMLSchema defined data type) it will not be set.</documentation></annotation></element>
 			<element name="appinfo" type="DM:descriptionType" minOccurs="0">
-				<annotation><documentation>This is the annotation appinfo of complextType tag. Elsewise (XMLSchema defined data type) it will not be set.</documentation><appinfo>Appinfo to test the appinfo</appinfo></annotation></element>
+				<annotation>
+					<documentation>This is the annotation appinfo of complextType tag. Elsewise (XMLSchema defined data type) it will not be set.</documentation>
+					<appinfo>Appinfo to test the appinfo</appinfo>
+				</annotation></element>
 		</sequence>
 	</complexType>
-	<complexType abstract="true" name="FieldMappingType">
+
+	<complexType name="FieldMappingType" abstract="true">
 		<annotation><documentation>.</documentation></annotation>
 		<complexContent>
 			<extension base="DM:DataType">
@@ -166,6 +181,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="DirectMappingType">
 		<annotation><documentation>This is the direct mapping type. It descends from DirectMappingType of name space is http://www.qpark.com/Interfaces/MappingTypes.</documentation></annotation>
 		<complexContent>
@@ -179,6 +195,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="DefaultMappingType">
 		<annotation><documentation>This is the default mapping type. It descends from DefaultMappingType of name space is http://www.qpark.com/Interfaces/MappingTypes.</documentation></annotation>
 		<complexContent>
@@ -190,15 +207,16 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="ComplexMappingType">
 		<annotation><documentation>This is the complex mapping type. It descends from ComplexMappingType of name space is http://www.qpark.com/Interfaces/MappingTypes.</documentation></annotation>
 		<complexContent>
 			<extension base="DM:FieldMappingType">
-				<sequence>
-				</sequence>
+				<sequence></sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="ComplexUUIDMappingType">
 		<annotation><documentation>This is the complex mapping type. It descends from ComplexUUIDMappingType of name space is http://www.qpark.com/Interfaces/MappingTypes.</documentation></annotation>
 		<complexContent>
@@ -210,6 +228,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="InterfaceMappingType">
 		<annotation><documentation>This is the interface mapping type using the MappingTypeTypes. It descends from InterfaceType of name space is http://www.qpark.com/Interfaces/MappingTypes.</documentation></annotation>
 		<complexContent>
@@ -223,6 +242,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="ComplexType">
 		<annotation><documentation>This is the complexType.</documentation></annotation>
 		<complexContent>
@@ -244,6 +264,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="FieldType">
 		<annotation><documentation>This is a element of a sequence inside a complexType.</documentation></annotation>
 		<sequence>
@@ -278,6 +299,7 @@
 				<annotation><documentation>The default value of the field.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="OperationType">
 		<annotation><documentation>This is a combination of request and response ElementTypes defined in a service.</documentation></annotation>
 		<sequence>
@@ -304,6 +326,7 @@
 				<annotation><documentation>This is _NOT_ parsed data till now.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="ElementType">
 		<annotation><documentation>This is element defined in the cluster.</documentation></annotation>
 		<complexContent>
@@ -315,7 +338,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
-	
+
 	<complexType name="FlowType">
 		<annotation><documentation>This is the flow definition.</documentation></annotation>
 		<sequence>
@@ -330,7 +353,7 @@
 				<annotation><documentation>The basic name of the flow (without package name).</documentation></annotation></element>
 			<element name="namespace" type="DM:namespaceType" minOccurs="0">
 				<annotation><documentation>The name space.</documentation></annotation></element>
-			<element name="clusterId" type="DM:UUIDType" >
+			<element name="clusterId" type="DM:UUIDType">
 				<annotation><documentation>The id of the cluster that defines the flow.</documentation></annotation></element>
 			<element name="inFieldDescription" type="DM:descriptionType" minOccurs="0">
 				<annotation><documentation>The annotation documentation of the sequence element containing the request.</documentation></annotation></element>
@@ -344,6 +367,7 @@
 				<annotation><documentation>This is _NOT_ parsed data till now.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="FlowProcessType">
 		<annotation><documentation>This is the flow executeRequest or processResponse.</documentation></annotation>
 		<sequence>
@@ -370,6 +394,7 @@
 			<element name="mapInOut" type="DM:FlowMapInOutType" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
+
 	<complexType name="FlowMapInOutType">
 		<annotation><documentation>This is the flow mapInOut method definition.</documentation></annotation>
 		<sequence>
@@ -392,6 +417,7 @@
 				<annotation><documentation>The list of interface mapping types ids used in the request and response.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="FlowSubRequestType">
 		<annotation><documentation>This is the flow sub request definition.</documentation></annotation>
 		<sequence>
@@ -412,6 +438,7 @@
 				<annotation><documentation>Combination of in and output complexTypes.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="FlowFilterType">
 		<annotation><documentation>This is the flow filter definition.</documentation></annotation>
 		<sequence>
@@ -432,6 +459,7 @@
 				<annotation><documentation>Combination of in and output complexTypes.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="FlowRuleType">
 		<annotation><documentation>This is the flow rule definition.</documentation></annotation>
 		<sequence>
@@ -452,6 +480,7 @@
 				<annotation><documentation>Combination of in and output complexTypes.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="RequestResponseDataType">
 		<annotation><documentation>This is a combination of request and response complexTypes.</documentation></annotation>
 		<sequence>
@@ -474,6 +503,7 @@
 				<annotation><documentation>The annotation documentation of the response type.</documentation></annotation></element>
 		</sequence>
 	</complexType>
+
 	<complexType name="SimpleType">
 		<annotation><documentation>This is the SimpleType.</documentation></annotation>
 		<complexContent>
@@ -509,7 +539,6 @@
 			</extension>
 		</complexContent>
 	</complexType>
-
 	<simpleType name="UUIDType">
 		<restriction base="normalizedString">
 			<length value="36" fixed="true"/>
@@ -540,5 +569,4 @@
 			<length value="2047"/>
 		</restriction>
 	</simpleType>
-
 </schema>

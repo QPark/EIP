@@ -7,10 +7,11 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 
 	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
+
 	xmlns:ISScty="http://www.samples.com/CommonTypes"
 	targetNamespace="http://www.samples.com/CommonTypes"
 >
@@ -20,12 +21,13 @@
 	<annotation>
 		<appinfo>
 			<jaxb:schemaBindings>
-				<jaxb:package name="com.samples.platform.model.iss.common" />
+				<jaxb:package name="com.samples.platform.model.iss.common"/>
 			</jaxb:schemaBindings>
 		</appinfo>
-		<documentation></documentation>
+		<documentation/>
 	</annotation>
+
 	<simpleType name="EURType">
-		<restriction base="decimal"></restriction>
+		<restriction base="decimal"/>
 	</simpleType>
 </schema>

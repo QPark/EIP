@@ -25,8 +25,7 @@ public class SyncShortRunningLockedOperation extends AbstractLockableOperation {
 	/** The UUID of the locked operation. */
 	public static final String OPERATION_UUID = "cc05a4b0-6e21-30c6-b894-09a653408a94";
 	/** The {@link org.slf4j.Logger}. */
-	private Logger logger = LoggerFactory
-			.getLogger(SyncShortRunningLockedOperation.class);
+	private Logger logger = LoggerFactory.getLogger(SyncShortRunningLockedOperation.class);
 
 	/**
 	 * @see com.qpark.eip.core.spring.lockedoperation.LockableOperation#getLogger()
@@ -57,15 +56,13 @@ public class SyncShortRunningLockedOperation extends AbstractLockableOperation {
 	 */
 	@Override
 	protected void invokeOperation(final LockableOperationContext context) {
-		this.logger.debug("+invokeOperation {} {}", this.getName(),
-				this.getUUID());
+		this.logger.info("+invokeOperation {} {}", this.getName(), this.getUUID());
 		try {
-			Thread.sleep(5 * 1000);
+			Thread.sleep(3 * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		this.logger.debug("+invokeOperation {} {}", this.getName(),
-				this.getUUID());
+		this.logger.info("-invokeOperation {} {}", this.getName(), this.getUUID());
 	}
 
 	/**

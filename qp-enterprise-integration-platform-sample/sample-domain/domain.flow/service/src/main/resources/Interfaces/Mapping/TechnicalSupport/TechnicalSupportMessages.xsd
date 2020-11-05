@@ -7,12 +7,11 @@
  * The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 
 	xmlns:MPTechSupportExtModel="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes"
 	xmlns:MPiTechSupport="http://www.samples.com/Interfaces/TechnicalSupportInterfaceTypes"
-
 	xmlns:EIPbasem="http://www.qpark.com/Common/BaseMessages"
 
 	xmlns:MPTechSupportmsg="http://www.samples.com/Interfaces/TechnicalSupportMessages"
@@ -21,7 +20,6 @@
 
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportExternalTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportExternalDefinedTypes.xsd"/>
 	<import namespace="http://www.samples.com/Interfaces/TechnicalSupportInterfaceTypes" schemaLocation="http://www.samples.com/model/Interfaces/Mapping/TechnicalSupport/TechnicalSupportInterfaceTypes.xsd"/>
-
 	<import namespace="http://www.qpark.com/Common/BaseMessages" schemaLocation="../../../EIP/Common/BaseMessage.xsd"/>
 
 	<annotation>
@@ -33,27 +31,20 @@
 		<documentation>Interface: Technical support messages interface.</documentation>
 	</annotation>
 
+
 	<complexType name="SystemUserLogRequestType">
-		<annotation>
-			<documentation>
-				@ServiceConsumer ESB
-				@ServiceImplementor ESB
-				@ServiceDataProvider ESB
-				@ServiceDescription Returns system user log entries.
-			</documentation>
-		</annotation>
+		<annotation><documentation>Returns system user log entries.</documentation></annotation>
 		<complexContent>
 			<extension base="EIPbasem:RequestMessage">
 				<sequence>
-					<element name="criteria" type="MPTechSupportExtModel:ExtSystemUserLogCriteriaType" />
+					<element name="criteria" type="MPTechSupportExtModel:ExtSystemUserLogCriteriaType"/>
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="SystemUserLogResponseType">
-		<annotation>
-			<documentation>Return message containing system user log entries.</documentation>
-		</annotation>
+		<annotation><documentation>Return message containing system user log entries.</documentation></annotation>
 		<complexContent>
 			<extension base="EIPbasem:ResponseMessage">
 				<sequence>
@@ -62,5 +53,4 @@
 			</extension>
 		</complexContent>
 	</complexType>
-
 </schema>

@@ -123,7 +123,7 @@
 	<int-ws:outbound-gateway id="eipCallerComSamplesBusDomainDocOutboundGateway"
 		request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
 		reply-channel="internalEipCallerComSamplesBusDomainDocWsOutgoingChannel"
-		uri="${service.endpoint.url.com.samples.platform.domain.doc:http://localhost:8080/}"
+		uri="${service.endpoint.url.com.samples.bus.domain.doc:http://localhost:8080/}"
 		interceptors="eipCallerComSamplesBusDomainDocWsInterceptors"
 		message-factory="soap12MessageFactory"
 		marshaller="eipCallerComSamplesBusDomainDocMarshaller" unmarshaller="eipCallerComSamplesBusDomainDocMarshaller"
