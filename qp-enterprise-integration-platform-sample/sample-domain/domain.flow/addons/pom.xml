@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.samples.domain.flow</groupId>
 		<artifactId>base</artifactId>
-		<version>3.17.1</version><!--qpark-eip-version-->
+		<version>4.0.0</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -32,13 +32,13 @@
 		<dependency>
 			<groupId>com.samples.domain</groupId>
 			<artifactId>jaxb</artifactId>
-			<version>3.17.1</version><!--qpark-eip-version-->
+			<version>4.0.0</version><!--qpark-eip-version-->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.samples.domain.flow</groupId>
 			<artifactId>flows</artifactId>
-			<version>3.17.1</version><!--qpark-eip-version-->
+			<version>4.0.0</version><!--qpark-eip-version-->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
