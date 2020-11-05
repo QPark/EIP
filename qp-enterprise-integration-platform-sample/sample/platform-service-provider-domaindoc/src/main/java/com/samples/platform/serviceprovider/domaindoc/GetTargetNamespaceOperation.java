@@ -15,11 +15,10 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetTargetNamespaceRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetTargetNamespaceResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get target namespace on service <code>domain.doc</code>.
- * 
+ *
  * @author bhausen
  */
 @Component("operationProviderDomainDocGetTargetNamespace")
@@ -35,12 +34,12 @@ public class GetTargetNamespaceOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetTargetNamespaceRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetTargetNamespaceRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetTargetNamespaceResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetTargetNamespaceResponseType> getTargetNamespace(
 			final JAXBElement<GetTargetNamespaceRequestType> message) {

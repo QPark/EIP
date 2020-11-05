@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.qpark.eip.core</groupId>
 		<artifactId>eip-base</artifactId>
-		<version>3.17.1</version><!--qpark-eip-version-->
+		<version>4.0.0</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -37,8 +37,8 @@
 			<artifactId>eip-model-analysis</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
+			<groupId>com.qpark.eip.core</groupId>
+			<artifactId>eip-core-reporting</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
@@ -65,9 +65,9 @@
 			<artifactId>spring-context</artifactId>
 		</dependency>
 		<dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
-      <scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.qpark.eip.core</groupId>
@@ -76,42 +76,23 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
-      <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-      <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-      <scope>test</scope>
-		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-      <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc14</artifactId>
-			<version>10.2.0.5.0</version>
-		</dependency>
-		 -->
-		
-		
-    <dependency>
-      <groupId>org.eclipse.persistence</groupId>
-      <artifactId>eclipselink</artifactId>
-      <version>2.5.1</version>
-      <scope>test</scope>
-		</dependency>		
-		<dependency>
-		    <groupId>org.hsqldb</groupId>
-		    <artifactId>hsqldb</artifactId>
-		    <scope>test</scope>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

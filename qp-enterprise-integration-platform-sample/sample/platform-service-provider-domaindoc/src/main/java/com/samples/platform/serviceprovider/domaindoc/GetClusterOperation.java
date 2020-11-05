@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetClusterRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetClusterResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get cluster on service <code>domain.doc</code>.
@@ -34,11 +33,11 @@ public class GetClusterOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetClusterRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetClusterRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetClusterResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetClusterResponseType> getCluster(
 			final JAXBElement<GetClusterRequestType> message) {

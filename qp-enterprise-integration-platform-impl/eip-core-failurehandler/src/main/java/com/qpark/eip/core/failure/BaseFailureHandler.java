@@ -41,7 +41,6 @@ import com.qpark.eip.core.failure.domain.FailureMessagePhraseType;
 import com.qpark.eip.core.failure.domain.FailureMessagePhraseableType;
 import com.qpark.eip.core.failure.domain.FailureMessageSeverity;
 import com.qpark.eip.core.failure.domain.FailureMessageType;
-import com.springsource.insight.annotation.InsightOperation;
 
 /**
  * Handle failures.
@@ -197,19 +196,6 @@ public abstract class BaseFailureHandler {
 		fd.setErrorCode(code);
 
 		fd.setSupportInformation(supportInfo.toString());
-
-		if (fd.getSeverity().equals(FailureMessageSeverity.ERROR)) {
-			if (t != null) {
-				showFailureDescription(t.getClass().getSimpleName(),
-						t.getMessage(), fd.getErrorCode(),
-						fd.getSeverity().name(), fd.getWhatHappened(),
-						fd.getWhyHappened(), fd.getWhatToDo());
-			} else {
-				showFailureDescription("", "", fd.getErrorCode(),
-						fd.getSeverity().name(), fd.getWhatHappened(),
-						fd.getWhyHappened(), fd.getWhatToDo());
-			}
-		}
 
 		StringBuffer sb = new StringBuffer(256);
 		sb.append("Occurred at: ").append(new Date());
@@ -424,21 +410,6 @@ public abstract class BaseFailureHandler {
 			fd = getFailure("E_SOAP_FAULT_SERVICE_NOT_AVAILABLE", e, data);
 		}
 		return fd;
-	}
-
-	/**
-	 * Show the {@link FailureDescription} in the insight stack
-	 *
-	 * @param fd
-	 * @param code
-	 * @param data
-	 */
-	@InsightOperation
-	private static void showFailureDescription(final String exception,
-			final String exceptionMessage, final String errorCode,
-			final String severity, final String whatHappened,
-			final String whyHappened, final String whatToDo) {
-		// Only to be shown in insight.
 	}
 
 	/**

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetFlowRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFlowResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get flow on service <code>domain.doc</code>.
@@ -35,11 +34,11 @@ public class GetFlowOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetFlowRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetFlowRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetFlowResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetFlowResponseType> getFlow(
 			final JAXBElement<GetFlowRequestType> message) {

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
+
+	xmlns:EIPcty="http://www.qpark.com/CommonTypes"
+	targetNamespace="http://www.qpark.com/CommonTypes"
+>
+
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.model.common"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Common Datatypes used by EIP</documentation>
+	</annotation>
+
+	<simpleType name="RegularExpressionType">
+		<annotation><documentation>A regular expression</documentation></annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="ContainsSearchExpressionType">
+		<annotation><documentation>A search expression using the contains semantic.</documentation></annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="UUIDType">
+		<annotation><documentation>A general unique identifier based on the Java implementation. Every entity in the master data architecture needs an assigned UUID.</documentation></annotation>
+		<restriction base="normalizedString">
+			<length value="36" fixed="true"/>
+		</restriction>
+	</simpleType>
+
+	<complexType name="EntityType" abstract="true">
+		<annotation><documentation>Things in EIP</documentation></annotation>
+		<sequence>
+			<element name="UUID" type="EIPcty:UUIDType" minOccurs="0">
+				<annotation><documentation>The UUID is a unique identifier of an object in a master data architecture.
+The id is optional since it can be empty for entities to be saved in a system.</documentation></annotation></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="AssetType" abstract="true">
+		<annotation><documentation>Named things in EIP</documentation></annotation>
+		<complexContent>
+			<extension base="EIPcty:EntityType">
+				<sequence>
+					<element name="name" type="string">
+						<annotation><documentation>The name of the asset.</documentation></annotation></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="EntityCriteriaType" abstract="true">
+		<annotation><documentation>Criteria for the entity search.
+A criteria complex type in general defines a set of search criteria. Search
+criteria are combined and each element adds a new restriction to the
+search. An empty sequence of elements for a criteria search retrieves
+all entities. In general the string fields shall allow for a regular expression
+search that is compliant with the regular expression search in the back-end system.</documentation></annotation>
+		<sequence>
+			<element name="id" type="EIPcty:UUIDType" minOccurs="0" maxOccurs="unbounded">
+				<annotation><documentation>The UUID of the object that shall be retrieved. The UUID is optional.
+If no UUID is given the size of the search result set can be >1.</documentation></annotation></element>
+			<element name="maxElements" type="integer" minOccurs="0">
+				<annotation><documentation>The maximum number of elements returned by the search.</documentation></annotation></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="AssetCriteriaType" abstract="true">
+		<annotation><documentation>Criteria for the entity search.
+A criteria complex type in general defines a set of search criteria. Search
+criteria are combined and each element adds a new restriction to the
+search. An empty sequence of elements for a criteria search retrieves
+all entities. In general all fields shall allow for a regular expression search that
+is compliant with the regular expression search in back-end systems.</documentation></annotation>
+		<complexContent>
+			<extension base="EIPcty:EntityCriteriaType">
+				<sequence>
+					<element name="name" type="EIPcty:RegularExpressionType" minOccurs="0">
+						<annotation><documentation>The name of the object.</documentation></annotation></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="ReferenceDataType">
+		<annotation><documentation>Reference data maps to the master data enumerations.
+Enumerations allow for a flexible configuration of the the master data aware applications.</documentation></annotation>
+		<complexContent>
+			<extension base="EIPcty:EntityType">
+				<sequence>
+					<element name="displayValue" type="string">
+						<annotation><documentation>The display value shall be used to populate visual GUI elements.</documentation></annotation></element>
+					<element name="category" type="string">
+						<annotation><documentation>The category the reference data entry belongs to. The category is defined in the master system or in the enterprise integration platform itself.</documentation></annotation></element>
+					<element name="description" type="string" minOccurs="0">
+						<annotation><documentation>Description of the reference data entry.</documentation></annotation></element>
+					<element name="active" type="boolean">
+						<annotation><documentation>Flag indicating that the reference data entry is no longer active. It shall no longer be used in partner systems.</documentation></annotation></element>
+					<element name="value" type="string" minOccurs="0"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="ReferenceDataCriteriaType">
+		<annotation><documentation>Criteria for the the reference data search.</documentation></annotation>
+		<complexContent>
+			<extension base="EIPcty:EntityCriteriaType">
+				<sequence>
+					<element name="category" type="EIPcty:RegularExpressionType" minOccurs="0">
+						<annotation><documentation>The category of the reference data that shall be retrieved. If no category is defined all reference data entries are returned.</documentation></annotation></element>
+					<element name="active" type="boolean">
+						<annotation><documentation>Flag indicating that the reference data entry is no longer active. It shall no longer be used in partner systems.</documentation></annotation></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="PropertyType">
+		<annotation><documentation>A key with a list of values.</documentation></annotation>
+		<sequence>
+			<element name="name" type="string">
+				<annotation><documentation>The key.</documentation></annotation></element>
+			<element name="value" type="string" minOccurs="0" maxOccurs="unbounded">
+				<annotation><documentation>The value assigned to the key.</documentation></annotation></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="MetaDataColumnType">
+		<annotation><documentation>A column of the excel sheet</documentation></annotation>
+		<sequence>
+			<element name="name" type="string">
+				<annotation><documentation>Column name</documentation></annotation></element>
+			<element name="reference" type="string">
+				<annotation><documentation>Machine readable name</documentation></annotation></element>
+			<element name="description" type="string">
+				<annotation><documentation>Column description</documentation></annotation></element>
+			<element name="mandatory" type="boolean">
+				<annotation><documentation>Mandatory</documentation></annotation></element>
+			<element name="dataType" type="string">
+				<annotation><documentation>Data Type</documentation></annotation></element>
+			<element name="restrictions" type="string">
+				<annotation><documentation>Restrictions</documentation></annotation></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="EntityValidationError">
+		<annotation><documentation>Schema validation errors related to an entity.</documentation></annotation>
+		<sequence>
+			<element name="name" type="string" minOccurs="0">
+				<annotation><documentation>The name of the entity validated.</documentation></annotation></element>
+			<element name="UUID" type="string" minOccurs="0">
+				<annotation><documentation>The UUID of the entity validated.</documentation></annotation></element>
+			<element name="validationError" type="string" minOccurs="0" maxOccurs="unbounded">
+				<annotation><documentation>Schema validation error</documentation></annotation></element>
+		</sequence>
+	</complexType>
+</schema>

@@ -17,7 +17,6 @@ import com.qpark.eip.core.DateUtil;
 import com.samples.platform.service.iss.tech.support.msg.GetSoapFaultRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetSoapFaultResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get soap fault on service <code>iss.tech.support</code>.
@@ -35,11 +34,11 @@ public class GetSoapFaultOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetSoapFaultRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetSoapFaultRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetSoapFaultResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetSoapFaultResponseType> getSoapFault(
 			final JAXBElement<GetSoapFaultRequestType> message) {

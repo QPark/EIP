@@ -15,11 +15,10 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetServiceIdRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetServiceIdResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get service id on service <code>domain.doc</code>.
- * 
+ *
  * @author bhausen
  */
 @Component("operationProviderDomainDocGetServiceId")
@@ -35,11 +34,11 @@ public class GetServiceIdOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetServiceIdRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetServiceIdRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetServiceIdResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetServiceIdResponseType> getServiceId(
 			final JAXBElement<GetServiceIdRequestType> message) {

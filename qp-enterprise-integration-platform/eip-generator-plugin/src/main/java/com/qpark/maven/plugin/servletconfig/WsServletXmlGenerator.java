@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeSet;
+import java.util.Set;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -34,7 +34,7 @@ public class WsServletXmlGenerator {
 	private final XsdsUtil config;
 	private final File outputDirectory;
 	private final String serviceId;
-	private final TreeSet<ElementType> elementTypes;
+	private final Set<ElementType> elementTypes;
 	private final String basePackageName;
 	private final String additionalWebservicePayloadInterceptors;
 	private final String webservicePayloadLoggerImplementation;

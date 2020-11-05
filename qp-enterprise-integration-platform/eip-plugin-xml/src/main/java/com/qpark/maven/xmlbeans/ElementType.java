@@ -15,7 +15,7 @@ import org.w3c.dom.NodeList;
 /**
  * @author bhausen
  */
-public class ElementType {
+public class ElementType implements Comparable<ElementType> {
 	/** Fixed value for web service channel name definition. */
 	public static final String WEB_SERVICE_CHANNEL_NAME_CONTENT = "WsChannel";
 	/** Fixed value for web service channel name prefix. */
@@ -203,6 +203,21 @@ public class ElementType {
 	}
 
 	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final ElementType o) {
+		if (this == o) {
+			return 0;
+		} else if (o == null) {
+			return -1;
+		} else {
+			return XsdsUtil.getQNameComparator().compare(
+					this.getElement().getName(), o.getElement().getName());
+		}
+	}
+
+	/**
 	 * @return the annotationDocumentation - never <code>null</code>.
 	 */
 	public String getAnnotationDocumentation() {
@@ -375,7 +390,7 @@ public class ElementType {
 	 * Set the defining {@link ComplexType}.
 	 *
 	 * @param complexType
-	 *            the {@link ComplexType}.
+	 *                        the {@link ComplexType}.
 	 */
 	public void setComplexType(final ComplexType complexType) {
 		this.complexType = complexType;

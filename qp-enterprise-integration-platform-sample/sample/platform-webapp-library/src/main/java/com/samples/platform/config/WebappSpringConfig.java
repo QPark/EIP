@@ -32,7 +32,12 @@ import com.samples.platform.util.SystemUserLogFlowGatewayImpl;
 
 		com.samples.platform.serviceprovider.domaindoc.config.ServiceProviderConfig.class,
 		com.samples.platform.serviceprovider.techsupport.flow.config.ServiceProviderConfig.class,
-		com.samples.platform.core.config.CoreSpringConfig.class
+		com.samples.platform.core.config.CoreSpringConfig.class,
+
+		com.samples.domain.serviceprovider.config.OperationProviderCommonConfig.class,
+		com.samples.domain.serviceprovider.config.OperationProviderDomainDocConfig.class,
+		com.samples.domain.serviceprovider.config.OperationProviderIssTechSupportConfig.class,
+		com.samples.domain.serviceprovider.config.OperationProviderLibraryConfig.class
 
 })
 @ComponentScan("com.samples.platform.service")

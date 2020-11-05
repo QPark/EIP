@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetFlowInterfaceMappingTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFlowInterfaceMappingTypeResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get flow interface mapping type on service <code>domain.doc</code>.
@@ -35,12 +34,12 @@ public class GetFlowInterfaceMappingTypeOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetFlowInterfaceMappingTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetFlowInterfaceMappingTypeRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetFlowInterfaceMappingTypeResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetFlowInterfaceMappingTypeResponseType> getFlowInterfaceMappingType(
 			final JAXBElement<GetFlowInterfaceMappingTypeRequestType> message) {

@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetServiceRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetServiceResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -27,9 +26,9 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetService;
 public class GetServiceOperation implements GetService {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetService";
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetServiceOperation.class);
@@ -38,8 +37,8 @@ public class GetServiceOperation implements GetService {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetServiceRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetServiceRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetServiceResponseType}.
 	 */
 	@Override

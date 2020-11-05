@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetFieldMappingTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFieldMappingTypeResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get field mapping type on service <code>domain.doc</code>.
@@ -35,12 +34,12 @@ public class GetFieldMappingTypeOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetFieldMappingTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetFieldMappingTypeRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetFieldMappingTypeResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetFieldMappingTypeResponseType> getFieldMappingType(
 			final JAXBElement<GetFieldMappingTypeRequestType> message) {

@@ -115,7 +115,7 @@ public class RestOperationProviderMockGenerator {
 			sb.append("import ");
 			sb.append(this.fqResponseType);
 			sb.append(";\n");
-			sb.append("import com.springsource.insight.annotation.InsightEndPoint;\n");
+			//sb.append("import com.springsource.insight.annotation.InsightEndPoint;\n");
 			sb.append("\n");
 			sb.append("/**\n");
 			sb.append(" * Operation ");
@@ -188,7 +188,7 @@ public class RestOperationProviderMockGenerator {
 			sb.append(this.responseType);
 			sb.append("}.\n");
 			sb.append("\t */\n");
-			sb.append("	@InsightEndPoint\n");
+			//sb.append("	@InsightEndPoint\n");
 
 			sb.append("	@RequestMapping(value = \"");
 			if (requestElements.length == 0 || !this.serviceId.equals(requestElements[0].getName().getLocalPart())) {

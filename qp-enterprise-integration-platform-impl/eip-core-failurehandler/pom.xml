@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.qpark.eip.core</groupId>
 		<artifactId>eip-base</artifactId>
-		<version>3.17.1</version><!--qpark-eip-version-->
+		<version>4.0.0</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -52,10 +52,6 @@
 		<dependency>
 			<groupId>org.springframework.ws</groupId>
 			<artifactId>spring-ws-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.springsource.insight</groupId>
-			<artifactId>insight-annotation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

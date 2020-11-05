@@ -114,8 +114,8 @@ public class OperationProviderMockGenerator {
 			sb.append(this.elementRequest.getPackageName());
 			sb.append(".ObjectFactory;\n");
 			if (this.useInsightAnnotation) {
-				sb.append(
-						"import com.springsource.insight.annotation.InsightEndPoint;\n");
+//				sb.append(
+//						"import com.springsource.insight.annotation.InsightEndPoint;\n");
 			}
 			sb.append("\n");
 			sb.append("/**\n");
@@ -158,7 +158,7 @@ public class OperationProviderMockGenerator {
 			sb.append("\t */\n");
 
 			if (this.useInsightAnnotation) {
-				sb.append("	@InsightEndPoint\n");
+				//sb.append("	@InsightEndPoint\n");
 			}
 			sb.append("	@ServiceActivator\n");
 			sb.append("	public final JAXBElement<");

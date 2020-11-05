@@ -18,7 +18,6 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao;
 import com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDaoImpl;
-import com.springsource.insight.annotation.InsightOperation;
 
 /**
  * Abstract asynchronous inheritance of the {@link AbstractLockableOperation}.
@@ -138,7 +137,6 @@ public abstract class AbstractAsyncLockableOperation
 	 *            the {@link LockableOperationContext} (could be
 	 *            <code>null</code>) to pass to the {@link LockableOperation}.
 	 */
-	@InsightOperation
 	protected abstract void invokeOperationAsync(
 			LockableOperationContext context);
 

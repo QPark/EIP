@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get complex type on service <code>domain.doc</code>.
@@ -35,12 +34,12 @@ public class GetComplexTypeOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetComplexTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetComplexTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetComplexTypeResponseType}
 	 *         .
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetComplexTypeResponseType> getComplexType(
 			final JAXBElement<GetComplexTypeRequestType> message) {

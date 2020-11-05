@@ -14,6 +14,9 @@ Excute the following steps to build the QPark EIP:
 1. mvn install -P bom
 2. mvn install -P platform,impl,sample
 
+Maven min version 3.5.4
+JDK min version 1.8, recommended version JDK 11
+
 From time to time it happens, that the following is reported:
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-dependency-plugin:2.10:unpack (unpack-sources) on project platform-domain-model-service: Unable to create Marker: C:\xnb\dev\git\EIP\qp-enterprise-integration-platform-sample\sample\platform-domain-model-service\target\dependency-maven-plugin-markers\com.samples.domain-model-jar-2.1.0.marker: Zugriff verweigert -> [Help 1]
 In this case just go on further as proposed applying the maven -rf option.

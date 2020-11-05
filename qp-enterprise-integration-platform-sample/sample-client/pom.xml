@@ -13,14 +13,14 @@
 	<parent>
 		<groupId>com.qpark.eip</groupId>
 		<artifactId>eip-platform-bom</artifactId>
-		<version>3.17.1</version><!--qpark-eip-version-->
+		<version>4.0.0</version><!--qpark-eip-version-->
 		<relativePath/>
 	</parent>
 
 
 	<groupId>com.samples.platform.client</groupId>
 	<artifactId>platform-client</artifactId>
-	<version>3.17.1</version><!--qpark-eip-version-->
+	<version>4.0.0</version><!--qpark-eip-version-->
 	<packaging>jar</packaging>
 	<name>platform-client</name>
 	<description>Platform web service client.</description>
@@ -43,9 +43,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.samples.domain.gen</groupId>
-			<artifactId>domain-gen-jaxb</artifactId>
-			<version>${project.version}</version>
+			<groupId>com.samples.domain</groupId>
+			<artifactId>jaxb</artifactId>
+			<version>4.0.0</version><!--qpark-eip-version-->
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.ws</groupId>
@@ -66,6 +71,24 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.messaging.saaj</groupId>
+			<artifactId>saaj-impl</artifactId>
+			<version>1.3.28</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.soap</groupId>
+			<artifactId>javax.xml.soap-api</artifactId>
+			<version>1.3.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.soap</groupId>
+			<artifactId>saaj-api</artifactId>
+			<version>1.3.5</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

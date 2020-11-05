@@ -7,6 +7,7 @@
 package com.qpark.maven.plugin.springintegration;
 
 import java.io.File;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -27,7 +28,7 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  */
 public class ServiceIdObjectFactoryGenerator {
 	/** Parsed complex types. */
-	private final TreeSet<ElementType> elementTypes;
+	private final Set<ElementType> elementTypes;
 	/** The {@link Log}. */
 	private final Log log;
 	/** The {@link XsdsUtil}. */
@@ -55,7 +56,7 @@ public class ServiceIdObjectFactoryGenerator {
 	public void generate() {
 		this.log.debug("+generate");
 		StringBuffer imports = new StringBuffer();
-		TreeSet<String> contextPath = new TreeSet<String>();
+		TreeSet<String> contextPath = new TreeSet<>();
 		StringBuffer methods = new StringBuffer();
 		StringBuffer objectFactories = new StringBuffer();
 		ServiceIdEntry entry = this.xsds.getServiceIdRegistry()
@@ -69,8 +70,8 @@ public class ServiceIdObjectFactoryGenerator {
 
 			imports.append("import javax.xml.bind.JAXBElement;\n");
 
-			TreeMap<String, String> ofMap = new TreeMap<String, String>();
-			TreeSet<String> methodNames = new TreeSet<String>();
+			TreeMap<String, String> ofMap = new TreeMap<>();
+			TreeSet<String> methodNames = new TreeSet<>();
 			ComplexType ct;
 			String ofName;
 			String eName;

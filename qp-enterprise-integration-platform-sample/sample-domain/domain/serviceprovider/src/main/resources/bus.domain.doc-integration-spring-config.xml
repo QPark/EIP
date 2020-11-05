@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:oxm="http://www.springframework.org/schema/oxm" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
+	"
+>
+	<!-- Interceptor list of services -->
+	<util:list id="eipCallerComSamplesBusDomainDocWsInterceptors">
+		<ref bean="eipCallerComSamplesBusDomainDocWss4jSecurityInterceptor"/>
+	</util:list>
+	<!-- Marshaller of services -->
+	<bean id="eipCallerComSamplesBusDomainDocMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="packagesToScan">
+			<list>
+				<value>com.qpark.eip.service.domain.doc.msg</value>
+			</list>
+		</property>
+	</bean>
+
+<!-- DomainDoc definition start -->
+	<!-- Gateway of the service domain.doc (to be used in your code) -->
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetClusterGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetCluster"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetClusterResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetComplexTypeGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetComplexType"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetComplexTypeResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetDataTypeGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetDataType"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetDataTypeResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetElementTypeGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetElementType"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetElementTypeResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetFieldMappingTypeGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetFieldMappingType"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetFieldMappingTypeResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetFlowInterfaceMappingTypeGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetFlowInterfaceMappingType"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetFlowInterfaceMappingTypeResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetFlowGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetFlow"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetFlowResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetRevisionGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetRevision"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetRevisionResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetServiceIdGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetServiceId"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetServiceIdResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetServiceGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetService"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetServiceResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusDomainDocGetTargetNamespaceGateway"
+		service-interface="com.qpark.eip.service.domain.doc.msg.gateway.GetTargetNamespace"
+		default-request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusDomainDocGetTargetNamespaceResponseChannel"
+	/>
+	<!-- Channel definitions of service domain.doc -->
+	<int:channel id="internalEipCallerComSamplesBusDomainDocRequestChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetClusterResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetComplexTypeResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetDataTypeResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetElementTypeResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetFieldMappingTypeResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetFlowInterfaceMappingTypeResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetFlowResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetRevisionResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetServiceIdResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetServiceResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocGetTargetNamespaceResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusDomainDocWsOutgoingChannel" />
+	<!-- Response type router of service domain.doc -->
+	<int:router id="internalEipCallerComSamplesBusDomainDocResponseTypeRouter"
+		input-channel="internalEipCallerComSamplesBusDomainDocWsOutgoingChannel" 
+		ref="internalEipCallerComSamplesBusDomainDocJAXBElementAwarePayloadTypeRouter"
+	/>
+	<bean id="internalEipCallerComSamplesBusDomainDocJAXBElementAwarePayloadTypeRouter" class="com.qpark.eip.core.spring.JAXBElementAwarePayloadTypeRouter">
+		<property name="channelMappings">
+			<map>
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetClusterResponseType" value="internalEipCallerComSamplesBusDomainDocGetClusterResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetComplexTypeResponseType" value="internalEipCallerComSamplesBusDomainDocGetComplexTypeResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetDataTypeResponseType" value="internalEipCallerComSamplesBusDomainDocGetDataTypeResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetElementTypeResponseType" value="internalEipCallerComSamplesBusDomainDocGetElementTypeResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetFieldMappingTypeResponseType" value="internalEipCallerComSamplesBusDomainDocGetFieldMappingTypeResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetFlowInterfaceMappingTypeResponseType" value="internalEipCallerComSamplesBusDomainDocGetFlowInterfaceMappingTypeResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetFlowResponseType" value="internalEipCallerComSamplesBusDomainDocGetFlowResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetRevisionResponseType" value="internalEipCallerComSamplesBusDomainDocGetRevisionResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetServiceIdResponseType" value="internalEipCallerComSamplesBusDomainDocGetServiceIdResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetServiceResponseType" value="internalEipCallerComSamplesBusDomainDocGetServiceResponseChannel" />
+				<entry key="com.qpark.eip.service.domain.doc.msg.GetTargetNamespaceResponseType" value="internalEipCallerComSamplesBusDomainDocGetTargetNamespaceResponseChannel" />
+			</map>
+		</property>
+	</bean>
+	<!-- Outbound gateway of the service domain.doc -->
+	<int-ws:outbound-gateway id="eipCallerComSamplesBusDomainDocOutboundGateway"
+		request-channel="internalEipCallerComSamplesBusDomainDocRequestChannel"
+		reply-channel="internalEipCallerComSamplesBusDomainDocWsOutgoingChannel"
+		uri="${service.endpoint.url.com.samples.bus.domain.doc:http://localhost:8080/}"
+		interceptors="eipCallerComSamplesBusDomainDocWsInterceptors"
+		message-factory="soap12MessageFactory"
+		marshaller="eipCallerComSamplesBusDomainDocMarshaller" unmarshaller="eipCallerComSamplesBusDomainDocMarshaller"
+	/>
+<!-- DomainDoc definition end -->
+
+
+</beans>

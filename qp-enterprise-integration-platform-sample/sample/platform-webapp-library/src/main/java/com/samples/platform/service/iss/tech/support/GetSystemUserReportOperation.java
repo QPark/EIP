@@ -23,7 +23,6 @@ import com.samples.platform.inf.iss.tech.support.flow.SystemUserReportFlowRespon
 import com.samples.platform.service.iss.tech.support.msg.GetSystemUserReportRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetSystemUserReportResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get system user report on service <code>iss.tech.support</code>.
@@ -49,12 +48,12 @@ public class GetSystemUserReportOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetSystemUserReportRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetSystemUserReportRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetSystemUserReportResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetSystemUserReportResponseType> getSystemUserReport(
 			final JAXBElement<GetSystemUserReportRequestType> message) {

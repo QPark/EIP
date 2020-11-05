@@ -8,6 +8,13 @@
  ******************************************************************************/
 package com.samples.platform.serviceprovider.library.internal.dao;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -32,8 +39,7 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 @Repository
 public class PlatformDao {
 	/** The {@link Logger}. */
-	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
-			.getLogger(PlatformDao.class);
+	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PlatformDao.class);
 	/** The {@link EntityManager}. */
 	@PersistenceContext(unitName = PersistenceConfig.PERSISTENCE_UNIT_NAME,
 			name = PersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
@@ -41,11 +47,10 @@ public class PlatformDao {
 
 	/**
 	 * @param value
-	 *            the {@link BookType} to create.
+	 *                  the {@link BookType} to create.
 	 * @return the created {@link BookType}.
 	 */
-	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
 	public BookType createBook(final BookType value) {
 		if (value != null) {
 			try {
@@ -64,10 +69,9 @@ public class PlatformDao {
 
 	/**
 	 * @param value
-	 *            the id of the book to delete.
+	 *                  the id of the book to delete.
 	 */
-	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
 	public void deleteBook(final BookType value) {
 		if (value != null) {
 			try {
@@ -83,42 +87,11 @@ public class PlatformDao {
 	}
 
 	/**
-	 * @param ISBN
-	 *            the ISBN of the book to find.
-	 * @return the {@link BookType}.
-	 */
-	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
-	public BookType getBookByISBN(final String ISBN) {
-		BookType m = null;
-		if (ISBN == null) {
-			this.logger.debug("getBookByISBN: ISBN is null.");
-		} else {
-			CriteriaBuilder cb = this.em.getCriteriaBuilder();
-			CriteriaQuery<BookType> q = cb.createQuery(BookType.class);
-			Root<BookType> c = q.from(BookType.class);
-			q.where(cb.equal(c.<String> get(BookType_.ISBN), ISBN));
-			TypedQuery<BookType> typedQuery = this.em.createQuery(q);
-			try {
-				m = typedQuery.getSingleResult();
-				this.logger.debug("getBookByISBN: "
-						+ ToStringBuilder.reflectionToString(m));
-			} catch (NoResultException e) {
-				this.logger.debug(
-						"getBookByISBN: non value found for ISBN=" + ISBN);
-				m = null;
-			}
-		}
-		return m;
-	}
-
-	/**
 	 * @param uuid
-	 *            the id of the book to find.
+	 *                 the id of the book to find.
 	 * @return the {@link BookType}.
 	 */
-	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
 	public BookType getBookById(final String uuid) {
 		BookType m = null;
 		if (uuid == null) {
@@ -131,11 +104,9 @@ public class PlatformDao {
 			TypedQuery<BookType> typedQuery = this.em.createQuery(q);
 			try {
 				m = typedQuery.getSingleResult();
-				this.logger.debug("getBookByISBN: "
-						+ ToStringBuilder.reflectionToString(m));
+				this.logger.debug("getBookByISBN: " + ToStringBuilder.reflectionToString(m));
 			} catch (NoResultException e) {
-				this.logger
-						.debug("getBookByISBN: non value found for id=" + uuid);
+				this.logger.debug("getBookByISBN: non value found for id=" + uuid);
 				m = null;
 			}
 		}
@@ -143,12 +114,61 @@ public class PlatformDao {
 	}
 
 	/**
+	 * @param ISBN
+	 *                 the ISBN of the book to find.
+	 * @return the {@link BookType}.
+	 */
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	public BookType getBookByISBN(final String ISBN) {
+		BookType m = null;
+		if (ISBN == null) {
+			this.logger.debug("getBookByISBN: ISBN is null.");
+		} else {
+			CriteriaBuilder cb = this.em.getCriteriaBuilder();
+			CriteriaQuery<BookType> q = cb.createQuery(BookType.class);
+			Root<BookType> c = q.from(BookType.class);
+			q.where(cb.equal(c.<String> get(BookType_.ISBN), ISBN));
+			TypedQuery<BookType> typedQuery = this.em.createQuery(q);
+			try {
+				m = typedQuery.getSingleResult();
+				this.logger.debug("getBookByISBN: " + ToStringBuilder.reflectionToString(m));
+			} catch (NoResultException e) {
+				this.logger.debug("getBookByISBN: non value found for ISBN=" + ISBN);
+				m = null;
+			}
+		}
+		return m;
+	}
+
+	/**
+	 * @param title
+	 * @param max
+	 * @return all {@link BookType}s with the title contained.
+	 */
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	public List<BookType> getBookByTitle(final String title, final BigInteger max) {
+		List<BookType> value = new ArrayList<>();
+		Optional.of(title).ifPresent(t -> {
+			CriteriaBuilder cb = this.em.getCriteriaBuilder();
+			CriteriaQuery<BookType> q = cb.createQuery(BookType.class);
+			Root<BookType> c = q.from(BookType.class);
+			q.where(cb.like(c.<String> get(BookType_.title), String.format("%%%s%%", title)));
+			q.orderBy(cb.asc(c.<String> get(BookType_.title)));
+			long maximum = Integer.MAX_VALUE;
+			if (Objects.nonNull(max)) {
+				maximum = max.longValue();
+			}
+			value.addAll(this.em.createQuery(q).getResultList().stream().limit(maximum).collect(Collectors.toList()));
+		});
+		return value;
+	}
+
+	/**
 	 * @param value
-	 *            the {@link BookType} to save.
+	 *                  the {@link BookType} to save.
 	 * @return the created {@link BookType}.
 	 */
-	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME,
-			propagation = Propagation.REQUIRED)
+	@Transactional(value = PersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
 	public BookType saveBook(final BookType value) {
 		if (value != null) {
 			try {
@@ -164,4 +184,5 @@ public class PlatformDao {
 			return null;
 		}
 	}
+
 }
