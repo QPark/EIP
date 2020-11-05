@@ -1,10 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
- * 
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0. 
- * The Eclipse Public License is available at 
- * http://www.eclipse.org/legal/epl-v10.html.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
  ******************************************************************************/
 package com.qpark.eip.core.spring;
 
@@ -30,29 +29,26 @@ import com.qpark.eip.core.ReInitalizeable;
  *
  * @author bhausen
  */
-public abstract class AbstractPlaceholderConfigurer
-		extends PropertyPlaceholderConfigurer implements Map<String, String>,
-		ReInitalizeable, ApplicationContextAware {
+public abstract class AbstractPlaceholderConfigurer extends PropertyPlaceholderConfigurer
+		implements Map<String, String>, ReInitalizeable, ApplicationContextAware {
 	/**
 	 * @param properties
-	 *            The loaded properties
+	 *                       The loaded properties
 	 * @return the {@link TreeMap} containing the translations.
 	 */
-	public static TreeMap<String, String> setupTranslationMap(
-			final Map<String, String> properties) {
-		TreeMap<String, String> translationMap = new TreeMap<String, String>();
+	public static TreeMap<String, String> setupTranslationMap(final Map<String, String> properties) {
+		TreeMap<String, String> translationMap = new TreeMap<>();
 		String number;
 		String source;
 		String translated;
 		for (String s0 : properties.keySet()) {
-			if (s0.trim().length() > 0 && !s0.trim().startsWith("#")
-					&& s0.indexOf('.') > 0) {
+			if (s0.trim().length() > 0 && !s0.trim().startsWith("#") && s0.indexOf('.') > 0) {
 				number = s0.substring(0, s0.indexOf('.'));
 				for (String s1 : properties.keySet()) {
 					source = null;
 					translated = null;
-					if (s1.trim().length() > 0 && !s1.trim().startsWith("#")
-							&& s1.startsWith(number) && !s1.equals(s0)) {
+					if (s1.trim().length() > 0 && !s1.trim().startsWith("#") && s1.startsWith(number)
+							&& !s1.equals(s0)) {
 						if (s0.contains("source")) {
 							source = s0;
 						} else if (s1.contains("source")) {
@@ -64,8 +60,7 @@ public abstract class AbstractPlaceholderConfigurer
 							translated = s1;
 						}
 						if (source != null && translated != null) {
-							translationMap.put(properties.get(source),
-									properties.get(translated));
+							translationMap.put(properties.get(source), properties.get(translated));
 						}
 					}
 				}
@@ -75,7 +70,7 @@ public abstract class AbstractPlaceholderConfigurer
 	}
 
 	/** The map containing all the properties. */
-	private final TreeMap<String, String> properties = new TreeMap<String, String>();
+	private final TreeMap<String, String> properties = new TreeMap<>();
 	/** The application context. */
 	protected ApplicationContext applicationContext;
 
@@ -102,6 +97,13 @@ public abstract class AbstractPlaceholderConfigurer
 	@Override
 	public boolean containsValue(final Object value) {
 		return this.properties.containsValue(value);
+	}
+
+	/** @return filled {@link Properties}. */
+	public Properties toProperties() {
+		final Properties p = new Properties();
+		this.properties.entrySet().stream().forEach(e -> p.put(e.getKey(), e.getValue()));
+		return p;
 	}
 
 	/**
@@ -152,9 +154,8 @@ public abstract class AbstractPlaceholderConfigurer
 		int value = defaultValue;
 		if (this.properties.containsKey(key)) {
 			try {
-				value = Integer.parseInt(
-						this.getProperty(key, String.valueOf(defaultValue)));
-			} catch (NumberFormatException e) {
+				value = Integer.parseInt(this.getProperty(key, String.valueOf(defaultValue)));
+			} catch (final NumberFormatException e) {
 				value = defaultValue;
 			}
 		}
@@ -168,9 +169,8 @@ public abstract class AbstractPlaceholderConfigurer
 		long value = defaultValue;
 		if (this.properties.containsKey(key)) {
 			try {
-				value = Long.parseLong(
-						this.getProperty(key, String.valueOf(defaultValue)));
-			} catch (NumberFormatException e) {
+				value = Long.parseLong(this.getProperty(key, String.valueOf(defaultValue)));
+			} catch (final NumberFormatException e) {
 				value = defaultValue;
 			}
 		}
@@ -179,7 +179,7 @@ public abstract class AbstractPlaceholderConfigurer
 
 	/**
 	 * Get the property names as {@link Set}.
-	 * 
+	 *
 	 * @return the property names.
 	 */
 	public Set<String> stringPropertyNames() {
@@ -193,9 +193,8 @@ public abstract class AbstractPlaceholderConfigurer
 		double value = defaultValue;
 		if (this.properties.containsKey(key)) {
 			try {
-				value = Double.parseDouble(
-						this.getProperty(key, String.valueOf(defaultValue)));
-			} catch (NumberFormatException e) {
+				value = Double.parseDouble(this.getProperty(key, String.valueOf(defaultValue)));
+			} catch (final NumberFormatException e) {
 				value = defaultValue;
 			}
 		}
@@ -223,11 +222,10 @@ public abstract class AbstractPlaceholderConfigurer
 	 *      java.util.Properties)
 	 */
 	@Override
-	protected void processProperties(
-			final ConfigurableListableBeanFactory beanFactoryToProcess,
-			final Properties props) throws BeansException {
+	protected void processProperties(final ConfigurableListableBeanFactory beanFactoryToProcess, final Properties props)
+			throws BeansException {
 		super.processProperties(beanFactoryToProcess, props);
-		for (String k : props.stringPropertyNames()) {
+		for (final String k : props.stringPropertyNames()) {
 			this.properties.put(k, props.getProperty(k));
 		}
 	}
@@ -253,7 +251,7 @@ public abstract class AbstractPlaceholderConfigurer
 	 */
 	@Override
 	public void putAll(final Map<? extends String, ? extends String> m) {
-		for (Map.Entry<? extends String, ? extends String> e : m.entrySet()) {
+		for (final Map.Entry<? extends String, ? extends String> e : m.entrySet()) {
 			this.put(e.getKey(), e.getValue());
 		}
 	}
@@ -263,12 +261,9 @@ public abstract class AbstractPlaceholderConfigurer
 	 */
 	@Override
 	public void reInitalize() {
-		if (ConfigurableApplicationContext.class
-				.isInstance(this.applicationContext)) {
+		if (ConfigurableApplicationContext.class.isInstance(this.applicationContext)) {
 			this.properties.clear();
-			this.postProcessBeanFactory(
-					((ConfigurableApplicationContext) this.applicationContext)
-							.getBeanFactory());
+			this.postProcessBeanFactory(((ConfigurableApplicationContext) this.applicationContext).getBeanFactory());
 		}
 	}
 
@@ -287,8 +282,7 @@ public abstract class AbstractPlaceholderConfigurer
 	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
 	 */
 	@Override
-	public void setApplicationContext(
-			final ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 

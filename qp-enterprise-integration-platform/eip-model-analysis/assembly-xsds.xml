@@ -18,7 +18,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${project.basedir}/src/main/xsd</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 		</fileSet>
 	</fileSets>

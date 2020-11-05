@@ -189,7 +189,7 @@ public class FlowInterfaceGenerator {
 			}
 			sb.append("\t */\n");
 
-			sb.append("\t@InsightOperation\n");
+			//sb.append("\t@InsightOperation\n");
 
 			sb.append("\t");
 			if (smd.getOut() != null) {
@@ -470,7 +470,7 @@ public class FlowInterfaceGenerator {
 			}
 		}
 		imports.add("java.util.List");
-		imports.add("com.springsource.insight.annotation.InsightOperation");
+	//	imports.add("com.springsource.insight.annotation.InsightOperation");
 		for (final String importedClass : imports) {
 			sb.append("import ").append(importedClass).append(";\n");
 		}

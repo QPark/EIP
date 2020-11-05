@@ -18,7 +18,6 @@ import com.qpark.eip.service.base.msg.FailureType;
 import com.samples.platform.service.iss.tech.support.msg.GetFailureMessageRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetFailureMessageResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get failure message on service <code>iss.tech.support</code>.
@@ -36,12 +35,12 @@ public class GetFailureMessageOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetFailureMessageRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetFailureMessageRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetFailureMessageResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetFailureMessageResponseType> getFailureMessage(
 			final JAXBElement<GetFailureMessageRequestType> message) {

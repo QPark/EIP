@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:oxm="http://www.springframework.org/schema/oxm" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
+	"
+>
+	<!-- Interceptor list of services -->
+	<util:list id="eipCallerComSamplesBusLibraryWsInterceptors">
+		<ref bean="eipCallerComSamplesBusLibraryWss4jSecurityInterceptor"/>
+	</util:list>
+	<!-- Marshaller of services -->
+	<bean id="eipCallerComSamplesBusLibraryMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="packagesToScan">
+			<list>
+				<value>com.samples.platform.service.library.msg</value>
+			</list>
+		</property>
+	</bean>
+
+<!-- Library definition start -->
+	<!-- Gateway of the service library (to be used in your code) -->
+	<int:gateway id="eipCallerComSamplesBusLibraryCreateBookGateway"
+		service-interface="com.samples.platform.service.library.msg.gateway.CreateBook"
+		default-request-channel="internalEipCallerComSamplesBusLibraryRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusLibraryCreateBookResponseChannel"
+	/>
+	<int:gateway id="eipCallerComSamplesBusLibraryGetBookGateway"
+		service-interface="com.samples.platform.service.library.msg.gateway.GetBook"
+		default-request-channel="internalEipCallerComSamplesBusLibraryRequestChannel"
+		default-reply-channel="internalEipCallerComSamplesBusLibraryGetBookResponseChannel"
+	/>
+	<!-- Channel definitions of service library -->
+	<int:channel id="internalEipCallerComSamplesBusLibraryRequestChannel" />
+	<int:channel id="internalEipCallerComSamplesBusLibraryCreateBookResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusLibraryGetBookResponseChannel" />
+	<int:channel id="internalEipCallerComSamplesBusLibraryWsOutgoingChannel" />
+	<!-- Response type router of service library -->
+	<int:router id="internalEipCallerComSamplesBusLibraryResponseTypeRouter"
+		input-channel="internalEipCallerComSamplesBusLibraryWsOutgoingChannel" 
+		ref="internalEipCallerComSamplesBusLibraryJAXBElementAwarePayloadTypeRouter"
+	/>
+	<bean id="internalEipCallerComSamplesBusLibraryJAXBElementAwarePayloadTypeRouter" class="com.qpark.eip.core.spring.JAXBElementAwarePayloadTypeRouter">
+		<property name="channelMappings">
+			<map>
+				<entry key="com.samples.platform.service.library.msg.CreateBookResponseType" value="internalEipCallerComSamplesBusLibraryCreateBookResponseChannel" />
+				<entry key="com.samples.platform.service.library.msg.GetBookResponseType" value="internalEipCallerComSamplesBusLibraryGetBookResponseChannel" />
+			</map>
+		</property>
+	</bean>
+	<!-- Outbound gateway of the service library -->
+	<int-ws:outbound-gateway id="eipCallerComSamplesBusLibraryOutboundGateway"
+		request-channel="internalEipCallerComSamplesBusLibraryRequestChannel"
+		reply-channel="internalEipCallerComSamplesBusLibraryWsOutgoingChannel"
+		uri="${service.endpoint.url.com.samples.bus.library:http://localhost:8080/}"
+		interceptors="eipCallerComSamplesBusLibraryWsInterceptors"
+		message-factory="soap12MessageFactory"
+		marshaller="eipCallerComSamplesBusIcdMarshaller" unmarshaller="eipCallerComSamplesBusIcdMarshaller"
+	/>
+<!-- Library definition end -->
+
+
+</beans>

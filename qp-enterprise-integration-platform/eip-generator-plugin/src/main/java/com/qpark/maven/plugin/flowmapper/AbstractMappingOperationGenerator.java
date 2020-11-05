@@ -97,8 +97,8 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append("import ");
 		sb.append(this.response.getClassNameFullQualified());
 		sb.append(";\n");
-		sb.append(
-				"import com.springsource.insight.annotation.InsightOperation;\n");
+//		sb.append(
+//				"import com.springsource.insight.annotation.InsightOperation;\n");
 		sb.append("\n");
 		sb.append("/**\n");
 		sb.append(" * The ");
@@ -144,7 +144,7 @@ public abstract class AbstractMappingOperationGenerator
 		sb.append("}.\n");
 		sb.append("\t */\n");
 
-		sb.append("\t@InsightOperation\n");
+		//sb.append("\t@InsightOperation\n");
 
 		sb.append("\t").append(this.response.getClassNameFullQualified());
 		sb.append(" ");

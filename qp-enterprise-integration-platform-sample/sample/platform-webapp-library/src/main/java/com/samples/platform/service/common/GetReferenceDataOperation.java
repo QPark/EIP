@@ -20,7 +20,6 @@ import com.qpark.eip.model.common.ReferenceDataType;
 import com.qpark.eip.service.common.msg.GetReferenceDataRequestType;
 import com.qpark.eip.service.common.msg.GetReferenceDataResponseType;
 import com.qpark.eip.service.common.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get reference data on service <code>common</code>.
@@ -38,12 +37,12 @@ public class GetReferenceDataOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetReferenceDataRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetReferenceDataRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetReferenceDataResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetReferenceDataResponseType> getReferenceData(
 			final JAXBElement<GetReferenceDataRequestType> message) {

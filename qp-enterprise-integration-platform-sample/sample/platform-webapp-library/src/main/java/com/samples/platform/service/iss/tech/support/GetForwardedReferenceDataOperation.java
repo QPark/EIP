@@ -22,7 +22,6 @@ import com.qpark.eip.service.common.msg.gateway.GetReferenceData;
 import com.samples.platform.service.iss.tech.support.msg.GetForwardedReferenceDataRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetForwardedReferenceDataResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get forwarded reference data on service
@@ -46,12 +45,12 @@ public class GetForwardedReferenceDataOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetForwardedReferenceDataRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetForwardedReferenceDataRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetForwardedReferenceDataResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetForwardedReferenceDataResponseType> getForwardedReferenceData(
 			final JAXBElement<GetForwardedReferenceDataRequestType> message) {

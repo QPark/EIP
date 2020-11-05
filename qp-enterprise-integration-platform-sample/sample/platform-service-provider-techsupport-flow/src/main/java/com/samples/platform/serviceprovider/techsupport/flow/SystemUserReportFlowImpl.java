@@ -36,8 +36,6 @@ import com.samples.platform.inf.iss.tech.support.type.TechnicalSupportSystemUser
 import com.samples.platform.model.iss.tech.support.SystemUserReportType;
 import com.samples.platform.service.iss.tech.support.msg.GetSystemUserReportRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetSystemUserReportResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
-import com.springsource.insight.annotation.InsightOperation;
 
 /**
  * The {@link SystemUserReportFlow}.
@@ -70,13 +68,13 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 * method(s).
 	 *
 	 * @param in
-	 *            the {@link GetSystemUserReportRequestType}
+	 *                        the {@link GetSystemUserReportRequestType}
 	 * @param flowContext
-	 *            the {@link FlowContext}
+	 *                        the {@link FlowContext}
 	 * @return the {@link SystemUserLogResponseType}
 	 */
 	@Override
-	@InsightOperation
+	// @InsightOperation
 	public SystemUserLogRequestType executeRequest(
 			final GetSystemUserReportRequestType in,
 			final FlowContext flowContext) {
@@ -107,17 +105,17 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 * Invoke the flow. This calls executeRequest and processResponse.
 	 *
 	 * @param request
-	 *            the {@link SystemUserReportFlowResponseType}
+	 *                        the {@link SystemUserReportFlowResponseType}
 	 * @param flowContext
-	 *            the {@link FlowContext}
+	 *                        the {@link FlowContext}
 	 * @return the {@link SystemUserReportFlowRequestType}
 	 */
 	@Override
-	@InsightEndPoint
+	// @InsightEndPoint
 	public SystemUserReportFlowResponseType invokeFlow(
 			final SystemUserReportFlowRequestType request,
 			final FlowContext flowContext) {
-		List<FailureType> failures = new ArrayList<FailureType>();
+		List<FailureType> failures = new ArrayList<>();
 		SystemUserLogRequestType executeRequest = null;
 		SystemUserLogResponseType gatewayResponse = null;
 		GetSystemUserReportResponseType processResponse = new GetSystemUserReportResponseType();
@@ -192,15 +190,15 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 * Get the {@link FlowLogMessageType}.
 	 *
 	 * @param flowContext
-	 *            the {@link FlowContext}.
+	 *                        the {@link FlowContext}.
 	 * @param type
-	 *            the type.
+	 *                        the type.
 	 * @param step
-	 *            the step.
+	 *                        the step.
 	 * @param severity
-	 *            the severity.
+	 *                        the severity.
 	 * @param data
-	 *            the data.
+	 *                        the data.
 	 * @return the {@link FlowLogMessageType}.
 	 */
 	private FlowLogMessageType getFlowLogMessage(final FlowContext flowContext,
@@ -225,13 +223,14 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 * {@link SystemUserLogCriteriaTypeMapResponseType}.
 	 *
 	 * @param mapIn
-	 *            the {@link SystemUserLogCriteriaTypeMapRequestType}
+	 *                        the
+	 *                        {@link SystemUserLogCriteriaTypeMapRequestType}
 	 * @param flowContext
-	 *            the {@link FlowContext}
+	 *                        the {@link FlowContext}
 	 * @return the {@link SystemUserLogCriteriaTypeMapResponseType}
 	 */
 	@Override
-	@InsightOperation
+	// @InsightOperation
 	public SystemUserLogCriteriaTypeMapResponseType mapInOutRequest(
 			final SystemUserLogCriteriaTypeMapRequestType mapIn,
 			final FlowContext flowContext) {
@@ -247,13 +246,13 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 * {@link SystemUserReportTypeMapResponseType}.
 	 *
 	 * @param mapIn
-	 *            the {@link SystemUserReportTypeMapRequestType}
+	 *                        the {@link SystemUserReportTypeMapRequestType}
 	 * @param flowContext
-	 *            the {@link FlowContext}
+	 *                        the {@link FlowContext}
 	 * @return the {@link SystemUserReportTypeMapResponseType}
 	 */
 	@Override
-	@InsightOperation
+	// @InsightOperation
 	public SystemUserReportTypeMapResponseType mapInOutResponse(
 			final SystemUserReportTypeMapRequestType mapIn,
 			final FlowContext flowContext) {
@@ -269,13 +268,13 @@ public class SystemUserReportFlowImpl implements SystemUserReportFlow {
 	 * method(s).
 	 *
 	 * @param in
-	 *            the {@link SystemUserLogResponseType}
+	 *                        the {@link SystemUserLogResponseType}
 	 * @param flowContext
-	 *            the {@link FlowContext}
+	 *                        the {@link FlowContext}
 	 * @return the {@link GetSystemUserReportResponseType}
 	 */
 	@Override
-	@InsightOperation
+	// @InsightOperation
 	public GetSystemUserReportResponseType processResponse(
 			final SystemUserLogResponseType in, final FlowContext flowContext) {
 		this.logger.debug("+processResponse {}", flowContext.getSessionId());

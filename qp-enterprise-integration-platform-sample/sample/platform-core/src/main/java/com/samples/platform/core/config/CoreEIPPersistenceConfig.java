@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
 import com.qpark.eip.core.EipJpaVendorAdapterConfiguration;
-import com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig;
 import com.qpark.eip.core.persistence.config.EipPersistenceConfig;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 import com.qpark.eip.core.spring.ContextNameProvider;
@@ -42,7 +41,6 @@ import com.samples.platform.persistenceconfig.PersistenceConfig;
 		com.qpark.eip.core.spring.statistics.config.EipStatisticsDBListenerConfig.class,
 		com.qpark.eip.core.spring.auth.config.EipAuthPropertyConfig.class,
 		com.qpark.eip.core.spring.lockedoperation.config.EipLockedoperationConfig.class,
-		com.qpark.eip.core.model.analysis.config.EipModelAnalysisPersistenceConfig.class,
 
 		com.samples.platform.persistenceconfig.PersistenceConfig.class,
 		com.samples.platform.persistenceconfig.JndiDataSourceConfig.class
@@ -52,8 +50,9 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 *
-	 * @param applicationProperties The
-	 *                              {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties
+	 *                                  The
+	 *                                  {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link ContextNameProvider} of the {@link EipAuthConfig}.
 	 */
 	@Bean(name = EipAuthConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
@@ -77,39 +76,6 @@ public class CoreEIPPersistenceConfig {
 		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
 		DataSource bean = dsLookup
 				.getDataSource(PersistenceConfig.DATASOURCE_JDNI_NAME);
-		return bean;
-	}
-
-	/**
-	 * Get the {@link DataSource} of {@link EipModelAnalysisPersistenceConfig}.
-	 *
-	 * @return the {@link DataSource} of
-	 *         {@link EipModelAnalysisPersistenceConfig}.
-	 */
-	@Bean(name = EipModelAnalysisPersistenceConfig.DATASOURCE_BEAN_NAME)
-	public DataSource getEipModelAnalysisDataSource() {
-		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-		DataSource bean = dsLookup
-				.getDataSource(PersistenceConfig.DATASOURCE_JDNI_NAME);
-		return bean;
-	}
-
-	/**
-	 * Set the {@link EipJpaVendorAdapterConfiguration} of
-	 * {@link EipModelAnalysisPersistenceConfig}.
-	 *
-	 * @return the {@link EipJpaVendorAdapterConfiguration} of
-	 *         {@link EipModelAnalysisPersistenceConfig}.
-	 */
-	@Bean(name = EipModelAnalysisPersistenceConfig.JPA_VENDOR_ADAPTER_CONFIGURATION_BEAN_NAME)
-	public EipJpaVendorAdapterConfiguration getEipModelAnalysisJpaVendorConfiguration() {
-		EipJpaVendorAdapterConfiguration bean = new EipJpaVendorAdapterConfiguration();
-		bean.setJpaVendorAdapterClassName(
-				EipJpaVendorAdapterConfiguration.DEFAULT_JPA_VENDOR_ADAPTER_CLASSNAME);
-
-		bean.setJpaVendorAdpaterDatabasePlatform(
-				"org.hibernate.dialect.HSQLDialect");
-		bean.setJpaVendorAdapterGenerateDdl(true);
 		return bean;
 	}
 
@@ -167,8 +133,9 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link ContextNameProvider} of the {@link EipStatisticsConfig}.
 	 *
-	 * @param applicationProperties The
-	 *                              {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties
+	 *                                  The
+	 *                                  {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link ContextNameProvider} of the
 	 *         {@link EipStatisticsConfig}.
 	 */
@@ -204,8 +171,9 @@ public class CoreEIPPersistenceConfig {
 	/**
 	 * Get the {@link MessageContentProvider} of {@link EipStatisticsConfig}.
 	 *
-	 * @param applicationProperties The
-	 *                              {@link ApplicationPlaceholderConfigurer}.
+	 * @param applicationProperties
+	 *                                  The
+	 *                                  {@link ApplicationPlaceholderConfigurer}.
 	 * @return the {@link MessageContentProvider} of {@link EipStatisticsConfig}
 	 *         .
 	 */

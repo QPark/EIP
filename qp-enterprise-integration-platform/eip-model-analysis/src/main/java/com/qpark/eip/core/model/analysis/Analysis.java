@@ -10,8 +10,10 @@ package com.qpark.eip.core.model.analysis;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.qpark.eip.model.docmodel.ClusterType;
 import com.qpark.eip.model.docmodel.DataType;
@@ -50,8 +52,7 @@ public class Analysis {
 			this.clusterMap.put(((ClusterType) o).getName(), (ClusterType) o);
 		} else if (ServiceType.class.isInstance(o)) {
 			this.serviceMap.put(((ServiceType) o).getName(), (ServiceType) o);
-			this.serviceIdMap.put(((ServiceType) o).getServiceId(),
-					(ServiceType) o);
+			this.serviceIdMap.put(((ServiceType) o).getServiceId(), (ServiceType) o);
 		} else if (ElementType.class.isInstance(o)) {
 			this.elementMap.put(((ElementType) o).getName(), (ElementType) o);
 			this.dataTypeMap.put(((ElementType) o).getName(), (ElementType) o);
@@ -70,7 +71,7 @@ public class Analysis {
 	 * Get the {@link ClusterType} according to the name space.
 	 *
 	 * @param namespace
-	 *            the name space.
+	 *                      the name space.
 	 * @return the {@link ClusterType} or <code>null</code> .
 	 */
 	public ClusterType getCluster(final String namespace) {
@@ -81,7 +82,7 @@ public class Analysis {
 	 * Get the {@link DataType} according to the QName.
 	 *
 	 * @param name
-	 *            the QName of the {@link DataType}.
+	 *                 the QName of the {@link DataType}.
 	 * @return the {@link DataType} or <code>null</code> .
 	 */
 	public DataType getDataType(final String qname) {
@@ -92,7 +93,7 @@ public class Analysis {
 	 * Get the {@link DataType} according to the id.
 	 *
 	 * @param id
-	 *            the id of the {@link DataType}.
+	 *               the id of the {@link DataType}.
 	 * @return the {@link DataType} or <code>null</code> .
 	 */
 	public DataType getDataTypeById(final String id) {
@@ -112,7 +113,7 @@ public class Analysis {
 	 * Get the {@link DomainType} according to the path name.
 	 *
 	 * @param pathName
-	 *            the path name.
+	 *                     the path name.
 	 * @return the {@link DomainType} or <code>null</code> .
 	 */
 	public DomainType getDomainType(final String pathName) {
@@ -123,7 +124,7 @@ public class Analysis {
 	 * Get the {@link ElementType} according to the QName of the element.
 	 *
 	 * @param name
-	 *            the QName of the element.
+	 *                 the QName of the element.
 	 * @return the {@link ElementType} or <code>null</code> .
 	 */
 	public ElementType getElementType(final String qname) {
@@ -138,7 +139,7 @@ public class Analysis {
 	 * Get the {@link ServiceType} according to the service id.
 	 *
 	 * @param serviceName
-	 *            the service id.
+	 *                        the service id.
 	 * @return the {@link ServiceType} or <code>null</code> .
 	 */
 	public ServiceType getServiceType(final String serviceName) {
@@ -146,10 +147,17 @@ public class Analysis {
 	}
 
 	/**
+	 * @return all serviceIds.
+	 */
+	public List<String> getServiceIds() {
+		return this.serviceIdMap.keySet().stream().sorted().collect(Collectors.toList());
+	}
+
+	/**
 	 * Get the {@link ServiceType} according to the service id.
 	 *
 	 * @param serviceId
-	 *            the service id.
+	 *                      the service id.
 	 * @return the {@link ServiceType} or <code>null</code> .
 	 */
 	public ServiceType getServiceTypeById(final String serviceId) {

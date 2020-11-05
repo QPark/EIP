@@ -22,7 +22,7 @@ import java.util.Properties;
  */
 public class CheckConnection {
 	static class Dotter implements Runnable {
-		boolean doit = true;;
+		boolean doit = true;
 
 		/**
 		 * @see java.lang.Runnable#run()
@@ -72,7 +72,7 @@ public class CheckConnection {
 
 	}
 
-	private static ArrayList<Properties> databaseProperties = new ArrayList<Properties>();
+	private static ArrayList<Properties> databaseProperties = new ArrayList<>();
 	private static final String DRIVER = "DRIVER";
 	private static final String DATASOURCE = "DATASOURCE";
 
@@ -80,7 +80,7 @@ public class CheckConnection {
 	private static final String DRIVER_CLASS_SQLSERVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	private static final String PWD = "PWD";
 
-	private static ArrayList<Entry<String, Integer>> servers = new ArrayList<Entry<String, Integer>>();
+	private static ArrayList<Entry<String, Integer>> servers = new ArrayList<>();
 
 	private static final String URL = "URL";
 
@@ -375,8 +375,7 @@ public class CheckConnection {
 								break;
 							}
 						}
-					} else if (value.contains("http://") || value.contains("https://") || value.contains("ftp://")
-							|| value.contains("sftp://") || value.contains("ldap://") || value.contains("ldaps://")) {
+					} else if (value.contains("://")) {
 						parseUrl(value);
 					}
 				}

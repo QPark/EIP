@@ -23,7 +23,6 @@ import com.qpark.eip.model.common.PropertyType;
 import com.qpark.eip.service.common.msg.GetServiceStatusRequestType;
 import com.qpark.eip.service.common.msg.GetServiceStatusResponseType;
 import com.qpark.eip.service.common.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get service status on service <code>common</code>.
@@ -45,31 +44,32 @@ public class GetServiceStatusOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetServiceStatusRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetServiceStatusRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetServiceStatusResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetServiceStatusResponseType> getServiceStatus(
 			final JAXBElement<GetServiceStatusRequestType> message) {
 		this.logger.debug("+getServiceStatus");
 		GetServiceStatusResponseType response = this.of
 				.createGetServiceStatusResponseType();
+
 		try {
 			PropertyType p;
 			ClassLoader cl;
 			URL[] urls;
 			ClassLoader sysCl = ClassLoader.getSystemClassLoader();
 
-			response.setStatus("Service is available");
+			response.setStatus("Service is alive");
 
 			/* System properties */
 			p = new PropertyType();
 			p.setName("System Properties");
 			response.getDetails().add(p);
-			TreeSet<String> propertyNames = new TreeSet<String>();
+			TreeSet<String> propertyNames = new TreeSet<>();
 			propertyNames.addAll(System.getProperties().stringPropertyNames());
 			for (String propertyName : propertyNames) {
 				p.getValue().add(new StringBuffer(64).append(propertyName)

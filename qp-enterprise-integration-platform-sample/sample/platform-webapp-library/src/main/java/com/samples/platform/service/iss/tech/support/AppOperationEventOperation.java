@@ -25,7 +25,6 @@ import com.samples.platform.model.iss.tech.support.OperationStateType;
 import com.samples.platform.service.iss.tech.support.msg.AppOperationEventRequestType;
 import com.samples.platform.service.iss.tech.support.msg.AppOperationEventResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation app operation event on service <code>iss.tech.support</code>.
@@ -46,12 +45,12 @@ public class AppOperationEventOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link AppOperationEventRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link AppOperationEventRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link AppOperationEventResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<AppOperationEventResponseType> appOperationEvent(
 			final JAXBElement<AppOperationEventRequestType> message) {

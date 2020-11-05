@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
+
+	xmlns:EIPlimem="http://www.qpark.com/LimeSurvey/LimeSurveyServiceMessages-2.0"
+	targetNamespace="http://www.qpark.com/LimeSurvey/LimeSurveyServiceMessages-2.0"
+>
+
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.service.lime.survey.msg"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Message definitions of the LimeSurvey service.</documentation>
+	</annotation>
+
+
+	<complexType name="GetSessionKeyRequestType">
+		<annotation><documentation>Function get_session_key request</documentation></annotation>
+		<sequence>
+			<element name="username" type="string"/>
+			<element name="password" type="string"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="GetSessionKeyResponseType">
+		<annotation><documentation>Function get_session_key response</documentation></annotation>
+		<sequence>
+			<element name="sessionKey" type="string"/>
+		</sequence>
+	</complexType>
+	<element name="GetSessionKeyRequest" type="EIPlimem:GetSessionKeyRequestType"/>
+	<element name="GetSessionKeyResponse" type="EIPlimem:GetSessionKeyResponseType"/>
+
+	<complexType name="SurveyType">
+		<sequence>
+			<element name="sid" type="string"/>
+			<element name="surveyls_title" type="string"/>
+			<element name="startdate" type="dateTime"/>
+			<element name="expires" type="dateTime"/>
+			<element name="active" type="boolean"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="ListSurveysRequestType">
+		<annotation><documentation>Function list_surveys request</documentation></annotation>
+		<sequence>
+			<element name="sessionKey" type="string"/>
+			<element name="username" type="string"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="ListSurveysResponseType">
+		<annotation><documentation>Function list_surveys response</documentation></annotation>
+		<sequence>
+			<element name="survey" type="EIPlimem:SurveyType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="ListSurveysRequest" type="EIPlimem:ListSurveysRequestType"/>
+	<element name="ListSurveysResponse" type="EIPlimem:ListSurveysResponseType"/>
+</schema>

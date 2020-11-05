@@ -22,7 +22,6 @@ import com.qpark.eip.service.common.msg.gateway.GetReferenceData;
 import com.samples.platform.service.iss.tech.support.msg.GetAggregatedReferenceDataRequestType;
 import com.samples.platform.service.iss.tech.support.msg.GetAggregatedReferenceDataResponseType;
 import com.samples.platform.service.iss.tech.support.msg.ObjectFactory;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get aggregated reference data on service
@@ -46,12 +45,12 @@ public class GetAggregatedReferenceDataOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetAggregatedReferenceDataRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetAggregatedReferenceDataRequestType}.
 	 * @return the {@link JAXBElement} with a
 	 *         {@link GetAggregatedReferenceDataResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetAggregatedReferenceDataResponseType> getAggregatedReferenceData(
 			final JAXBElement<GetAggregatedReferenceDataRequestType> message) {

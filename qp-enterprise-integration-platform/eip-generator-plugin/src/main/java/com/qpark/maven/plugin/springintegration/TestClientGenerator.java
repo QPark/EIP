@@ -63,7 +63,7 @@ public class TestClientGenerator {
 		imports.add(this.ctRequest.getClassNameFullQualified());
 		imports.add(this.ctResponse.getClassNameFullQualified());
 		if (this.useInsightAnnotation) {
-			imports.add("com.springsource.insight.annotation.InsightEndPoint");
+			//imports.add("com.springsource.insight.annotation.InsightEndPoint");
 		}
 		return imports;
 	}
@@ -90,7 +90,7 @@ public class TestClientGenerator {
 			sb.append("\t */\n");
 
 			if (this.useInsightAnnotation) {
-				sb.append("	@InsightEndPoint\n");
+				//sb.append("	@InsightEndPoint\n");
 			}
 			sb.append("	public final ");
 			sb.append(this.responseType);

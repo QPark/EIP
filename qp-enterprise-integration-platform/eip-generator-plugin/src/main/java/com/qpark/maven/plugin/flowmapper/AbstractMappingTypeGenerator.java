@@ -89,8 +89,8 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		importedClasses.add(new StringBuffer(this.basicFlowPackageName)
 				.append(".FlowContext").toString());
 
-		importedClasses
-				.add("com.springsource.insight.annotation.InsightOperation");
+//		importedClasses
+//				.add("com.springsource.insight.annotation.InsightOperation");
 
 		for (String importedClass : importedClasses) {
 			sb.append("import ").append(importedClass).append(";\n");
@@ -149,7 +149,7 @@ public abstract class AbstractMappingTypeGenerator extends AbstractGenerator {
 		sb.append("}.\n");
 		sb.append("\t */\n");
 
-		sb.append("\t@InsightOperation\n");
+	//	sb.append("\t@InsightOperation\n");
 
 		sb.append("\t").append(this.complexType.getClassNameFullQualified());
 		sb.append(" ");

@@ -5,24 +5,31 @@
 # The Eclipse Public License is available at
 # http://www.eclipse.org/legal/epl-v10.html.
 
-FROM tomcat:jdk8-openjdk-slim
+FROM tomcat:9-jdk11-openjdk-slim
+# FROM tomcat:10-jdk11-openjdk-slim
+# tomcat 10 reports:
+# SEVERE [main] org.apache.catalina.core.StandardContext.filterStart Exception starting filter [xxxFilter] java.lang.ClassCastException: class xxxFilter cannot be cast to class jakarta.servlet.Filter
+# tomcat 10 removed the dependency on Java EE 8 and replaced it with Jakarta EE 9. There is a tool available at 
+# https://github.com/apache/tomcat-jakartaee-migration
+# to migrate a tomcat 9 valid war file into a tomcat 10 valid war file.
 
-ADD tomcat/lib-platform-servicebus-1.0.0 /usr/local/tomcat/lib-platform-servicebus-1.0.0/
+
+ADD tomcat/lib-platform-servicebus-2.0.0 /usr/local/tomcat/lib-platform-servicebus-2.0.0/
 ADD tomcat/lib/* /usr/local/tomcat/lib/
 ADD tomcat/conf/* /usr/local/tomcat/conf/
 ADD tomcat/webapps/platform-webapp-library-xxx-application.version-xxx.war /usr/local/tomcat/webapps/iss-library.war
 
-RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/tomcat\/lib-platform-servicebus-1.0.0\/*.jar/g' /usr/local/tomcat/conf/catalina.properties; 
+RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/tomcat\/lib-platform-servicebus-2.0.0\/*.jar/g' /usr/local/tomcat/conf/catalina.properties; 
 RUN sed -i 's/<\/Context>/<ResourceLink name="jdbc\/PlatformDB" type="javax.sql.DataSource" global="jdbc\/PlatformDB" \/><\/Context>/g' /usr/local/tomcat/conf/context.xml; 
 RUN sed -i 's/<\/GlobalNamingResources>/<Resource name="jdbc\/PlatformDB" auth="Container" username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}\/issLibraryHSQLDB.bin" driverClassName="org.hsqldb.jdbc.JDBCDriver" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" defaultTransactionIsolation="READ_COMMITTED" maxActive="20" maxIdle="20" minIdle="3" initialSize="2" \/><\/GlobalNamingResources>/g' /usr/local/tomcat/conf/server.xml; 
 RUN sed -i 's/redirectPort="8443"\ \/>/redirectPort="8443" address="0.0.0.0" URIEncoding="UTF-8" ><UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" \/><\/Connector>/g' /usr/local/tomcat/conf/server.xml; 
-RUN sed -i "s/1catalina.org.apache.juli.AsyncFileHandler.level\ =\ FINE/1catalina.org.apache.juli.AsyncFileHandler.level=WARNING/g" /usr/local/tomcat/conf/logging.properties; 
-RUN echo "org.apache.catalina.startup.Catalina.level = INFO\norg.apache.catalina.startup.Catalina.handlers = java.util.logging.ConsoleHandler\njava.util.logging.SimpleFormatter.format=%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS.%1$tL %2$s%n%4$s: %5$s%6$s%n" >> /usr/local/tomcat/conf/logging.properties;
+#RUN sed -i "s/1catalina.org.apache.juli.AsyncFileHandler.level\ =\ FINE/1catalina.org.apache.juli.AsyncFileHandler.level=WARNING/g" /usr/local/tomcat/conf/logging.properties; 
+#RUN echo "org.apache.catalina.startup.Catalina.level = INFO\norg.apache.catalina.startup.Catalina.handlers = java.util.logging.ConsoleHandler\njava.util.logging.SimpleFormatter.format=%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS.%1$tL %2$s%n%4$s: %5$s%6$s%n" >> /usr/local/tomcat/conf/logging.properties;
 RUN chmod 600 /usr/local/tomcat/conf/jmxremote.password;
 
 EXPOSE 8080 8010 1099
 
-ENV eip.jasypt.encryptor.password=qpark-eip
+ENV eip_jasypt_encryptor_password=qpark-eip
 
 ENV CATALINA_OPTS="${CATALINA_OPTS} -Duser.timezone=UTC \
     -Duser.language=en \

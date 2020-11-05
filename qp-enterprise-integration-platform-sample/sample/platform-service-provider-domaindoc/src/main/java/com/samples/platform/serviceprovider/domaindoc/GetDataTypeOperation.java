@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.qpark.eip.service.domain.doc.msg.GetDataTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetDataTypeResponseType;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation get data type on service <code>domain.doc</code>.
@@ -34,11 +33,11 @@ public class GetDataTypeOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetDataTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetDataTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetDataTypeResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<GetDataTypeResponseType> getDataType(
 			final JAXBElement<GetDataTypeRequestType> message) {

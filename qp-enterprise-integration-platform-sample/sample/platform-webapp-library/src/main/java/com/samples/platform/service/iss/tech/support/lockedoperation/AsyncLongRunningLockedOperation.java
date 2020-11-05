@@ -21,13 +21,11 @@ import com.qpark.eip.core.spring.lockedoperation.LockableOperationContext;
  * @author bhausen
  */
 @Component
-public class AsyncLongRunningLockedOperation
-		extends AbstractAsyncLockableOperation {
+public class AsyncLongRunningLockedOperation extends AbstractAsyncLockableOperation {
 	/** The UUID of the locked operation. */
 	public static final String OPERATION_UUID = "a5a70aea-86b0-3a74-86dd-2f0ea139c950";
 	/** The {@link org.slf4j.Logger}. */
-	private Logger logger = LoggerFactory
-			.getLogger(AsyncLongRunningLockedOperation.class);
+	private Logger logger = LoggerFactory.getLogger(AsyncLongRunningLockedOperation.class);
 
 	/**
 	 * @see com.qpark.eip.core.spring.lockedoperation.LockableOperation#getLogger()
@@ -57,17 +55,14 @@ public class AsyncLongRunningLockedOperation
 	 * @see com.qpark.eip.core.spring.lockedoperation.AbstractAsyncLockableOperation#invokeOperationAsync(com.qpark.eip.core.spring.lockedoperation.LockableOperationContext)
 	 */
 	@Override
-	protected void invokeOperationAsync(
-			final LockableOperationContext context) {
-		this.logger.debug("+invokeOperationAsync {} {}", this.getName(),
-				this.getUUID());
+	protected void invokeOperationAsync(final LockableOperationContext context) {
+		this.logger.info("+invokeOperationAsync {} {}", this.getName(), this.getUUID());
 		try {
-			Thread.sleep(60 * 1000);
+			Thread.sleep(15 * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		this.logger.debug("-invokeOperationAsync {} {}", this.getName(),
-				this.getUUID());
+		this.logger.info("-invokeOperationAsync {} {}", this.getName(), this.getUUID());
 	}
 
 }

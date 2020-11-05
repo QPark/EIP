@@ -106,7 +106,8 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	@Qualifier(EipStatisticsConfig.CONTEXTNAME_PROVIDER_BEAN_NAME)
 	private ContextNameProvider contextNameProvider;
 	/** The {@link EntityManager}. */
-	@PersistenceContext(unitName = EipPersistenceConfig.PERSISTENCE_UNIT_NAME, name = EipPersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
+	@PersistenceContext(unitName = EipPersistenceConfig.PERSISTENCE_UNIT_NAME,
+			name = EipPersistenceConfig.ENTITY_MANAGER_FACTORY_NAME)
 	private EntityManager em;
 
 	/** The {@link org.slf4j.Logger}. */
@@ -116,9 +117,12 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	/**
 	 * Add the {@link ApplicationUserLogType} to the database.
 	 *
-	 * @param log the {@link ApplicationUserLogType} to add.
+	 * @param log
+	 *                the {@link ApplicationUserLogType} to add.
 	 */
 	@Override
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void addChannelInvocation(final String channelName,
 			final ApplicationUserLogType log) {
 		if (this.logger.isTraceEnabled()) {
@@ -134,9 +138,12 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	/**
 	 * Add the {@link SystemUserLogType} to the database.
 	 *
-	 * @param log the {@link SystemUserLogType} to add.
+	 * @param log
+	 *                the {@link SystemUserLogType} to add.
 	 */
 	@Override
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void addChannelInvocation(final String channelName,
 			final SystemUserLogType log) {
 		/* Setup context and version. */
@@ -154,27 +161,28 @@ public class StatisticsLoggingDao extends AbstractEipDao
 		final Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
 
 		final List<Predicate> predicates = new ArrayList<>();
-		predicates.add(cb.equal(c.<String>get(SystemUserLogType_.context),
+		predicates.add(cb.equal(c.<String> get(SystemUserLogType_.context),
 				log.getContext()));
-		predicates.add(cb.equal(c.<String>get(SystemUserLogType_.version),
+		predicates.add(cb.equal(c.<String> get(SystemUserLogType_.version),
 				log.getVersion()));
 		if (log.getUserName() == null) {
-			predicates
-					.add(cb.isNull(c.<String>get(SystemUserLogType_.userName)));
+			predicates.add(
+					cb.isNull(c.<String> get(SystemUserLogType_.userName)));
 		} else {
-			predicates.add(cb.equal(c.<String>get(SystemUserLogType_.userName),
+			predicates.add(cb.equal(c.<String> get(SystemUserLogType_.userName),
 					log.getUserName()));
 		}
-		predicates.add(cb.equal(c.<String>get(SystemUserLogType_.serviceName),
+		predicates.add(cb.equal(c.<String> get(SystemUserLogType_.serviceName),
 				log.getServiceName()));
-		predicates.add(cb.equal(c.<String>get(SystemUserLogType_.operationName),
-				log.getOperationName()));
-		predicates.add(cb.between(c.<Date>get(SystemUserLogType_.logDateItem),
+		predicates
+				.add(cb.equal(c.<String> get(SystemUserLogType_.operationName),
+						log.getOperationName()));
+		predicates.add(cb.between(c.<Date> get(SystemUserLogType_.logDateItem),
 				getDayStart(log.getLogDateItem()),
 				getDayEnd(log.getLogDateItem())));
 
 		q.where(predicates.toArray(new Predicate[predicates.size()]));
-		q.orderBy(cb.desc(c.<Long>get(SystemUserLogType_.hjid)));
+		q.orderBy(cb.desc(c.<Long> get(SystemUserLogType_.hjid)));
 		TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);
 
 		SystemUserLogType persistence = null;
@@ -245,9 +253,12 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	/**
 	 * Add the {@link FlowLogMessageType} to the database.
 	 *
-	 * @param log the {@link FlowLogMessageType} to add.
+	 * @param log
+	 *                the {@link FlowLogMessageType} to add.
 	 */
 	@Override
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void addFlowLogMessage(final FlowLogMessageType log) {
 		this.em.persist(log);
 	}
@@ -257,7 +268,8 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	 *      java.lang.Object)
 	 */
 	@Override
-	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void doAsyncDatabaseOperation(final String userName,
 			final Object obj) {
 		if (ApplicationUserLogType.class.isInstance(obj)) {
@@ -273,18 +285,20 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	 * Erase all {@link ApplicationUserLogType}s of the application scope older
 	 * than the given date.
 	 *
-	 * @param toDate the date.
+	 * @param toDate
+	 *                   the date.
 	 */
-	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void eraseApplicationUserLog(final Date toDate) {
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaDelete<ApplicationUserLogType> q = cb
 				.createCriteriaDelete(ApplicationUserLogType.class);
 		final Root<ApplicationUserLogType> c = q
 				.from(ApplicationUserLogType.class);
-		q.where(cb.lessThan(c.<Date>get(ApplicationUserLogType_.stopItem),
+		q.where(cb.lessThan(c.<Date> get(ApplicationUserLogType_.stopItem),
 				toDate),
-				cb.equal(c.<String>get(ApplicationUserLogType_.context),
+				cb.equal(c.<String> get(ApplicationUserLogType_.context),
 						this.contextNameProvider.getContextName()));
 		try {
 			this.em.createQuery(q).executeUpdate();
@@ -297,15 +311,17 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	 * Erase all {@link FlowLogMessageType}s of the application scope older than
 	 * the given date.
 	 *
-	 * @param toDate the date.
+	 * @param toDate
+	 *                   the date.
 	 */
-	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void eraseFlowLogMessage(final Date toDate) {
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaDelete<FlowLogMessageType> q = cb
 				.createCriteriaDelete(FlowLogMessageType.class);
 		final Root<FlowLogMessageType> c = q.from(FlowLogMessageType.class);
-		q.where(cb.lessThan(c.<Date>get(FlowLogMessageType_.logTimeItem),
+		q.where(cb.lessThan(c.<Date> get(FlowLogMessageType_.logTimeItem),
 				toDate));
 		try {
 			this.em.createQuery(q).executeUpdate();
@@ -318,17 +334,19 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	 * Erase all {@link SystemUserLogType}s of the application scope older than
 	 * the given date.
 	 *
-	 * @param toDate the date.
+	 * @param toDate
+	 *                   the date.
 	 */
-	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public void eraseSystemUserLog(final Date toDate) {
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		final CriteriaDelete<SystemUserLogType> q = cb
 				.createCriteriaDelete(SystemUserLogType.class);
 		final Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
-		q.where(cb.lessThan(c.<Date>get(SystemUserLogType_.logDateItem),
+		q.where(cb.lessThan(c.<Date> get(SystemUserLogType_.logDateItem),
 				toDate),
-				cb.equal(c.<String>get(SystemUserLogType_.context),
+				cb.equal(c.<String> get(SystemUserLogType_.context),
 						this.contextNameProvider.getContextName()));
 		try {
 			this.em.createQuery(q).executeUpdate();
@@ -340,10 +358,12 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	/**
 	 * Get all {@link ApplicationUserLogType}s of the day of the application.
 	 *
-	 * @param date the date the calls are recorded.
+	 * @param date
+	 *                 the date the calls are recorded.
 	 * @return the list of {@link ApplicationUserLogType}s.
 	 */
-	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public List<ApplicationUserLogType> getApplicationUserLogType(
 			final Date date) {
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
@@ -355,9 +375,9 @@ public class StatisticsLoggingDao extends AbstractEipDao
 				.createQuery(ApplicationUserLogType.class);
 		final Root<ApplicationUserLogType> c = q
 				.from(ApplicationUserLogType.class);
-		q.where(cb.equal(c.<String>get(ApplicationUserLogType_.context),
+		q.where(cb.equal(c.<String> get(ApplicationUserLogType_.context),
 				this.contextNameProvider.getContextName()),
-				cb.between(c.<Date>get(ApplicationUserLogType_.startItem),
+				cb.between(c.<Date> get(ApplicationUserLogType_.startItem),
 						getDayStart(d), getDayEnd(d)));
 
 		final TypedQuery<ApplicationUserLogType> typedQuery = this.em
@@ -392,10 +412,12 @@ public class StatisticsLoggingDao extends AbstractEipDao
 	/**
 	 * Get all {@link SystemUserLogType}s of the day of the application.
 	 *
-	 * @param date the date the calls are recorded.
+	 * @param date
+	 *                 the date the calls are recorded.
 	 * @return the list of {@link SystemUserLogType}s.
 	 */
-	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME, propagation = Propagation.REQUIRED)
+	@Transactional(value = EipPersistenceConfig.TRANSACTION_MANAGER_NAME,
+			propagation = Propagation.REQUIRED)
 	public List<SystemUserLogType> getSystemUserLogType(final Date date) {
 		final CriteriaBuilder cb = this.em.getCriteriaBuilder();
 		Date d = date;
@@ -405,9 +427,9 @@ public class StatisticsLoggingDao extends AbstractEipDao
 		final CriteriaQuery<SystemUserLogType> q = cb
 				.createQuery(SystemUserLogType.class);
 		final Root<SystemUserLogType> c = q.from(SystemUserLogType.class);
-		q.where(cb.equal(c.<String>get(SystemUserLogType_.context),
+		q.where(cb.equal(c.<String> get(SystemUserLogType_.context),
 				this.contextNameProvider.getContextName()),
-				cb.between(c.<Date>get(SystemUserLogType_.logDateItem),
+				cb.between(c.<Date> get(SystemUserLogType_.logDateItem),
 						getDayStart(d), getDayEnd(d)));
 
 		final TypedQuery<SystemUserLogType> typedQuery = this.em.createQuery(q);

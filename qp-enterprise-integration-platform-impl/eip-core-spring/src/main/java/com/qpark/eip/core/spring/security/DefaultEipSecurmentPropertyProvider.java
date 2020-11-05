@@ -10,6 +10,8 @@ package com.qpark.eip.core.spring.security;
 import java.util.Optional;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.StrongTextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
 
@@ -17,6 +19,8 @@ import com.qpark.eip.core.spring.ApplicationPlaceholderConfigurer;
  * @author bhausen
  */
 public class DefaultEipSecurmentPropertyProvider implements SecurmentPropertyProvider {
+  /** The {@link org.slf4j.Logger}. */
+  private Logger logger = LoggerFactory.getLogger(DefaultEipSecurmentPropertyProvider.class);
   private String securementPassword;
   private String securementUsername;
   /** The {@link ApplicationPlaceholderConfigurer}. */
@@ -75,12 +79,16 @@ public class DefaultEipSecurmentPropertyProvider implements SecurmentPropertyPro
     this.securementPassword = Optional.ofNullable(securementPassword).map(pwd -> {
       String pwdEncrypted = null;
       if (pwd.trim().startsWith("ENC(") && pwd.trim().endsWith(")")) {
+        this.logger.debug("setSecurementPassword: Try password decrpytion of user '{}' '{}'",
+            this.securementUsername, pwd);
         final StrongTextEncryptor encryptor =
             EipJasyptEncryptionProvider.getEncryptor(this.properties);
         try {
           pwdEncrypted = encryptor.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
         } catch (final EncryptionOperationNotPossibleException e) {
-          e.printStackTrace();
+          this.logger.error("setSecurementPassword: Password decrpytion of user '{}' '{}' failed.",
+              this.securementUsername, pwd);
+          throw e;
         }
       }
       return pwdEncrypted;

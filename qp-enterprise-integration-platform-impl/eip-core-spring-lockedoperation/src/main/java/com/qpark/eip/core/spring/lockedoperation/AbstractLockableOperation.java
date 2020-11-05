@@ -14,7 +14,6 @@ import com.qpark.eip.core.spring.lockedoperation.dao.LockableOperationDao;
 import com.qpark.eip.core.spring.lockedoperation.dao.LockedOperationDaoImpl;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationEventEnumType;
 import com.qpark.eip.core.spring.lockedoperation.model.OperationStateEnumType;
-import com.springsource.insight.annotation.InsightOperation;
 
 /**
  * The base of the {@link LockableOperation}.
@@ -95,7 +94,6 @@ public abstract class AbstractLockableOperation implements LockableOperation {
 	 *            the {@link LockableOperationContext} (could be
 	 *            <code>null</code>) to pass to the {@link LockableOperation}.
 	 */
-	@InsightOperation
 	protected abstract void invokeOperation(LockableOperationContext context);
 
 	/**

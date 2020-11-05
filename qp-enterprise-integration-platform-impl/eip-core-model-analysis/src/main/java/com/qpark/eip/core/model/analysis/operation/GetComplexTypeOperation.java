@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetComplexTypeResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -27,9 +26,9 @@ import com.qpark.eip.service.domain.doc.msg.gateway.GetComplexType;
 public class GetComplexTypeOperation implements GetComplexType {
 	/** The bean name to use. */
 	public static final String BEAN_NAME = "com.qpark.eip.core.model.analysis.operationProviderDomainDocGetComplexType";
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetComplexTypeOperation.class);
@@ -38,8 +37,8 @@ public class GetComplexTypeOperation implements GetComplexType {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetComplexTypeRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetComplexTypeRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetComplexTypeResponseType}
 	 *         .
 	 */

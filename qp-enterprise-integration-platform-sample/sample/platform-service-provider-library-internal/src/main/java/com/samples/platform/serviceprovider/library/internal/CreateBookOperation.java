@@ -22,7 +22,6 @@ import com.samples.platform.service.library.msg.CreateBookRequestType;
 import com.samples.platform.service.library.msg.CreateBookResponseType;
 import com.samples.platform.service.library.msg.ObjectFactory;
 import com.samples.platform.serviceprovider.library.internal.dao.PlatformDao;
-import com.springsource.insight.annotation.InsightEndPoint;
 
 /**
  * Operation create book on service <code>library</code>.
@@ -42,11 +41,11 @@ public class CreateBookOperation {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link CreateBookRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link CreateBookRequestType}.
 	 * @return the {@link JAXBElement} with a {@link CreateBookResponseType}.
 	 */
-	@InsightEndPoint
+	// @InsightEndPoint
 	@ServiceActivator
 	public final JAXBElement<CreateBookResponseType> createBook(
 			final JAXBElement<CreateBookRequestType> message) {

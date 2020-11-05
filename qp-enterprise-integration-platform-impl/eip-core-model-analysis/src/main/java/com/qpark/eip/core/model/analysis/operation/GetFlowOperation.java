@@ -16,7 +16,6 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qpark.eip.core.DateUtil;
-import com.qpark.eip.core.model.analysis.AnalysisDao;
 import com.qpark.eip.service.domain.doc.msg.GetFlowRequestType;
 import com.qpark.eip.service.domain.doc.msg.GetFlowResponseType;
 import com.qpark.eip.service.domain.doc.msg.ObjectFactory;
@@ -35,7 +34,7 @@ public class GetFlowOperation implements GetFlow {
 	 * Translate the pattern do SQL <i>like</i>.
 	 *
 	 * @param namePattern
-	 *            the given name pattern.
+	 *                        the given name pattern.
 	 * @return the translated pattern.
 	 */
 	private static Optional<String> translateNamePattern(
@@ -54,9 +53,9 @@ public class GetFlowOperation implements GetFlow {
 		return value;
 	}
 
-	/** The {@link AnalysisDao}. */
+	/** The {@link ExtendedDataProviderModelAnalysis}. */
 	@Autowired
-	private AnalysisDao dao;
+	private ExtendedDataProviderModelAnalysis dao;
 	/** The {@link Logger}. */
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory
 			.getLogger(GetFlowOperation.class);
@@ -65,8 +64,8 @@ public class GetFlowOperation implements GetFlow {
 
 	/**
 	 * @param message
-	 *            the {@link JAXBElement} containing a
-	 *            {@link GetFlowRequestType}.
+	 *                    the {@link JAXBElement} containing a
+	 *                    {@link GetFlowRequestType}.
 	 * @return the {@link JAXBElement} with a {@link GetFlowResponseType}.
 	 */
 	@Override

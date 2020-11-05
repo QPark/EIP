@@ -8,11 +8,13 @@ package com.qpark.maven.xmlbeans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +28,20 @@ public class ServiceIdRegistry {
 
 	private static final String SERVICE_DEFINITION = ".service.";
 
-	private final Map<String, ServiceIdEntry> serviceIdMap = new TreeMap<String, ServiceIdEntry>();
-	private final Map<String, ServiceIdEntry> serviceIdPackageNameMap = new TreeMap<String, ServiceIdEntry>();
-	private final Set<String> serviceIds = new TreeSet<String>();
-	private final Map<String, ServiceIdEntry> serviceIdTargetNamespaceMap = new TreeMap<String, ServiceIdEntry>();
+	private final Map<String, ServiceIdEntry> serviceIdMap = Collections
+			.synchronizedSortedMap(new TreeMap<>());
+	private final Map<String, ServiceIdEntry> serviceIdPackageNameMap = Collections
+			.synchronizedSortedMap(new TreeMap<>());
+	private final Set<String> serviceIds = Collections
+			.synchronizedSet(new TreeSet<String>());
+	private final Map<String, ServiceIdEntry> serviceIdTargetNamespaceMap = Collections
+			.synchronizedSortedMap(new TreeMap<>());
 
 	/**
 	 * @return
 	 */
 	public Collection<String> getAllServiceIds() {
-		Set<String> ts = new TreeSet<String>();
-		ts.addAll(this.serviceIds);
-		return ts;
+		return this.serviceIds.stream().collect(Collectors.toList());
 	}
 
 	private static int getIndexDeltaSuffix(final String packageName,
@@ -158,7 +162,7 @@ public class ServiceIdRegistry {
 
 	public String getCombinedMarshallerContextPath(final String serviceIds) {
 		StringBuffer sb = new StringBuffer(128);
-		Set<String> sids = new TreeSet<String>();
+		Set<String> sids = new TreeSet<>();
 		List<String> list = splitByCommaAndSpace(serviceIds);
 		if (list.isEmpty()) {
 			sids.addAll(this.getAllServiceIds());
@@ -273,7 +277,7 @@ public class ServiceIdRegistry {
 	}
 
 	private static List<String> splitByCommaAndSpace(final String s) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (s != null && s.trim().length() > 0) {
 			for (String stringa : s.split(",")) {
 				if (stringa.trim().length() > 0) {

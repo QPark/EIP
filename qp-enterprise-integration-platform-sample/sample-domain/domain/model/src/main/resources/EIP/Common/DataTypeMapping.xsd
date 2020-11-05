@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0.
+ * The Eclipse Public License is available at
+ * http://www.eclipse.org/legal/epl-v10.html.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" jaxb:version="2.0"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+
+
+	xmlns:EIPjdtm="http://www.qpark.com/JavaDataTypeMappingTypes"
+	targetNamespace="http://www.qpark.com/JavaDataTypeMappingTypes"
+>
+
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="com.qpark.eip.model.datatypemapping"/>
+			</jaxb:schemaBindings>
+		</appinfo>
+		<documentation>Technical description how the W3C defined XSD types are mapping to Java classes by XJC</documentation>
+	</annotation>
+
+
+	<complexType name="JavaDataMappingType" abstract="true">
+		<annotation><documentation>W3C defined XSD types mapped Java classes by XJC</documentation></annotation>
+		<sequence>
+			<element name="w3cAnyType" type="anyType">
+				<annotation><documentation>java.lang.Object</documentation></annotation></element>
+			<element name="w3cAnyURI" type="anyURI" default="http://www.w3.org/TR/xmlschema-0">
+				<annotation><documentation>java.lang.String</documentation></annotation></element>
+			<element name="w3cAnySimpleType" type="anySimpleType">
+				<annotation><documentation>java.lang.Object</documentation></annotation></element>
+			<element name="w3cDuration" type="duration" default="P1Y2M3DT5H20M30.123S">
+				<annotation><documentation>javax.xml.datatype.Duration</documentation></annotation></element>
+			<element name="w3cDate" type="date" default="1989-11-09">
+				<annotation><documentation>javax.xml.datatype.XMLGregorianCalendar</documentation></annotation></element>
+			<element name="w3cDateTime" type="dateTime" default="1989-11-09T20:15:31">
+				<annotation><documentation>javax.xml.datatype.XMLGregorianCalendar</documentation></annotation></element>
+			<element name="w3cBoolean" type="boolean" default="true">
+				<annotation><documentation>boolean</documentation></annotation></element>
+			<element name="w3cBase64Binary" type="base64Binary">
+				<annotation><documentation>byte[]</documentation></annotation></element>
+			<element name="w3cHexBinary" type="hexBinary">
+				<annotation><documentation>byte[]</documentation></annotation></element>
+			<element name="w3cQName" type="QName">
+				<annotation><documentation>javax.xml.namespace.QName</documentation></annotation></element>
+			<element name="w3cString" type="string" default="A">
+				<annotation><documentation>java.lang.String</documentation></annotation></element>
+			<element name="w3cNormalizedString" type="normalizedString" default="A">
+				<annotation><documentation>java.lang.String</documentation></annotation></element>
+			<element name="w3cToken" type="token">
+				<annotation><documentation>java.lang.String</documentation></annotation></element>
+			<element name="w3cFloat" type="float" default="1.1">
+				<annotation><documentation>float</documentation></annotation></element>
+			<element name="w3cDouble" type="double" default="1.2">
+				<annotation><documentation>double</documentation></annotation></element>
+			<element name="w3cDecimal" type="decimal" default="1.3">
+				<annotation><documentation>java.math.BigDecimal</documentation></annotation></element>
+			<element name="w3cInteger" type="integer" default="2">
+				<annotation><documentation>java.math.BigInteger</documentation></annotation></element>
+			<element name="w3cLong" type="long" default="3">
+				<annotation><documentation>long</documentation></annotation></element>
+			<element name="w3cInt" type="int" default="4">
+				<annotation><documentation>int</documentation></annotation></element>
+			<element name="w3cShort" type="short" default="5">
+				<annotation><documentation>short</documentation></annotation></element>
+			<element name="w3cByte" type="byte">
+				<annotation><documentation>byte</documentation></annotation></element>
+		</sequence>
+	</complexType>
+</schema>
