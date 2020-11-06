@@ -15,7 +15,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.TreeSet;
+
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.jasypt.util.text.StrongTextEncryptor;
 
 /**
  * @author bhausen
@@ -75,22 +81,21 @@ public class CheckConnection {
 	private static ArrayList<Properties> databaseProperties = new ArrayList<>();
 	private static final String DRIVER = "DRIVER";
 	private static final String DATASOURCE = "DATASOURCE";
-
 	private static final String DRIVER_CLASS_ORACLE = "oracle.jdbc.driver.OracleDriver";
 	private static final String DRIVER_CLASS_SQLSERVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	private static final String DRIVER_CLASS_POSTGRES = "org.postgresql.Driver";
 	private static final String PWD = "PWD";
-
 	private static ArrayList<Entry<String, Integer>> servers = new ArrayList<>();
-
 	private static final String URL = "URL";
-
 	private static final String USER = "USER";
-
 	private static final String VALIDATION_QUERY_ORACLE = "SELECT 1 FROM DUAL";
-
 	private static final String VALIDATION_QUERY_SQLSERVER = "SELECT 1";
+	public static String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip_jasypt_encryptor_password";
+	private static final TreeSet<String> failed = new TreeSet<>();
+	private static final TreeSet<String> success = new TreeSet<>();
+	private static final String USE_DEFAULT_PORT = "USE_DEFAULT_PORT";
 
-	private static void doCheckDatabase(final Properties p) {
+	private static void doCheckDatabase(final Properties p, final Properties fileProperties) {
 		p.setProperty(DRIVER, setupDrivername(p.getProperty(DRIVER), p.getProperty(URL)));
 		if (p.getProperty(DATASOURCE) != null) {
 			System.out.println("\tDatasource             : " + p.getProperty(DATASOURCE));
@@ -99,11 +104,21 @@ public class CheckConnection {
 		System.out.println("\tUsername               : " + p.getProperty(USER));
 		System.out.println("\tPassword               : " + p.getProperty(PWD));
 		System.out.println("\tDriver                 : " + p.getProperty(DRIVER));
-		boolean valid = doCheckDatabaseMetaData(p.getProperty(DRIVER), p.getProperty(URL), p.getProperty(USER),
-				p.getProperty(PWD));
-		if (valid) {
-			doCheckDatabaseValidtationQuery(p.getProperty(DRIVER), p.getProperty(URL), p.getProperty(USER),
-					p.getProperty(PWD));
+		try {
+			String pwd = String.valueOf(p.getProperty(PWD));
+			if (pwd != null && pwd.startsWith("ENC(") && pwd.endsWith(")")) {
+				StrongTextEncryptor enc = new StrongTextEncryptor();
+				enc.setPassword(getEncryptorPassword(fileProperties));
+				pwd = enc.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
+			}
+			final boolean valid = doCheckDatabaseMetaData(p.getProperty(DRIVER), p.getProperty(URL),
+					p.getProperty(USER), pwd);
+			if (valid) {
+				doCheckDatabaseValidtationQuery(p.getProperty(DRIVER), p.getProperty(URL), p.getProperty(USER), pwd);
+			}
+		} catch (EncryptionOperationNotPossibleException e) {
+			doPrintError("Cannot decrypt password '" + p.getProperty(PWD) + "' of user " + p.getProperty(USER));
+			parseUrl(p.getProperty(URL)).ifPresent(server -> doCheckSocketConnection(server));
 		}
 	}
 
@@ -113,7 +128,7 @@ public class CheckConnection {
 		Connection connection = null;
 		try {
 			connection = getConnection(driver, url, user, pwd);
-			DatabaseMetaData metadata = connection.getMetaData();
+			final DatabaseMetaData metadata = connection.getMetaData();
 			System.out.println("\t\tDatabaseProductName    : " + metadata.getDatabaseProductName());
 			System.out.println("\t\tDatabaseProductVersion : " + metadata.getDatabaseProductVersion());
 			System.out.println("\t\tMeta-Url               : " + metadata.getURL());
@@ -121,13 +136,14 @@ public class CheckConnection {
 			System.out.println("\t\tMeta-DriverName        : " + metadata.getDriverName());
 			System.out.println("\t\tMeta-DriverVersion     : " + metadata.getDriverVersion());
 			valid = true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			doPrintError(e.getMessage());
+			parseUrl(url).ifPresent(server -> doCheckSocketConnection(server));
 		} finally {
 			if (connection != null) {
 				try {
 					connection.close();
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					// be quiet.
 				}
 			}
@@ -151,30 +167,30 @@ public class CheckConnection {
 			if (validationQuery != null) {
 				connection = getConnection(driver, url, user, pwd);
 				statement = connection.createStatement();
-				ResultSet rs = statement.executeQuery(validationQuery);
+				final ResultSet rs = statement.executeQuery(validationQuery);
 				System.out.println("\t\tExecute query          : " + validationQuery);
 				if (rs != null && rs.getMetaData() != null) {
-					int columns = rs.getMetaData().getColumnCount();
+					final int columns = rs.getMetaData().getColumnCount();
 					System.out.println("\t\tResult columns         : " + columns);
 					if (columns > 0 && rs.next()) {
 						System.out.println("\t\tResult column 1        : " + String.valueOf(rs.getObject(1)));
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			doPrintError(e.getMessage());
 		} finally {
 			if (statement != null) {
 				try {
 					statement.close();
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					// be quiet.
 				}
 			}
 			if (connection != null) {
 				try {
 					connection.close();
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					// be quiet.
 				}
 			}
@@ -182,54 +198,66 @@ public class CheckConnection {
 	}
 
 	private static void doCheckSocketConnection(final Entry<String, Integer> server) {
-		Dotter d = new Dotter();
-		Thread t = new Thread(d);
+		final Dotter d = new Dotter();
+		final Thread t = new Thread(d);
 		try {
 			System.out.print("\tConnecting to          : " + server.getKey() + ":" + server.getValue() + "\t\t");
 			t.start();
-			Socket socket = new Socket();
+			final Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(server.getKey(), server.getValue()), 10000);
 			d.doit = false;
 			try {
 				t.join();
 				socket.close();
-			} catch (InterruptedException ex) {
+			} catch (final InterruptedException ex) {
 				socket.close();
 			}
 			System.out.println("\tconnected");
 			try {
-				InetAddress address = InetAddress.getByName(server.getKey());
+				final InetAddress address = InetAddress.getByName(server.getKey());
 				if (isIpAddress(server.getKey()) && !server.getKey().equals(address.getHostName())) {
 					System.out.println("\tConneced to            : " + address.getHostName());
 				} else {
 					System.out.println("\tConneced to            : " + address.getHostAddress());
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// nothing
 			}
-		} catch (Exception e) {
+			success.add(String.format("%s:%d", server.getKey(), server.getValue()));
+		} catch (final Exception e) {
 			d.doit = false;
 			try {
 				t.join();
-			} catch (InterruptedException ex) {
+			} catch (final InterruptedException ex) {
 			}
 			System.out.println();
+			failed.add(String.format("%s:%d", server.getKey(), server.getValue()));
 			doPrintError(e.getMessage());
 		}
 	}
 
-	private static boolean isIpAddress(final String s) {
-		boolean address = false;
-		address = s != null && s.split("\\.").length == 4 && s.replaceAll("\\.", "").matches("^\\d*?$");
-		return address;
+	/**
+	 * @param string
+	 */
+	private static void doListenOnPort(final String string) {
+		try {
+
+		} catch (final Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	private static void doPrintError(final String message) {
+		System.out.println("##### ERROR: " + message);
+		CheckConnection.sleep(900);
 	}
 
 	private static void doPrintLocalhost() {
 		try {
-			InetAddress localaddr = InetAddress.getLocalHost();
+			final InetAddress localaddr = InetAddress.getLocalHost();
 			System.out.println("Local IP address       : " + localaddr.getHostAddress());
 			System.out.println("Local hostname         : " + localaddr.getHostName());
-		} catch (UnknownHostException e) {
+		} catch (final UnknownHostException e) {
 			doPrintError("Can't detect localhost! " + e.getMessage());
 		}
 	}
@@ -238,14 +266,9 @@ public class CheckConnection {
 		System.out.println("----------------------------------------");
 	}
 
-	private static void doPrintError(final String message) {
-		System.out.println("##### ERROR: " + message);
-		CheckConnection.sleep(900);
-	}
-
 	private static void doPrintUsage() {
-		String s = CheckConnection.class.getName();
-		StringBuffer sb = new StringBuffer(1024);
+		final String s = CheckConnection.class.getName();
+		final StringBuffer sb = new StringBuffer(1024);
 
 		sb.append("Usage:\n");
 		sb.append("\t\tjava ").append(s).append(" <file>\n");
@@ -263,42 +286,101 @@ public class CheckConnection {
 	private static Connection getConnection(final String driver, final String url, final String user, final String pwd)
 			throws Exception {
 		Class.forName(driver);
-		Connection connection = DriverManager.getConnection(url, user, pwd);
+		final Connection connection = DriverManager.getConnection(url, user, pwd);
 		return connection;
+	}
+
+	private static int getDefaultPort(final String url) {
+		int port = Optional.ofNullable(url).map(u -> {
+			if (u.trim().startsWith("https")) {
+				return 443;
+			} else if (u.trim().startsWith("http")) {
+				return 80;
+			} else if (u.trim().startsWith("sftp") || u.trim().startsWith("ssh")) {
+				return 22;
+			} else if (u.trim().contains("jdbc")) {
+				if (u.trim().toLowerCase().contains("postgres")) {
+					return 5432;
+				} else if (u.trim().toLowerCase().contains("sqlserver")) {
+					return 1433;
+				} else if (u.trim().toLowerCase().contains("oracle")) {
+					return 1521;
+				} else if (u.trim().toLowerCase().contains("mysql")) {
+					return 3306;
+				}
+			} else if (u.trim().startsWith("ldaps")) {
+				return 636;
+			} else if (u.trim().startsWith("ldap")) {
+				return 389;
+			} else if (u.trim().startsWith("redis")) {
+				return 6379;
+			}
+			return 0;
+		}).orElse(0);
+		return port;
+	}
+
+	/**
+	 * Get the encryptor password from Environment, system properties or properties.
+	 *
+	 * @param properties
+	 *                       the {@link Properties}.
+	 * @return the password.
+	 */
+	public static String getEncryptorPassword(final Properties properties) {
+		String pwd = Optional.ofNullable(System.getenv(EIP_ENCRYPTOR_PWD_PROPERTY_NAME)).orElse(null);
+		if (Objects.isNull(pwd)) {
+			pwd = System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+			if (Objects.isNull(pwd)) {
+				pwd = Optional.ofNullable(properties).map(p -> p.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
+						.orElse(null);
+			}
+		}
+		if (Objects.isNull(pwd)) {
+			pwd = "eip";
+		}
+		return pwd;
+	}
+
+	private static boolean isIpAddress(final String s) {
+		boolean address = false;
+		address = s != null && s.split("\\.").length == 4 && s.replaceAll("\\.", "").matches("^\\d*?$");
+		return address;
 	}
 
 	public static void main(final String[] args) {
 		try {
+			Properties allProperties = new Properties();
 			if (args == null || args.length == 0) {
 				doPrintUsage();
 			} else if (args.length == 1) {
-				String s = args[0].trim();
-				File f = new File(s);
+				final String s = args[0].trim();
+				final File f = new File(s);
 				if (f.exists() && f.isDirectory()) {
-					parseDirectory(f);
+					allProperties.putAll(parseDirectory(f));
 				} else if (f.exists() && f.isFile()) {
-					parseFile(f);
+					allProperties.putAll(parseFile(f));
 				} else if (s.indexOf(':') > 0 && s.indexOf(':') < s.length()) {
 					if (s.startsWith("server:")) {
 						doListenOnPort(s.substring(s.indexOf(':') + 1));
 					} else {
-						parseUrl(s);
+						parseUrlAndCheck(s).ifPresent(server -> servers.add(server));
 					}
 				}
 			} else if (args.length == 2) {
 				if (args[0].trim().equals("server")) {
 					doListenOnPort(args[1]);
 				} else {
-					parseUrl(args[0].trim() + ":" + args[1].trim());
+					parseUrlAndCheck(args[0].trim() + ":" + args[1].trim()).ifPresent(server -> servers.add(server));
 				}
 			} else if (args.length == 3) {
-				Properties p = new Properties();
+				final Properties p = new Properties();
 				databaseProperties.add(p);
 				p.setProperty(URL, args[0].trim());
 				p.setProperty(USER, args[1].trim());
 				p.setProperty(PWD, args[2].trim());
 			} else if (args.length == 4) {
-				Properties p = new Properties();
+				final Properties p = new Properties();
 				databaseProperties.add(p);
 				p.setProperty(URL, args[0].trim());
 				p.setProperty(USER, args[1].trim());
@@ -313,92 +395,110 @@ public class CheckConnection {
 				doPrintSeparator();
 				doPrintSeparator();
 				System.out.println("Check databases");
-				for (Properties p : databaseProperties) {
+				databaseProperties.stream().forEach(dbp -> {
 					doPrintSeparator();
-					doCheckDatabase(p);
-				}
+					doCheckDatabase(dbp, allProperties);
+				});
 			}
 			if (!servers.isEmpty()) {
 				doPrintSeparator();
 				doPrintSeparator();
 				System.out.println("Check servers");
-				for (Entry<String, Integer> server : servers) {
+				for (final Entry<String, Integer> server : servers) {
 					doPrintSeparator();
 					doCheckSocketConnection(server);
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			doPrintError(e.getMessage());
 		}
-	}
-
-	/**
-	 * @param string
-	 */
-	private static void doListenOnPort(final String string) {
-		try {
-
-		} catch (Exception e) {
-			// TODO: handle exception
+		if (success.size() > 0) {
+			doPrintSeparator();
+			doPrintSeparator();
+			System.out.println("Successfully connected:");
+			doPrintSeparator();
+			success.stream().forEach(s -> System.out.println(String.format("\t%s", s)));
 		}
+		if (failed.size() > 0) {
+			doPrintSeparator();
+			doPrintSeparator();
+			System.out.println("Failed connection attempt:");
+			doPrintSeparator();
+			failed.stream().forEach(s -> System.out.println(String.format("\t%s", s)));
+		}
+		doPrintSeparator();
 	}
 
-	private static void parseDirectory(final File dir) throws Exception {
+	private static Properties parseDirectory(final File dir) throws Exception {
+		final Properties properties = new Properties();
 		if (dir.isDirectory()) {
-			for (File f : dir.listFiles()) {
+			for (final File f : dir.listFiles()) {
 				if (f.isDirectory()) {
-					parseDirectory(f);
+					properties.putAll(parseDirectory(f));
 				} else if (f.isFile()) {
-					parseFile(f);
+					properties.putAll(parseFile(f));
 				}
 			}
 		}
+		return properties;
 	}
 
-	private static void parseFile(final File f) throws Exception {
+	private static Properties parseFile(final File f) throws Exception {
+		final Properties properties = new Properties();
 		if (f.exists()) {
 			if (f.getName().endsWith(".properties")) {
-				Properties properties = new Properties();
 				properties.load(new FileInputStream(f));
 				String key;
 				String value;
 
-				for (Entry<Object, Object> en : properties.entrySet()) {
+				for (final Entry<Object, Object> en : properties.entrySet()) {
 					key = String.valueOf(en.getKey());
 					value = String.valueOf(en.getValue());
 					if (key.endsWith(".host")) {
-						String hostDesc = key.substring(0, key.indexOf(".host"));
-						for (Entry<Object, Object> second : properties.entrySet()) {
-							String keyPort = String.valueOf(second.getKey());
+						final String hostDesc = key.substring(0, key.indexOf(".host"));
+						for (final Entry<Object, Object> second : properties.entrySet()) {
+							final String keyPort = String.valueOf(second.getKey());
 							if (keyPort.startsWith(hostDesc) && keyPort.endsWith(".port")) {
-								parseUrl(value + ":" + String.valueOf(second.getValue()));
+								parseUrlAndCheck(value + ":" + String.valueOf(second.getValue()))
+										.ifPresent(server -> servers.add(server));
 								break;
 							}
 						}
 					} else if (value.contains("://")) {
-						parseUrl(value);
+						parseUrlAndCheck(value).ifPresent(server -> servers.add(server));
 					}
 				}
 
-				Properties p = new Properties();
-				boolean add = false;
-				for (Entry<Object, Object> en : properties.entrySet()) {
-					key = String.valueOf(en.getKey());
-					value = String.valueOf(en.getValue());
-					if (key.toLowerCase().contains("user")) {
-						p.setProperty(USER, value);
-					} else if (key.toLowerCase().contains("password") || key.toLowerCase().contains("pwd")) {
-						p.setProperty(PWD, value);
-					} else if (key.toLowerCase().contains("url") && value.toLowerCase().startsWith("jdbc")) {
-						p.setProperty(URL, value);
-						add = true;
-					} else if (key.toLowerCase().contains("driver")) {
-						p.setProperty(DRIVER, value);
-					}
-				}
-				if (add) {
-					databaseProperties.add(p);
-				}
+				properties.entrySet().stream().filter(p -> p.getKey() != null && p.getValue() != null
+						&& String.valueOf(p.getValue()).contains("jdbc")).forEach(px -> {
+							final Properties dbp = new Properties();
+							dbp.setProperty(URL, String.valueOf(px.getValue()));
+							final String kx = String.valueOf(px.getKey());
+							if (kx.toLowerCase().endsWith(".url")) {
+								final String keyStart = kx.toLowerCase().replace(".url", "");
+								properties.entrySet().stream()
+										.filter(p -> p.getKey() != null && p.getValue() != null
+												&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
+												&& String.valueOf(p.getKey()).toLowerCase().contains("driver"))
+										.findAny().map(p -> dbp.setProperty(DRIVER, String.valueOf(p.getValue())))
+										.orElse("");
+								properties.entrySet().stream()
+										.filter(p -> p.getKey() != null && p.getValue() != null
+												&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
+												&& (String.valueOf(p.getKey()).toLowerCase().contains("username")
+														|| String.valueOf(p.getKey()).toLowerCase().contains("user")))
+										.findAny().map(p -> dbp.setProperty(USER, String.valueOf(p.getValue())))
+										.orElse("");
+								properties.entrySet().stream()
+										.filter(p -> p.getKey() != null && p.getValue() != null
+												&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
+												&& (String.valueOf(p.getKey()).toLowerCase().contains("password")
+														|| String.valueOf(p.getKey()).toLowerCase().contains("pwd")))
+										.findAny().map(p -> dbp.setProperty(PWD, String.valueOf(p.getValue()).trim()))
+										.orElse("");
+								databaseProperties.add(dbp);
+							}
+						});
 
 			} else if (f.getName().endsWith("server.xml")) {
 				String xml = readFile(f);
@@ -453,13 +553,14 @@ public class CheckConnection {
 								datasource = resource.substring(i, j);
 							}
 							if (url != null) {
-								Properties p = new Properties();
+								final Properties p = new Properties();
 								databaseProperties.add(p);
 								p.setProperty(URL, url);
 								p.setProperty(USER, user);
-								p.setProperty(PWD, pwd);
+								p.setProperty(PWD, pwd.trim());
 								p.setProperty(DRIVER, driver);
 								p.setProperty(DATASOURCE, datasource);
+								parseUrlAndCheck(url);
 							}
 						}
 						index = xml.indexOf("<Resource");
@@ -467,25 +568,30 @@ public class CheckConnection {
 				}
 			}
 		}
+		return properties;
 	}
 
-	private static int parsePort(final String portString) {
-		int port = 0;
+	private static int parsePort(final String portString, final int defaultPort) {
+		int port = defaultPort;
 		String s = portString;
-		if (s != null) {
+		if (s != null && !s.equals(USE_DEFAULT_PORT)) {
 			if (s.indexOf('/') > 0) {
 				s = s.substring(0, s.indexOf('/'));
+			} else if (s.indexOf(';') > 0) {
+				s = s.substring(0, s.indexOf(';'));
+			} else if (s.indexOf('?') > 0) {
+				s = s.substring(0, s.indexOf('?'));
 			}
 			try {
 				port = Integer.parseInt(s);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				doPrintError("Can not parse '" + s + "' to a port number!");
 			}
 		}
 		return port;
 	}
 
-	private static void parseUrl(final String url) {
+	private static Optional<Entry<String, Integer>> parseUrl(final String url) {
 		String host = null;
 		Integer port = null;
 		if (url != null) {
@@ -495,28 +601,43 @@ public class CheckConnection {
 			}
 			if (s.indexOf(':') > 0 && s.indexOf(':') < s.length()) {
 				host = s.substring(0, s.indexOf(':'));
+				if (host.indexOf(';') > 0) {
+					host = host.substring(0, host.indexOf(';'));
+				}
 				s = s.substring(s.indexOf(':') + 1);
-				port = parsePort(s);
+				port = parsePort(s, getDefaultPort(url));
+			} else if (s.indexOf('/') > 0 && s.indexOf('/') <= s.length()) {
+				host = s.substring(0, s.indexOf('/'));
+				port = parsePort(USE_DEFAULT_PORT, getDefaultPort(url));
+			} else if (s.indexOf(';') > 0 && s.indexOf(';') <= s.length()) {
+				host = s.substring(0, s.indexOf(';'));
+				port = parsePort(USE_DEFAULT_PORT, getDefaultPort(url));
+			} else {
+				host = s;
+				port = parsePort(USE_DEFAULT_PORT, getDefaultPort(url));
 			}
 		}
 		if (host != null && port != null) {
-			boolean add = true;
-			for (Entry<String, Integer> x : servers) {
-				if (x.getKey().equals(host) && x.getValue().equals(port)) {
-					add = false;
-				}
-			}
-			if (add) {
-				Entry<String, Integer> server = new ServerEntry(host, port);
-				servers.add(server);
+			return Optional.of(new ServerEntry(host, port));
+		}
+		return Optional.empty();
+	}
+
+	private static Optional<Entry<String, Integer>> parseUrlAndCheck(final String url) {
+		Optional<Entry<String, Integer>> server = parseUrl(url);
+		if (server.isPresent()) {
+			if (!servers.stream().filter(s -> s.getKey().equals(server.get().getKey()))
+					.filter(s -> s.getValue().equals(server.get().getValue())).findAny().isPresent()) {
+				return server;
 			}
 		}
+		return Optional.empty();
 	}
 
 	private static String readFile(final File file) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		final BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
-		StringBuilder stringBuilder = new StringBuilder();
+		final StringBuilder stringBuilder = new StringBuilder();
 
 		while ((line = reader.readLine()) != null) {
 			stringBuilder.append(line);
@@ -539,11 +660,13 @@ public class CheckConnection {
 					s = DRIVER_CLASS_ORACLE;
 				} else if (url.toLowerCase().contains("sqlserver")) {
 					s = DRIVER_CLASS_SQLSERVER;
+				} else if (url.toLowerCase().contains("postgresql")) {
+					s = DRIVER_CLASS_POSTGRES;
 				}
 			}
 		}
 		if (s == null || s.trim().length() == 0) {
-			s = DRIVER_CLASS_ORACLE;
+			s = DRIVER_CLASS_POSTGRES;
 		}
 		return s;
 	}
@@ -551,7 +674,7 @@ public class CheckConnection {
 	private static void sleep(final long millis) {
 		try {
 			Thread.sleep(millis);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 		}
 	}
 }
