@@ -26,6 +26,8 @@ public class EipJasyptEncryptionProvider {
 	private static final Logger logger = LoggerFactory.getLogger(EipJasyptEncryptionProvider.class);
 	/** The property name of the encryptor password. */
 	public static String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip_jasypt_encryptor_password";
+	public static String JASYPT_ENCRYPTOR_PASSWORD_ENV_NAME = "JASYPT_ENCRYPTOR_PASSWORD";
+	public static String JASYPT_ENCRYPTOR_PASSWORD_PROPRERTY_NAME = "jasypt.encryptor.password";
 
 	/**
 	 * Encrypts the text if it starts with <i>ENC(</i> and ends with <i>)</i>.
@@ -134,6 +136,10 @@ public class EipJasyptEncryptionProvider {
 
 	/**
 	 * Get the encryptor password from Environment, system properties or properties.
+	 * Search keys are <code>eip_jasypt_encryptor_password</code>,
+	 * <code>JASYPT_ENCRYPTOR_PASSWORD</code> for environment variables and
+	 * <code>eip_jasypt_encryptor_password</code> and
+	 * <code>jasypt.encryptor.password</code> for properties.
 	 *
 	 * @param properties
 	 *                       the {@link Properties}.
@@ -144,14 +150,31 @@ public class EipJasyptEncryptionProvider {
 		if (Objects.nonNull(pwd)) {
 			logger.info("Found OS environment variable {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
 		} else {
-			pwd = System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+			pwd = System.getenv(JASYPT_ENCRYPTOR_PASSWORD_ENV_NAME);
 			if (Objects.nonNull(pwd)) {
-				logger.info("Found JVM property {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+				logger.info("Found OS environment variable {}.", JASYPT_ENCRYPTOR_PASSWORD_ENV_NAME);
 			} else {
-				pwd = Optional.ofNullable(properties).map(p -> p.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
-						.orElse(null);
+				pwd = System.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
 				if (Objects.nonNull(pwd)) {
-					logger.info("Found in provided properties property {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+					logger.info("Found JVM property {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+				} else {
+					pwd = System.getProperty(JASYPT_ENCRYPTOR_PASSWORD_PROPRERTY_NAME);
+					if (Objects.nonNull(pwd)) {
+						logger.info("Found JVM property {}.", JASYPT_ENCRYPTOR_PASSWORD_PROPRERTY_NAME);
+					} else {
+						pwd = Optional.ofNullable(properties).map(p -> p.getProperty(EIP_ENCRYPTOR_PWD_PROPERTY_NAME))
+								.orElse(null);
+						if (Objects.nonNull(pwd)) {
+							logger.info("Found in provided properties property {}.", EIP_ENCRYPTOR_PWD_PROPERTY_NAME);
+						} else {
+							pwd = Optional.ofNullable(properties)
+									.map(p -> p.getProperty(JASYPT_ENCRYPTOR_PASSWORD_PROPRERTY_NAME)).orElse(null);
+							if (Objects.nonNull(pwd)) {
+								logger.info("Found in provided properties property {}.",
+										JASYPT_ENCRYPTOR_PASSWORD_PROPRERTY_NAME);
+							}
+						}
+					}
 				}
 			}
 		}
