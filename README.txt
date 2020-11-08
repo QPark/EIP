@@ -15,7 +15,9 @@ Excute the following steps to build the QPark EIP:
 2. mvn install -P platform,impl,sample
 
 Maven min version 3.5.4
-JDK min version 1.8, recommended version JDK 11
+JDK min version 1.8, recommended version JDK 11 (LTS)
+EIP is now compatible with the java versions up to 15. Please be aware, future EIP versions will drop the support of java versions prior to 11. 
+Java 1.8 to 10 are deprecated now.
 
 From time to time it happens, that the following is reported:
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-dependency-plugin:2.10:unpack (unpack-sources) on project platform-domain-model-service: Unable to create Marker: C:\xnb\dev\git\EIP\qp-enterprise-integration-platform-sample\sample\platform-domain-model-service\target\dependency-maven-plugin-markers\com.samples.domain-model-jar-2.1.0.marker: Zugriff verweigert -> [Help 1]

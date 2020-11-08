@@ -6,6 +6,8 @@ Changelog:
 * Dropped pivotal tc-server templates
 * Dropped spring inside dependencies
 * Dropped all maven repositories except https://repo.maven.apache.org/maven2/
+EIP is now compatible with the java versions up to 15. Please be aware, future EIP versions will drop the support of java versions prior to 11. 
+Java 1.8 to 10 are deprecated now.
 
 3.17.1 20201014
 Impl: core-spring - Support of JSypt encrypted system user passwords.
