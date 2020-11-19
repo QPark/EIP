@@ -1,0 +1,662 @@
+Fault Domain 
+#
+Machines share a common power source and network switch
+###
+Update domain 
+#
+separates VMs forming 1 environment into different groups in order that not all are rebooted at the same time during maintenance
+###
+Cloud Computing 
+#
+the running of all compute resources run in the cloud
+###
+Cloud types 
+#
+Private
+Public
+Hybrid
+###
+IaaS (Infrastructure as a Service) 
+#
+Service where the customer rents only the IT infrastructure but manages the software it runs on
+###
+PaaS (Platform as a Service) 
+#
+Provides IaaS plus OS and development tools, database management, and/or business analytics
+###
+SaaS (Software as a Service) 
+#
+Software is centrally hosted and managed by the cloud provider; the end-user only manages their data and access
+###
+Datacenter 
+#
+physical or virtual infrastructures used by enterprises to house computer, server and networking systems and components for the company's IT (information technology) needs
+###
+Azure Region 
+#
+Geographical area on the planet containing multiple data centers in close proximity, networked together
+###
+Two types of Azure Regions 
+#
+Special and Region pairs
+###
+Special Region 
+#
+a type of region typically only used by governmental agencies
+###
+Region pair 
+#
+a type of region where regions are joined within the same geography
+###
+Azure Geographies 
+#
+discrete markets made up of two or more regions that preserve data residency and compliance boundaries
+###
+Availability Zones 
+#
+Physical separate locations within an Azure Region made up of 1 or more DC setup to be isolated and run independent of other DCs
+###
+Availability Sets 
+#
+A way to help ensure apps remain online during maintenance events or hardware failures
+###
+Availability Set Types 
+#
+Update Domain (UD) and Fault Domain (FD)
+###
+Update Domain function 
+#
+protects against failures due to updates by sequencing updates through update domains
+###
+Fault Domain function 
+#
+Protects against hardware and software failures by providing physical separations of a workload across different hardware in the DC.
+###
+Azure Resource Groups 
+#
+A unit of management for resources in Azure. A container that allows you to aggregate and manage all the resources for an app in a single manageable unit
+###
+Benefits of Resource Groups 
+#
+Metering and billing
+Policies
+Monitoring and alerts
+Quotas
+Access Control
+###
+Azure Resource Manager 
+#
+Used to create, configure, manage and delete all resources
+###
+Azure Compute 
+#
+A way to run full virtual OS in the cloud.
+Includes all necessary components like disks, processors, memory and OS
+###
+Azure Compute Services 
+#
+Azure VM
+Azure Scale Sets
+App Services
+Functions
+Containers
+###
+Azure VM 
+#
+IaaS function that allows you to create personal and business desktops, OS in the cloud
+###
+VM Scale Sets 
+#
+a group of identically configured VMs. Allow for the provisioning of multiple machines simultaneously with the same configurations
+###
+Functions 
+#
+automates infrastructure creations based on an event
+###
+Containers 
+#
+a virtual environment that, unlike a VM, does not include an OS; this contains all the necessary components and files necessary to run an application/website minus the OS
+###
+Azure Container Instances 
+#
+A PaaS that allows you to upload your containers and runs them for you
+###
+Azure Kubernetes Service 
+#
+A container orchestrator service for managing large numbers of containers
+###
+Azure Virtual Network 
+#
+a virtual network restricted to a single region
+###
+Azure Load Balancer 
+#
+manages traffic to VM and not apps; this allows for scaling of identical VMs
+###
+VPN Gateway 
+#
+a PaaS offering which creates a VPN between the on-prem network and the cloud used to build, deploy and scale enterprise-grade web, mobile and API apps
+###
+Azure App Gateway 
+#
+manages web traffic to apps, which acts as a load balancer that directs traffic based on source IP/Region
+###
+Content Delivery Network (CDN) 
+#
+an Azure system of hardware and software that stores user data in many different geographical locations and makes those data available on demand
+###
+Azure Data Categories 
+#
+Structured Data
+Semi-Structured Data
+Unstructured Data
+###
+Structured Data 
+#
+data in the form of rows and columns in either a spreadsheet or a database
+###
+Semi-structured data 
+#
+data which is less-organized than structured data and not stored in a relational format; typically referred to as non-relational or NoSQL data
+###
+Unstructured Data 
+#
+data which has no designated structure or restrictions on type of data it contains
+
+Examples:: PDF, JPG, JSON or other files)
+###
+Azure Storage Solutions 
+#
+Blob
+Disk Storage
+File Storage
+Archive storage
+###
+BLOB storage 
+#
+storage with no restriction on data type stored on it
+###
+Disk storage 
+#
+disks presented to VMs which is used by other apps and services
+###
+File Storage 
+#
+fully managed file share in the cloud
+###
+Archive storage 
+#
+low-cost storage for rarely-accessed data with higher cost to access
+###
+Azure DB Services 
+#
+Azure Cosmos DB
+Azure SQL Database
+Azure Database migration
+###
+Azure Cosmos DB 
+#
+A globally-distributed database service that allows end-users to update it
+###
+Azure SQL Database 
+#
+relations DB as a service (DaaS) based on the latest stable version of MS-SQL database engine
+###
+Azure Database Migration 
+#
+A fully-managed service designed to enable seamless database migrations from multiple DB sources to Azure with minimal downtime
+###
+Azure Marketplace 
+#
+a centralized hub which connects end-users with thousands of Azure certified applications
+###
+IoT (Internet of Things) 
+#
+The ability for devices to gather and then relay information for data analysis via the internet
+###
+Microsoft IoT offerings 
+#
+IoT Central
+IoT Hub
+###
+IoT Central 
+#
+A SaaS solution for connecting, monitoring, and managing IoT devices. Makes it easy to connect, monitor and manage IoT assets
+###
+IoT Hub 
+#
+The underlying PaaS messaging service for IoT Central. Acts as a central message hub for bidirectional communication between IoT apps and the devices it manages
+###
+Big Data 
+#
+a broad term for datasets so large or complex that traditional data processing applications are inadequate.
+###
+Azure Big Data Components 
+#
+Azure SQL Data Warehouse
+Azure HDInsight
+Azure Data Lake Analytics
+###
+Azure SQL Data Warehouse 
+#
+A cloud based Enterprise Data Warehouse that leverages massively parallel processing (mpp) to run complex queries quickly across petabytes of data
+###
+Azure HDInsight 
+#
+Analytical tool for lots of data
+###
+Azure Data Lake Analytics 
+#
+Analytics tool that dynamically provisions resources and lets you do analytics on terabytes to petabytes of data
+###
+Artificial Intelligence 
+#
+the theory and development of computer systems able to perform tasks that normally require human intelligence, such as visual perception, speech recognition, decision-making, and translation between languages
+
+Machine learning is an example.
+###
+Artificial Intelligence components 
+#
+Azure Machine Learning Service
+Azure Machine Learning Studio
+###
+Azure Machine Learning Service 
+#
+environment to develop, train, test, deploy, manage and track machine learning components
+###
+Azure Machine Learning Studio 
+#
+workspace where you can build, test and deploy machine learning solutions w/o needing to write code
+###
+Serverless Computing 
+#
+A way to host and run code in the cloud with no concern for underlying infrastructure (OS, storage,...).
+###
+Serverless computing services 
+#
+Azure Functions
+Azure Logic apps
+Azure Event grid
+###
+Azure functions 
+#
+a method run by a support trigger that runs on its own without any application architecture underneath it
+###
+Azure Logic Apps 
+#
+automates and orchestrates tasks, processes and workflows
+###
+Azure Event Grid 
+#
+An event routing service that uses a published-subscribe model. It routes events based on published instructions
+###
+DevOps Services 
+#
+Brings together people, processes and technology to create, build and release applications
+###
+Azure DevTest Labs 
+#
+Allows you to quickly create and test environments in Azure while minimizing waste and controlling cost
+###
+Azure DevOps Services 
+#
+Allows you to quickly create and test environments in Azure
+###
+Azure Portal 
+#
+way to manage Azure services via the GUI interface, which is available via website or app
+###
+Azure PowerShell 
+#
+command line scripting language only available for Microsoft products that requires the installation of a PS module
+###
+Azure CLI 
+#
+cross-platform command line scripting language to monitor and work with the Azure infrastructure
+###
+Azure Cloud Shell 
+#
+cloud based scripting language available via the Azure portal
+###
+Azure Advisor 
+#
+A free built-in tool that analyzes my Azure configurations and provides recommendations on HA, Security, Performance and cost
+###
+Authentication 
+#
+a method for confirming users' identities via login credentials, smart cards, etc.
+###
+Authorization 
+#
+a means to define what permissions a user has to system resources
+###
+Azure AD 
+#
+MS cloud based identity and access management
+###
+Azure AD Services 
+#
+Authentication
+Single Sign-On
+Application Management
+###
+Multi-factor authentication (MFA) 
+#
+Provides additional security by require two-or-more elements to complete authentication
+###
+Azure Security Center 
+#
+Security monitoring service that offer threat protection across both cloud and on-premises services
+###
+Azure Key Vault 
+#
+Centralized cloud service that stores all app secrets
+###
+Examples of Azure Key Vault (3) 
+#
+Secret Management (PW)
+Key Management (Data encryption keys)
+Certificates (stores and/or generates certificates)
+###
+Hardware Security Module (HSM) 
+#
+A device that can safely store and manage encryption keys which is used to secure the Azure Key Vault
+###
+Azure Information Protection (AIP) 
+#
+Helps organizations classify and protect its docs and emails by applying labels
+###
+Azure AIP Labels 
+#
+a set of rules and conditions applied manually or by admins to documents
+###
+Azure Advanced Threat Protection (Azure ATP) 
+#
+identifies, detects and helps investigate advanced threats, compromised identities and malicious insider actions at the organization
+###
+Components of Advanced Threat Protection 
+#
+ATP Portal
+ATP Sensor
+ATP Cloud Service
+###
+Azure ATP Portal 
+#
+Provides monitoring and response to suspicious activity
+###
+Azure ATP Sensor 
+#
+Part of ATP which monitors requests for credentials and is installed on Domain Controller
+###
+Azure ATP Cloud Service 
+#
+Runs in Azure and monitors access to your Azure based apps
+###
+Azure Policy 
+#
+create, assign and manage policies that enforce different rules and effects over ALL resources and runs compliance evaluations
+###
+Role-Based Access Control (RBAC) 
+#
+access management based on roles or resource group membership
+###
+Locks 
+#
+prevents deletions or modifications of Azure subscription, resource group, or resources
+###
+Azure Lock levels (2) 
+#
+CanNotDelete
+Read only
+###
+Azure Advisor Security Assistance 
+#
+Provides security recommendations by integrating with Azure Security Center
+###
+Azure Blueprints 
+#
+used to define a repeatable set of Azure resources that implement and adhere to org's standards, patterns and requirements
+###
+Azure Firewall 
+#
+Grants access based on the originating IP address
+###
+Features of Azure Firewall (FW) 
+#
+High-availability
+Scalable
+Bidirectional filtering
+Monitor logging
+###
+DDoS (Distributed Denial of Service) Protection 
+#
+attack to disrupt and bog down services
+###
+Tiers of Azure DDoS protection 
+#
+Basic
+Standard
+###
+Basic DDoS Protection tier 
+#
+Is free and automatically setup to scrubs all incoming traffic at Azure Network edge
+###
+Standard DDoS Protection tier 
+#
+free and provides mitigation capabilities tuned specifically for MS Azure V-network resources
+###
+Types of DDoS attacks 
+#
+Volumentric.. floods network with legitimate data
+Protocol.. finds a protocol exploit and exploits it
+Resource.. attacks the web app
+###
+Network Security Groups (NSG) 
+#
+Allow you to filter network traffic to and from Azure resources in an Azure virtual network based on inbound/outbound rules for IP address, port and protocol
+###
+Azure security layers breakdown 
+#
+- Physical.. lock on building doors
+- Identity & Access.. users/computers with access
+- Perimeter..protecting the network from attacks
+- Network.. limiting network connections across resources to only what is needed
+- Compute.. OS access
+- App
+- Data
+###
+Azure Monitor 
+#
+Collects applications information from cloud and on-premise environments
+###
+Logs that Azure monitor collects 
+#
+Activity logs
+Metric tell
+###
+Activity logs 
+#
+logs when resources are created or modified
+###
+Metric tell 
+#
+shows how resources in the Azure instance or resource group are performing (CPU, Memory, I/Ops, ...)
+###
+Azure Service Health is composed of...? (3) 
+#
+Azure Status
+Service Health
+Azure Resource Health
+###
+Azure Status 
+#
+Global view of the health state of ALL Azure services
+###
+Azure Service Health 
+#
+dashboard that tracks Azure *services* in the regions where you use them
+###
+Azure Resource Health 
+#
+A dashboard listing the health of all Azure *resources* in the different regions now and in the past, as well as planned maintenance or health advisories.
+###
+Privacy Statement 
+#
+a Microsoft statement that defines what information Microsoft collects on Azure services and what it is used for
+###
+Trust Center 
+#
+a website containing information and details about how Microsoft enforces security, privacy, compliance and transparency across its services
+###
+Service Trust Portal 
+#
+Published Microsoft compliance audit reports, compliance guides and trust documents
+###
+Compliance Manager 
+#
+Is a risk assessment tool in the Trust Portal that enables you to track, assign and verify your organization's regulatory compliance activities
+###
+Azure Government services 
+#
+services available only to DoD, Federal, state and local agencies and list all the standard required by: 
+Azure Government services 
+Azure Germany services 
+Azure China 21Vianet
+###
+Azure Subscription 
+#
+Provides access to Azure products and services linked to your account
+###
+Azure Subscription types 
+#
+Pay-as-you-go
+Free
+Enterprise Agreement
+Student
+###
+Billing boundary 
+#
+determines who the Azure account is billed
+###
+Access boundary 
+#
+Applies access management policies to the subscription
+###
+Management groups 
+#
+Containers for managing access, policies and compliance across multiple Azure subscriptions across the entire Azure infrastructure
+###
+Azure customer types 
+#
+Enterprise
+Web direct
+Cloud Solution Provider (CSP)
+###
+Enterprise customer 
+#
+signs an EA agreement and agrees to spend a negotiated paid amount annually
+###
+Web direct 
+#
+pays-as-you-go customer that signs up for a standard Azure paid account
+###
+Cloud Service Provider 
+#
+a MS partner that sells MS cloud services to customers and bills the customer to pay the Azure bill
+###
+Billing zones 
+#
+a geographical grouping of Azure regions for billing purposes and bandwidth charges are based on zones and only when they leave the DC
+###
+Pricing Calculator 
+#
+Tool used to estimate the hourly/monthly costs associated with your selection and configurations.
+###
+TCO (Total Cost of Ownership) calculator 
+#
+tool used to estimate the cost saving to moving to the Azure
+###
+Azure Cost Management tool 
+#
+helps monitor, allocate and optimize Azure costs
+###
+Azure support options 
+#
+Developer
+Standard
+Professional Direct
+Premier
+###
+Azure Developer support 
+#
+can be used for support during a trial and non-prod environment
+###
+Azure Standard support 
+#
+can be used for support in for a prod environment
+###
+Azure Professional Direct Support 
+#
+used for support by orgs that have business critical dependencies on Azure
+###
+Premier support 
+#
+used for support by orgs that have substantial critical dependencies on Azure
+###
+Support channels 
+#
+Azure community
+Stack overflow
+Azure feedback
+Twitter
+Knowledge center
+###
+Azure Community 
+#
+general forum for users to post questions and answer Azure questions/issues
+###
+StackOverflow 
+#
+developer community where devs can ask questions to receive Azure and other-platform related answers
+###
+Azure feedback 
+#
+thoughts sent to Azure
+###
+Knowledge center 
+#
+A searchable database with support questions and answers from a community of Azure experts, developers, customers and users
+###
+Service Level Agreements (SLAs) 
+#
+Defines specific terms for Azure performance standards between Microsoft and customer
+###
+Composite SLAs 
+#
+the combined SLAs of multiple Azure products and services
+###
+Azure Service Lifecycle 
+#
+Preview
+General Availability (GA)
+###
+Private Preview Lifecycle 
+#
+lifecycle where Azure features are only available to certain Azure customers for evaluative purposes
+###
+Public Preview Lifecycle 
+#
+lifecycle where Azure features are available to all Azure customers for evaluative purposes
+###
+General Availability (GA) lifecycle 
+#
+life cycle where Azure features are fully released and out of beta testing
+###
+Feature updates 
+#
+consists of information about the latest updates to Azure products, services and features and product roadmaps and announcements.
+###
+Azure Databricks 
+#
+An Apache Spark-based analytics platform integrated with Azure to provide one-click setup, streamlined workflows, and an interactive workspace that enables collaboration between data scientists, data engineers, and business analysts
+###

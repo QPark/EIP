@@ -13,12 +13,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.StrongTextEncryptor;
@@ -91,8 +94,10 @@ public class CheckConnection {
 	private static final String VALIDATION_QUERY_ORACLE = "SELECT 1 FROM DUAL";
 	private static final String VALIDATION_QUERY_SQLSERVER = "SELECT 1";
 	public static String EIP_ENCRYPTOR_PWD_PROPERTY_NAME = "eip_jasypt_encryptor_password";
-	private static final TreeSet<String> failed = new TreeSet<>();
-	private static final TreeSet<String> success = new TreeSet<>();
+	private static final TreeMap<String, String> failed = new TreeMap<>();
+	private static final TreeMap<String, String> success = new TreeMap<>();
+	private static final TreeMap<String, String> failedAuth = new TreeMap<>();
+	private static final TreeMap<String, String> successAuth = new TreeMap<>();
 	private static final String USE_DEFAULT_PORT = "USE_DEFAULT_PORT";
 
 	private static void doCheckDatabase(final Properties p, final Properties fileProperties) {
@@ -126,6 +131,14 @@ public class CheckConnection {
 			final String pwd) {
 		boolean valid = false;
 		Connection connection = null;
+
+		Optional<Entry<String, Integer>> parsedUrl = parseUrl(url);
+		String ipAddress = "";
+		String auth = "";
+		if (parsedUrl.isPresent()) {
+			auth = String.format("%s@%s:%d", user, parsedUrl.get().getKey(), parsedUrl.get().getValue());
+			ipAddress = getHostAddress(parsedUrl.get().getKey()).map(i -> i.getHostAddress()).orElse("");
+		}
 		try {
 			connection = getConnection(driver, url, user, pwd);
 			final DatabaseMetaData metadata = connection.getMetaData();
@@ -136,9 +149,19 @@ public class CheckConnection {
 			System.out.println("\t\tMeta-DriverName        : " + metadata.getDriverName());
 			System.out.println("\t\tMeta-DriverVersion     : " + metadata.getDriverVersion());
 			valid = true;
+			if (parsedUrl.isPresent()) {
+				successAuth.put(auth, ipAddress);
+			} else {
+				successAuth.put(auth, ipAddress);
+			}
 		} catch (final Exception e) {
 			doPrintError(e.getMessage());
-			parseUrl(url).ifPresent(server -> doCheckSocketConnection(server));
+			if (parsedUrl.isPresent()) {
+				failedAuth.put(auth, ipAddress);
+				doCheckSocketConnection(parsedUrl.get());
+			} else {
+				failedAuth.put(auth, ipAddress);
+			}
 		} finally {
 			if (connection != null) {
 				try {
@@ -200,39 +223,46 @@ public class CheckConnection {
 	private static void doCheckSocketConnection(final Entry<String, Integer> server) {
 		final Dotter d = new Dotter();
 		final Thread t = new Thread(d);
+
+		String connectionKey = String.format("%s:%d", server.getKey(), server.getValue());
+		InetAddress address;
 		try {
-			System.out.print("\tConnecting to          : " + server.getKey() + ":" + server.getValue() + "\t\t");
-			t.start();
-			final Socket socket = new Socket();
-			socket.connect(new InetSocketAddress(server.getKey(), server.getValue()), 10000);
-			d.doit = false;
+			address = InetAddress.getByName(server.getKey());
 			try {
-				t.join();
-				socket.close();
-			} catch (final InterruptedException ex) {
-				socket.close();
-			}
-			System.out.println("\tconnected");
-			try {
-				final InetAddress address = InetAddress.getByName(server.getKey());
-				if (isIpAddress(server.getKey()) && !server.getKey().equals(address.getHostName())) {
-					System.out.println("\tConneced to            : " + address.getHostName());
-				} else {
-					System.out.println("\tConneced to            : " + address.getHostAddress());
+				System.out.print("\tConnecting to          : " + connectionKey + "\t\t");
+				t.start();
+				final Socket socket = new Socket();
+				socket.connect(new InetSocketAddress(server.getKey(), server.getValue()), 10000);
+				d.doit = false;
+				try {
+					t.join();
+					socket.close();
+				} catch (final InterruptedException ex) {
+					socket.close();
 				}
+				System.out.println("\tconnected");
+				try {
+					if (isIpAddress(server.getKey()) && !server.getKey().equals(address.getHostName())) {
+						System.out.println("\tConneced to            : " + address.getHostName());
+					} else {
+						System.out.println("\tConneced to            : " + address.getHostAddress());
+					}
+				} catch (final Exception e) {
+					// nothing
+				}
+				success.put(connectionKey, address.getHostAddress());
 			} catch (final Exception e) {
-				// nothing
+				d.doit = false;
+				try {
+					t.join();
+				} catch (final InterruptedException ex) {
+				}
+				System.out.println();
+				failed.put(connectionKey, address.getHostAddress());
+				doPrintError(e.getMessage());
 			}
-			success.add(String.format("%s:%d", server.getKey(), server.getValue()));
-		} catch (final Exception e) {
-			d.doit = false;
-			try {
-				t.join();
-			} catch (final InterruptedException ex) {
-			}
-			System.out.println();
-			failed.add(String.format("%s:%d", server.getKey(), server.getValue()));
-			doPrintError(e.getMessage());
+		} catch (Exception e) {
+			failed.put(connectionKey, "UnknownHostException");
 		}
 	}
 
@@ -253,13 +283,27 @@ public class CheckConnection {
 	}
 
 	private static void doPrintLocalhost() {
+		System.out.println(
+				getLocalHost().map(l -> String.format("Local IP address       : %s\nLocal hostname         : %s",
+						l.getHostAddress(), l.getHostName())).orElse("Can't detect localhost!"));
+	}
+
+	private static Optional<InetAddress> getLocalHost() {
 		try {
-			final InetAddress localaddr = InetAddress.getLocalHost();
-			System.out.println("Local IP address       : " + localaddr.getHostAddress());
-			System.out.println("Local hostname         : " + localaddr.getHostName());
+			return Optional.of(InetAddress.getLocalHost());
 		} catch (final UnknownHostException e) {
-			doPrintError("Can't detect localhost! " + e.getMessage());
+			doPrintError(String.format("Localhost access:", e.getMessage()));
 		}
+		return Optional.empty();
+	}
+
+	private static Optional<InetAddress> getHostAddress(final String name) {
+		try {
+			return Optional.of(InetAddress.getByName(name));
+		} catch (final UnknownHostException e) {
+			doPrintError(String.format("Problem resolving:", e.getMessage()));
+		}
+		return Optional.empty();
 	}
 
 	private static void doPrintSeparator() {
@@ -412,21 +456,35 @@ public class CheckConnection {
 		} catch (final Exception e) {
 			doPrintError(e.getMessage());
 		}
-		if (success.size() > 0) {
-			doPrintSeparator();
-			doPrintSeparator();
-			System.out.println("Successfully connected:");
-			doPrintSeparator();
-			success.stream().forEach(s -> System.out.println(String.format("\t%s", s)));
-		}
-		if (failed.size() > 0) {
-			doPrintSeparator();
-			doPrintSeparator();
-			System.out.println("Failed connection attempt:");
-			doPrintSeparator();
-			failed.stream().forEach(s -> System.out.println(String.format("\t%s", s)));
-		}
+
 		doPrintSeparator();
+		doPrintSeparator();
+		System.out.println(reportConnectivity());
+		doPrintSeparator();
+	}
+
+	private static final String reportConnectivity() {
+		StringBuffer sb = new StringBuffer();
+		if (!success.isEmpty() || !failed.isEmpty()) {
+			String localhost = getLocalHost().map(l -> l.getHostName()).orElse("localhost");
+			String date = new SimpleDateFormat("yyyyMMdd-HHmm00").format(new Date());
+			sb.append("Date\tState\tClient\tServer\tIP\n");
+			success.entrySet().stream().forEach(e -> {
+				sb.append(
+						String.format("%s\t%s\t%s\t%s\t%s\n", date, "connected", localhost, e.getKey(), e.getValue()));
+			});
+			failed.entrySet().stream().forEach(e -> {
+				sb.append(String.format("%s\t%s\t%s\t%s\t%s\n", date, "failed", localhost, e.getKey(), e.getValue()));
+			});
+			successAuth.entrySet().stream().forEach(e -> {
+				sb.append(String.format("%s\t%s\t%s\t%s\t%s\n", date, "authenticated", localhost, e.getKey(),
+						e.getValue()));
+			});
+			failedAuth.entrySet().stream().forEach(e -> {
+				sb.append(String.format("%s\t%s\t%s\t%s\t%s\n", date, "rejected", localhost, e.getKey(), e.getValue()));
+			});
+		}
+		return sb.toString();
 	}
 
 	private static Properties parseDirectory(final File dir) throws Exception {
@@ -441,6 +499,103 @@ public class CheckConnection {
 			}
 		}
 		return properties;
+	}
+
+	private static Properties parseJdbc(final Entry<Object, Object> jdbc, final Properties properties) {
+		final Properties value = new Properties();
+		value.setProperty(URL, String.valueOf(jdbc.getValue()));
+		final String kx = String.valueOf(jdbc.getKey());
+		if (kx.toLowerCase().endsWith(".url")) {
+			final String keyStart = kx.toLowerCase().replace(".url", "");
+			properties.entrySet().stream()
+					.filter(p -> p.getKey() != null && p.getValue() != null
+							&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
+							&& String.valueOf(p.getKey()).toLowerCase().contains("driver"))
+					.findAny().map(p -> value.setProperty(DRIVER, String.valueOf(p.getValue()))).orElse("");
+			properties.entrySet().stream()
+					.filter(p -> p.getKey() != null && p.getValue() != null
+							&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
+							&& (String.valueOf(p.getKey()).toLowerCase().contains("username")
+									|| String.valueOf(p.getKey()).toLowerCase().contains("user")))
+					.findAny().map(p -> value.setProperty(USER, String.valueOf(p.getValue()))).orElse("");
+			properties.entrySet().stream()
+					.filter(p -> p.getKey() != null && p.getValue() != null
+							&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
+							&& (String.valueOf(p.getKey()).toLowerCase().contains("password")
+									|| String.valueOf(p.getKey()).toLowerCase().contains("pwd")))
+					.findAny().map(p -> value.setProperty(PWD, String.valueOf(p.getValue()).trim())).orElse("");
+		}
+		return value;
+	}
+
+	private static List<Properties> parseServerXml(final File f) throws IOException {
+		List<Properties> value = new ArrayList<>();
+		String xml = readFile(f);
+		int index = xml.indexOf("<Resource");
+		int i, j;
+		if (index > 0) {
+			String resource;
+			String user;
+			String pwd;
+			String url;
+			String driver;
+			String datasource;
+			while (index > 0) {
+				resource = null;
+				user = null;
+				pwd = null;
+				url = null;
+				driver = null;
+				datasource = null;
+				xml = xml.substring(index + 1);
+				index = xml.indexOf("/>");
+				if (index > 0) {
+					resource = xml.substring(0, index);
+					i = resource.indexOf(" username=\"");
+					if (i > 0) {
+						i += " username=\"".length();
+						j = resource.indexOf('"', i + 1);
+						user = resource.substring(i, j);
+					}
+					i = resource.indexOf(" password=\"");
+					if (i > 0) {
+						i += " password=\"".length();
+						j = resource.indexOf('"', i + 1);
+						pwd = resource.substring(i, j);
+					}
+					i = resource.indexOf(" url=\"");
+					if (i > 0) {
+						i += " url=\"".length();
+						j = resource.indexOf('"', i + 1);
+						url = resource.substring(i, j);
+					}
+					i = resource.indexOf(" driverClassName=\"");
+					if (i > 0) {
+						i += " driverClassName=\"".length();
+						j = resource.indexOf('"', i + 1);
+						driver = resource.substring(i, j);
+					}
+					i = resource.indexOf(" name=\"");
+					if (i > 0) {
+						i += " name=\"".length();
+						j = resource.indexOf('"', i + 1);
+						datasource = resource.substring(i, j);
+					}
+					if (url != null) {
+						final Properties p = new Properties();
+						value.add(p);
+						p.setProperty(URL, url);
+						p.setProperty(USER, user);
+						p.setProperty(PWD, pwd.trim());
+						p.setProperty(DRIVER, driver);
+						p.setProperty(DATASOURCE, datasource);
+						parseUrlAndCheck(url);
+					}
+				}
+				index = xml.indexOf("<Resource");
+			}
+		}
+		return value;
 	}
 
 	private static Properties parseFile(final File f) throws Exception {
@@ -470,102 +625,16 @@ public class CheckConnection {
 				}
 
 				properties.entrySet().stream().filter(p -> p.getKey() != null && p.getValue() != null
-						&& String.valueOf(p.getValue()).contains("jdbc")).forEach(px -> {
-							final Properties dbp = new Properties();
-							dbp.setProperty(URL, String.valueOf(px.getValue()));
-							final String kx = String.valueOf(px.getKey());
-							if (kx.toLowerCase().endsWith(".url")) {
-								final String keyStart = kx.toLowerCase().replace(".url", "");
-								properties.entrySet().stream()
-										.filter(p -> p.getKey() != null && p.getValue() != null
-												&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
-												&& String.valueOf(p.getKey()).toLowerCase().contains("driver"))
-										.findAny().map(p -> dbp.setProperty(DRIVER, String.valueOf(p.getValue())))
-										.orElse("");
-								properties.entrySet().stream()
-										.filter(p -> p.getKey() != null && p.getValue() != null
-												&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
-												&& (String.valueOf(p.getKey()).toLowerCase().contains("username")
-														|| String.valueOf(p.getKey()).toLowerCase().contains("user")))
-										.findAny().map(p -> dbp.setProperty(USER, String.valueOf(p.getValue())))
-										.orElse("");
-								properties.entrySet().stream()
-										.filter(p -> p.getKey() != null && p.getValue() != null
-												&& String.valueOf(p.getKey()).toLowerCase().startsWith(keyStart)
-												&& (String.valueOf(p.getKey()).toLowerCase().contains("password")
-														|| String.valueOf(p.getKey()).toLowerCase().contains("pwd")))
-										.findAny().map(p -> dbp.setProperty(PWD, String.valueOf(p.getValue()).trim()))
-										.orElse("");
+						&& String.valueOf(p.getValue()).contains("jdbc")).forEach(p -> {
+							final Properties dbp = parseJdbc(p, properties);
+							if (dbp.size() > 1) {
 								databaseProperties.add(dbp);
+							} else {
+								parseUrlAndCheck((String) p.getValue()).ifPresent(server -> servers.add(server));
 							}
 						});
-
 			} else if (f.getName().endsWith("server.xml")) {
-				String xml = readFile(f);
-				int index = xml.indexOf("<Resource");
-				int i, j;
-				if (index > 0) {
-					String resource;
-					String user;
-					String pwd;
-					String url;
-					String driver;
-					String datasource;
-					while (index > 0) {
-						resource = null;
-						user = null;
-						pwd = null;
-						url = null;
-						driver = null;
-						datasource = null;
-						xml = xml.substring(index + 1);
-						index = xml.indexOf("/>");
-						if (index > 0) {
-							resource = xml.substring(0, index);
-							i = resource.indexOf(" username=\"");
-							if (i > 0) {
-								i += " username=\"".length();
-								j = resource.indexOf('"', i + 1);
-								user = resource.substring(i, j);
-							}
-							i = resource.indexOf(" password=\"");
-							if (i > 0) {
-								i += " password=\"".length();
-								j = resource.indexOf('"', i + 1);
-								pwd = resource.substring(i, j);
-							}
-							i = resource.indexOf(" url=\"");
-							if (i > 0) {
-								i += " url=\"".length();
-								j = resource.indexOf('"', i + 1);
-								url = resource.substring(i, j);
-							}
-							i = resource.indexOf(" driverClassName=\"");
-							if (i > 0) {
-								i += " driverClassName=\"".length();
-								j = resource.indexOf('"', i + 1);
-								driver = resource.substring(i, j);
-							}
-							i = resource.indexOf(" name=\"");
-							if (i > 0) {
-								i += " name=\"".length();
-								j = resource.indexOf('"', i + 1);
-								datasource = resource.substring(i, j);
-							}
-							if (url != null) {
-								final Properties p = new Properties();
-								databaseProperties.add(p);
-								p.setProperty(URL, url);
-								p.setProperty(USER, user);
-								p.setProperty(PWD, pwd.trim());
-								p.setProperty(DRIVER, driver);
-								p.setProperty(DATASOURCE, datasource);
-								parseUrlAndCheck(url);
-							}
-						}
-						index = xml.indexOf("<Resource");
-					}
-				}
+				databaseProperties.addAll(parseServerXml(f));
 			}
 		}
 		return properties;
