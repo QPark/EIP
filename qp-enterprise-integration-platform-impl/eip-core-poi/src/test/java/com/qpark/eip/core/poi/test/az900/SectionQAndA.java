@@ -21,10 +21,14 @@ public class SectionQAndA extends AbstractSection<SimpleEntry<String, String>> {
 	 */
 	private static List<ColumnDefinition> getSectionColumns() {
 		List<ColumnDefinition> value = new ArrayList<>();
+		value.add(new ColumnDefinition("No", 5, false));
 		value.add(new ColumnDefinition("Question", 40, false));
 		value.add(new ColumnDefinition("Answer", 40, false));
 		return value;
 	}
+
+	/** the number. */
+	private int number = 0;
 
 	/** Constructor. */
 	public SectionQAndA() {
@@ -37,6 +41,7 @@ public class SectionQAndA extends AbstractSection<SimpleEntry<String, String>> {
 	 */
 	@Override
 	public void createCells(final SimpleEntry<String, String> value, final HSSFRow row, final ExcelFile excel) {
+		excel.createCell(row, ++this.number);
 		excel.createCell(row, value.getKey());
 		excel.createCell(row, value.getValue());
 	}
