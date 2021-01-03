@@ -21,13 +21,12 @@ import com.qpark.eip.core.poi.ExcelFile;
 public class AZ900Example {
 	/**
 	 * Create the excel file.
-	 *
-	 * @param args
-	 *                 the arguments we do not care for.
+	 * @param args the arguments we do not care for.
 	 */
 	public static void main(final String[] args) {
 		try {
 			createExcelFile("AZ-900-questions.txt");
+			createExcelFile("AZ-900-questions-and-answers.txt");
 			createExcelFile("AZ-900-keywords.txt");
 			createExcelFile("AZ-900-keywords-0.txt");
 		} catch (IOException e) {
@@ -37,7 +36,6 @@ public class AZ900Example {
 
 	/**
 	 * Create the Excel file.
-	 *
 	 * @throws IOException
 	 */
 	private static void createExcelFile(final String fileName) throws IOException {
@@ -71,6 +69,6 @@ public class AZ900Example {
 		qanda.stream().forEach(p -> sheet.addRowValues(p));
 		sheet.finish();
 
-		excel.writeWorkbook(Paths.get(".", fileName + ".xls").toFile());
+		excel.writeWorkbook(Paths.get(".", fileName.replace(".txt", "") + ".xls").toFile());
 	}
 }
