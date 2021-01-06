@@ -249,11 +249,13 @@ public class PropertyUserProvider implements EipUserProvider, ReInitalizeable {
 					userDefinition.setPassword(Optional.ofNullable(userDefinitionProperty.getValue()).map(pwd -> {
 						String pwdEncrypted = null;
 						if (pwd.trim().startsWith("ENC(") && pwd.trim().endsWith(")")) {
-							this.logger.debug("createUsers: Try password decryption '{}' password '{}' failed.",
+							this.logger.debug("createUsers: Try password decryption '{}' password '{}'.",
 									userDefinition.getName(), pwd);
 							try {
 								pwdEncrypted = encryptor
 										.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
+								this.logger.debug("createUsers: Password decryption of user '{}' password '{}' passed.",
+										userDefinition.getName(), pwd);
 							} catch (final EncryptionOperationNotPossibleException e) {
 								this.logger.error("createUsers: Password decryption of user '{}' password '{}' failed.",
 										userDefinition.getName(), pwd);

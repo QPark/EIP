@@ -85,6 +85,8 @@ public class DefaultEipSecurmentPropertyProvider implements SecurmentPropertyPro
             EipJasyptEncryptionProvider.getEncryptor(this.properties);
         try {
           pwdEncrypted = encryptor.decrypt(pwd.substring(0, pwd.length() - 1).replace("ENC(", ""));
+          this.logger.debug("setSecurementPassword: Password decrpytion of user '{}' '{}' passed.",
+                  this.securementUsername, pwd);
         } catch (final EncryptionOperationNotPossibleException e) {
           this.logger.error("setSecurementPassword: Password decrpytion of user '{}' '{}' failed.",
               this.securementUsername, pwd);

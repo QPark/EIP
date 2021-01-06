@@ -1,0 +1,2112 @@
+Which calculator is used to estimate cost savings by migrating to Azure?
+A. Azure Price Calculator
+B. TCO Calculator
+#
+B
+###
+Multi-factor authentication (MFA) provides additional security for your identities by requiring two or more elements for full authentication?
+True or False?
+#
+T
+###
+What is a feature of Azure Active Directory?
+A. B2B identity services
+B. Application management
+C. Device Management
+D. Single Sign-On (SSO)
+E. Authentication
+F. All of the above
+#
+F
+###
+What are the options for a Policy Definition?
+Allowed VM SKU's
+Locations
+Allowed Resource Type
+Allowed Storage Account SKUs
+All of the above
+#
+All of the above
+###
+What is the logical breakup of Virtual Network known as?
+A Hyper - V
+B VM Ware
+C SubNet
+D NoNet
+#
+C
+###
+In which solution requires the least amount of management for users?
+A SaaS
+B IaaS
+C DaaS
+D PaaS
+#
+A
+###
+A Video file is an example of what kind of data type?
+A Semi-structured data
+B Structured data
+C Unstructured data
+D None of the above
+#
+C
+###
+______________ is a workflow-based risk assessment dashboard within the Trust Portal that enables you to track, assign, and verify your organization's regulatory compliance activities related to Microsoft professional services and Microsoft cloud service?
+A Service Trust Portal
+B Microsoft Trust Center
+C Microsoft Privacy Statement
+D Compliance Manager
+#
+D
+###
+Azure Security Center is available with what options?
+A Standard
+B Free
+C Both
+D None
+#
+C
+###
+A virtual network allows Azure resources to securely communicate with each other, the internet, and on-premises networks.
+Yes Y
+No N
+#
+Y
+###
+You hold the most technical responsibility in what kind of solution?
+A DaaS (Database as a Service)
+B PaaS
+C SaaS
+D IaaS
+#
+D
+###
+__________is a service that monitors the availability, performance, and usage of your web applications, whether they're hosted in the cloud or on-premises?
+A Azure Service Health
+B Azure Monitor
+C Compliance Manager
+D Application Insights
+#
+D
+###
+Option of SSD and HDD is an option for what kind of Azure database service?
+A Data Lake
+B Azure Queue
+C Disk Storage
+D Azure Files
+E Cosmos DB
+#
+C
+###
+What is the right formation?
+A. Management Group > Policy > Initiative
+B. Initiative > Management Group > Policy
+C. Management Group > Initiative > Policy
+D. Policy > Management Group > Initiative
+#
+C
+###
+What is a logical container for resources deployed on Azure?
+A Resource Group
+B Resource Manager
+C Tags
+D Azure Group
+#
+A
+###
+You hold the most technical responsibility in what kind of solution?
+A On Premises
+B SaaS
+C IaaS
+D PaaS
+#
+A
+###
+Azure SQL database is designed to support what type of database?
+A Structured data
+B Semi-structured data
+C Unstructured data
+D None of the above
+#
+A
+###
+Which is an Azure Encryption service?
+Azure Storage Service Encryption
+Azure Disk Encryption
+Transparent data encryption (TDE)
+All of the above
+#
+All of the above
+###
+What is a load balancer designed for web applications at a TCP(Transport Level)?
+Gateway
+Load Balancer
+Network security group
+Traffic Manager
+#
+Gateway
+###
+Which option has the maximum responsibility of Customer?
+IaaS
+PaaS
+SaaS
+Equal in all options
+#
+IaaS
+###
+What are Azure services for Network Security?
+
+Virtual network security
+Azure Application Gateway
+Azure Application Gateway
+Azure Firewall
+All of the above
+#
+All of the above
+###
+What is the maximum of Tag on an Resource
+10
+25
+20
+15
+#
+15
+###
+______________is a suite of experiences that provide personalized guidance and support when issues with Azure services affect you?
+Azure Service Health
+Azure Monitor for VMs
+Application Insights
+Azure Monitor for Containers
+#
+Azure Service Health
+###
+What are the valid ways to create a resource group?
+A. Portal, PowerShell, templates & SDK
+B. Portal, CLI, PowerShell, templates, SDK
+C. Portal, CLI, PowerShell & SDK
+D. Portal, CLI, PowerShell, templates
+#
+B
+###
+What is a service in Azure that you use to define, assign, and, manage standards for resources in your environment?
+A Azure DevOps
+B Azure Locations
+C Azure Policy
+D Azure Police
+#
+C
+###
+Which of the following is designed for data analytics?
+A CosmosDB
+B BLOB Storage
+C SQL database
+D Data Lake
+#
+D
+###
+Which of the following is not a Data Storage tier?
+A. Archived
+B. Warm
+C. Hot
+D. Cold
+#
+B
+###
+You company is running an extremely predictable solution with known workload for foreseen long turn future. What can be a viable solution?
+A CapEx Computing Solution
+B OpEx - Operational Expense cloud solution
+C Both
+D None
+#
+A
+###
+Each policy definition in Azure Policy has a what kind of effect?
+A Single
+B Mutliple
+C Double
+D None
+#
+A
+###
+Which is NOT a feature of Azure Application Gateway?
+A Web application firewall
+B URL rule-based routes
+C SSL termination
+D Cookie affinity
+E None of the above
+#
+E
+###
+You don't need to manage the application in what kind of service?
+A SaaS
+B PaaS
+C On-Premises
+D IaaS
+#
+A
+###
+What can be used to enforce standards?
+
+A Policies
+B Resource Group
+C Tags
+D All of the Above
+#
+A
+###
+Which service allows or denies inbound network traffic to your Azure resources?
+A Load Balancer
+B Gateway
+C Network security group
+D Traffic manager
+#
+C
+###
+A NoSQL data is an example of what kind of data type?
+A. Unstructured data
+B. Structured data
+C. Semi-structured data
+D. None of the above
+#
+C
+###
+What is the way to encrypt data at rest?
+A. Client-side encryption
+B. Azure Storage Service Encryption (SSE)
+C. Both
+D. None of the above
+#
+B
+###
+Buying and installing your own datacenter is what kind of solution?
+
+A. CapEx Computing Solution
+B. OpEx - Operating Expense Cloud solution
+C. None
+D. Both
+#
+A
+###
+Which of the following is ideal for Video and Audio streaming?
+A. SQL Database
+B. Cosmos DB
+C. Data Lake
+D. BLOB storage
+#
+D
+###
+_______ hosts the Compliance Manager service, and is the Microsoft public site for publishing audit reports and other compliance-related information relevant to Microsoft cloud services.
+A. Microsoft Trust Center
+B. Compliance Manager
+C. Service Trust Portal
+D. Microsoft Privacy Statement
+#
+C
+###
+Which of the following is designed for decoupled data transfer?
+A. Azure Files
+B. Azure Queue
+C. Cosmos DB
+#
+B
+###
+What is a Tag in Azure?
+A. Name/value pairs of text data that you can apply to resources and resource groups
+B. Name/value pairs of text data that you can apply to resource groups
+C. A movie
+D. Name/value pairs of text data that you can apply to resources
+#
+A
+###
+What is the process of establish what level of access an authenticated person or service has?
+
+A. Authorization
+B. Identification
+C. Authentication
+D. None of the Above
+#
+A
+###
+Suppose you have limited budget, How does Azure helps in terms of storage?
+
+A. Secures your data
+B. Pay As You go is cheaper than setting up own data center
+C. Helps with buying hardware
+D. All of the above
+#
+B
+###
+What is a service you can use to create, assign, and manage policies. These policies apply and enforce rules that your resources need to follow
+
+A. Tags
+B. Azure Manager
+C. Policies
+D. Resource Group
+#
+C
+###
+Which is the most expensive data storage type?
+A. Archived
+B. Cold
+C. Hot
+D. Warm
+#
+C
+###
+Which of the following is Quickly scale able?
+A. OpEx
+B. CapEx
+C. Both
+D. None
+#
+A
+###
+What refers to a system's ability to stay operational during abnormal conditions?
+A. Availability
+B. Resiliency
+C. Both
+D. None
+#
+B
+###
+Azure SQL Database is what kind of service?
+A. SaaS
+B. PaaS
+C. IaaS
+D. None of the above
+#
+B
+###
+________helps you diagnose and obtain support when an Azure service issue affects your resources?
+A. Azure Status
+B. Resource Health
+C. Azure Monitor
+D. Azure Service Health
+#
+C
+###
+What uses the DNS server that's closest to the user to direct user traffic to a globally distributed endpoint?
+A. Traffic Manager
+B. Gateway
+C. Network security group
+D. Load balancer
+#
+A
+###
+What is a complete development and deployment environment in the cloud, with resources that enable organizations to deliver everything from simple cloud-based apps to sophisticated cloud-enabled enterprise applications?
+
+A. SaaS
+B. DaaS
+C. PaaS
+D. IaaS
+#
+C
+###
+Which of the following Azure service is accessible thru Service message block(SMB)?
+A. Cosmos DB
+B. Azure Files
+C. Azure files
+D. Azure Queue
+E. Disk Storage
+#
+B
+###
+#
+D
+###
+Which is ideal for large distributed data storage?
+
+A. Cosmos DB
+B. SQL database
+C. Data Lake
+D. Blob Storage
+#
+A
+###
+What delivers a comprehensive solution for collecting, analyzing, and acting on telemetry from your cloud and on-premises environments?
+A. Application Insights
+B. Compliance Manager
+C. Azure Service Health
+D. Azure Monitor
+#
+D
+###
+Which is an example of Azure unstructured data storage?
+A. Cosmos DB
+B. SQL Database
+C. BLOB storage
+D. Data lake
+#
+C
+###
+What is the cost effective way to store your rarely used data?
+A. Cold
+B. Hot
+C. Archived
+D. Warm
+#
+C
+###
+What is a monitoring service that provides threat protection across all of your services both in Azure, and on-premises
+A. Azure Watch
+B. Azure Monitor
+C. Azure Police
+D. Azure Security Center
+#
+D
+###
+What Assigns user friendly name to IP address?
+A. CDN (Content Delivery Network)
+B. DNS
+C. HTTP
+D. Load Balancer
+#
+B
+###
+__________ maintains relationship with resources even after deployment?
+
+A. Azure Blueprint
+B. Azure Resource Manager Templates
+C. Both
+D. None
+#
+A
+###
+Microsoft Excel macro is an example of what kind of service?
+A. PaaS
+B. DaaS
+C. SaaS
+D. IaaS
+#
+A
+###
+Primary services to monitor the health of your apps and resources is/are?
+
+A. Azure Monitor
+B. Azure Service Health
+C. None
+D. Both
+#
+D
+###
+Application security is a ________?
+
+A. User Responsibility
+B. Shared Responsibility
+C. Azure Responsibility
+D. Government Responsibility
+#
+B
+###
+What is the most flexible category of cloud services?
+
+A. PaaS
+B. IaaS
+C. DaaS
+D. SaaS
+#
+B
+###
+What is a distributed network of servers that can efficiently deliver web content to users?
+A. CDN (Content Delivery Network)
+B. HTTP
+C. Load Balancer
+D. DNS
+#
+A
+###
+Your company is experimenting with a new solution with high risk of failure. What is preferred way to go?
+
+A. CapEx
+B. OpEx
+C. Both
+D. None
+#
+B
+###
+What is an identity that is used by a service or application?
+
+A. Service Principals
+B. MFA
+C. SSO
+D. All of the Above
+#
+A
+###
+Which of the following service is DaaS(Database as a Service) and based on MS SQL server?
+A. BLOB Storage
+B. Data Lake
+C. SQL database
+D. Cosmos DB
+#
+C
+###
+Tags can be used for automated actions and organization of Resources?
+True or False
+#
+T
+###
+Which of the following solution is Agile?
+A. OpEx
+B. CapEx
+C. Both
+D. None
+#
+A
+###
+What could be the most efficient way to ensure a naming convention was followed across your subscription?
+
+A. Send Memo
+B. Create Tag
+C. Run Reports
+D. Create Policy
+#
+D
+###
+One resource can be part of many resource group?
+True or False?
+#
+F
+###
+What is a cloud-based security solution that identifies, detects, and helps you investigate advanced threats, compromised identities, and malicious insider actions directed at your organization?
+A. Azure Disk Encryption
+B. Azure Firewall
+C. MSIPE - Microsoft Azure Information Protection
+D. Azure Advanced Threat Protection (Azure ATP)
+#
+D
+###
+Resource Groups can be nested?
+T or F?
+#
+F
+###
+Which of the following is NOT a benefit of storing data in Azure cloud?
+A. Cost Effective
+B. Auto backup
+C. Mutliple data types
+D. Global replication for safety
+E. Difficult to analyze
+#
+E
+###
+___________is a service that is designed to monitor the performance of container workloads?
+
+A. Azure Monitor for containers
+B. Azure Service Health
+C. Application Insights
+D. Azure Monitor for VMs
+#
+A
+###
+What option will you use to protect credit card information in document?
+A. Azure Firewall
+B. Azure Disk Encryption
+C. MSIPE - MS Azure Information Protection
+D. Azure Application Gateway
+#
+C
+###
+What defines the set of controls that are recommended for resources within that specified subscription or resource group?
+
+A. Security Policy
+B. Azure Monitor
+C. Azure Watch
+D. Azure Security Center
+#
+A
+###
+________ is a website resource containing information and details about how Microsoft implements and supports security, privacy, compliance, and transparency in all Microsoft cloud products and services.
+A. Microsoft Privacy Statement
+B. Microsoft Trust Center
+C. Compliance Manager
+D. Service Trust Portal
+#
+B
+###
+What can be the organizing principle for Resource Groups?
+A. Organizing for lifecycle
+B. Organization for Authorization
+C. Organizing for billing
+D. All of the above
+#
+D
+###
+Almost all attackers are after?
+A. Firewall
+B. Network
+C. Data
+D. Compute
+#
+C
+###
+What is the process of managing and assigning policy definitions by grouping a set of policies into a single item?
+A. Grouping
+B. Cluster
+C. Initiative
+D. Startup
+#
+C
+###
+What does RBAC stands for in Azure?
+A. Role-based Azure control
+B. Role-based access commitment
+C. Role based access control
+D. Retro based access control
+#
+C
+###
+What Azure service is used to move data to the cloud?
+A. Data immigration service
+B. Data backup service
+C. Data Migration Service
+D. All of the above
+#
+C
+###
+What allows you to define a repeatable set of Azure resources that implement and adhere to your organization's standards, patterns, and requirements?
+A. Management Group
+B. Initiative
+C. Azure Resource Manager Templates
+D. Azure Blueprint
+#
+D
+###
+In which format does the data adheres to a schema?
+A. Unstructured data
+B. Structured data
+C. Semi-structure data
+D. None of the above
+#
+B
+###
+Udemy is an example of what kind of service?
+A. SaaS
+B. PaaS
+C. IaaS
+D. None of the above
+#
+A
+###
+Your company maintains and stores legal information and needs to follow security norms and procedure which is far more aggressive then the industry standards. What is an optimal solution?
+A. Wait for next gen cloud
+B. Private Cloud
+C. Hybrid cloud
+D. Public Cloud - Azure, AWS, etc
+#
+B
+###
+______________explains what personal data Microsoft processes, how Microsoft processes it, and for what purposes?
+A. Compliance Manager
+B. Microsoft Privacy Statement
+C. Microsoft Trust Center
+D. Service Trust Portal
+#
+B
+###
+What kind of data storage is most beneficial in Azure?
+A. Predictable Data
+B. Consistent small data
+C. Data that fluctuates significantly with demanid
+D. None of the above
+#
+C
+###
+What is a setting that can be applied to any resource to block modification or deletion?
+A. Resource Groups
+B. Tags
+C. Policies
+D. Resource Locks
+#
+D
+###
+Which of the following has an upfront cost?
+A. IaaS
+B. PaaS
+C. SaaS
+D. None of the above
+#
+D
+###
+You want to deploy your own web application quickly without taking any responsibility of Operating System, Web server or system updates. What is the right solution for you?
+A. DaaS
+B. SaaS
+C. PaaS
+D. IaaS
+#
+C
+###
+What distributes traffic evenly among each system in a pool and can help you achieve both high availability and resiliency?
+A. Load Balancer
+B. Network Security Group
+C. Traffic Manager
+D. Gateway
+#
+A
+###
+You want to setup a website or blog quickly. What could be an optimal solution?
+A. Hybrid
+B. Private Cloud
+C. Public Cloud
+D. Wait for the next gen cloud
+#
+C
+###
+What is Azure service to stop Distributed Denial of Service attacks
+A. Azure Application Gateway
+B. Azure DDoS Protection
+C. Azure Firewall
+#
+B
+###
+What helps protect Azure SQL Database and Azure Data Warehouse against the threat of malicious activity?
+A. Transparent Data encryption (TDE)
+B. Azure Storage Service Encryption
+C. Azure Disk Encryption
+D. All of the above
+#
+A
+###
+Suppose you work at a startup with limited funding. Why might you prefer Azure data storage over an on-premises solution?
+A. To ensure you run on a specific brand of hardware which will let you to form a marketing partnership with that hardware vendor.
+B. The Azure pay-as-you-go billing model lets you avoid buying expensive hardware.
+C. To get exact control over the location of your data store.
+#
+B
+###
+Which of the following situations would yield the most benefits from relocating an on-premises data store to Azure?
+A. Unpredictable storage demand that increases and decreases multiple times throughout the year.
+B. Long-term, steady growth in storage demand.
+C. Consistent, unchanging storage demand.
+#
+A
+###
+What is an Azure region?
+A. One or more Azure data centers within a specific geographical location.
+B. A way of breaking networks into smaller networks.
+C. Firewall rules which define the flow of traffic in and out of Azure.
+#
+A
+###
+Which of the following is true about virtual networks?
+A. You configure virtual networks through software.
+B. A virtual network accepts network traffic on all ports. You configure the firewall through virtual machines.
+C. Virtual networks are always reachable from the internet.
+#
+A
+###
+Which is true about Azure Load Balancer?
+A. You must use Azure Load Balancer if you want to distribute traffic among your virtual machines running in Azure.
+B. Azure Load Balancer works with internet-facing traffic only.
+C. Azure Load Balancer distributes traffic among similar systems, making your services more highly available.
+#
+C
+###
+What is network latency?
+A. The amount of data that can fit on the connection.
+B. The distance data must travel to reach its destination.
+C. The time it takes for data to travel over the network.
+#
+C
+###
+How does Azure Traffic Manager reduce latency?
+A. It chooses only the fastest networks between endpoints.
+B. It chooses the endpoint that's closest to the user's DNS server.
+C. It caches content, similar to how content delivery networks work.
+#
+B
+###
+Cloud security is a shared responsibility between you and your cloud provider. Which category of cloud services requires the greatest security effort on your part?
+A. Infrastructure as a service (IaaS)
+B. Platform as a service (PaaS)
+C. Software as a service (SaaS)
+#
+A
+###
+Which of these helps you most easily disable an account when an employee leaves your company?
+A. Enforce multi-factor authentication (MFA)
+B. Monitor sign-on attempts
+C. Use single sign-on (SSO)
+#
+C
+###
+Which of these is the strongest way to protect sensitive customer data?
+A. Encrypt data as it sits in your database
+B. Encrypt data as it travels over the network
+C. Encrypt data both as it sits in your database and as it travels over the network
+#
+C
+###
+There has been an attack on your public-facing website, and the application's resources have been overwhelmed and exhausted, and are now unavailable to users. What service should you use to prevent this type of attack?
+A. DDoS protection
+B. Azure Firewall
+C. Network Security Group
+D. Application Gateway
+#
+A
+###
+You want to store certificates in Azure to centrally manage them for your services. Which Azure service should you use?
+A. MSIP
+B. Azure AD
+C. Azure Key Vault
+D. Azure ATP
+#
+C
+###
+True or false: You can download published audit reports and other compliance-related information related to Microsoft's cloud service from the Service Trust Portal
+True
+False
+#
+T
+###
+Which Azure service allows you to configure fine-grained access management for Azure resources, enabling you to grant users only the rights they need to perform their jobs?
+A. Locks
+B. Policy
+C. Initiatives
+D. Role-based Access Control
+#
+D
+###
+Which Azure service allows you to create, assign, and, manage policies to enforce different rules and effects over your resources and stay compliant with your corporate standards and service-level agreements (SLAs)?
+A. Azure Policy
+B. Azure Blueprints
+C. Azure Security Center
+D. Role-based Access Control
+#
+A
+###
+Which of the following services provides up-to-date status information about the health of Azure services?
+A. Compliance Manager
+B. Azure Monitor
+C. Service Trust Portal
+D. Azure Service Health
+#
+D
+###
+Where can you obtain details about the personal data Microsoft processes, how Microsoft processes it, and for what purposes?
+A. Microsoft Privacy Statement
+B. Compliance Manager
+C. Azure Service Health
+D. Trust Center
+#
+A
+###
+Tags can be applied to any type of resource on Azure
+True
+False
+#
+F
+###
+Tags applied at a resource group level are propagated to resources within the resource group.
+True
+False
+#
+F
+###
+Which of the following is not a feature of resource groups?
+A. Resources can be in only one resource group.
+B. Resources can be moved from one resource group to another resource group.
+C. Resource groups can be nested.
+D. Role based access control can be applied to the resource group.
+#
+C
+###
+Which of the following might be a good usage of tags?
+A. Using tags to associate a cost center with resources for internal chargeback
+B. Using tags in conjunction with Azure Automation to schedule maintenance windows
+C. Using tags to store environment and department association
+D. All of the above are good ways to use tags
+#
+D
+###
+Which of the following would be the most efficient way to ensure a naming convention was followed across your subscription?
+A. Send out an email with the details of your naming conventions and hope it is followed
+B. Create a policy with your naming requirements and assign it to the scope of your subscription
+C. Give all other users except for yourself read-only access to the subscription. Have all requests to create resources sent to you so you can review the names being assigned to resources, and then create them.
+#
+B
+###
+Which of the following would be good to put a resource lock on?
+A. An ExpressRoute circuit with connectivity back to your on-premises network
+B. A non-production virtual machine used to test occasional application builds
+C. A storage account used to temporarily store images processed in a development environment
+#
+A
+###
+Which support plan is best for organizations with substantial dependence on Azure across multiple products?
+A.Standard
+B.Professional
+C.Premier
+#
+C
+###
+An Azure subscription can only trust one directory.
+True
+False
+#
+T
+###
+Azure pricing is the same, whether you create an Azure account through the Azure website or if you add Azure to a Microsoft Enterprise Agreement.
+True
+False
+#
+T
+###
+A free Azure account includes _________ in Azure credits.
+A. $100
+B. $200
+C. $300
+#
+B
+###
+The credits provided as part of a free Azure account must be used within _______ days.
+A. 30
+B. 60
+C. 90
+#
+A
+###
+Azure VMs are billed by the __________.
+A. Hour
+B. Minute
+C. Second
+#
+C
+###
+Which calculator is used to estimate cost savings by migrating to Azure?
+A. Azure Price Calculator
+B. TCO Calculator
+#
+B
+###
+Which feature identifies VMs with low utilization?
+A. Azure Cost Management
+B. Azure Advisor
+C. Azure Cost Analysis
+#
+B
+###
+_____________ allows you to set cost alerts.
+A. Azure Cost Management
+B. Budgets
+C. Azure Cost Analysis
+#
+A
+###
+Which support plan guarantees Sev A response times of less than 1 hour?
+A. Basic
+B. Standard
+C. Developer
+#
+B
+###
+Which support plan is best for organizations with substantial dependence on Azure across multiple products?
+A. Standard
+B. Professional
+C. Premier
+#
+C
+###
+Which Microsoft-affiliated forum is a good resource for Azure support, outside of support plan channels?
+A. Stack Overflow
+B. MSDN
+C. Experts Exchange
+#
+B
+###
+Preview features are covered by the same SLAs as General Availability features.
+T. True
+F. False
+#
+F
+###
+A _________ is a set of datacenters deployed within a latency-defined perimeter and connected through a dedicated regional low-latency network.
+A. Paired Region
+B. Region
+C. Resource group
+#
+B
+###
+An Azure __________ is a defined area of the world that contains at least one Azure Region.
+A. geography
+B. datacenter
+C. region
+#
+A
+###
+__________ is a high-availability offering that protects your applications and data from datacenter failures.
+A. Azure Datacenters
+B. Availability Zones
+C. Resource Groups
+#
+B
+###
+A combination of a fault domain and an update domain is called ______________________.
+A. a Resource Group
+B. an Availability Zone
+C. a redundant datacenter
+#
+B
+###
+A ____________ is a container that holds related resources for an Azure solution.
+A. Resource Set
+B. Paired Datacenter
+C. Resource Group
+#
+C
+###
+______________ allows you to work with the resources in your solution as a group.
+A. Azure Resource Manager
+B. Resource Group
+C. Azure Manager
+#
+A
+###
+True or False. When naming a VM, the computer name and the virtual machine name can be different.
+T. True
+F. False
+#
+T
+###
+______________ let you create and manage a group of identical, load balanced VMs.
+A. VM scale sets
+B. Load Balancers
+C. Availability Sets
+#
+A
+###
+____________ allows you to build and host web apps, mobile back ends, and RESTful APIs in the programming language of your choice without managing infrastructure.
+A. Web Apps
+B. Azure App Service
+C. JSON
+#
+B
+###
+____________ is a solution for easily running small pieces of code in the cloud.
+A. Azure Functions
+B. Azure App Service
+C. Web Apps
+#
+A
+###
+A virtual network is scoped to a single region.
+T. True
+F. False
+#
+T
+###
+______________ connections are private. Traffic does not go over the internet.
+A. Site-to-Site VPN
+B. Point-to-site VPN
+C. Azure ExpressRoute
+#
+C
+###
+Allows you to scale your applications and create high availability for your services.
+A. Availability Zone
+B. Load Balancer
+C. vNet
+#
+B
+###
+Sends encrypted traffic between an Azure virtual network and an on-premises location over the public Internet.
+A. Public Load Balancer
+B. Internal Load Balancer
+C. VPN Gateway
+#
+C
+###
+The max throughput for a VpnGw3 VPN gateway is _______________.
+A. 100Mbps
+B. 1Gbps
+C. 1.25Gbps
+#
+C
+###
+A _________________ lets you create a secure connection to your virtual network from an individual client computer.
+A. Site-to-Site VPN
+B. Point-to-Site VPN
+C. ExpressRoute
+#
+B
+###
+_____________ is a web traffic load balancer that enables you to manage traffic to your web applications.
+A. Azure Application Gateway
+B. Availability Set
+C. Scale Set
+#
+A
+###
+A ______________ is a distributed network of servers that can efficiently deliver web content to users.
+A. Load Balancer
+B. Application Gateway
+C. Content Delivery Network
+#
+C
+###
+_________________ is optimized for storing massive amounts of unstructured data.
+A. Azure Files
+B. Blob Storage
+C. Archive Storage
+#
+B
+###
+_______________ provides a unique namespace in Azure for your data.
+A. Storage Account
+B. Container
+C. Blob
+#
+A
+###
+_____________ are made up of blocks of data that can be managed individually.
+A. Block Blobs
+B. Append Blobs
+C. Page Blobs
+#
+A
+###
+All Azure virtual machines have at least ________ disk(s).
+1
+2
+3
+#
+2
+###
+Data on the temporary disk may be lost during a maintenance event or when you redeploy a VM.
+T. True
+F. False
+#
+T
+###
+Managed disks have a maximum capacity of ______________.
+A. 4TB
+B. 32TB
+C. 2TB
+#
+B
+###
+___________ disks are the recommended deployment option for most workloads.
+A. Standard HDD
+B. Standard SSD
+C. Premium SSD
+#
+B
+###
+Microsoft recommends that you use ___________ disks for new VMs.
+A. Managed
+B. Unmanaged
+#
+A
+###
+Azure file shares cannot be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS.
+T. True
+F. False
+#
+F
+###
+_____________ offers fully managed file shares in the cloud.
+A. Blob Storage
+B. Azure Files
+C. Storage Account
+#
+B
+###
+While a blob is in Archive storage, it is offline and cannot be read, copied, overwritten, or modified.
+T. True
+F. False
+#
+T
+###
+_____________ is Microsoft's globally distributed, multi-model database service.
+A. HDInsight
+B. Azure Cosmos DB
+C. Hadoop
+#
+B
+###
+Azure SQL Database can be deployed as a single database with its own set of resources managed via a logical server.
+T. True
+F. False
+#
+T
+###
+_____________ is a cloud-based EDW that leverages Massively Parallel Processing (MPP) to quickly run complex queries across petabytes of data.
+A. HDInsight
+B. CosmosDB
+C. SQL Data Warehouse
+#
+C
+###
+_________________ is a managed service, hosted in the cloud, that acts as a central message hub for bi-directional communication between your IoT application and the devices it manages.
+A. IoT Central
+B. App Service
+C. IoT Hub
+#
+C
+###
+IoT Hub supports communications both from the device to the cloud and from the cloud to the device.
+T. True
+F. False
+#
+T
+###
+______________ is a fully managed IoT Software-as-a-Service solution that makes it easy to create products that connect the physical and digital worlds.
+A. IoT Hub
+B. Azure IoT Central
+C. HDInsight
+#
+B
+###
+____________ is a Hadoop service offering hosted in Azure that enables clusters of managed hadoop instances.
+A. Data Lake Analytics
+B. Azure HD Insight
+C. CosmosDB
+#
+B
+###
+_______________________ is an on-demand analytics job service that simplifies big data
+A. Azure Data Lake Analytics
+B. HDInsight
+C. Azure Analytics
+#
+A
+###
+_____________________ is a cloud service that you use to train, deploy, automate, and manage machine learning models.
+A. Azure Machine Learning Service
+B. Azure Machine Learning Studio
+C. Azure AI
+#
+A
+###
+Azure Machine Learning service does not support open-source technologies.
+T. True
+F. False
+#
+F
+###
+_________________ is a cloud service that helps you automate and orchestrate tasks, business processes, and workflows.
+A. Azure Functions
+B. Azure Logic Apps
+C. HDInsight
+#
+B
+###
+_____________________ is Microsoft's cross-platform command-line experience for managing Azure resources.
+A. Azure CLI
+B. Azure PowerShell
+C. Azure Portal
+#
+A
+###
+_______________________ provides a set of cmdlets that use the Azure Resource Manager model for managing your Azure resources.
+A. Azure CLI
+B. Azure PowerShell
+C. Azure Portal
+#
+B
+###
+__________________ analyzes your resource configuration and usage telemetry and then recommends solutions that can help you improve the cost effectiveness, performance, high availability, and security of your Azure resources.
+A. Azure Portal
+B. Azure Advisor
+C. Azure AZ Module
+#
+B
+###
+A _________ is a set of datacenters deployed within a latency-defined perimeter and connected through a dedicated regional low-latency network.
+A. Paired Region
+B. Region
+C. Resource group
+#
+B
+###
+__________ is a high-availability offering that protects your applications and data from datacenter failures.
+A. Azure Datacenters
+B. Availability Zones
+C. Resource Groups
+#
+B
+###
+What is an Azure region?
+A. One or more Azure data centers within a specific geographical location.
+B. A way of breaking networks into smaller networks.
+C. Firewall rules which define the flow of traffic in and out of Azure.
+#
+A
+###
+Which of the following is true about virtual networks?
+A. You configure virtual networks through software.
+B. A virtual network accepts network traffic on all ports. You configure the firewall through virtual machines.
+C. Virtual networks are always reachable from the internet.
+#
+A
+###
+Which is true about Azure Load Balancer?
+A. You must use Azure Load Balancer if you want to distribute traffic among your virtual machines running in Azure.
+B. Azure Load Balancer works with internet-facing traffic only.
+C. Azure Load Balancer distributes traffic among similar systems, making your services more highly available.
+#
+C
+###
+What is network latency?
+A. The amount of data that can fit on the connection.
+B. The distance data must travel to reach its destination.
+C. The time it takes for data to travel over the network.
+#
+C
+###
+How does Azure Traffic Manager reduce latency?
+A. It chooses only the fastest networks between endpoints.
+B. It chooses the endpoint that's closest to the user's DNS server.
+C. It caches content, similar to how content delivery networks work.
+#
+B
+###
+Cloud security is a shared responsibility between you and your cloud provider. Which category of cloud services requires the greatest security effort on your part?
+A. Infrastructure as a service (IaaS)
+B. Platform as a service (PaaS)
+C. Software as a service (SaaS)
+#
+A
+###
+Which of these helps you most easily disable an account when an employee leaves your company?
+A. Enforce multi-factor authentication (MFA)
+B. Monitor sign-on attempts
+C. Use single sign-on (SSO)
+#
+C
+###
+Which of these is the strongest way to protect sensitive customer data?
+A. Encrypt data as it sits in your database
+B. Encrypt data as it travels over the network
+C. Encrypt data both as it sits in your database and as it travels over the network
+#
+C
+###
+There has been an attack on your public-facing website, and the application's resources have been overwhelmed and exhausted, and are now unavailable to users. What service should you use to prevent this type of attack?
+A. DDoS protection
+B. Azure Firewall
+C. Network Security Group
+D. Application Gateway
+#
+A
+###
+You want to store certificates in Azure to centrally manage them for your services. Which Azure service should you use?
+A. MSIP
+B. Azure AD
+C. Azure Key Vault
+D. Azure ATP
+#
+C
+###
+True or false: You can download published audit reports and other compliance-related information related to Microsoft's cloud service from the Service Trust Portal
+#
+T
+###
+Which Azure service allows you to configure fine-grained access management for Azure resources, enabling you to grant users only the rights they need to perform their jobs?
+A. Locks
+B. Policy
+C. Initiatives
+D. Role-based Access Control
+#
+D
+###
+Which Azure service allows you to create, assign, and, manage policies to enforce different rules and effects over your resources and stay compliant with your corporate standards and service-level agreements (SLAs)?
+A. Azure Policy
+B. Azure Blueprints
+C. Azure Security Center
+D. Role-based Access Control
+#
+A
+###
+Which of the following services provides up-to-date status information about the health of Azure services?
+A. Compliance Manager
+B. Azure Monitor
+C. Service Trust Portal
+D. Azure Service Health
+#
+D
+###
+Where can you obtain details about the personal data Microsoft processes, how Microsoft processes it, and for what purposes?
+A. Microsoft Privacy Statement
+B. Compliance Manager
+C. Azure Service Health
+D. Trust Center
+#
+A
+###
+T or F: Tags can be applied to any type of resource on Azure
+#
+F
+###
+T or F: Tags applied at a resource group level are propagated to resources within the resource group.
+#
+F
+###
+Which of the following is not a feature of resource groups?
+A. Resources can be in only one resource group.
+B. Resources can be moved from one resource group to another resource group.
+C. Resource groups can be nested.
+D. Role based access control can be applied to the resource group.
+#
+C
+###
+Which of the following might be a good usage of tags?
+A. Using tags to associate a cost center with resources for internal chargeback
+B. Using tags in conjunction with Azure Automation to schedule maintenance windows
+C. Using tags to store environment and department association
+D. All of the above are good ways to use tags
+#
+D
+###
+Which of the following would be the most efficient way to ensure a naming convention was followed across your subscription?
+A. Send out an email with the details of your naming conventions and hope it is followed
+B. Create a policy with your naming requirements and assign it to the scope of your subscription
+C. Give all other users except for yourself read-only access to the subscription. Have all requests to create resources sent to you so you can review the names being assigned to resources, and then create them.
+#
+B
+###
+Which of the following would be good to put a resource lock on?
+A. An ExpressRoute circuit with connectivity back to your on-premises network
+B. A non-production virtual machine used to test occasional application builds
+C. A storage account used to temporarily store images processed in a development environment
+#
+A
+###
+A company is deploying a critical business application on two virtual machines (VMs). The deployment needs to support:
+1. Highly available access
+2. Geographically separate fault and update zones
+3. Minimal latency between instances
+Most users who need to access the application are in the Azure East US 2 region.
+Which configuration should the company use to deploy the solution?
+A. Separate regions in a regional pair
+B. Separate availability sets
+C. Separate availability zones
+D. Separate resource groups in the same region
+#
+C
+###
+What is the advantage of moving your company's infrastructure to Azure by using a public cloud model?
+A. There are no capital expenditure (CapEx) costs
+B. There are no operational expenditure costs (OpEx) costs
+C. The company has complete control of resources that are used by the operating system
+D. Legacy applications are easier to support
+#
+A
+###
+A company deploys an Azure VM in the North Central US region. The company adds the VM and its resources to a local resource group. As part of a reorganization, the company needs to move the VM and its data to a different region. This must be accomplished with minimal downtime.
+Solution: The company configures the site recovery with another region in the same geographic cluster.
+Does this meet the goal? (Y or N)
+#
+Y
+###
+A company deploys an Azure VM in the North Central US region. The company adds the VM and its resources to a local resource group. As part of a reorganization, the company needs to move the VM and its data to a different region. This must be accomplished with minimal downtime.
+Solution: The company moves the VM to a different resource group located in a different region.
+Does this meet the goal? (Y or N)
+#
+N
+###
+A company deploys an Azure VM in the North Central US region. The company adds the VM and its resources to a local resource group. As part of a reorganization, the company needs to move the VM and its data to a different region. This must be accomplished with minimal downtime.
+Solution: The company backs up the VM, deletes the original VM, and recreates the VM in a different region.
+Does this meet the goal? (Y or N)
+#
+N
+###
+You need to filter traffic between two subnets in an Azure deployment. Filtering should be based on:
+1. Source IP address and port number
+2. Destination IP address and port number
+3. TCP/IP protocol in use
+Solution: You deploy and configure Azure Firewall as the traffic filter
+Does this solution meet the goal? (Y or N)
+#
+Y
+###
+You need to filter traffic between two subnets in an Azure deployment. Filtering should be based on:
+1. Source IP address and port number
+2. Destination IP address and port number
+3. TCP/IP protocol in use
+Solution: You deploy and configure Web Application Firewall (WAF) as the traffic filter
+Does this solution meet the goal? (Y or N)
+#
+N
+###
+You need to filter traffic between two subnets in an Azure deployment. Filtering should be based on:
+1. Source IP address and port number
+2. Destination IP address and port number
+3. TCP/IP protocol in use
+Solution: You deploy and configure a Network Security Group (NSG) as the traffic filter
+Does this solution meet the goal? (Y or N)
+#
+Y
+###
+A cloud service provider's costs per subscriber are reduced as the number of subscribers to a public cloud increases. Which cloud benefit does this describe?
+A. Consumption-based billing
+B. Operational expenditures
+C. Scalability
+D. Economies of scale
+#
+E
+###
+How can Azure lower capital expenditure (CapEx) costs?
+A. Azure reduces the amount of maintenance that is associated with the configuration of firewalls, which reduces costs
+B. Azure allows you to reduce the level of IT staffing that is required to maintain on-premises applications and services
+C. Azure allows you to pay monthly based on usage rather than pay upfront for physical hardware
+D. Azure allows you to pay annually to reduce overall costs that are associated with its platform-as-a-service (PaaS) offerings.
+#
+C
+###
+Which two statements accurately describe Platform-as-a-Service (PaaS)?
+A. Development tools are available for Web application development only
+B. The subscriber is responsible for maintaining OS updates
+C. This is the preferred environment for deploying pay-as-you-go apps to a subscriber's customers
+D. Support is provided for geographically distributed development teams
+E. The service provider is responsible for providing business analysis tools
+#
+D & E
+###
+What is an advantage of a public cloud over a private cloud?
+A. On-demand scalability efficiently meets business requirements
+B. Costs are lower and spread among multiple tenants
+C. Greater security is provided for tenant data
+D. The environment supports a higher level of customization for each tenant
+#
+B
+###
+What is the advantage of moving your company's infrastructure to Azure by using a public cloud deployment model?
+A. Legacy applications are easier to support
+B. There are no operational expenditure (OpEx) costs
+C. The company has complete control of resources that are used by the OS
+D. There are no capital expenditure (CapEx) costs
+#
+D
+###
+T or F: Locking a resource group as read-only locks all resources contained in the group.
+#
+T
+###
+T or F: A resource group can contain resources from the same region as the resource group only.
+#
+F
+###
+T or F: You can add a resource to or remove a resource from a resource group at any time.
+#
+T
+###
+T or F: Resources can interact with other resources in a different resource group.
+#
+T
+###
+When should you use Azure Resource Manager?
+A. To monitor resource use and generate management reports
+B. To perform basic management tasks, such as starting and stopping a VM
+C. To coordinate resource use between on-premises and cloud-based resources
+D. To automate resource deployments using templates
+#
+D
+###
+Which three (3) descriptions of regions are accurate?
+A. Represent physical datacenters
+B. Are always paired with other regions
+C. Contain one or more datacenters
+D. Can span countries
+E. Specify the location of resources
+#
+B, C, E
+###
+Which of the following four (4) descriptions of containers are accurate?
+A. Can be accessed over the internet by IP address or domain name
+B. Can scale out as needed
+C. Requires you to configure the host virtual machine
+D. Represents a single app and its dependencies
+E. Requires you to manually install dependencies
+F. Can run on Windows or Linux
+#
+A, B, D, F
+###
+Which setup can be deployed as an availability zone?
+A. Two datacenters located in different regions
+B. Two datacenters located in the same region
+C. Two servers located in the same datacenter
+D. Two datacenters located in different geographies
+#
+B
+###
+What is the purpose of a resource group?
+A. It is a collection of user and group accounts
+B. It defines initiatives that allows you to control the type of resources that can be deployed
+C. It serves as a container for Azure resources like VMs and web apps
+D. It specifies the subscriptions that are allowed to create Azure resources
+#
+C
+###
+In which two situations would using an Application Gateway be necessary? Each correct answer presents part of the solution?
+A. A web application program interface (API) that must be load-balanced across three instances
+B. A web application that must access an on-premises service through Azure
+C. A web application that uses path-based routing for images and videos
+D. A web application program interface (API) that must be located near the user calling it to reduce latency
+#
+A & C
+###
+A company deploys an Azure VM running Windows. The VM hosts data files that must be available to other VMs running Windows, Linux and MacOS. Data must be secure both at rest and in-transit. You need to choose an appropriate storage product solution. Which storage product should you use?
+A. Disk storage
+B. File storage
+C. Blob storage
+D. Archive storage
+#
+B
+###
+What is the purpose of the Load Balancer resource?
+A. It delivers Internet traffic to the datacenter that is geographically closest to the user
+B. It adds or removes VM instances as demand increases
+C. It distributes VM traffic evenly across multiple instances
+D. It uses URL-based routing to route web traffic across multiple instances
+#
+C
+###
+Which Azure database product supports key-value and document data model and provides native support for NoSQL?
+A. Azure Cosmos DB
+B. Azure SQL Database
+C. Azure SQL Data Warehouse
+D. SQL Server on VMs
+#
+A
+###
+T or F: A virtual machine scale set automatically creates and integrates with Azure load balancer or Application Gateway
+#
+T
+###
+T or F: A virtual machine scale set automates the distribution of virtual machine (VM) instances across Availability Sets, Availability Zones and Regions
+#
+F
+###
+T or F: A virtual machine scale set can rapidly create hundreds of identical VMs from a central configuration
+#
+T
+###
+A company deploys multiple instances of a web application across three Availability Zones. The company then configures an Azure networking product to evenly distribute service requests across the instances based on three different URLs. Which networking product does this describe?
+A. Content Delivery Network (CDN)
+B. Application Gateway
+C. Load Balancer
+D. Web Application Firewall (WAF)
+#
+B
+###
+In which situation should you use an Azure Function App?
+A. You want to execut3e a batch file that removes records from an Azure SQL Database on demand
+B. You want to execute a graphical workflow in a browser that sends a text message whenever an email with the subject Billing arrives in a folder named Azure
+C. You want to execute JavaScript code that sends a maintenance email every Sunday evening
+D. You want to execute a Visual Studio graphical workflow that provisions an order when an order is received
+#
+C
+###
+Your company is planning to build a solution for an automobile manufacturing company. The solution should allow vehicles to send on-board diagnostic (OBD) sensory and vehicle telemetry data to the cloud for analysis. You need to be able to identify individual vehicles from the data that is sent. What would be the most appropriate Azure solution?
+A. Event Hub
+B. IoT Hub
+C. IoT Central
+D. Notification Hub
+#
+D
+###
+You need to use an Azure Big Data solution that allows you to query and transform data to extract insights. What is the most appropriate solution to use?
+A. Data Lake Analytics
+B. CosmosDB
+C. Blob Storage
+D. Azure SQL Database
+#
+A
+###
+IoT Hub is ~
+A. A collection of platform-as-a-service (PaaS) solutions you can use to accelerate your development of an IoT solution
+B. A software-as-a-service (SaaS) solution that makes it easy to connect, monitor, and manage your IoT assets
+C. A service that provides for bi-directional connections between your IoT devices and an IoT application
+D. A service that can be used to analyze data on the IoT devices rather than in the cloud
+#
+C
+###
+You need to analyze large volumes of streaming data being collected from IoT devices. What should you use?
+A. Machine Learning service
+B. Application insights
+C. HDInstight
+D. Data Lake Analytics
+#
+C
+###
+T or F: Machine learning models created in Machine Learning Studio can be deployed and managed by Azure Machine Learning Service.
+#
+F
+###
+What are the features of Azure Advisor? Choose 5
+A. Monitors on-premises services
+B. Helps you reduce spending
+C. Detects threats and vulnerabilities
+D. Ensures fault tolerance
+E. Notifies you when to perform updates
+F. Protects data from accidental deletion
+G. Speeds up your applications
+#
+B, C, D, F, G
+###
+Which tool allows you to create Azure resources without using the command line?
+A. Azure PowerShell
+B. Azure Portal
+C. Azure CLI
+D. Azure Cloud Shell
+#
+B
+###
+Which resource should you create first efore you can use Azure Cloud Shell?
+A. Container
+B. Storage Account
+C. App Services web app
+D. Virtual Machine
+#
+B
+###
+T or F: Azure PowerShell can be used to create Azure Resource Manager templates.
+#
+F
+###
+T or F: Azure PowerShell virtual machine (VM) management is limited to Windows VMs only.
+#
+F
+###
+You deploy three virtual machines (VMs) to Azure as a three-tiered architecture. One VM hosts a front-end web application, one VM hosts a business application programming interface (API), and the other VM hosts a Microsoft SQL Server database. Only the front-end web application should be publicly accessible, and it should be accessible over HTTP over port 80. All three VMs must be accessible over RDP on port 222. Only your account should be able to use RDP to access the VMs.
+You need to determine how Network Security Groups (NSGs) can be used in this scenario.
+Which two ways can NSGs be used? (Pick 2)
+A. To ensure that only the front-end VM is publicly accessible over port 80
+B. To ensure that only your account can use RDP to access the VMs
+C. To ensure that all three VMs are accessible over port 222
+D. To ensure that the front-end VM hosts only web applications
+#
+A & D
+###
+A company investigates moving on-premises datacenters in multiple locations to the cloud. The data is mission critical, and all offices need access to data resources at all times. Changes to resource requirements are projected to be incremental and relatively easy to predict.
+Which two cloud features help ensure this? (Pick 2)
+A. Elasticity
+B. High availability
+C. Agility
+D. Fault tolerance
+E. Disaster recovery
+#
+B & D
+###
+T or F: Azure DDoS is set up automatically when you install Microsoft Threat Protection.
+#
+F
+###
+T or F: Azure DDoS Standard provides protection against volumetric, protocol and application layer attacks.
+#
+T
+###
+T or F: Virtual networks from multiple subscriptions in your organization can link to the same Azure DDoS protection plan.
+#
+T
+###
+T or F: Authentication can use certificates to identify a person or service.
+#
+T
+###
+Which statement best describes Azure Information Protection (AIP)?
+A. AIP requires all readers of Office documents to have accounts in Azure Active Directory
+B. AIP sends you a text message each time you log on to Azure
+C. AIP encrypts virtual machines (VMs)
+D. AIP classifies documents and emails by applying labels to them
+#
+D
+###
+You want to be notiied of a threat coming from an account that you set up to be fake.
+A. Honeytoken attack
+B. Suspected identity theft (pass-the-ticket)
+C. User and group membership reconnaissance (SAMR)
+#
+A
+###
+You want to be notified of multiple authentication attempts with different passwords.
+A. Suspected brute force attack
+B. Suspected identity theft (pass-the-hash)
+#
+A
+###
+You want to be notified of multiple failed authentication attempts with what appears to be an alphabetical list of user names
+A. Account enumeration reconnaissance
+B. Account enumeration reconnaissance suspected brute force attack
+C. User and group membership reconnaissance (SAMR)
+#
+A
+###
+You need an Azure security solution that is able to identify and investigate suspicious user activities. What should you use?
+A. Azure Security Center
+B. Key Vault
+C. Azure Information Protection (AIP)
+D. Azure Advanced Threat Protection (ATP)
+#
+D
+###
+Which two features are supported by Azure (AD) Free edition? Pick 2
+A. User and group management
+B. Company branding
+C. Group-based access management
+D. Self-service password change for cloud users
+E. Service level agreement (SLA) guarantee
+#
+A & D
+###
+You need a security solution that helps provision, manage, and deploy Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates. What should you use?
+A. Azure Security Center
+B. Azure Information Protection (AIP)
+C. Key Vault
+D. Azure Advanced Threat Protection (ATP)
+#
+C
+###
+Which Azure security solution lets users identify email messages that should be protected through encryption, identiy and authorization policies?
+A. Key Vault
+B. Azure Security Center
+C. Azure Information Protection (AIP)
+D. Azure Advanced Threat Protection (ATP)
+#
+C
+###
+Which of the following allows you to assign permissions to users so that they can create resources in Azure?
+A. Initiatives
+B. Role-based access security (RBAC)
+C. Policies
+D. Resource groups
+#
+B
+###
+You need to give all users in a group the ability to create and manage all types of Azure resources in a subscription. Rights granted to the users should be kept to a minimum. Which built-in role based access control (RBAC) role should you assign to the group?
+A. Contributor
+B. User Access Administrator
+C. Reader
+D. Owner
+#
+A
+###
+Your company has a new policy to be able to limit access to resources at the resource group and resource scopes in a detailed, granular way. Access will be granted to various groups and individual users. You need to implement the new policy. What should you use?
+A. Role-based access control (RBAC)
+B. Azure Advisor
+C. Locks
+D. Azure Policies
+#
+A
+###
+An Azure initiative ~
+A. Provides a model that is used by Azure Resource Manager to deploy large numbers of identical resources
+B. Lets you implement detailed granular resource access controls
+C. Is a collection of Azure policies targeted toward reaching a single overall goal
+D. Integrates with Azure Advisor to provide best practices for optimization
+#
+C
+###
+T or F: Role-based access control (RBAC) roles take precedence over locks.
+#
+F
+###
+T or F: Locks can be applied in the context of specific users and roles.
+#
+F
+###
+Your company wants to ensure that it meets its internal compliance goals and that Azure resources are compliant with company standards. This will include ongoing evaluation for compliance and identification of non-compliant resources. You need to recommend a solution. What should you use?
+A. Role-based access control (RBAC)
+B. Azure Monitor
+C. Azure Policies
+D. Azure Advisor
+#
+C
+###
+Which feature of Azure Monitor allows you to visually analyze telemetry data?
+A. Application insights
+B. Service Health
+C. Metrics
+D. Alerts
+#
+A
+###
+Which Azure Monitor feature sends an administrator an email when a VM is about to exceed its usage quota for the month?
+A. Application Insights
+B. Service Health
+C. Metrics
+D. Alerts
+#
+B
+###
+You want to know how many times your web app has been unavailable during the past month. Which should use use?
+A. Health advisories
+B. Health alerts
+C. Health history
+D. Planned Maintenance
+E. Service Issues
+#
+C
+###
+You want to receive a text message when Azure maintenance is planned. Which should you use?
+A. Health advisories
+B. Health alerts
+C. Health history
+D. Planned Maintenance
+E. Service Issues
+#
+B
+###
+You want to view the Azure features that are planned to be deprecated. Which should you use?
+A. Health advisories
+B. Health alerts
+C. Health history
+D. Planned Maintenance
+E. Service Issues
+#
+A
+###
+Azure monitor begins collecting data ~
+A. As soon as you launch Azure Management Portal
+B. After you enable diagnostics
+C. As soon as you add a resource to a new Azure subscription
+D. Only after you create the metrics and logs data stores
+#
+C
+###
+Which Azure service can use autoscale to add or remove resources as appropriate to minimize costs and ensure optimum performance levels?
+A. Azure Service Health
+B. Azure Advisor
+C. Azure Monitor
+D. Azure Security Center
+#
+C
+###
+Which Azure component provides information about planned maintenance and advisories such as deprecated offerings?
+A. Azure Advisor
+B. Azure Security Center
+C. Azure Service Health
+D. Azure Monitor
+#
+C
+###
+You are going to start collecting data about your Azure infrastructure with Azure Monitor. Which type of data collection requires you to enable diagnostics?
+A. Usage of web applications
+B. Container workload performance
+C. Linux virtual machine (VM) health
+D. Event logs
+#
+D
+###
+Which URL should you visit to use Compliance Manager?
+A. Portal.azure.com
+B. Servicetrust.microsoft.com
+#
+B
+###
+Which standards or regulations are enforced by a government agency?
+A. ISO
+B. GDPR
+C. NIST
+#
+B
+###
+Which country uses a dedicated trustee for customer data?
+A. Brazil
+B. Germany
+C. South Africa
+#
+B
+###
+This is a standards-based non-regulatory agency based in the United States
+A. ISO
+B. GDPR
+C. NIST
+D. DHL
+#
+C
+###
+Microsoft Trust Center ~
+A. Provides best practices recommendations for advanced threat protection of hybrid workloads
+B. Is the Azure information site that contains broad-ranging security information
+C. Is a workflow-based risk assessment tool that lets you track compliance activities
+D. Lets you define policies to enforce compliance of Azure resources with company standards
+#
+B
+###
+Which statement best describes regulatory compliance responsibilities in an Azure cloud-based deployment?
+A. Compliance is the sole responsibility of Microsoft
+B. Compliance is the responsibility of applicable third-party auditors
+C. Compliance is a shared responsibility of Microsoft and the subscriber
+D. Compliance is the sole responsibility of the subscriber
+#
+C
+###
+T or F: Azure Germany is available to governmental agencies only?
+#
+F
+###
+T or F: You can directly migrate an existing European account to Azure Germany with minimal changes?
+#
+F
+###
+T or F: Azure Germany meets strict EU requirements.
+#
+T
+###
+What is the maximum length of time you can use an Azure free subscription before it expires?
+A. 12 months
+B. 30 days
+C. 24 months
+D. 6 months
+#
+A
+###
+Your company plans to deploy to the Azure cloud three virtual machines (VMs) and a Load Balancer. You want to estimate the cost of using all four resources before you create a subscription. You need to choose the most appropriate cost estimation tool. Which should you use?
+A. Cost Management
+B. Total Cost of Ownership (TCO) calculator
+C. Azure Advisor
+D. Azure Pricing Calculator
+#
+D
+###
+A zone is a geographical grouping of Azure regions used to determine billing based on ~
+A. Hours of activity
+B. Data transfers
+C. Resource deployment
+D. Peak usage periods
+#
+B
+###
+You want to purchase the least expensive Azure support plan that provides you with 24x7 technical phone support. Which plan should you purchase?
+A. Developer
+B. Premier
+C. Standard
+D. Professional Direct
+#
+C
+###
+Your company deploys a cloud infrastructure solution to Azure. You want to be able to receive technical support from Microsoft at any time of the day via phone. Microsoft must respond within the hour. You need to purchase the least expensive support plan to meet your needs. Which support plan should you purchase?
+A. Professional Direct
+B. Standard
+C. Developer
+D. Premier
+#
+B
+###
+Which statement best describes the Azure Knowledge Center?
+A. It is a resource that you can deploy to allow developers to integrate support in their applications
+B. It is a website that lists a collection of templates for every resource type that you can deploy in Azure
+C. It publishes a representational state transfer (REST) application program interface (API) that allows third-party tools to retrieve a user-friendly definition of each resource type in Azure
+D. It provides answers to frequently asked questions (FAQs) regarding Azure cloud
+#
+D
+###
+Your company has an Azure Professional Direct (ProDirect) service plan. A user with the Support Request Contributor built-in role initiates a support ticket through Azure Portal. The support ticket has Minimal business impact (Sev C) severity. What is the maximum response time for the initial response to the support ticket?
+A. 1 hour
+B. 8 hours
+C. 2 hours
+D. 4 hours
+#
+D
+###
+What is Azure Knowledge Center?
+A. A public forum for discussing observed problems and recommended solutions
+B. A public database of quick fixes and links to software patches
+C. A public interactive chat environment to ask support professionals questions
+D. A publicly available search interface to locate and access online documentation
+#
+D
+###

@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.domain</groupId>
 		<artifactId>base</artifactId>
-		<version>4.0.0</version><!--qpark-eip-version-->
+		<version>4.0.1</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

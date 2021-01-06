@@ -1,0 +1,585 @@
+High Availability
+#
+Agreed level of uptime. If a server goes down, we have another to go to. Read in a %. Specified in an SLA. Achieved using redundancy. Availability zones and availability certifications.
+###
+Scalability
+#
+Scaling up: More CPU cores, memory, or disks
+Scaling out: More servers
+###
+Elasticity
+#
+Elastic computing is the ability to quickly expand or decrease computer processing, memory, and storage resources to meet changing demands without worrying about capacity planning and engineering for peak usage. Automatic.
+Can see this in action in App Service automatic traffic manager
+###
+Agility
+#
+Engineering resource availability. Provisioning new resources is fast.
+Business response to changing conditions or opportunity is easy in Azure.
+How fast Azure can allocated or deallocate resources
+###
+Fault Tolerance
+#
+Continue providing service to underlying application even after the failure of one or more components in any layer.
+###
+Disaster Recovery
+#
+Backups, screenshots, and restore strategy. Retain multiple copies of data as a security measure in case of unforeseen loss.
+###
+Global Reach
+#
+The ability to reach audiences around the globe.
+###
+Customer Latency Capabilities
+#
+Provide all services around the globe with a fast connection.
+###
+Predictive Cost Considerations
+#
+Essentially a cost calculator for Azure.
+###
+Security
+#
+Azure can control security policies for your services. You can monitor and change these.
+###
+Economies of Scale for Azure
+#
+Amazon, Microsoft, Google, are not buying the most robust enterprise grade disks, storage controllers, server chassis, etc.
+Cost advantages that enterprises obtain due to scale of operation.
+###
+Differences between Capital Expenditure (CapEx) and Operational Expenditure (OpEx)
+#
+Capital Expenditure is an expense a business incurs to create a benefit in the future. Upfront payment. Accounted for over useful life. Ex: buying new server hardware and software for data center.
+Operational Expenditure is an expense required for the day to day. Monthly or yearly payment. Accounted for in current month or year. An operating cost. Ex: IaaS offering from Azure
+###
+What is the consumption-based model?
+#
+Pay for what you use. Function apps and logic apps have a consumption based plan.
+###
+Describe IaaS
+#
+Azure VMs. You manage Applications, Data, Runtime, Middleware, O/S :: Azure manages Virtualization, Servers, Storage, and Networking
+###
+Describe PaaS
+#
+Azure cloud services, Azure App services. You manage Applications and Data :: Azure manages Runtime, Middleware, O/S, Virtualization, Servers, Storage, and Networking
+###
+Describe SaaS
+#
+Azure Websites. Azure manages Application, Data, Runtime, Middleware, O/S, Virtualization, Servers, Storage, and Networking.
+###
+Public Cloud
+#
+Most common way of cloud computing. Cloud resources such as storage, and server are owned and operated by a third-party cloud service provider (Azure). All hardware, software and other supporting infrastructure is owned and managed by the cloud provider. Lower costs, no maintenance, near-unlimited scalability, high reliability
+Benefits: No CapEx, Agility, Consumption-based.
+###
+Private Cloud
+#
+Computing resources used exclusively by one business or organization. The private cloud can be physically located at an on-site datacenter, or hosted by a third-party service provider. All hardware and software are dedicated solely to the organization - governments and banks use this a lot. More flexibility, improved security, high scalability.
+Benefits: Control, Security
+###
+Hybrid Cloud
+#
+Data can move between private and public cloud greater flexibility and more deployment options. Use public cloud for high-volume, lower security needs such as web-based email, and the private cloud for sensitive, business-critical operations like financial reporting. In hybrid cloud, "cloud bursting" is also an option: when an application or resource runs in the private cloud until there is a spike in demand, such as seasonal event or tax filing, can then burst into the public cloud for additional computing resources. Gives control, flexibility, cost-effectiveness, scalability, and ease of transferring workloads gradually.
+Benefits: Flexibility, Compliance
+###
+Regions
+#
+A set of datacenters deployed within a latency-defined perimeter and connected through a dedicated regional low-latency network.
+###
+Availability Zones
+#
+Physically separate locations within an Azure region. Each Availability Zone is made up of one or more datacenters equipped with independent power, cooling, and networking. Offer high availability and low latency.
+###
+Availability Sets
+#
+Help ensure applications remain online if high-impact maintenance event is required, or hardware failure.
+Made up of update domains and fault domains.
+UD: when maintenance occurs, update is sequenced through update domains
+FD: provide physical separation of a workload across different hardware in the data center.
+###
+Resource Groups
+#
+A container that holds related resources for an Azure solution. Includes those resources (VMs, app services, storage account), that you want to manage as a group.
+###
+Azure Resource Manager
+#
+Provides a consistent management layer to perform tasks through the Azure portal. All of these capabilities are also available through AZ PowerShell, CLI, REST APIs, and client SDK.
+Can manage infrastructure, create/ deploy, update resources with template json files.
+Can deploy, manage, monitor all the resources for your solution as a group, rather than individually.
+Repeatedly deploy solution throughout the dev cycle and have resources deployed in a consistent state.
+Define dependencies between resources so they're deployed in that correct order.
+Apply role-based access.
+Apply tags to logically organize resources.
+Clarify organizations billing by viewing groups of tagged resources.
+###
+Benefits and usage of core Azure Architectural Components.
+#
+Easy to deploy and manage.
+Keep organized.
+Stay available for development. Stay consistent with releases.
+Understand billing of each resource.
+Restrict or allow access.
+Manage zone for optimal availability and latency.
+###
+VMs
+#
+On demand, high-scale, secure, virtualized infrastructure using Windows Server. It's a virtual computer. IaaS
+###
+VM Scale Sets
+#
+Create and manage a group of identical, load balanced VMs. The number of VM instances can be auto-scaled depending on current load. Provide high-availability to apps, and allow you to centrally manage, configure, and update a large number of VMs. Provide redundancy and improve performance.
+###
+App Service
+#
+Build web, mobile, and API apps using .NET, .NET Core, Java, Ruby, Node.js, PHP, Python and Docker. Essentially a website hosting space. You provide Application and Data, Azure does the rest. PaaS.
+###
+Azure Functions
+#
+Support triggers like queues or HTTP requests, or timers to run small pieces of code. Write individual functions that will be called when you want. Can link up with an App Service for a dedicated plan, or a consumption plan that allows you to pay for how much you use the function.
+###
+Container Services
+#
+Containers are a virtualization environment, but without O/S.
+Azure container instances: a PaaS offering that allows you to upload containers, which it then will run for you.
+###
+Azure Kubernetes
+#
+Container orchestrator service for managing a large number of containers.
+###
+Virtual Network
+#
+Enables many types of Azure resources, such as Azure VMs to securely communicate with each other, the internet, or on-premise networks. A Virtual Network is scoped to a single region; however, multiple regions can be connected via Virtual Network Peering.
+Offers Isolation and Segmentation. Assigns a private IP, segment the Virtual Network into one or more subnets and allocate a portion of the address to the subnet. User Azure-provided name resolution or own DNS server for use by resources in a Virtual Network.
+###
+Load Balancer
+#
+Scale application to create high availability for your services. Load Balancer supports inbound and outbound scenarios. Distributed new inbound flows that arrive in the LB frontend to the backend pool instances, according to the rules and health. A public LB can provide outbound connections for VMs iinside your virtual network by translating their private IP addresses to public IP addresses.
+Available in Basic and Standard.
+###
+VPN Gateway
+#
+Specific type of virtual network gateway that is used to send encrypted traffic between an Azure virtual network and on-premises location the public Internet. Can also send encrypted traffic between Azure virtual networks over the Microsoft network. Each virtual network can only have one VPN gateway. When you create a virtual network gateway, gateway VMS are deployed to the gateway subnet and configured with the settings you specify. One of the settings is the gateway types is VPN. You can create gateways between two VPN gateways (VNet-to-VNet), a VPN gateway to on-premise VPN device (Site-to-Site), or connect to your virtual network from a remote location (Point-to-Site) over a VPN connection.
+A PaaS offering to build, deploy, and scale enterprise-grade web, mobile, and API apps.
+###
+Application Gateway
+#
+Gives application-level routing and load balancing services that let you build scalable and highly-available web front end in Azure. You control the size of the gateway and scale deployment based on your needs. Can set up Web Application firewall, and SSL offload lets you build a secure web front end for streamlined certification management.
+###
+Content Delivery Network
+#
+A distributed network of servers that can efficiently deliver content to users. CDNs store cached content on edge server in point-of-presence (POP) locations that are close to end users. Offers developers a global solution for rapidly delivering high-bandwidth content to users by caching their content at strategically placed physically nodes across the world. CDN can also accelerate dynamic that cannot be cashed, by leveraging various network optimizations using CDN POPs. Ex: bypass Border Gateway Protocol.
+###
+Structured Data
+#
+Has a schema e.g. SQL
+###
+Semi-structured Data
+#
+Has sort of a structure, but not like relational data. Easy to read, can still store this in a relational database e.g. XML, JSON
+###
+Unstructured Data
+#
+No schema at all, just data. e.g. Word, .txt, video.
+###
+Blob Storage
+#
+Unstructured: like a file system. Used for images, documents, video, audio. Perform big data analytics. Used when you want your application to support streaming and random access scenarios. You want to be able to access application data form anywhere. You want to build enterprise data lake on Azure and perform big data analytics.
+###
+Disk Storage
+#
+Get HDD/SSD durability, scalability, availability, and security you need for all workloads. Ultra-SSD for sub-millisecond latency and extreme scalable performance. Premium SSD is high-performance for production workloads. Standard SSD for cost-effective and consistent performance. Managed Disks is the service used in VMs. Essentially the same. You want to lift and shift application that use native file system APIs to read and write data to persistent disks. Store data that is not required to be accessed from outside the virtual machine to which the disk is attached.
+###
+File Storage
+#
+Provides a Server Message Block (SMB) protocol. Azure Files shares can be mounted concurrently by cloud or on-premise deployments of Windows, Linux, and macOS. Cache Azure File shares on Windows Servers with Azure File Sync for fast access near where data is being stored. Used when you want to "lift and shift" into the cloud that already uses the native file system APIs to share data between it and other applications running on Azure. Used to store development and debugging tools that need to be accessed from many VMs.
+###
+Archive Storage
+#
+Low cost storage for rarely accessed data with flexibility latency requirements. Store terabytes of data in the cloud for a few dollars a month, and repurpose other storage infrastructure for other business objectives. Secure, easy to manage. Storage tier available for blob storage.
+###
+Cosmos DB
+#
+Globally distributed, multi-model database service. No SQL database. Collection of documents. Has different query APIs. No schema or index management. Semi structured.
+###
+Azure SQL Database
+#
+Based on newest version of MS SQL Server
+###
+Azure Database Migration
+#
+Fully managed serviced designed to migrate multiple database sources to azure data platforms with minimal downtime.
+###
+Azure Marketplace and usage scenarios
+#
+Connects end users with Microsoft partners. Targets at IT professionals and cloud develops. Find, try, purchase, and provision applications and services from other leading services providers, all certified to run on Azure.
+###
+IoT Central
+#
+Fully managed SaaS solution that makes it easy to connect, monitor, and manage your IoT assets at scale.
+###
+IoT Hub
+#
+Managed service hosted in cloud that serves as central message hub for bidirectional communication between IoT application and the devices it manages.
+###
+SQL Data Warehouse
+#
+Cloud-based enterprise data warehouse that leverages massively parallel processing (mpp) to run complex queries across petabytes of data.
+###
+HDInsight
+#
+Fully-managed, open source analytics service for enterprises. Cloud service that makes it easier, faster, and cost effective to process massive amounts of data.
+###
+Data Lake Analytics
+#
+On-demand analytics job service that simplifies big data. No deploying, configuring, just write query and get results.
+###
+ML Service
+#
+Develop, train, test, deploy, manage, and track ML models.
+###
+ML Studio
+#
+Collaborative, drag-and-drop visual workspace where you can build, test, and deploy machine learning solutions without needing to write code.
+###
+DevOps
+#
+Devops services: provides develop collaboration tools including pipeline, git repos, Kanban boards, and extensive automated and cloud-based load testing
+DevTest labs: allows to quickly create environments in Azure while minimizing waste and controlling cost.
+###
+Azure Logic Apps
+#
+Automate and orchestrate tasks, business processes, and workflows when you need to integrate apps, data, systems, and services across enterprises or organizations.
+###
+App Event Grid
+#
+Fully managed, intelligent event routing service that uses a publish-subscribe model for uniform event consumption.
+###
+Azure CLI
+#
+Command-line interface, Cross Platform for Windows, Linux, Mac OS.
+###
+PowerShell
+#
+A command shell scripting language.
+###
+Azure Portal
+#
+Website via the web browser. (portal.azure.com)
+###
+Cloudshell
+#
+Browser-based scripting environment in your portal.
+###
+Azure Advisor
+#
+Provides recommendations on high availability, security, performance, and cost.
+Analyzes deployed services and looks for ways to improve your environment across those areas.
+###
+Azure Firewall
+#
+Firewall is a service that grants server access based on the originating IP address of each request.
+AZ Firewall is managed, cloud-based network security service that protects your Azure Virtual network resources. Fully stateful firewall as a service.
+High availability, unrestricted cloud scalability, inbound and outbound filtering rules, azure monitor logging.
+###
+Azure DDoS Protection
+#
+Distributed denial of service attacks.
+Protects azure applications by scrubbing traffic at network edge before it gets to your application.
+Basic: automatically enabled.
+Standard: mitigation capabilities that are tuned specifically to your Microsoft Azure Virtual Network resources.
+###
+Network Security Group (NSG)
+#
+Allows you to filter network traffic to and from Azure resources in a VN. Can contain multiple inbound and outbound security riles that enable you to filter traffic to and from resource and destination IP address, port, and protocol.
+As many rules as permitted by subscription.
+Can override default rules but cannot delete them.
+###
+Defense in Depth
+#
+Layered approach to providing security.
+###
+Perimeter Layer
+#
+Network perimeter is protect organizations from network based attacks. I.e. DDoS and Firewall.
+###
+Networking Layer
+#
+Limit connectivity.
+###
+Combination Services (Security)
+#
+Using multiple security protocols, e.g. networking security groups and azure firewall.
+###
+Authentication
+#
+Is the process of establishing the identity of a person or service looking to access a resource. Act of challenging a party for legit credentials, and provides the basis for creating a security principle for identity and access control use. It establishes if they are who they say they are.
+###
+Authorization
+#
+The process of establishing what level of access an authenticated person or service has. It specifies what data they're allowed to access and what they can do with it.
+###
+Azure Active Directory
+#
+Cloud based identity and access management service. Azure AD helps employees of an organization sight in and access resources.
+Benefits:
+Authentication
+SSO (single-sign on)
+Application management
+B2B identity services
+B2C identity services
+Device Management
+###
+Azure Multi-Factor Authentication
+#
+Additional security by requiring two elements e.g. something you know, something you possess, something you are.
+###
+Azure Security
+#
+You can use security center to detect, assess, and diagnose stages of incident response.
+Use security center recommendations to enhance security.
+Detect -> assess -> diagnose -> stabilize -> close.
+###
+Azure Key Vault
+#
+A centralized cloud services to store application secrets. Provide secure access, permissions control, and access logging
+Usage: secrets management, key management, certificate management, store secrets backed by hardware security modules (HSMs)
+###
+Azure Information Protection (AIP)
+#
+Helps organizations classify and optionally help protect documents and emails by applying labels.
+Labels can be applied:
+Automatically by admins who define rules and conditions, manually by users, a combo of the two where users are given recommendations
+Usage:
+A user saves a word doc containing a credit card number, a custom tooltip displays a label if the file is confidential/all employees, label classifies doc and protects it.
+###
+Azure Advanced Threat Protection
+#
+Identifies, detects, and helps investigate advanced threats, compromised identities, and malicious insider actions directed at your organization
+ATP Portal - lets you monitor and respond
+ATP sensor - installed directly on domain controllers
+ATP cloud service - runs on Azure infrastructure
+###
+Azure Policies
+#
+Use to create, assign, and manage policies. The policies enforce different rules and effects over your corporate standards and SLAs
+Uses policies to run evaluations of your resources and scans for those not compliant with the policies you have created
+Comes with a number of built in policies and initiative definitions. Categories: Storage, Networking, compute, security center, monitoring
+Can integrate with DevOps:
+* Create a policy definition
+* Assign a Definition to scope of resources
+* View policy evaluation results
+###
+Azure Initiatives
+#
+A set of policy definitions to help track compliance state for a larger goal, which simplifies the process of managing and assigning policy definitions by grouping them
+Initiative assignments: Init Def assigned to a specific scope
+###
+Role-Based Access Control
+#
+Grants users only the rights they need for a job.
+Provided at no additional cost.
+e.g. allow one user to manage VMs in a sub, other to manage VNs, DBA manages MS SQL server, allow a user to manage all resources in a resource group.
+###
+Azure Locks
+#
+Prevent accidental deletion or modification of azure resources. Lock a sub, resource group, or resource.
+e.g. Set to CanNotDelete or ReadOnly
+###
+Azure Advisor Security Assistance
+#
+Provides security recommendations by integrating with Azure Security center.
+###
+Azure Blueprints
+#
+Define a repeatable set of AZ resources that implement and adhere to standards, pattern, and requirements.
+* Create a blueprint.
+* Assign blueprint.
+* Track blueprint assignments.
+* Vs: deployment templates // blueprints assignments keep the relationship with the blueprint after deployment, templates do not.
+* Great for auditing, tracing, and compliance in deployment.
+* Use with Azure DevOps to build specific artifacts and track them.
+###
+Azure Monitor
+#
+Collecting, analyzing, and acting on telemetry from cloud and on-premise environments.
+Activity logs and metrics.
+Diagnostics can be enabled.
+###
+Azure Service Health
+#
+Personalized guidance and support when you have azure issues. Can notify you and help you understand what is wrong and update when it is resolved.
+Azure status : global view of AZ services.
+Service health : track services in regions you use.
+Resource health : what service issues affect your resources.
+###
+Microsoft Privacy Statement
+#
+Explains what personal data Microsoft processes, how they process it and for what purposes.
+Applies to interactions Microsoft has to its users over applications or services.
+###
+Trust Center
+#
+How Microsoft implements and supports security, privacy, compliance, and transparency on all cloud services and products. Recommends resources in the form of a curated list of the most applicable and widely-used resources for that topic.
+###
+Service Trust Portal
+#
+Where audit reports are published.
+Access compliance guides to help you understand how you can use MS cloud service features to manage compliance regulations.
+Access trust documents to help you understand how MS cloud services protects your data.
+Companion feature to trust center.
+###
+Compliance Manager
+#
+Workflow based risk assessment in the Trust Portal. Enables you to track, assign, verify, your organization's regulatory compliance activities.
+Provides details related to Office 365, dynamics 365, and Azure.
+Provides a compliance score to help you track your progress and prioritize compliance.
+###
+Azure Government Services
+#
+Addresses the security and compliance needs of US federal agencies, state and local gov'ts, and their solution providers.
+Separate instance of the Azure service.
+Offer physical from non-US gov't deployments and provides screened US personnel
+Handles data that is subject to certain gov't regulations and requirements.
+###
+Azure Germany Services
+#
+Built on MS trusted cloud policy of security, privacy, compliance, and transparency.
+Resides in data centers managed by Deutsche Telecom (T-Systems International - a trustee of Deutsche Telecom.)
+Anyone who resides in Germany can use this.
+###
+Azure 21 Vianet
+#
+Physically separated instance of cloud services located in China.
+First foreign public cloud service provider offered in China in compliance with their gov't regulations.
+###
+Azure Subscription
+#
+Provides you with authentication and authorization access to Azure products and services. A logical unit that links Azure services to an Azure account.
+Can change owners.
+###
+Uses and options of Azure Subscriptions
+#
+Free and paid (Pay-as-you-go).
+One account can have multiple subscriptions with different billing methods.
+Multiple core administrators to a single subscription.
+Use Azure subscriptions to define boundaries around Azure products, services, and resources.
+Two types of boundaries:
+* Billing boundary: how the account is billed for using azure. Different subscriptions for different billing.
+* Access control boundary: access management at a subscription level. Different subscriptions for different organizational structures
+###
+Management Groups
+#
+Manage access policies and compliance for the different subscriptions.
+* All subscriptions under the management group inherit the policies from the parent management group (hierarchically
+* Supports 6 levels of depth and 10,000 groups
+###
+Options for purchasing Azure Products and Services
+#
+Enterprise agreements, Web direct, Cloud solution providers like Microsoft partners.
+###
+Options for Azure Free account.
+#
+30 day free trial with $200, credit card is not billed. 12 months with free services.
+###
+Understand the factors affecting costs such as resource types, services, locations, ingress and egress traffic.
+#
+Resource type: cost specific, so usage meter tracks
+Services: depends on if subscription is enterprise, web direct, or CSP customers.
+Location: infrastructure is globally distributed, and usage costs differ between locations that have different products, services, and resources.
+###
+Understand zones for billing purposes
+#
+Bandwidth refers to data moving in and out of Azure data centers.
+For outbound data transfer - such as Azure going out of Data centers - pricing is based on Zones.
+###
+Understand the pricing calculator
+#
+Helps estimate the cost of services with what you think will be used. Licensing is not included.
+###
+Total Cost of Ownership (TCO) calculator
+#
+Estimate the cost you can realize from migrating from on-premise to on Azure.
+###
+Understand best practices for minimizing Azure costs such as performing cost analysis, creating spending limits and quotas, and using tags to identify cost owners; use Azure reservations; use Azure Advisor recommendations
+#
+Perform cost analysis: azure pricing and TCO calculators.
+Monitor usage with Azure Advisor.
+Use spending limits for free trial customers and some credit-based Azure sub.
+Use Azure reservations. To get a discount, reserve product and resources by paying in advance. Prepay for 1 or 3 years to get up to 72% savings.
+Chose low-cost locations and regions. If possible do this.
+Apply tags to identify cost owners. Identify usage owners with tags. Apply tags to organize billing data on a set of resources.
+###
+Azure Cost Management
+#
+Generates reports.
+Improve accountability with organizational tags.
+Budgets: monitor resource demand trends, consumption rates, cost patterns.
+Get alerts on cost and usage budgets.
+Receive recommendations to eliminate idle resources to optimize resources.
+Can export this data to read in other software.
+###
+Azure Support Plans
+#
+Dev, Standard, Professional Direct, and Premier.
+Dev: for Azure in trial and nonproductive environments. Support engineers, low business impact. 8hr response time.
+Standard: used in production environment, support via email 24/7. 1 hr response time
+Professional Direct: business critical. All standard, and other stuff (look up). Architectural guidance and seminars
+Premier: Ideal for organizations with substantial dependence on Microsoft products, including Azure. Same as Direct, but also all other services. 15 min response time. Designated account manager.
+###
+How to open a support ticket.
+#
+Sign into azure portal
+Choose help and support from left nav.
+Click new support request, fill in details, and submit.
+You can monitor your requests.
+###
+Available support channels outside of support plan channels.
+#
+Azure community support
+Stack overflow
+Azure general feedback
+Twitter @AzureSupport
+###
+Azure Knowledge Center.
+#
+Searchable database that contains support questions and answers from community of azure experts, devs, customer, and users.
+###
+Azure Service Level Agreements (SLAs)
+#
+Describe a Service Level Agreement (SLA)
+Specific terms that defines the standards of performance
+Determine SLA for a particular Azure product or service
+Each one is different, all are available on website
+3 characteristics of SLAs for Azure products and Services
+Performance targets, uptime and connectivity guarantees such as availability
+Performance target ranges 99.9 to 99.99
+Service credits: percentage of the applicable monthly service fees credited to you if service fails to meet SLA uptime guarantee
+Composite SLAs
+App Service Web App (99.95) with SQL Database (99.99)
+Composite is them multiplied (99.95 x 99.99 = 99.94)
+This is lower than individual SLA value
+Improving application SLAs
+Create their own SLAs aka application SLA
+Considerations:
+Self-diagnosing and self-healing
+Response Time: Responding to failures quickly enough to meet SLA performance target about 99.99 are hard to meet
+Realistically achievable: the smaller the time window for recovery, the tighter the tolerance and higher the cost.
+###
+Azure Service Lifecycle
+#
+Understand Public and Private Preview features
+o Offers preview of features for evaluation
+o With previews, you can test beta and other pre-release features, products
+o Private: available to certain Azure customers
+o Public: available to all customers
+Understand how to access Preview features
+o There's a Try it button, and a list of features
+Understand the term General Availability (GA)
+o Once a feature is tested successfully, it might be released. Once meets certain criteria it is released to all customers called GA
+Monitor feature updates
+o Information about latest updates to products, services, and features, and product roadmaps, and announcements are available at Azure updates
+o Updates page:
+View details about all azure updates
+See which are in GA, preview, or development
+###
