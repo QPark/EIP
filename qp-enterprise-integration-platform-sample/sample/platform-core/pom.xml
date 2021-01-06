@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>4.0.0</version><!--qpark-eip-version-->
+		<version>4.0.1</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -26,28 +26,28 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>platform-domain-model-service</artifactId>
-			<version>4.0.0</version><!--qpark-eip-version-->
+			<version>4.0.1</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}.flow</groupId>
 			<artifactId>flows</artifactId>
-			<version>4.0.0</version><!--qpark-eip-version-->
+			<version>4.0.1</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}</groupId>
 			<artifactId>serviceprovider</artifactId>
-			<version>4.0.0</version><!--qpark-eip-version-->
+			<version>4.0.1</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}</groupId>
 			<artifactId>jaxb</artifactId>
-			<version>4.0.0</version><!--qpark-eip-version-->
+			<version>4.0.1</version><!--qpark-eip-version-->
 			<classifier>xsd-sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}</groupId>
 			<artifactId>jaxb</artifactId>
-			<version>4.0.0</version><!--qpark-eip-version-->
+			<version>4.0.1</version><!--qpark-eip-version-->
 			<classifier>html-description</classifier>
 		</dependency>
 
