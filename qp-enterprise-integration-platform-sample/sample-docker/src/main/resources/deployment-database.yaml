@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eip-sample-hsqldb
+  labels:
+    app: eip-sample-hsqldb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eip-sample-hsqldb
+  template:
+    metadata:
+      labels:
+        app: eip-sample-hsqldb
+    spec:
+      containers:
+        - name: eip-sample-hsqldb
+          image: datagrip/hsqldb
+          ports:
+            - containerPort: 9001
+          env:
+            - name: HSQLDB_DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: eip-sample-configmap
+                  key: database-schema-name
+            - name: HSQLDB_DATABASE_ALIAS
+              valueFrom:
+                configMapKeyRef:
+                  name: eip-sample-configmap
+                  key: database-schema-userName
+            - name: HSQLDB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: eip-sample-configmap
+                  key: database-schema-userName
+            - name: HSQLDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: eip-sample-configmap
+                  key: database-schema-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eip-sample-database
+spec:
+  ports:
+    - name: jdbc
+      port: 9001
+      targetPort: 9001
+  selector:
+    app: eip-sample-hsqldb
