@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eip-sample
+  labels:
+    app: eip-sample
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eip-sample
+  template:
+    metadata:
+      labels:
+        app: eip-sample
+    spec:
+      containers:
+        - name: eip-sample
+          image: com.qpark.eip/sample:xxx-application.version-xxx
+          ports:
+            - containerPort: 8080
+          env:
+            - name: EIP_SAMPLE_DATABASE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: eip-sample-configmap
+                  key: database-schema-userName
+            - name: EIP_SAMPLE_DATABASE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: eip-sample-configmap
+                  key: database-schema-password
+            - name: EIP_SAMPLE_DATABASE_JDBC_URL
+              value: jdbc:hsqldb:hsql://$(EIP_SAMPLE_DATABASE_SERVICE_HOST):$(EIP_SAMPLE_DATABASE_SERVICE_PORT)/$(EIP_SAMPLE_DATABASE_USERNAME)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eip-sample-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: eip-sample

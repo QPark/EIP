@@ -21,7 +21,7 @@ ADD tomcat/webapps/platform-webapp-library-xxx-application.version-xxx.war /usr/
 
 RUN sed -i 's/shared.loader=/shared.loader=\/usr\/local\/tomcat\/lib-platform-servicebus-2.0.0\/*.jar/g' /usr/local/tomcat/conf/catalina.properties; 
 RUN sed -i 's/<\/Context>/<ResourceLink name="jdbc\/PlatformDB" type="javax.sql.DataSource" global="jdbc\/PlatformDB" \/><\/Context>/g' /usr/local/tomcat/conf/context.xml; 
-RUN sed -i 's/<\/GlobalNamingResources>/<Resource name="jdbc\/PlatformDB" auth="Container" username="platformUser" password="platformUserPwd" url="jdbc:hsqldb:file:${catalina.base}\/issLibraryHSQLDB.bin" driverClassName="org.hsqldb.jdbc.JDBCDriver" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" defaultTransactionIsolation="READ_COMMITTED" maxActive="20" maxIdle="20" minIdle="3" initialSize="2" \/><\/GlobalNamingResources>/g' /usr/local/tomcat/conf/server.xml; 
+RUN sed -i 's/<\/GlobalNamingResources>/<Resource name="jdbc\/PlatformDB" auth="Container" username="${eip.sample.database.userName}" password="${eip.sample.database.password}" url="${eip.sample.database.jdbc}" driverClassName="org.hsqldb.jdbc.JDBCDriver" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" type="javax.sql.DataSource" defaultTransactionIsolation="READ_COMMITTED" maxActive="20" maxIdle="20" minIdle="3" initialSize="2" \/><\/GlobalNamingResources>/g' /usr/local/tomcat/conf/server.xml; 
 RUN sed -i 's/redirectPort="8443"\ \/>/redirectPort="8443" address="0.0.0.0" URIEncoding="UTF-8" ><UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" \/><\/Connector>/g' /usr/local/tomcat/conf/server.xml; 
 #RUN sed -i "s/1catalina.org.apache.juli.AsyncFileHandler.level\ =\ FINE/1catalina.org.apache.juli.AsyncFileHandler.level=WARNING/g" /usr/local/tomcat/conf/logging.properties; 
 #RUN echo "org.apache.catalina.startup.Catalina.level = INFO\norg.apache.catalina.startup.Catalina.handlers = java.util.logging.ConsoleHandler\njava.util.logging.SimpleFormatter.format=%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS.%1$tL %2$s%n%4$s: %5$s%6$s%n" >> /usr/local/tomcat/conf/logging.properties;
@@ -41,6 +41,9 @@ ENV CATALINA_OPTS="${CATALINA_OPTS} -Duser.timezone=UTC \
     -Dcom.sun.management.jmxremote.authenticate=true \
     -Dcom.sun.management.jmxremote.password.file=/usr/local/tomcat/conf/jmxremote.password \
     -Dcom.sun.management.jmxremote.access.file=/usr/local/tomcat/conf/jmxremote.access \
+    -Deip.sample.database.jdbc=\${EIP_SAMPLE_DATABASE_JDBC_URL} \
+    -Deip.sample.database.userName=\${EIP_SAMPLE_DATABASE_USERNAME} \
+    -Deip.sample.database.password=\${EIP_SAMPLE_DATABASE_PASSWORD} \
     -Xmx512M \
     -Xms512M \
     -Xss256K \

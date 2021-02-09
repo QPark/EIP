@@ -73,6 +73,7 @@
 		<junit.version>4.13.1</junit.version>
 		<logback.version>1.2.3</logback.version>
 		<commons-codec.version>1.15</commons-codec.version>
+		<hsqldb.version>2.5.1</hsqldb.version>
 
 		<plugin.org.apache.maven.plugins.maven-antrun-plugin.version>3.0.0</plugin.org.apache.maven.plugins.maven-antrun-plugin.version>
 		<plugin.org.apache.maven.plugins.maven-assembly-plugin.version>3.3.0</plugin.org.apache.maven.plugins.maven-assembly-plugin.version>

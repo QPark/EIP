@@ -105,9 +105,13 @@
 									todir="${project.build.directory}" />
 								<copy
 									failonerror="false"
-									file="${basedir}/src/main/resources/docker-compose.yaml"
-									todir="${project.build.directory}" />
+									todir="${project.build.directory}" >
+									<fileset dir="${basedir}/src/main/resources/" includes="*.yaml"/>
+								</copy>
 								<replace file="${project.build.directory}/dockerfile.txt"
+									token="xxx-application.version-xxx"
+									value="${application.version}" />
+								<replace file="${project.build.directory}/deployment-eip-sample.yaml"
 									token="xxx-application.version-xxx"
 									value="${application.version}" />
 								<replace file="${project.build.directory}/docker-compose.yaml"
@@ -187,7 +191,7 @@
 								<artifactItem>
 									<groupId>org.hsqldb</groupId>
 									<artifactId>hsqldb</artifactId>
-									<version>2.3.3</version>
+									<version>2.5.1</version>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

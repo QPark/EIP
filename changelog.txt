@@ -1,4 +1,10 @@
 Changelog:
+4.0.2 20210209
+* Added kubernetes files for testing
+
+4.0.1 20210106
+* Fixed ApplicationPropertiesConfig to check JVM properties and system environment
+
 4.0.0 20201108
 * Made EIP java 15 compatible
 * Fixed minor issues
