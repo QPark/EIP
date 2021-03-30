@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.samples.domain.flow</groupId>
 		<artifactId>base</artifactId>
-		<version>4.0.1</version><!--qpark-eip-version-->
+		<version>4.0.3</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.samples.domain</groupId>
 			<artifactId>jaxb</artifactId>
-			<version>4.0.1</version><!--qpark-eip-version-->
+			<version>4.0.3</version><!--qpark-eip-version-->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -76,7 +76,7 @@
 			<plugin>
 				<groupId>com.qpark.maven</groupId>
 				<artifactId>eip-generator-plugin</artifactId>
-				<version>4.0.1</version><!--qpark-eip-version-->
+				<version>4.0.3</version><!--qpark-eip-version-->
 				<executions>
 					<execution>
 						<id>make schemalocations absolute</id>
@@ -198,25 +198,25 @@ https://java.net/jira/browse/JAXB-486
 								<artifactItem>
 									<groupId>com.samples.domain</groupId>
 									<artifactId>model</artifactId>
-									<version>4.0.1</version><!--qpark-eip-version-->
+									<version>4.0.3</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.samples.domain</groupId>
 									<artifactId>service</artifactId>
-									<version>4.0.1</version><!--qpark-eip-version-->
+									<version>4.0.3</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.samples.domain.flow</groupId>
 									<artifactId>model</artifactId>
-									<version>4.0.1</version><!--qpark-eip-version-->
+									<version>4.0.3</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.samples.domain.flow</groupId>
 									<artifactId>service</artifactId>
-									<version>4.0.1</version><!--qpark-eip-version-->
+									<version>4.0.3</version><!--qpark-eip-version-->
 									<outputDirectory>${model.dir}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
