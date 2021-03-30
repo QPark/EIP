@@ -154,6 +154,7 @@ https://java.net/jira/browse/JAXB-486
 							<baseDirectory>${model.dir}</baseDirectory>
 							<basePackageName>${base.package.name}</basePackageName>
 							<outputDirectory>${project.build.directory}/integration</outputDirectory>
+							<reactive>true</reactive>
 						</configuration>
 					</execution>
 				</executions>
