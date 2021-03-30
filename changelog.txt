@@ -1,4 +1,10 @@
 Changelog:
+3.17.3 20210330
+Generators: Added reactive spring integration gateway classes
+
+3.17.2 20210106
+Impl: Fixed ApplicationPropertiesConfig to check JVM properties and system environment
+
 3.17.1 20201014
 Impl: core-spring - Support of JSypt encrypted system user passwords.
 Impl: core-spring-statistics - StatisticsListener change adding channelName to the methods.
