@@ -83,6 +83,19 @@ Additionally to that a human readable version of the xsds is generated.
 						</configuration>
 					</execution>
 					<execution>
+						<id>generate integration gateways reactive</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>generate-integration</goal>
+						</goals>
+						<configuration>
+							<baseDirectory>${model.dir}</baseDirectory>
+							<basePackageName>${base.package.name}</basePackageName>
+							<reactive>true</reactive>
+							<outputDirectory>${project.build.directory}/integration</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>generate jaxb2 marshaller configs</id>
 						<phase>prepare-package</phase>
 						<goals>

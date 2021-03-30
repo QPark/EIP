@@ -13,6 +13,7 @@ import org.apache.maven.plugin.logging.Log;
 import com.qpark.maven.Util;
 import com.qpark.maven.xmlbeans.ComplexType;
 import com.qpark.maven.xmlbeans.ElementType;
+import com.qpark.maven.xmlbeans.ServiceIdRegistry;
 import com.qpark.maven.xmlbeans.XsdsUtil;
 
 /**
@@ -38,28 +39,35 @@ public class IntegrationGatewayGenerator {
 	private String requestType;
 	private String responseType;
 	private final String serviceId;
+	private final String integrationConfigGatewayId;
 	private final String eipVersion;
+	private final boolean reactive;
 
-	public IntegrationGatewayGenerator(final XsdsUtil config,
-			final File outputDirectory, final ElementType element,
-			final String eipVersion, final Log log) {
+
+	public IntegrationGatewayGenerator(final XsdsUtil config, final File outputDirectory, final ElementType element,
+			final String basePackageName, final boolean reactive, final String eipVersion, final Log log) {
 		this.config = config;
 		this.outputDirectory = outputDirectory;
 		this.eipVersion = eipVersion;
 		this.log = log;
 		this.elementRequest = element;
 		this.packageName = element.getPackageNameGateway();
-		this.className = element.getClassNameGateway();
+		if (reactive) {
+			this.className = String.format("Reactive%s", element.getClassNameGateway());
+		} else {
+			this.className = element.getClassNameGateway();
+		}
 		this.serviceId = element.getServiceId();
+		this.integrationConfigGatewayId = String.format("eipCaller%s%s%sGateway",
+				Util.capitalizePackageName(basePackageName), ServiceIdRegistry.capitalize(this.serviceId),
+				element.getClassNameGateway());
 		this.methodName = element.getMethodName();
+		this.reactive = reactive;
 
-		this.elementResponse = XsdsUtil.findResponse(this.elementRequest,
-				config.getElementTypes(), config);
+		this.elementResponse = XsdsUtil.findResponse(this.elementRequest, config.getElementTypes(), config);
 		if (this.elementResponse != null) {
-			this.ctRequest = new ComplexType(
-					this.elementRequest.getElement().getType(), this.config);
-			this.ctResponse = new ComplexType(
-					this.elementResponse.getElement().getType(), this.config);
+			this.ctRequest = new ComplexType(this.elementRequest.getElement().getType(), this.config);
+			this.ctResponse = new ComplexType(this.elementResponse.getElement().getType(), this.config);
 
 			this.fqRequestType = this.ctRequest.getClassNameFullQualified();
 			this.fqResponseType = this.ctResponse.getClassNameFullQualified();
@@ -71,8 +79,7 @@ public class IntegrationGatewayGenerator {
 
 	public void generate() {
 		this.log.debug("+generate");
-		if (this.elementResponse != null && this.ctResponse != null
-				&& !this.ctResponse.isSimpleType()
+		if (this.elementResponse != null && this.ctResponse != null && !this.ctResponse.isSimpleType()
 				&& !this.ctResponse.isPrimitiveType()) {
 			StringBuffer sb = new StringBuffer(1024);
 			sb.append("package ");
@@ -88,23 +95,30 @@ public class IntegrationGatewayGenerator {
 			sb.append("import ");
 			sb.append(this.fqResponseType);
 			sb.append(";\n");
+			if (this.reactive) {
+				sb.append("import reactor.core.publisher.Mono;\n");
+			}
 			sb.append("/**\n");
 			sb.append(" * Gateway to call operation ");
 			sb.append(Util.splitOnCapital(this.methodName));
 			sb.append(" on service <code>");
 			sb.append(this.serviceId);
 			sb.append("</code>.\n");
-			sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
-					this.eipVersion));
+			sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(), this.eipVersion));
 			sb.append(" */\n");
 			sb.append("public interface ");
 			sb.append(this.className);
 			sb.append(" extends IntegrationGateway<JAXBElement<");
 			sb.append(this.requestType);
-			sb.append(">, JAXBElement<");
-			sb.append(this.responseType);
-			sb.append(">> {\n");
-
+			if (this.reactive) {
+				sb.append(">, Mono<JAXBElement<");
+				sb.append(this.responseType);
+				sb.append(">>> {\n");
+			} else {
+				sb.append(">, JAXBElement<");
+				sb.append(this.responseType);
+				sb.append(">> {\n");
+			}
 			// sb.append("\t/**\n");
 			// sb.append(
 			// "\t * @param message the {@link JAXBElement} containing a {@link
@@ -125,10 +139,8 @@ public class IntegrationGatewayGenerator {
 			sb.append("}\n");
 			sb.append("\n");
 			File f = Util.getFile(this.outputDirectory, this.packageName,
-					new StringBuffer().append(this.className).append(".java")
-							.toString());
-			this.log.info(new StringBuffer().append("Write ")
-					.append(f.getAbsolutePath()));
+					new StringBuffer().append(this.className).append(".java").toString());
+			this.log.info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 			try {
 				Util.writeToFile(f, sb.toString());
 				this.generated = true;
@@ -151,8 +163,7 @@ public class IntegrationGatewayGenerator {
 	 * @return the implName
 	 */
 	public String getFqClassName() {
-		return new StringBuffer(128).append(this.packageName).append(".")
-				.append(this.className).toString();
+		return new StringBuffer(128).append(this.packageName).append(".").append(this.className).toString();
 	}
 
 	/**
@@ -197,6 +208,10 @@ public class IntegrationGatewayGenerator {
 		return this.fqResponseType;
 	}
 
+	public String getIntegrationConfigGatewayId() {
+		return this.integrationConfigGatewayId;
+	}
+
 	/**
 	 * @return the methodName
 	 */
@@ -233,16 +248,14 @@ public class IntegrationGatewayGenerator {
 	}
 
 	/**
-	 * @param fqRequestType
-	 *            the fqRequestType to set
+	 * @param fqRequestType the fqRequestType to set
 	 */
 	public void setFqRequestType(final String fqRequestType) {
 		this.fqRequestType = fqRequestType;
 	}
 
 	/**
-	 * @param fqResponseType
-	 *            the fqResponseType to set
+	 * @param fqResponseType the fqResponseType to set
 	 */
 	public void setFqResponseType(final String fqResponseType) {
 		this.fqResponseType = fqResponseType;
