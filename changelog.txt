@@ -1,4 +1,7 @@
 Changelog:
+4.0.3 20210330
+Generators: Added reactive spring integration gateway classes
+
 4.0.2 20210209
 * Added kubernetes files for testing
 

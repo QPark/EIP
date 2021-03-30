@@ -30,32 +30,25 @@ import com.qpark.maven.xmlbeans.XsdsUtil;
  * This plugin creates:
  * <ul>
  * <li>all spring-integration gateways of all serviceIds and operations</li>
- * <li>for all service ids one OperationProvider implementation proposal (in the
- * project.build.directory)</li>
+ * <li>for all service ids one OperationProvider implementation proposal (in the project.build.directory)</li>
  * </ul>
- *
  * @author bhausen
  */
-@Mojo(name = "generate-integration-java",
-		defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Mojo(name = "generate-integration-java", defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "baseDirectory",
-			defaultValue = "${project.build.directory}/model")
+	@Parameter(property = "baseDirectory", defaultValue = "${project.build.directory}/model")
 	protected File baseDirectory;
 	/** The base directory where to start the scan of xsd files. */
-	@Parameter(property = "outputDirectory",
-			defaultValue = "${project.build.directory}/generated-sources")
+	@Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources")
 	protected File outputDirectory;
 	/**
-	 * The package name of the messages should end with this. Default is
-	 * <code>msg flow</code>.
+	 * The package name of the messages should end with this. Default is <code>msg flow</code>.
 	 */
 	@Parameter(property = "messagePackageNameSuffix", defaultValue = "msg flow")
 	protected String messagePackageNameSuffix;
 	/**
-	 * The package name of the delta should contain this. Default is
-	 * <code>delta</code>.
+	 * The package name of the delta should contain this. Default is <code>delta</code>.
 	 */
 	@Parameter(property = "deltaPackageNameSuffix", defaultValue = "delta")
 	protected String deltaPackageNameSuffix;
@@ -63,14 +56,12 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 	@Parameter(property = "basePackageName", defaultValue = "")
 	protected String basePackageName;
 	/**
-	 * The service request name need to end with this suffix (Default
-	 * <code>Request</code>).
+	 * The service request name need to end with this suffix (Default <code>Request</code>).
 	 */
 	@Parameter(property = "serviceRequestSuffix", defaultValue = "Request")
 	protected String serviceRequestSuffix;
 	/**
-	 * The service response name need to end with this suffix (Default
-	 * <code>Response</code>).
+	 * The service response name need to end with this suffix (Default <code>Response</code>).
 	 */
 	@Parameter(property = "serviceResponseSuffix", defaultValue = "Response")
 	protected String serviceResponseSuffix;
@@ -78,10 +69,14 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 	protected MavenProject project;
 	@Parameter(defaultValue = "${mojoExecution}", readonly = true)
 	protected MojoExecution execution;
+	/**
+	 * If <code>true</code>, the gateways and operation provider are generated in reactive manner.
+	 */
+	@Parameter(property = "reactive", defaultValue = "false")
+	private boolean reactive;
 
 	/**
 	 * Get the executing plugin version - the EIP version.
-	 *
 	 * @return the EIP version.
 	 */
 	protected String getEipVersion() {
@@ -93,17 +88,17 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		String eipVersion = this.getEipVersion();
 
 		this.generateBasicIntegrationGatewayInterface(eipVersion);
-		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<String, List<IntegrationGatewayGenerator>>();
+		TreeMap<String, List<IntegrationGatewayGenerator>> serviceIgMap = new TreeMap<>();
 		List<IntegrationGatewayGenerator> igs;
 		for (ElementType element : xsds.getElementTypes()) {
 			if (element.isRequest()) {
-				ig = new IntegrationGatewayGenerator(xsds, this.outputDirectory,
-						element, eipVersion, this.getLog());
+				ig = new IntegrationGatewayGenerator(xsds, this.outputDirectory, element, this.basePackageName,
+						this.reactive, eipVersion, this.getLog());
 				ig.generate();
 				if (ig.isGenerated()) {
 					igs = serviceIgMap.get(ig.getServiceId());
 					if (igs == null) {
-						igs = new ArrayList<IntegrationGatewayGenerator>();
+						igs = new ArrayList<>();
 						serviceIgMap.put(ig.getServiceId(), igs);
 					}
 					igs.add(ig);
@@ -111,27 +106,22 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 			}
 		}
 		ServiceOperationProviderGenerator sopg;
-		for (Entry<String, List<IntegrationGatewayGenerator>> entry : serviceIgMap
-				.entrySet()) {
-			sopg = new ServiceOperationProviderGenerator(entry.getKey(),
-					entry.getValue(), this.basePackageName, eipVersion,
-					this.getLog(), this.project);
+		for (Entry<String, List<IntegrationGatewayGenerator>> entry : serviceIgMap.entrySet()) {
+			sopg = new ServiceOperationProviderGenerator(entry.getKey(), entry.getValue(), this.basePackageName,
+					this.reactive, eipVersion, this.getLog(), this.project);
 			sopg.generate();
 		}
 	}
 
-	private void generateBasicIntegrationGatewayInterface(
-			final String eipVersion) {
+	private void generateBasicIntegrationGatewayInterface(final String eipVersion) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("package com.qpark.eip;\n");
 		sb.append("\n");
 		sb.append("/**\n");
 		sb.append(" * Basic spring integration interface.\n");
-		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(),
-				eipVersion));
+		sb.append(Util.getGeneratedAtJavaDocClassHeader(this.getClass(), eipVersion));
 		sb.append(" */\n");
-		sb.append(
-				"public interface IntegrationGateway<JaxbRequest, JaxbResponse> {\n");
+		sb.append("public interface IntegrationGateway<JaxbRequest, JaxbResponse> {\n");
 		sb.append("\t/**\n");
 		sb.append("\t * Invoke the spring integration gateway.\n");
 		sb.append("\t * @param request the {@link JaxbRequest}\n");
@@ -140,10 +130,8 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		sb.append("\tJaxbResponse invoke(JaxbRequest request);\n");
 		sb.append("}\n");
 		sb.append("\n");
-		File f = Util.getFile(this.outputDirectory, "com.qpark.eip",
-				"IntegrationGateway.java");
-		this.getLog().info(new StringBuffer().append("Write ")
-				.append(f.getAbsolutePath()));
+		File f = Util.getFile(this.outputDirectory, "com.qpark.eip", "IntegrationGateway.java");
+		this.getLog().info(new StringBuffer().append("Write ").append(f.getAbsolutePath()));
 		try {
 			Util.writeToFile(f, sb.toString());
 		} catch (Exception e) {
@@ -160,10 +148,8 @@ public class GeneratorIntegrationJavaSourcesMojo extends AbstractMojo {
 		StaticLoggerBinder.getSingleton().setLog(this.getLog());
 		this.getLog().debug("+execute");
 		this.getLog().debug("get xsds");
-		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory,
-				this.basePackageName, this.messagePackageNameSuffix,
-				this.deltaPackageNameSuffix, this.serviceRequestSuffix,
-				this.serviceResponseSuffix);
+		XsdsUtil xsds = XsdsUtil.getInstance(this.baseDirectory, this.basePackageName, this.messagePackageNameSuffix,
+				this.deltaPackageNameSuffix, this.serviceRequestSuffix, this.serviceResponseSuffix);
 
 		this.generate(xsds);
 
