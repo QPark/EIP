@@ -40,6 +40,7 @@
 		<module>eip-core-spring-lockedoperation</module>
 		<module>eip-core-spring-scheduling</module>
 		<module>eip-core-spring-statistics</module>
+		<module>eip-core-openapi</module>
 	</modules>
 
 	<organization>
