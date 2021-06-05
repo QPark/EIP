@@ -15,7 +15,7 @@ Excute the following steps to build the QPark EIP:
 2. mvn install -P platform,impl,sample
 
 Maven min version 3.5.4
-JDK min version 1.8, recommended version JDK 11 (LTS)
+JDK min version JDK 11 (LTS)
 EIP is now compatible with the java versions up to 15. Please be aware, future EIP versions will drop the support of java versions prior to 11. 
 Java 1.8 to 10 are deprecated now.
 
