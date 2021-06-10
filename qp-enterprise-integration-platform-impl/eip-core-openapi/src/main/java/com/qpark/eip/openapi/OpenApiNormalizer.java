@@ -7,6 +7,8 @@
  ******************************************************************************/
 package com.qpark.eip.openapi;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -66,6 +68,11 @@ public class OpenApiNormalizer {
 						.addAll(requiredList.stream().map(String::valueOf).collect(Collectors.toList())));
 				sortMap(map);
 			});
+			validate(this);
+		}
+
+		public void addIssue(final String issue) {
+			this.issues.add(issue);
 		}
 
 		public void cleanup() {
@@ -91,10 +98,6 @@ public class OpenApiNormalizer {
 						parameterMap.remove("description");
 						parameterMap.remove("example");
 					})));
-		}
-
-		public void addIssue(final String issue) {
-			this.issues.add(issue);
 		}
 
 		public Optional<Object> getExample() {
@@ -150,37 +153,45 @@ public class OpenApiNormalizer {
 		}
 		int value = 0;
 		if (o1.getKey().equals("name")) {
-			value = -8;
+			value = -18;
 		} else if (o2.getKey().equals("name")) {
-			value = 8;
+			value = 18;
 		} else if (o1.getKey().equals("required")) {
-			value = -7;
+			value = -17;
 		} else if (o2.getKey().equals("required")) {
-			value = 7;
+			value = 17;
 		} else if (o1.getKey().equals("type")) {
-			value = -6;
+			value = -16;
 		} else if (o2.getKey().equals("type")) {
-			value = 6;
+			value = 16;
 		} else if (o1.getKey().equals("format")) {
-			value = -5;
+			value = -15;
 		} else if (o2.getKey().equals("format")) {
-			value = 5;
+			value = 15;
 		} else if (o1.getKey().equals("id")) {
-			value = -4;
+			value = -14;
 		} else if (o2.getKey().equals("id")) {
-			value = 4;
+			value = 14;
 		} else if (o1.getKey().equals("@type")) {
-			value = -3;
+			value = -13;
 		} else if (o2.getKey().equals("@type")) {
-			value = 3;
+			value = 13;
 		} else if (o1.getKey().equals("header")) {
-			value = -2;
+			value = -12;
 		} else if (o2.getKey().equals("header")) {
-			value = 2;
+			value = 12;
 		} else if (o1.getKey().equals("content")) {
-			value = -1;
+			value = -11;
 		} else if (o2.getKey().equals("content")) {
-			value = 1;
+			value = 11;
+		} else if (o1.getKey().equals("url")) {
+			value = 10;
+		} else if (o2.getKey().equals("url")) {
+			value = -10;
+		} else if (o1.getKey().equals("description")) {
+			value = 2;
+		} else if (o2.getKey().equals("description")) {
+			value = -2;
 		} else if (o1.getKey().equals("enum")) {
 			value = 1;
 		} else if (o2.getKey().equals("enum")) {
@@ -219,7 +230,8 @@ public class OpenApiNormalizer {
 	}
 
 	public static void main(final String[] args) {
-		new OpenApiNormalizer().handleFile("/openApi-A.yaml");
+		new OpenApiNormalizer().handleFile(
+				"C:\\development\\src\\domain\\com.ses.domain.tmf\\api-ses-tmf675\\src\\main\\resources\\ses-tmf675.json");
 	}
 
 	private static List<Object> sortList(final List<Object> list) {
@@ -247,7 +259,7 @@ public class OpenApiNormalizer {
 		return String.format("#/%s", path.stream().collect(Collectors.joining("/")));
 	}
 
-	private static Optional<String> toJson(final String yaml) {
+	public static Optional<String> toJson(final String yaml) {
 		final ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
 		Object obj;
 		try {
@@ -262,7 +274,7 @@ public class OpenApiNormalizer {
 		return Optional.empty();
 	}
 
-	private static String toYaml(final String string) {
+	public static String toYaml(final String string) {
 		return Optional.ofNullable(string).map(json -> {
 			JsonNode value = null;
 			try {
@@ -298,14 +310,68 @@ public class OpenApiNormalizer {
 		path.remove(valueName);
 	}
 
-	private static void validate(final Node node, final Map<String, Node> refMap, final Yaml yaml) {
-		node.getNodeMap()
-				.ifPresent(map -> Optional.ofNullable(map.get("$ref")).map(String::valueOf).ifPresent(itemRef -> {
-					if (!refMap.containsKey(itemRef)) {
-						node.addIssue(String.format("References to an undefined object %s.", itemRef));
+	private static void validate(final Node node) {
+		if (node.getPath().equals("#/servers")) {
+			node.getNodeList()
+					.ifPresent(list -> list.stream().map(OpenApiNormalizer::getMap).filter(Optional::isPresent)
+							.map(Optional::get).map(m -> Optional.ofNullable(m.get("url")))
+							.forEach(optUrl -> optUrl.map(String::valueOf).ifPresentOrElse(url -> {
+								try {
+									validateUrl(url);
+								} catch (final Exception e) {
+									node.addIssue(String.format("#/servers 'url' is not a valid URL '%s'.", url));
+								}
+							}, () -> node.addIssue("#/servers entry missing required 'url' attribute."))));
+		} else if (node.getPath().equals("#/info/contact")) {
+			node.getNodeMap().ifPresent(map -> {
+				getEntry(map.get("url")).map(String::valueOf).ifPresent(url -> {
+					try {
+						validateUrl(url);
+					} catch (final Exception e) {
+						node.addIssue(String.format("#/info/contact 'url' is not a valid URL '%s'.", url));
 					}
-				}));
-		validateExample(node, refMap, yaml);
+				});
+				getEntry(map.get("email")).map(String::valueOf).ifPresent(email -> {
+					try {
+						validateEmail(email);
+					} catch (final Exception e) {
+						node.addIssue(String.format("#/info/contact 'email' is not a valid email '%s'.", email));
+					}
+				});
+			});
+		} else if (node.getPath().equals("#/info/license")) {
+			node.getNodeMap().ifPresent(map -> {
+				Optional.ofNullable(map.get("url")).map(String::valueOf).ifPresent(url -> {
+					try {
+						validateUrl(url);
+					} catch (final Exception e) {
+						node.addIssue(String.format("#/info/license 'url' is not a valid URL '%s'.", url));
+					}
+				});
+				Optional.ofNullable(map.get("name")).map(String::valueOf).ifPresentOrElse(name -> {
+				}, () -> node.addIssue("#/info/license entry missing required 'name' attribute."));
+			});
+		}
+	}
+
+	private static void validateDateTime(final String dateTime) throws Exception {
+		if (Objects.nonNull(dateTime)) {
+			OffsetDateTime.parse(dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		}
+	}
+
+
+	private static void validateDouble(final String number) throws Exception {
+		if (Objects.nonNull(number)) {
+			Double.parseDouble(number);
+		}
+	}
+
+	private static void validateEmail(final String email) throws Exception {
+		if (Objects.nonNull(email)
+				&& !email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+			throw new Exception("Email does not match format.");
+		}
 	}
 
 	private static void validateExample(final Node node, final Map<String, Node> refMap, final Yaml yaml) {
@@ -403,11 +469,11 @@ public class OpenApiNormalizer {
 		Optional.ofNullable(exampleMap.get("format")).map(String::valueOf).ifPresent(format -> {
 			try {
 				if (format.equals("date-time")) {
-					OffsetDateTime.parse(exampleString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+					validateDateTime(exampleString);
 				} else if (format.equals("guid")) {
-					UUID.fromString(exampleString);
+					validateGuid(exampleString);
 				} else if (format.equals("url")) {
-					new URL(exampleString);
+					validateUrl(exampleString);
 				}
 			} catch (final Exception e) {
 				node.addIssue(String.format("Example '%s' does not match format '%s'.", exampleString, format));
@@ -425,13 +491,36 @@ public class OpenApiNormalizer {
 		});
 		try {
 			if (exampleType.equals("number")) {
-				Double.parseDouble(exampleString);
-			}
-			if (exampleType.equals("integer")) {
-				Integer.parseInt(exampleString);
+				validateNumber(exampleString);
+			} else if (exampleType.equals("integer")) {
+				validateInteger(exampleString);
+			} else if (exampleType.equals("long")) {
+				validateLong(exampleString);
+			} else if (exampleType.equals("float")) {
+				validateFloat(exampleString);
+			} else if (exampleType.equals("double")) {
+				validateDouble(exampleString);
 			}
 		} catch (final Exception e) {
 			node.addIssue(String.format("Example '%s' does not match type '%s'.", exampleString, exampleType));
+		}
+	}
+
+	private static void validateFloat(final String number) throws Exception {
+		if (Objects.nonNull(number)) {
+			Float.parseFloat(number);
+		}
+	}
+
+	private static void validateGuid(final String guid) throws Exception {
+		if (Objects.nonNull(guid)) {
+			UUID.fromString(guid);
+		}
+	}
+
+	private static void validateInteger(final String number) throws Exception {
+		if (Objects.nonNull(number)) {
+			Integer.parseInt(number);
 		}
 	}
 
@@ -444,9 +533,55 @@ public class OpenApiNormalizer {
 		});
 	}
 
-	public void handleFile(final String fileName) {
-		try (final InputStream is = OpenApiNormalizer.class.getResourceAsStream(fileName)) {
+	private static void validateLong(final String number) throws Exception {
+		if (Objects.nonNull(number)) {
+			Long.parseLong(number);
+		}
+	}
 
+	private static void validateNumber(final String number) throws Exception {
+		if (Objects.nonNull(number)) {
+			Double.parseDouble(number);
+		}
+	}
+
+	private static List<String> validateOpenApi(final Map<String, Node> refMap) {
+		final List<String> value = new ArrayList<>();
+		if (!refMap.containsKey("#/openapi")) {
+			value.add("Spec misses '#/openapi' definition.");
+		}
+		if (!refMap.containsKey("#/info")) {
+			value.add("Spec misses '#/info' definition.");
+		}
+		if (!refMap.containsKey("#/info/title")) {
+			value.add("Spec misses '#/info/title' definition.");
+		}
+		if (!refMap.containsKey("#/info/version")) {
+			value.add("Spec misses '#/info/version' definition.");
+		}
+		if (!refMap.containsKey("#/paths")) {
+			value.add("Spec misses '#/paths' definition.");
+		}
+		return value;
+	}
+
+	private static void validateReferences(final Node node, final Map<String, Node> refMap) {
+		node.getNodeMap()
+				.ifPresent(map -> Optional.ofNullable(map.get("$ref")).map(String::valueOf).ifPresent(itemRef -> {
+					if (!refMap.containsKey(itemRef)) {
+						node.addIssue(String.format("References to an undefined object %s.", itemRef));
+					}
+				}));
+	}
+
+	private static void validateUrl(final String url) throws Exception {
+		if (Objects.nonNull(url)) {
+			new URL(url).toURI();
+		}
+	}
+
+	public void handleFile(final String fileName) {
+		try (final InputStream is = new FileInputStream(new File(fileName))) {
 			final String s = toYaml(new String(is.readAllBytes()));
 			final DumperOptions options = new DumperOptions();
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -460,7 +595,11 @@ public class OpenApiNormalizer {
 				o.entrySet().stream().forEach(e -> {
 					travers(e.getValue(), e.getKey(), Optional.of(o), path, refMap);
 				});
-				refMap.values().stream().forEach(node -> validate(node, refMap, yaml));
+				validateOpenApi(refMap);
+				refMap.values().stream().forEach(node -> {
+					validateReferences(node, refMap);
+					validateExample(node, refMap, yaml);
+				});
 				refMap.values().stream().forEach(Node::cleanup);
 				final Set<String> description = new TreeSet<>();
 				// refMap.values().stream().filter(n -> n.getExample().isPresent())
@@ -472,6 +611,7 @@ public class OpenApiNormalizer {
 					o.put("description", String.format("%s", description.stream().collect(Collectors.joining("\n"))));
 				}
 				final String outputYaml = yaml.dump(o);
+				// refMap.values().stream().forEach(node -> System.out.println(node.getPath()));
 				try {
 					Files.writeString(Path.of(String.format("./%s.out", fileName)), outputYaml,
 							StandardOpenOption.CREATE);
