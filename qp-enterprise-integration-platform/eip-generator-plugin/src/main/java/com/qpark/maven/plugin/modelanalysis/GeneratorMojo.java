@@ -309,7 +309,15 @@ public class GeneratorMojo extends AbstractMojo {
 				this.getLog().error(e.getMessage());
 				e.printStackTrace();
 			}
-
+			final File fjson = Util.getFile(this.outputDirectory,
+					new StringBuffer(64).append(this.enterpriseName).append("-ModelAnalysis.json").toString());
+			this.getLog().info(new StringBuffer().append("Write ").append(fjson.getAbsolutePath()));
+			try {
+				Util.writeToFile(fjson, this.objectMapper.writeValueAsString(enterprise));
+			} catch (final Exception e) {
+				this.getLog().error(e.getMessage());
+				e.printStackTrace();
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
