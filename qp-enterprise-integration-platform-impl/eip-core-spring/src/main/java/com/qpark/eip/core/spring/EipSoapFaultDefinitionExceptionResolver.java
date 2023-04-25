@@ -77,7 +77,7 @@ public class EipSoapFaultDefinitionExceptionResolver
     } else {
       this.logger.error("" + endpoint);
     }
-    this.logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+    this.logger.error(String.format("%s: %s",ex.getClass().getName(), ex.getMessage()), ex);
     final SoapFaultDefinition sfd = this.getSoapFaultDefinition(ex);
     System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     return sfd;
