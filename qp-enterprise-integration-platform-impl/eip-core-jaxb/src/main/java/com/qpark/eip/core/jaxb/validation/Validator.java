@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014, 2015 QPark Consulting  S.a r.l.
+ * Copyright (c) 2013, 2014, 2015 QPark Consulting S.a r.l.
  *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0.
- * The Eclipse Public License is available at
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0. The Eclipse Public License is available at
  * http://www.eclipse.org/legal/epl-v10.html.
  ******************************************************************************/
 package com.qpark.eip.core.jaxb.validation;
@@ -33,8 +32,7 @@ import org.xml.sax.SAXException;
  */
 public class Validator {
 	/**
-	 * The {@link Map} of already setup {@link JAXBContext} with their context
-	 * path.
+	 * The {@link Map} of already setup {@link JAXBContext} with their context path.
 	 */
 	private Map<String, JAXBContext> jaxbContextMap = new HashMap<>();
 	/** The {@link ClassPathResolver}. */
@@ -42,18 +40,26 @@ public class Validator {
 	/** The {@link Schema} to validate with. */
 	private Schema schema;
 
+	private final List<String> features = new ArrayList<>();
 	/** The validation XSD. */
 	// /collected-schemas.xsd
 	private String validationXsd = "/validation.xsd";
 
 	/**
-	 * @param contextPath
-	 *            the context path.
+	 * Enables the feature when validating.
+	 *
+	 * @param feature
+	 */
+	public void enableFeature(final String feature) {
+		this.features.add(feature);
+	}
+
+	/**
+	 * @param contextPath the context path.
 	 * @return the {@link JAXBContext}.
 	 * @throws JAXBException
 	 */
-	private JAXBContext getJAXBContext(final String contextPath)
-			throws JAXBException {
+	private JAXBContext getJAXBContext(final String contextPath) throws JAXBException {
 		JAXBContext value = this.jaxbContextMap.get(contextPath);
 		if (Objects.isNull(value)) {
 			value = JAXBContext.newInstance(contextPath);
@@ -70,11 +76,9 @@ public class Validator {
 	 */
 	private Schema getSchema() throws SAXException {
 		if (Objects.isNull(this.schema)) {
-			SchemaFactory sf = SchemaFactory
-					.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			sf.setResourceResolver(this.resolver);
-			this.schema = sf.newSchema(new StreamSource(
-					this.resolver.getResourceAsStream(this.validationXsd)));
+			this.schema = sf.newSchema(new StreamSource(this.resolver.getResourceAsStream(this.validationXsd)));
 		}
 		return this.schema;
 	}
@@ -100,41 +104,36 @@ public class Validator {
 	/**
 	 * Validate the {@link JAXBElement}.
 	 *
-	 * @param element
-	 *            the {@link JAXBElement} to validate.
+	 * @param element the {@link JAXBElement} to validate.
 	 * @return the list of error messages.
 	 * @throws Exception
 	 */
-	public List<String> validate(final JAXBElement<?> element)
-			throws Exception {
-		return this.validate(element,
-				element.getValue().getClass().getPackage().getName());
+	public List<String> validate(final JAXBElement<?> element) throws Exception {
+		return this.validate(element, element.getValue().getClass().getPackage().getName());
 	}
 
 	/**
 	 * Validate the {@link JAXBElement}.
 	 *
-	 * @param element
-	 *            the {@link JAXBElement} to validate.
-	 * @param contextPath
-	 *            the context path of the {@link JAXBElement}.
+	 * @param element     the {@link JAXBElement} to validate.
+	 * @param contextPath the context path of the {@link JAXBElement}.
 	 * @return the list of error messages.
 	 * @throws Exception
 	 */
-	private List<String> validate(final JAXBElement<?> element,
-			final String contextPath) throws Exception {
+	private List<String> validate(final JAXBElement<?> element, final String contextPath) throws Exception {
 		List<String> value = new ArrayList<>();
 		ListErrorHandler errorHandler = new ListErrorHandler();
-		javax.xml.validation.Validator validator = this.getSchema()
-				.newValidator();
+		javax.xml.validation.Validator validator = this.getSchema().newValidator();
+		for (String feature : this.features) {
+			validator.setFeature(feature, true);
+		}
+		validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
 		validator.setErrorHandler(errorHandler);
 
-		JAXBSource source = new JAXBSource(this.getJAXBContext(contextPath),
-				element);
+		JAXBSource source = new JAXBSource(this.getJAXBContext(contextPath), element);
 		validator.validate(source);
 		value.addAll(errorHandler.getErrorList().stream()
-				.filter(e -> !e.contains(
-						ObjectFactory._RootElement_QNAME.getNamespaceURI()))
+				.filter(e -> !e.contains(ObjectFactory._RootElement_QNAME.getNamespaceURI()))
 				.collect(Collectors.toList()));
 		return value;
 	}
@@ -142,8 +141,7 @@ public class Validator {
 	/**
 	 * Validate the {@link JAXBElement}.
 	 *
-	 * @param value
-	 *            the JAXB {@link Object} to validate.
+	 * @param value the JAXB {@link Object} to validate.
 	 * @return the list of error messages.
 	 * @throws Exception
 	 */
@@ -153,8 +151,7 @@ public class Validator {
 		root.setElement(value);
 		JAXBElement<RootElementType> element = of.createRootElement(root);
 
-		return this.validate(element,
-				String.format("%s:%s", root.getClass().getPackage().getName(),
-						value.getClass().getPackage().getName()));
+		return this.validate(element, String.format("%s:%s", root.getClass().getPackage().getName(),
+				value.getClass().getPackage().getName()));
 	}
 }
