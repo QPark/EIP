@@ -39,7 +39,7 @@ public class EipHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessag
 	/** The HTTP request content type. */
 	private String contentType;
 	/** The {@link X509TrustManager} using the keystore.jks. */
-	@Autowired
+	@Autowired(required = false)
 	private EipX509TrustManager x509TrustManager;
 	/** The {@link ApplicationPlaceholderConfigurer} if available. */
 	@Autowired(required = false)
@@ -78,6 +78,11 @@ public class EipHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessag
 		return this.x509TrustManager;
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+
+	}
+
 	/**
 	 * Initialize the HTTPs conncection.
 	 *
@@ -101,8 +106,14 @@ public class EipHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessag
 	@Override
 	protected void prepareConnection(final HttpURLConnection connection) throws IOException {
 		if (HttpsURLConnection.class.isInstance(connection)) {
-			this.setHostnameVerifier(this.x509TrustManager);
-			this.setTrustManagers(new TrustManager[] { this.x509TrustManager });
+			Optional.ofNullable(this.x509TrustManager).map(trustManager -> {
+				this.setHostnameVerifier(trustManager);
+				this.setTrustManagers(new TrustManager[] { trustManager });
+				return trustManager;
+			}).orElseGet(() -> {
+				this.logger.error("Missconfiguration: No EipX509TrustManager set!");
+				return null;
+			});
 		}
 		/* call the super method. */
 		super.prepareConnection(connection);
@@ -117,7 +128,7 @@ public class EipHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessag
 
 		/* Setup the basic Authentication. */
 		if (Objects.nonNull(this.userName)) {
-			this.logger.debug(String.format("prepareConnection add request header '%s' basic AUTH userName '%s'",
+			this.logger.error(String.format("prepareConnection add request header '%s' basic AUTH userName '%s'",
 					"Authorization", this.userName));
 			connection.setRequestProperty("Authorization",
 					new StringBuffer(128).append("Basic ").append(this.base64UserNamePassword).toString());

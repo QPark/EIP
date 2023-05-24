@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.samples.platform</groupId>
 		<artifactId>platform-base</artifactId>
-		<version>3.17.3</version><!--qpark-eip-version-->
+		<version>3.17.4</version><!--qpark-eip-version-->
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -31,12 +31,12 @@
 		<dependency>
 			<groupId>${domain.groupId}.gen</groupId>
 			<artifactId>domain-gen-flow</artifactId>
-			<version>3.17.3</version><!--qpark-eip-version-->
+			<version>3.17.4</version><!--qpark-eip-version-->
 		</dependency>
 		<dependency>
 			<groupId>${domain.groupId}.gen</groupId>
 			<artifactId>domain-gen-jaxb</artifactId>
-			<version>3.17.3</version><!--qpark-eip-version-->
+			<version>3.17.4</version><!--qpark-eip-version-->
 			<classifier>xsd-sources</classifier>
 		</dependency>
 
