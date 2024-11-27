@@ -61,7 +61,7 @@
 		<org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>0.6.1</org.jvnet.hyperjaxb3.hyperjaxb3-ejb-runtime.version>
 
 		<org.jasypt.jasypt.version>1.9.3</org.jasypt.jasypt.version>
-		<org.apache.santuario-xmlsec>1.5.8</org.apache.santuario-xmlsec>
+		<org.apache.santuario-xmlsec>2.1.7</org.apache.santuario-xmlsec>
 		<org.apache.commons.csv.version>1.5</org.apache.commons.csv.version>
 		<org.aspectj.aspectjtools.version>1.8.14</org.aspectj.aspectjtools.version>
 		<net.sourceforge.cardme.cardme.version>0.4.0</net.sourceforge.cardme.cardme.version>
