@@ -164,10 +164,8 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
                                                                            "No schema location prefix to generate catalog file provided.");
                               } else {
                                              catalogXml.append("<?xml version=\"1.0\"?>\n");
-                                             catalogXml.append(
-                                                                           "<!DOCTYPE catalog PUBLIC \"-//OASIS/DTD Entity Resolution XML Catalog V1.0//EN\" \http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd\>\n");
-                                             catalogXml.append(
-                                                                           "<catalog xmlns=\"urn:oasis:names:tc:entity:xmlns:xml:catalog\">\n");
+                                             catalogXml.append("<!DOCTYPE catalog PUBLIC \"-//OASIS/DTD Entity Resolution XML Catalog V1.0//EN\" \"http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd\">\n");
+                                             catalogXml.append("<catalog xmlns=\"urn:oasis:names:tc:entity:xmlns:xml:catalog\">\n");
                                              String[] slps = this.schemalocationPrefix.split(",");
                                              String s = this.baseDirectory.getAbsolutePath();
                                              s = s.replace("\\", "/");
@@ -345,7 +343,7 @@ public class XjcMojo extends AbstractJavaGeneratorMojo {
                @Override
                protected List<File> getSourceXJBs() {
         final List<Filter<File>> excludePatterns = new ArrayList<Filter<File>>();
-        excludePatterns.add(new PatternFileFilter(Arrays.asList(\\.xsd), true));
+        excludePatterns.add(new PatternFileFilter(Arrays.asList("\\.xsd"), true));
         Filters.initialize(getLog(), excludePatterns);
  
         return FileSystemUtilities.filterFiles(
